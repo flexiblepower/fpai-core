@@ -1,0 +1,19 @@
+# Generate Java / Eclipse generated stuff
+.metadata
+*.swp
+cnf/db
+cnf/cache
+cnf/release
+bin
+generated
+*playground
+
+# GWT generated stuff
+.gwt
+gwt-unitCache
+deploy
+*.cache.html
+*.cache.gif
+*.gwt.rpc
+*.nocache.js
+hosted.html
