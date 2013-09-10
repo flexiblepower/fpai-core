@@ -1,0 +1,9 @@
+-runrequires: osgi.identity;filter:='(osgi.identity=flexiblepower.runtime.simulation.test)'
+-runfw: org.eclipse.osgi
+-runee: JavaSE-1.6
+-runbundles: ch.qos.logback.classic;version='[1.0.13,1.0.14)',\
+	ch.qos.logback.core;version='[1.0.13,1.0.14)',\
+	flexiblepower.api.test;version=latest,\
+	flexiblepower.runtime.simulation.test;version=latest,\
+	junit.osgi;version='[3.8.2,3.8.3)',\
+	slf4j.api;version='[1.7.5,1.7.6)'

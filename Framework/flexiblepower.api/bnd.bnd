@@ -1,0 +1,23 @@
+-include: ../cnf/base.bnd
+
+-buildpath: \
+	osgi.cmpn;version="[4.3,5)",\
+	osgi.core;version="[4.3,5)"
+
+Bundle-Version: 4.0.0
+Export-Package: \
+	org.flexiblepower.control,\
+	org.flexiblepower.data,\
+	org.flexiblepower.data.appliances,\
+	org.flexiblepower.data.applications,\
+	org.flexiblepower.observation,\
+	org.flexiblepower.provisioning,\
+	org.flexiblepower.rai,\
+	org.flexiblepower.rai.unit,\
+	org.flexiblepower.rai.values,\
+	org.flexiblepower.ral,\
+	org.flexiblepower.security,\
+	org.flexiblepower.time,\
+	org.flexiblepower.ui
+
+-sub: *.bnd

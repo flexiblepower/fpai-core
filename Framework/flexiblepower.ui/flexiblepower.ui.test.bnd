@@ -1,0 +1,11 @@
+Private-Package: \
+	org.flexiblepower.runtime.ui.server,\
+	org.flexiblepower.runtime.ui.server.pages,\
+	org.flexiblepower.runtime.ui.server.widgets,\
+	org.flexiblepower.runtime.ui.user,\
+	org.flexiblepower.runtime.ui.test
+	
+Service-Component: \
+	org.flexiblepower.runtime.ui.user.*,\
+	org.flexiblepower.runtime.ui.server.*,\
+	org.flexiblepower.runtime.ui.test.*

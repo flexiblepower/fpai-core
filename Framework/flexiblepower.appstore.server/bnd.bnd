@@ -1,0 +1,11 @@
+-include: ../cnf/base.bnd
+-buildpath: ${default-buildpath},\
+	com.google.gson,\
+	org.apache.felix.http.jetty,\
+	flexiblepower.appstore.common;version=latest
+
+Bundle-Version: 1.0.4
+Private-Package: \
+	org.flexiblepower.appstore.server,\
+	org.flexiblepower.appstore.server.model
+Service-Component: org.flexiblepower.appstore.server.*

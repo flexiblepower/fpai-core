@@ -1,0 +1,8 @@
+-include: ../cnf/base.bnd
+-buildpath: osgi.core;version="[4.3,5)",\
+			osgi.cmpn;version="[4.3,5)",\
+			slf4j.api;version="[1.6,2.0)",\
+			flexiblepower.api;version=latest
+
+Bundle-Version: 4.0.0
+Export-Package: org.flexiblepower.ral.drivers.*, org.flexiblepower.ral.ext

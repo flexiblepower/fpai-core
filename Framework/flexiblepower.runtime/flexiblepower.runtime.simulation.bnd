@@ -1,0 +1,6 @@
+Bundle-Version: 2.0.0
+Private-Package: org.flexiblepower.runtime.data,\
+	org.flexiblepower.runtime.services,\
+	org.flexiblepower.simulation.schedule
+Service-Component: org.flexiblepower.*
+Export-Package: org.flexiblepower.simulation.api

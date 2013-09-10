@@ -1,0 +1,3 @@
+Bundle-Version: 2.0.0
+Private-Package: org.flexiblepower.runtime.*
+Service-Component: org.flexiblepower.runtime.*

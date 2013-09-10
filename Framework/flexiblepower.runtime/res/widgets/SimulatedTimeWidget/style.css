@@ -1,0 +1,21 @@
+#loading {
+	position: absolute;
+	left: 45%;
+	top: 40%;
+}
+
+#icon {
+	position: absolute;
+	top: 5;
+	right: 1em;
+}
+
+p {
+	display: none;
+}
+
+#simulation_parameters {
+	display: none;
+	position: absolute;
+	top: 50%;
+}

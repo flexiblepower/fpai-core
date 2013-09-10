@@ -1,0 +1,2 @@
+Private-Package: org.flexiblepower.rai.values.test
+Test-Cases: org.flexiblepower.rai.values.test.EnergyProfileTest

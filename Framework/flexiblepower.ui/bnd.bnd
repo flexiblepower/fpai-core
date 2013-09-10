@@ -1,0 +1,8 @@
+-include: ../cnf/base.bnd
+-buildpath: ${default-buildpath},\
+	com.google.gson,\
+	org.apache.felix.http.jetty
+
+Bundle-Version: 2.0.0
+
+-sub: *.bnd
