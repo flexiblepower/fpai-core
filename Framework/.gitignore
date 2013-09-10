@@ -5,6 +5,7 @@ cnf/db
 cnf/cache
 cnf/release
 bin
+bin_test
 generated
 *playground
 

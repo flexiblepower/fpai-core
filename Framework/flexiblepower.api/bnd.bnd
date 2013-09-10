@@ -1,8 +1,8 @@
 -include: ../cnf/base.bnd
 
--buildpath: \
-	osgi.cmpn;version="[4.3,5)",\
-	osgi.core;version="[4.3,5)"
+-buildpath: osgi.cmpn;version='[4.3,5)',\
+	osgi.core;version='[4.3,5)',\
+	junit.osgi;version='[3.8,4)'
 
 Bundle-Version: 4.0.0
 Export-Package: \
@@ -20,4 +20,11 @@ Export-Package: \
 	org.flexiblepower.time,\
 	org.flexiblepower.ui
 
--sub: *.bnd
+Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
+Tester-Plugin: biz.aQute.junit
+-runtrace: true
+-runbundles: biz.aQute.junit
+-runproperties:  \
+    tester.trace=true, \
+    tester.continuous=true, \
+    tester.dir=testdir

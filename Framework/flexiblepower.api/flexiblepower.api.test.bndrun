@@ -1,5 +1,0 @@
--runee: JavaSE-1.6
--runfw: org.eclipse.osgi
--runrequires: osgi.identity;filter:='(osgi.identity=flexiblepower.api.test)'
--runbundles: flexiblepower.api.test;version=latest,\
-	junit.osgi;version='[3.8.2,3.8.3)'
