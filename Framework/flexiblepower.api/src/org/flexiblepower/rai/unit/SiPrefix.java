@@ -20,7 +20,7 @@ public enum SiPrefix {
     DECI("Deci", "d", -1, "tenth"),
     CENTI("Centi", "c", -2, "hundredth"),
     MILLI("Milli", "m", -3, "thousandth"),
-    MICRO("Micro", "µ", -6, "millionth"),
+    MICRO("Micro", "Âµ", -6, "millionth"),
     NANO("Nano", "n", -9, "billionth"),
     PICO("Pico", "p", -12, "trillionth"),
     FEMTO("Femto", "f", -15, "quadrillionth"),
