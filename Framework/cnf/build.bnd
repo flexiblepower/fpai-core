@@ -4,3 +4,4 @@ Git-SHA: ${system-allow-fail;git rev-list -1 HEAD}
 javac.source: 1.6
 javac.target: 1.6
 
+src: src, test
