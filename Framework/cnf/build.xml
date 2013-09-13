@@ -53,8 +53,8 @@
 	</target>
 
 
-	<target name="test-coverage" depends="check,instrument" if="testdirpresent">
-		<junit fork="yes" dir="${basedir}">
+	<target name="test-coverage" depends="check,compileTests,instrument" if="testdirpresent">
+		<junit fork="no" dir="${basedir}">
 			<classpath path="${project.buildpath}:bin_test/" />
 			<formatter type="xml" />
 			<batchtest todir="${target}">
