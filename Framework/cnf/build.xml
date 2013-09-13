@@ -25,7 +25,6 @@
 	<property name="cobertura.dir" value="${basedir}/../cnf/tools/cobertura" />
 	<property name="instrumented.dir" value="${basedir}/instrumented" />
 	<property name="classes.dir" value="${basedir}/bin" />
-	<property name="coverage.xml.dir" value="report" />
 
 	<target name="check">
 		<condition property="testdirpresent">
@@ -70,8 +69,8 @@
 	</target>
 
 	<target name="coverage-report" depends="check,test-coverage" if="testdirpresent">
-		<delete dir="${coverage.xml.dir}" />
-		<cobertura-report srcdir="src" destdir="${coverage.xml.dir}" format="xml" />
+		<delete file="coverage.xml" />
+		<cobertura-report srcdir="src" destdir="${basedir}" format="xml" />
 	</target>
 
 	<target name="clean">
