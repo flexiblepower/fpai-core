@@ -71,7 +71,7 @@
 
 	<target name="coverage-report" depends="check,test-coverage" if="testdirpresent">
 		<delete dir="${coverage.xml.dir}" />
-		<cobertura-report srcdir="src" destdir="${coverage.xml.dir}" format="html" />
+		<cobertura-report srcdir="src" destdir="${coverage.xml.dir}" format="xml" />
 	</target>
 
 	<target name="clean">
