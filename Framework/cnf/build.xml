@@ -70,7 +70,7 @@
 
 	<target name="coverage-report" depends="check,test-coverage" if="testdirpresent">
 		<delete file="coverage.xml" />
-		<cobertura-report srcdir="src" destdir="${basedir}" format="xml" />
+		<cobertura-report srcdir="${project.sourcepath}" destdir="${basedir}" format="xml" />
 	</target>
 
 	<target name="clean">
