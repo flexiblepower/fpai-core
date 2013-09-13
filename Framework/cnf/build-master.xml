@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="fpai" default="build">
+
+	<property name="version" value="1.0.0-snapshot" />
+
+	<target name="build">
+		<ant dir="../flexiblepower.api" target="build" />
+		<ant dir="../flexiblepower.api.ext" target="build" />
+		<ant dir="../flexiblepower.appstore.client" target="build" />
+		<ant dir="../flexiblepower.appstore.common" target="build" />
+		<ant dir="../flexiblepower.appstore.server" target="build" />
+		<ant dir="../flexiblepower.runtime" target="build" />
+		<ant dir="../flexiblepower.ui" target="build" />
+		<ant dir="../flexiblepower.ui.appinfo" target="build" />
+		<ant dir="../flexiblepower.ui.applianceinfo" target="build" />
+	</target>
+
+	<target name="coverage-report">
+		<ant dir="../flexiblepower.api" target="coverage-report" />
+		<ant dir="../flexiblepower.api.ext" target="coverage-report" />
+		<ant dir="../flexiblepower.appstore.client" target="coverage-report" />
+		<ant dir="../flexiblepower.appstore.common" target="coverage-report" />
+		<ant dir="../flexiblepower.appstore.server" target="coverage-report" />
+		<ant dir="../flexiblepower.runtime" target="coverage-report" />
+		<ant dir="../flexiblepower.ui" target="coverage-report" />
+		<ant dir="../flexiblepower.ui.appinfo" target="coverage-report" />
+		<ant dir="../flexiblepower.ui.applianceinfo" target="coverage-report" />
+	</target>
+
+	<target name="clean">
+		<ant dir="../flexiblepower.api" target="clean" />
+		<ant dir="../flexiblepower.api.ext" target="clean" />
+		<ant dir="../flexiblepower.appstore.client" target="clean" />
+		<ant dir="../flexiblepower.appstore.common" target="clean" />
+		<ant dir="../flexiblepower.appstore.server" target="clean" />
+		<ant dir="../flexiblepower.runtime" target="clean" />
+		<ant dir="../flexiblepower.ui" target="clean" />
+		<ant dir="../flexiblepower.ui.appinfo" target="clean" />
+		<ant dir="../flexiblepower.ui.applianceinfo" target="clean" />
+	</target>
+
+
+</project>
