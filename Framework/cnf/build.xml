@@ -54,10 +54,12 @@
 
 
 	<target name="test-coverage" depends="check,compileTests,instrument" if="testdirpresent">
-		<junit fork="no" dir="${basedir}">
+		<junit fork="yes" dir="${basedir}">
 			<classpath path="${instrumented.dir}" />
+			<classpath path="${cobertura.dir}" />
 			<classpath location="../cnf/tools/cobertura/cobertura-2.0.3.jar" />
-			<classpath path="${project.buildpath}:bin_test/" />
+			<classpath path="bin_test" />
+			<classpath path="bin" />
 			<formatter type="xml" />
 			<batchtest todir="${target}">
 				<fileset dir="test">
@@ -69,7 +71,7 @@
 
 	<target name="coverage-report" depends="check,test-coverage" if="testdirpresent">
 		<delete dir="${coverage.xml.dir}" />
-		<cobertura-report srcdir="src" destdir="${coverage.xml.dir}" format="xml" />
+		<cobertura-report srcdir="src" destdir="${coverage.xml.dir}" format="html" />
 	</target>
 
 	<target name="clean">
