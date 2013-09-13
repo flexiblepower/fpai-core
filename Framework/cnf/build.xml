@@ -56,7 +56,7 @@
 	<target name="test-coverage" depends="check,compileTests,instrument" if="testdirpresent">
 		<junit fork="no" dir="${basedir}">
 			<classpath path="${instrumented.dir}" />
-			<classpath path="${cobertura.dir}" />
+			<classpath location="../cnf/tools/cobertura/cobertura-2.0.3.jar" />
 			<classpath path="${project.buildpath}:bin_test/" />
 			<formatter type="xml" />
 			<batchtest todir="${target}">
