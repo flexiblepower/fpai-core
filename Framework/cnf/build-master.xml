@@ -51,11 +51,15 @@
 		<ant dir="../flexiblepower.ui.appinfo" target="clean" />
 		<ant dir="../flexiblepower.ui.applianceinfo" target="clean" />
 	</target>
-	
+
 	<target name="publishrelease" depends="release">
 		<delete dir="${releasedir}/${version}/repo" />
-		<copydir dest="${releasedir}/${version}/repo" src="${release.dir}"></copydir>
+		<mkdir dir="${releasedir}/${version}" />
+		<copy todir="${releasedir}/${version}">
+			<fileset dir="release" />
+		</copy>
 	</target>
+
 
 
 </project>
