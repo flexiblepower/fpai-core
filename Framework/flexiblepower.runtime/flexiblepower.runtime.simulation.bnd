@@ -4,3 +4,15 @@ Private-Package: org.flexiblepower.runtime.data,\
 	org.flexiblepower.simulation.schedule
 Service-Component: org.flexiblepower.*
 Export-Package: org.flexiblepower.simulation.api
+
+-buildpath: junit.osgi;version='[3.8,4)'
+
+
+Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
+Tester-Plugin: biz.aQute.junit
+-runtrace: true
+-runbundles: biz.aQute.junit
+-runproperties:  \
+    tester.trace=true, \
+    tester.continuous=true, \
+    tester.dir=testdir

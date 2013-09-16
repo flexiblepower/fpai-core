@@ -1,6 +1,9 @@
 -include: ../cnf/base.bnd
+
 -buildpath: ${default-buildpath},\
-	org.apache.felix.http.jetty
+	org.apache.felix.http.jetty,\
+	junit.osgi;version='[3.8,4)'
+
 Import-Package: junit.framework;resolution:=optional,javax.servlet.*;resolution:=optional,*
 
 -sub: *.bnd
