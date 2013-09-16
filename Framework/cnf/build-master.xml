@@ -2,6 +2,7 @@
 <project name="fpai" default="build">
 
 	<property name="version" value="1.0.0-snapshot" />
+	<property name="releasedir" value="/var/www/html/release/framework" />
 
 	<target name="build">
 		<ant dir="../flexiblepower.api" target="build" />
@@ -49,6 +50,11 @@
 		<ant dir="../flexiblepower.ui" target="clean" />
 		<ant dir="../flexiblepower.ui.appinfo" target="clean" />
 		<ant dir="../flexiblepower.ui.applianceinfo" target="clean" />
+	</target>
+	
+	<target name="publishrelease" depends="release">
+		<delete dir="${releasedir}/${version}/repo" />
+		<copydir dest="${releasedir}/${version}/repo" src="${release.dir}"></copydir>
 	</target>
 
 
