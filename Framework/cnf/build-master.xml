@@ -3,7 +3,7 @@
 
 	<property name="version" value="development" />
 
-	<property name="releasedir" value="/var/www/html/releases/framework" />
+	<property name="releasedir" value="/var/www/html/releases/fpai" />
 
 	<target name="build">
 		<ant dir="../flexiblepower.api" target="build" />
