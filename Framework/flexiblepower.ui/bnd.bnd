@@ -4,3 +4,9 @@
 	org.apache.felix.http.jetty
 
 Bundle-Version: 2.0.0
+Private-Package: org.flexiblepower.runtime.ui.server,\
+	org.flexiblepower.runtime.ui.server.pages,\
+	org.flexiblepower.runtime.ui.server.widgets,\
+	org.flexiblepower.runtime.ui.user
+	
+Service-Component: org.flexiblepower.runtime.ui.server.*
