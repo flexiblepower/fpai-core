@@ -62,7 +62,7 @@
 			<formatter type="xml" />
 			<batchtest todir="${target}">
 				<fileset dir="test">
-					<include name="**/*.java" />
+					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
 		</junit>
@@ -81,5 +81,14 @@
 		<delete file="cobertura.log" />
 	</target>
 
+	
+	<taskdef resource="checkstyletask.properties" classpath="${basedir}/../cnf/tools/checkstyle/checkstyle-5.6-all.jar"/>
+	
+	<target name="checkstyle">
+		<checkstyle config="${basedir}/../cnf/tools/checkstyle/fpai_checks.xml" failOnViolation="false">
+			<fileset dir="${basedir}/src" includes="**/*.java"/>
+			<formatter type="xml" toFile="${basedir}/generated/checkstyle_errors.xml"/>
+		</checkstyle>
+	</target>
 
 </project>

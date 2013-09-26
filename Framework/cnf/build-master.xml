@@ -52,6 +52,18 @@
 		<ant dir="../flexiblepower.ui.appinfo" target="clean" />
 		<ant dir="../flexiblepower.ui.applianceinfo" target="clean" />
 	</target>
+	
+	<target name="checkstyle">
+		<ant dir="../flexiblepower.api" target="checkstyle" />
+		<ant dir="../flexiblepower.api.ext" target="checkstyle" />
+		<!-- <ant dir="../flexiblepower.appstore.client" target="checkstyle" /> -->
+		<ant dir="../flexiblepower.appstore.common" target="checkstyle" />
+		<ant dir="../flexiblepower.appstore.server" target="checkstyle" />
+		<ant dir="../flexiblepower.runtime" target="checkstyle" />
+		<ant dir="../flexiblepower.ui" target="checkstyle" />
+		<ant dir="../flexiblepower.ui.appinfo" target="checkstyle" />
+		<ant dir="../flexiblepower.ui.applianceinfo" target="checkstyle" />
+	</target>
 
 	<target name="publishrelease" depends="release">
 		<delete dir="${releasedir}/${version}/repo" />
