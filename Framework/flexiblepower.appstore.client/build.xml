@@ -8,7 +8,23 @@
 	<!-- GWT stuff -->
 
 	<target name="compile" depends="dependencies">
-		<antcall target="template.compile" />
+		<!-- slightly ajusted target compile -->
+		<mkdir dir="${project.output}" />
+		<javac fork="yes" executable="${javac}" srcdir="${project.sourcepath}" destdir="${project.output}" bootclasspath="${project.bootclasspath}" deprecation="true" listfiles="true" target="${javac.target}" source="${javac.source}" debug="${javac.debug}" includeAntRuntime="no" verbose="${verbose}">
+			<classpath>
+				<pathelement path="${project.buildpath}" />
+				<fileset dir="${basedir}/../cnf/tools/gwt">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${project.output}" verbose="${verbose}" preservelastmodified="true">
+			<fileset dir="${project.sourcepath}">
+				<exclude name="**/*.java" />
+				<exclude name="**/*.class" />
+			</fileset>
+		</copy>
+		<!-- end of slightly ajusted target compile -->
 		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
 			<classpath>
 				<pathelement location="${basedir}/src" />
