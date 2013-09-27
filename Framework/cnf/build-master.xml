@@ -8,7 +8,7 @@
 	<target name="build">
 		<ant dir="../flexiblepower.api" target="build" />
 		<ant dir="../flexiblepower.api.ext" target="build" />
-		<!-- <ant dir="../flexiblepower.appstore.client" target="build" /> -->
+		<ant dir="../flexiblepower.appstore.client" target="build" />
 		<ant dir="../flexiblepower.appstore.common" target="build" />
 		<ant dir="../flexiblepower.appstore.server" target="build" />
 		<ant dir="../flexiblepower.runtime" target="build" />
@@ -20,7 +20,7 @@
 	<target name="release">
 		<ant dir="../flexiblepower.api" target="release" />
 		<ant dir="../flexiblepower.api.ext" target="release" />
-		<!-- <ant dir="../flexiblepower.appstore.client" target="release" /> -->
+		<ant dir="../flexiblepower.appstore.client" target="release" />
 		<ant dir="../flexiblepower.appstore.common" target="release" />
 		<ant dir="../flexiblepower.appstore.server" target="release" />
 		<ant dir="../flexiblepower.runtime" target="release" />
@@ -32,7 +32,7 @@
 	<target name="coverage-report">
 		<ant dir="../flexiblepower.api" target="coverage-report" />
 		<ant dir="../flexiblepower.api.ext" target="coverage-report" />
-		<!-- <ant dir="../flexiblepower.appstore.client" target="coverage-report" /> -->
+		<ant dir="../flexiblepower.appstore.client" target="coverage-report" />
 		<ant dir="../flexiblepower.appstore.common" target="coverage-report" />
 		<ant dir="../flexiblepower.appstore.server" target="coverage-report" />
 		<ant dir="../flexiblepower.runtime" target="coverage-report" />
@@ -44,7 +44,7 @@
 	<target name="clean">
 		<ant dir="../flexiblepower.api" target="clean" />
 		<ant dir="../flexiblepower.api.ext" target="clean" />
-		<!-- <ant dir="../flexiblepower.appstore.client" target="clean" /> -->
+		<ant dir="../flexiblepower.appstore.client" target="clean" />
 		<ant dir="../flexiblepower.appstore.common" target="clean" />
 		<ant dir="../flexiblepower.appstore.server" target="clean" />
 		<ant dir="../flexiblepower.runtime" target="clean" />
@@ -56,7 +56,7 @@
 	<target name="checkstyle">
 		<ant dir="../flexiblepower.api" target="checkstyle" />
 		<ant dir="../flexiblepower.api.ext" target="checkstyle" />
-		<!-- <ant dir="../flexiblepower.appstore.client" target="checkstyle" /> -->
+		<ant dir="../flexiblepower.appstore.client" target="checkstyle" />
 		<ant dir="../flexiblepower.appstore.common" target="checkstyle" />
 		<ant dir="../flexiblepower.appstore.server" target="checkstyle" />
 		<ant dir="../flexiblepower.runtime" target="checkstyle" />
