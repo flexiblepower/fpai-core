@@ -20,6 +20,10 @@ public class EnergyValueTest extends TestCase {
         assertEquals(EnergyUnit.KILO_WATTHOUR, e.getUnit());
         assertEquals(3600d, e.getValueAs(EnergyUnit.KILO_JOULE));
         assertEquals(3600000d, e.getValueAsDefaultUnit());
+    }
+
+    public void testEquals() {
+        EnergyValue e = new EnergyValue(1, EnergyUnit.KILO_WATTHOUR);
         assertTrue(e.equals(new EnergyValue(1, EnergyUnit.KILO_WATTHOUR),
                             new EnergyValue(1, EnergyUnit.JOULE)));
         assertTrue(e.equals(new EnergyValue(1.1, EnergyUnit.KILO_WATTHOUR),
@@ -28,7 +32,16 @@ public class EnergyValueTest extends TestCase {
                              new EnergyValue(1, EnergyUnit.JOULE)));
         assertFalse(e.equals(new EnergyValue(2.1, EnergyUnit.KILO_WATTHOUR),
                              new EnergyValue(1000, EnergyUnit.JOULE)));
+    }
+
+    public void testAveragePower() {
+        EnergyValue e = new EnergyValue(1, EnergyUnit.KILO_WATTHOUR);
         assertTrue(e.getAveragePower(new Duration(1, TimeUnit.HOURS))
                     .equals(new PowerValue(1000, PowerUnit.WATT)));
+    }
+
+    public void testUnit() {
+        assertEquals("kWh", EnergyUnit.KILO_WATTHOUR.getSymbol());
+        assertEquals("kJ", EnergyUnit.KILO_JOULE.getSymbol());
     }
 }
