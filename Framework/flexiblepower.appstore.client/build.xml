@@ -25,6 +25,7 @@
 			</fileset>
 		</copy>
 		<!-- end of slightly ajusted target compile -->
+
 		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
 			<classpath>
 				<pathelement location="${basedir}/src" />
