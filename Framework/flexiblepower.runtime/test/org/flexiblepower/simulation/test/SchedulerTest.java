@@ -24,18 +24,15 @@ public class SchedulerTest extends TestCase {
 
         Date d1_1_2012 = new Date(1325376000000l);
 
-        for (int i = 1; i < 50; i++) {
-            runCounter.set(0);
+        runCounter.set(0);
 
-            scheduler.startSimulation(d1_1_2012, i);
-            try {
-                Thread.sleep(9500 / i);
-            } catch (InterruptedException e) {
-            }
-            scheduler.stopSimulation();
-
-            Assert.assertEquals(10, runCounter.get());
+        scheduler.startSimulation(d1_1_2012, 2);
+        try {
+            Thread.sleep(2250);
+        } catch (InterruptedException e) {
         }
+        scheduler.stopSimulation();
 
+        Assert.assertEquals(5, runCounter.get());
     }
 }
