@@ -10,6 +10,7 @@ import org.flexiblepower.rai.values.EnergyProfile;
 import org.flexiblepower.rai.values.EnergyProfile.Builder;
 
 public class EnergyProfileTest extends TestCase {
+
     public void testGetDuration() {
         // we want a profile of one minute with 30 elements of 2 seconds
         Duration totalDuration = new Duration(1, TimeUnit.MINUTES);
