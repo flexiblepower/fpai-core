@@ -8,4 +8,6 @@ default-buildpath: \
 	
 Bundle-Category: FlexiblePower Application Infrastructure
 Bundle-Vendor: TNO
-Include-Resource: res
+Include-Resource: res, ../cnf/LICENSE.txt
+Bundle-Copyright: Copyright Flexiblepower Alliance Network (FAN) 2013
+Bundle-License: Apache License, Version 2.0
