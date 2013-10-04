@@ -10,26 +10,26 @@ public abstract class ResourceInfo {
     private final UUID id;
 
     /**
-     * Identifier of the appliance.
+     * Identifier of the resource.
      */
-    private final String applianceId;
+    private final String resourceId;
 
     /**
      * Constructs a new {@link ResourceInfo} with a random id.
      * 
-     * @param applianceId
-     *            Identifier of the appliance
+     * @param resourceId
+     *            Identifier of the resource
      * 
      * @throws IllegalArgumentException
-     *             when applianceId is null or an empty string
+     *             when resourceId is null or an empty string
      */
-    public ResourceInfo(String applianceId) {
-        if (applianceId == null || applianceId.trim().length() == 0) {
+    public ResourceInfo(String resourceId) {
+        if (resourceId == null || resourceId.trim().length() == 0) {
             throw new IllegalArgumentException("resourceId is empty string");
         }
 
         id = UUID.randomUUID();
-        this.applianceId = applianceId;
+        this.resourceId = resourceId;
     }
 
     /**
@@ -40,15 +40,15 @@ public abstract class ResourceInfo {
      */
     ResourceInfo(ResourceInfo resourceInfo) {
         id = resourceInfo.id;
-        applianceId = resourceInfo.applianceId;
+        resourceId = resourceInfo.resourceId;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public String getApplianceId() {
-        return applianceId;
+    public String getResourceId() {
+        return resourceId;
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class ResourceInfo {
             return false;
         } else {
             ResourceInfo other = (ResourceInfo) obj;
-            if (!applianceId.equals(other.applianceId)) {
+            if (!resourceId.equals(other.resourceId)) {
                 return false;
             } else if (!id.equals(other.id)) {
                 return false;
@@ -72,13 +72,13 @@ public abstract class ResourceInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((applianceId == null) ? 0 : applianceId.hashCode());
+        result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [" + id + ", applianceId=" + applianceId + "]";
+        return getClass().getSimpleName() + " [" + id + ", resourceId=" + resourceId + "]";
     }
 }

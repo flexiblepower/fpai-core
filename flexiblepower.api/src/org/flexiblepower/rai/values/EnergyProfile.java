@@ -1,13 +1,21 @@
 package org.flexiblepower.rai.values;
 
+import static javax.measure.unit.SI.JOULE;
+import static javax.measure.unit.SI.SECOND;
+import static javax.measure.unit.SI.WATT;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.flexiblepower.rai.unit.EnergyUnit;
-import org.flexiblepower.rai.unit.PowerUnit;
-import org.flexiblepower.rai.unit.TimeUnit;
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
+import javax.measure.unit.Unit;
+
 import org.flexiblepower.rai.values.EnergyProfile.Element;
 
 /**
@@ -18,10 +26,10 @@ import org.flexiblepower.rai.values.EnergyProfile.Element;
  */
 public class EnergyProfile extends AbstractList<Element> {
     public static class Element {
-        private final Duration duration;
-        private final EnergyValue energy;
+        private final Measurable<Duration> duration;
+        private final Measurable<Energy> energy;
 
-        public Element(Duration duration, EnergyValue energy) {
+        public Element(Measurable<Duration> duration, Measurable<Energy> energy) {
             if (duration == null || energy == null) {
                 throw new NullPointerException();
             }
@@ -29,18 +37,18 @@ public class EnergyProfile extends AbstractList<Element> {
             this.energy = energy;
         }
 
-        public Duration getDuration() {
+        public Measurable<Duration> getDuration() {
             return duration;
         }
 
-        public EnergyValue getEnergy() {
+        public Measurable<Energy> getEnergy() {
             return energy;
         }
 
-        public PowerValue getAveragePower() {
-            double joules = energy.getValueAs(EnergyUnit.JOULE);
-            double seconds = duration.getValueAs(TimeUnit.SECONDS);
-            return new PowerValue(joules / seconds, PowerUnit.WATT);
+        public Measurable<Power> getAveragePower() {
+            double joules = energy.doubleValue(JOULE);
+            double seconds = duration.doubleValue(SECOND);
+            return Measure.valueOf(joules / seconds, WATT);
         }
 
         @Override
@@ -50,7 +58,7 @@ public class EnergyProfile extends AbstractList<Element> {
     }
 
     public static class Builder {
-        private Duration duration;
+        private Measurable<Duration> duration;
         private final List<Element> profile;
 
         public Builder() {
@@ -58,27 +66,17 @@ public class EnergyProfile extends AbstractList<Element> {
             profile = new ArrayList<Element>();
         }
 
-        public Builder add(Duration duration, EnergyValue energy) {
+        public Builder add(Measurable<Duration> duration, Measurable<Energy> energy) {
             profile.add(new Element(duration, energy));
             return this;
         }
 
-        public Builder add(Duration duration, double value, EnergyUnit unit) {
-            profile.add(new Element(duration, new EnergyValue(value, unit)));
-            return this;
-        }
-
-        public Builder add(EnergyValue energy) {
+        public Builder add(Measurable<Energy> energy) {
             profile.add(new Element(duration, energy));
             return this;
         }
 
-        public Builder add(double value, EnergyUnit unit) {
-            profile.add(new Element(duration, new EnergyValue(value, unit)));
-            return this;
-        }
-
-        public Builder setDuration(Duration duration) {
+        public Builder setDuration(Measurable<Duration> duration) {
             this.duration = duration;
             return this;
         }
@@ -90,14 +88,14 @@ public class EnergyProfile extends AbstractList<Element> {
 
     private final Element[] profile;
 
-    public EnergyProfile(Duration duration, EnergyUnit unit, double... values) {
+    public EnergyProfile(Measurable<Duration> duration, Unit<Energy> unit, double... values) {
         profile = new Element[values.length];
         for (int ix = 0; ix < values.length; ix++) {
-            profile[ix] = new Element(duration, new EnergyValue(values[ix], unit));
+            profile[ix] = new Element(duration, Measure.valueOf(values[ix], unit));
         }
     }
 
-    public EnergyProfile(Duration duration, EnergyValue... measurements) {
+    public EnergyProfile(Measurable<Duration> duration, Measurable<Energy>... measurements) {
         profile = new Element[measurements.length];
         for (int ix = 0; ix < measurements.length; ix++) {
             profile[ix] = new Element(duration, measurements[ix]);
@@ -112,18 +110,17 @@ public class EnergyProfile extends AbstractList<Element> {
         return Arrays.copyOf(profile, profile.length);
     }
 
-    public EnergyValue getValueForOffset(Duration offset) {
+    public Measurable<Energy> getValueForOffset(Measurable<Duration> offset) {
         Element e = getElementForOffset(offset);
         return e == null ? null : e.getEnergy();
     }
 
-    public Element getElementForOffset(Duration offset) {
+    public Element getElementForOffset(Measurable<Duration> offset) {
         double offsetDone = 0;
-        double offsetNeeded = offset.getValue();
-        TimeUnit timeUnit = offset.getUnit();
+        double offsetNeeded = offset.doubleValue(Duration.UNIT);
 
         for (Element element : profile) {
-            offsetDone += element.duration.getValueAs(timeUnit);
+            offsetDone += element.duration.doubleValue(Duration.UNIT);
             if (offsetDone >= offsetNeeded) {
                 return element;
             }
@@ -132,22 +129,22 @@ public class EnergyProfile extends AbstractList<Element> {
         return null;
     }
 
-    public EnergyValue getTotalEnergy(EnergyUnit unit) {
+    public Measurable<Energy> getTotalEnergy() {
         double value = 0;
         for (Element part : profile) {
-            value += part.getEnergy().getValueAs(unit);
+            value += part.getEnergy().doubleValue(JOULE);
         }
-        return new EnergyValue(value, unit);
+        return Measure.valueOf(value, JOULE);
     }
 
-    public Duration getDuration() {
+    public Measurable<Duration> getDuration() {
         double duration = 0;
 
         for (Element e : getProfile()) {
-            duration += e.getDuration().getValueAs(TimeUnit.MILLISECONDS);
+            duration += e.getDuration().doubleValue(SECOND);
         }
 
-        return new Duration(duration, TimeUnit.MILLISECONDS);
+        return Measure.valueOf(duration, SECOND);
     }
 
     /**
@@ -159,25 +156,22 @@ public class EnergyProfile extends AbstractList<Element> {
      *            appended with 0W)
      * @return A portion of this profile defined by the offset and the duration of this profile to include.
      */
-    public EnergyProfile subprofile(Duration offset, Duration duration) {
+    @SuppressWarnings("unchecked")
+    public EnergyProfile subprofile(Measurable<Duration> offset, Measurable<Duration> duration) {
         // duration must be specified
         if (duration == null) {
             throw new IllegalArgumentException("No duration provided for the subprofile");
         }
 
         // if the duration is zero, return an empty profile
-        if (duration.getValue() == 0) {
-            return new EnergyProfile(duration);
-        }
-
-        // if the original profile is empty, return an empty profile
-        if (getDuration().getValue() == 0) {
+        // or if the original profile is empty, return an empty profile
+        if (duration.doubleValue(SECOND) == 0 || getDuration().doubleValue(SECOND) == 0) {
             return new EnergyProfile(duration);
         }
 
         // if there is no offset use 0
         if (offset == null) {
-            offset = Duration.ZERO;
+            offset = Measure.valueOf(0, SECOND);
         }
 
         // if the offset is larger than the profile, return an empty profile
@@ -187,12 +181,9 @@ public class EnergyProfile extends AbstractList<Element> {
 
         EnergyProfile.Builder builder = new EnergyProfile.Builder();
 
-        // the unit to use throughout the calculations
-        TimeUnit timeUnit = offset.getUnit();
-
         // the start, duration and end of the sub profile
-        double subprofileStart = offset.getValue();
-        double subprofileDuration = duration.getValueAs(timeUnit);
+        double subprofileStart = offset.doubleValue(SECOND);
+        double subprofileDuration = duration.doubleValue(SECOND);
         double subprofileEnd = subprofileStart + subprofileDuration;
 
         // variables for the start, duration and end of a profile element
@@ -200,12 +191,12 @@ public class EnergyProfile extends AbstractList<Element> {
 
         // prepend if offset is negative
         if (subprofileStart < 0) {
-            builder.add(new Duration(subprofileStart * -1, timeUnit), 0, EnergyUnit.JOULE);
+            builder.add(Measure.valueOf(subprofileStart * -1, SECOND), Measure.valueOf(0, JOULE));
         }
 
         for (int i = 0; i < size(); i++) {
             Element e = get(i);
-            eDuration = e.getDuration().getValueAs(timeUnit);
+            eDuration = e.getDuration().doubleValue(SECOND);
             eEnd = eStart + eDuration;
 
             // reached the end of the sub profile
@@ -230,8 +221,8 @@ public class EnergyProfile extends AbstractList<Element> {
                 // or add part of the element
                 else {
                     double timeToKeep = eDuration - timeToSkip;
-                    double energyValue = e.getEnergy().getValue() * (timeToKeep / eDuration);
-                    builder.add(new Duration(timeToKeep, timeUnit), energyValue, e.getEnergy().getUnit());
+                    double energyValue = e.getEnergy().doubleValue(JOULE) * (timeToKeep / eDuration);
+                    builder.add(Measure.valueOf(timeToKeep, SECOND), Measure.valueOf(energyValue, JOULE));
                 }
             }
 
@@ -239,9 +230,9 @@ public class EnergyProfile extends AbstractList<Element> {
         }
 
         // append empty element if duration is longer than profile
-        double remainder = subprofileDuration - builder.build().getDuration().getValueAs(timeUnit);
+        double remainder = subprofileDuration - builder.build().getDuration().doubleValue(SECOND);
         if (remainder > 0) {
-            builder.add(new Duration(remainder, timeUnit), 0, EnergyUnit.JOULE);
+            builder.add(Measure.valueOf(remainder, SECOND), Measure.valueOf(0, JOULE));
         }
 
         // return the new profile

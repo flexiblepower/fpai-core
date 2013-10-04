@@ -2,10 +2,12 @@ package org.flexiblepower.rai;
 
 import java.util.Date;
 
-import org.flexiblepower.rai.values.Duration;
-import org.flexiblepower.rai.values.EnergyValue;
-import org.flexiblepower.rai.values.PowerConstraintList;
-import org.flexiblepower.rai.values.PowerValue;
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
+
+import org.flexiblepower.rai.values.ConstraintList;
 
 /**
  * BufferControlSpace is a ControlSpace to expose energetic flexibility of Buffer resource.
@@ -19,18 +21,18 @@ import org.flexiblepower.rai.values.PowerValue;
  * Charge speed/curve as PowerConstraintList, self discharge (W), minimal switch on period, minimal switch off period;
  * additional optional parameters specify the target time at which one wants to achieve a target state of charge (%).
  * <p>
- * Note that an appliance is able to operate at different modes, one could have charge values of 20W and 20W, whereas
- * for both modes one could have the same self discharge 10W. Therefore we have charge speed as PowerConstraintList and
- * a self discharge.
+ * Note that an resource is able to operate at different modes, one could have charge values of 20W and 20W, whereas for
+ * both modes one could have the same self discharge 10W. Therefore we have charge speed as PowerConstraintList and a
+ * self discharge.
  * <p>
  * PMSuite - PM Control Specification - v0.6
  */
-public final class BufferControlSpace extends ControlSpace {
+public class BufferControlSpace extends ControlSpace {
 
     /**
      * total buffer capacity
      */
-    private final EnergyValue totalCapacity;
+    private final Measurable<Energy> totalCapacity;
 
     /**
      * state of charge, percentage expressed as float in [0,1]
@@ -40,22 +42,22 @@ public final class BufferControlSpace extends ControlSpace {
     /**
      * power constraint list to represent charge speed/curve
      */
-    private final PowerConstraintList chargeSpeed;
+    private final ConstraintList<Power> chargeSpeed;
 
     /**
      * discharge speed/curve value expressed as Power.
      */
-    private final PowerValue selfDischarge;
+    private final Measurable<Power> selfDischarge;
 
     /**
      * minimal switch on period
      */
-    private final Duration minOnPeriod;
+    private final Measurable<Duration> minOnPeriod;
 
     /**
      * minimal switch off period
      */
-    private final Duration minOffPeriod;
+    private final Measurable<Duration> minOffPeriod;
 
     /**
      * target state of charge one wants to achieve at the target time, percentage as float in [0,1].
@@ -122,19 +124,19 @@ public final class BufferControlSpace extends ControlSpace {
      * @throws IllegalArgumentException
      *             when targetStateOfCharge is not null but not in [0,1]
      */
-    public BufferControlSpace(String applianceId,
+    public BufferControlSpace(String resourceId,
                               Date validFrom,
                               Date validThru,
                               Date expirationTime,
-                              EnergyValue totalCapacity,
+                              Measurable<Energy> totalCapacity,
                               float stateOfCharge,
-                              PowerConstraintList chargeSpeed,
-                              PowerValue selfDischarge,
-                              Duration minOnPeriod,
-                              Duration minOffPeriod,
+                              ConstraintList<Power> chargeSpeed,
+                              Measurable<Power> selfDischarge,
+                              Measurable<Duration> minOnPeriod,
+                              Measurable<Duration> minOffPeriod,
                               Date targetTime,
                               Float targetStateOfCharge) {
-        super(applianceId, validFrom, validThru, expirationTime);
+        super(resourceId, validFrom, validThru, expirationTime);
         this.totalCapacity = totalCapacity;
         this.stateOfCharge = stateOfCharge;
         this.chargeSpeed = chargeSpeed;
@@ -181,7 +183,7 @@ public final class BufferControlSpace extends ControlSpace {
     /**
      * @return total capacity
      */
-    public EnergyValue getTotalCapacity() {
+    public Measurable<Energy> getTotalCapacity() {
         return totalCapacity;
     }
 
@@ -196,14 +198,14 @@ public final class BufferControlSpace extends ControlSpace {
     /**
      * @return minimum on period
      */
-    public Duration getMinOnPeriod() {
+    public Measurable<Duration> getMinOnPeriod() {
         return minOnPeriod;
     }
 
     /**
      * @return minimum off period
      */
-    public Duration getMinOffPeriod() {
+    public Measurable<Duration> getMinOffPeriod() {
         return minOffPeriod;
     }
 
@@ -211,7 +213,7 @@ public final class BufferControlSpace extends ControlSpace {
      * 
      * @return charge speed power constraint list
      */
-    public PowerConstraintList getChargeSpeed() {
+    public ConstraintList<Power> getChargeSpeed() {
         return chargeSpeed;
     }
 
@@ -219,7 +221,7 @@ public final class BufferControlSpace extends ControlSpace {
      * 
      * @return self discharge (real power)
      */
-    public PowerValue getSelfDischarge() {
+    public Measurable<Power> getSelfDischarge() {
         return selfDischarge;
     }
 

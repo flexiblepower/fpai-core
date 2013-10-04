@@ -12,8 +12,10 @@ import org.flexiblepower.rai.ControllableResource;
  * {@link ResourceManager} in OSGi, by using matching 'appliance.id' configuration parameter. This should be done by the
  * FPAI runtime environment.
  */
-public interface ResourceManager<RS extends ResourceState> extends ObservationConsumer<RS>, ControllableResource {
-    void registerDriver(ResourceDriver<RS, ?> driver);
+public interface ResourceManager<CS extends ControlSpace, RS extends ResourceState, RCP extends ResourceControlParameters> extends
+                                                                                                                           ObservationConsumer<RS>,
+                                                                                                                           ControllableResource<CS> {
+    void registerDriver(ResourceDriver<RS, RCP> driver);
 
-    void unregisterDriver(ResourceDriver<RS, ?> driver);
+    void unregisterDriver(ResourceDriver<RS, RCP> driver);
 }

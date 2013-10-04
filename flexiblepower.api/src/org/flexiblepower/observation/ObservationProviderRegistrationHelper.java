@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
 public class ObservationProviderRegistrationHelper {
@@ -18,20 +19,16 @@ public class ObservationProviderRegistrationHelper {
 
     private final BundleContext bundleContext;
     private final Hashtable<String, Object> properties;
-    private Object serviceObject;
+    private final Object serviceObject;
 
-    public ObservationProviderRegistrationHelper(BundleContext context) {
-        bundleContext = context;
+    public ObservationProviderRegistrationHelper(Object serviceObject) {
+        this.serviceObject = serviceObject;
+        bundleContext = FrameworkUtil.getBundle(serviceObject.getClass()).getBundleContext();
         properties = new Hashtable<String, Object>();
     }
 
     public ObservationProviderRegistrationHelper setProperty(String key, Object value) {
         properties.put(key, value);
-        return this;
-    }
-
-    public ObservationProviderRegistrationHelper serviceObject(Object serviceObject) {
-        this.serviceObject = serviceObject;
         return this;
     }
 

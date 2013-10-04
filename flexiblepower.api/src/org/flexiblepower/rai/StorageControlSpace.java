@@ -2,15 +2,17 @@ package org.flexiblepower.rai;
 
 import java.util.Date;
 
-import org.flexiblepower.rai.values.Duration;
-import org.flexiblepower.rai.values.EnergyValue;
-import org.flexiblepower.rai.values.PowerConstraintList;
-import org.flexiblepower.rai.values.PowerValue;
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
+
+import org.flexiblepower.rai.values.ConstraintList;
 
 /**
  * StorageControlSpace is a ControlSpace to expose energetic flexibility of Storage resource.
  * <p>
- * Storage appliances can store electricity and release it when required. They are similar to a buffer but can both take
+ * Storage resources can store electricity and release it when required. They are similar to a buffer but can both take
  * and return energy. Examples: batteries, electrical vehicles.
  * <p>
  * Main parameters are about the storage state and characteristics: total capacity (Wh), State of Charge (%), Charge
@@ -21,27 +23,12 @@ import org.flexiblepower.rai.values.PowerValue;
  * <p>
  * PMSuite - PM Control Specification - v0.6
  */
-public final class StorageControlSpace extends ControlSpace {
-
-    /**
-     * total buffer capacity
-     */
-    private final EnergyValue totalCapacity;
-
-    /**
-     * state of charge, percentage expressed as double in [0,1]
-     */
-    private final float stateOfCharge;
-
-    /**
-     * power constraint list to represent charge speed/curve
-     */
-    private final PowerConstraintList chargeSpeed;
+public final class StorageControlSpace extends BufferControlSpace {
 
     /**
      * power constraint list to represent discharge speed/curve
      */
-    private final PowerConstraintList dischargeSpeed;
+    private final ConstraintList<Power> dischargeSpeed;
 
     /**
      * charge efficiency percentage [0,1] to represent energy turnover loss on charging
@@ -52,34 +39,6 @@ public final class StorageControlSpace extends ControlSpace {
      * discharge efficiency percentage [0,1] to represent energy turnover loss on discharging
      */
     private final float dischargeEfficiency;
-
-    /**
-     * discharge speed/curve value expressed as Power.
-     */
-    private final PowerValue selfDischarge;
-
-    /**
-     * minimal switch on period
-     */
-    private final Duration minOnPeriod;
-
-    /**
-     * minimal switch off period
-     */
-    private final Duration minOffPeriod;
-
-    /**
-     * target state of charge one wants to achieve at the target time, percentage as double in [0,1].
-     * <p>
-     * Is an optional attribute, null when not specified. When not specified also targetTime is not specified.
-     */
-    private final Float targetStateOfCharge;
-
-    /**
-     * target time at which one wants to achieve the target state of charge. Is an optional attribute, null when not
-     * specified. When not specified also targetStateOfCharge is not specified.
-     */
-    private final Date targetTime;
 
     /**
      * construct storage control space, which exposes the energetic flexibility of a storage resource.
@@ -144,49 +103,40 @@ public final class StorageControlSpace extends ControlSpace {
      * @throws IllegalArgumentException
      *             when dischargeEfficiency is not null but not in [0,1]
      */
-    public StorageControlSpace(String applianceId,
+    public StorageControlSpace(String resourceId,
                                Date validFrom,
                                Date validThru,
                                Date expirationTime,
-                               EnergyValue totalCapacity,
+                               Measurable<Energy> totalCapacity,
                                float stateOfCharge,
-                               PowerConstraintList chargeSpeed,
-                               PowerConstraintList dischargeSpeed,
-                               PowerValue selfDischarge,
+                               ConstraintList<Power> chargeSpeed,
+                               ConstraintList<Power> dischargeSpeed,
+                               Measurable<Power> selfDischarge,
                                float chargeEfficiency,
                                float dischargeEfficiency,
-                               Duration minOnPeriod,
-                               Duration minOffPeriod,
+                               Measurable<Duration> minOnPeriod,
+                               Measurable<Duration> minOffPeriod,
                                Date targetTime,
                                Float targetStateOfCharge) {
-        super(applianceId, validFrom, validThru, expirationTime);
-        this.totalCapacity = totalCapacity;
-        this.stateOfCharge = stateOfCharge;
-        this.chargeSpeed = chargeSpeed;
+        super(resourceId,
+              validFrom,
+              validThru,
+              expirationTime,
+              totalCapacity,
+              stateOfCharge,
+              chargeSpeed,
+              selfDischarge,
+              minOnPeriod,
+              minOffPeriod,
+              targetTime,
+              targetStateOfCharge);
         this.dischargeSpeed = dischargeSpeed;
-        this.selfDischarge = selfDischarge;
         this.chargeEfficiency = chargeEfficiency;
         this.dischargeEfficiency = dischargeEfficiency;
-        this.minOnPeriod = minOnPeriod;
-        this.minOffPeriod = minOffPeriod;
-        this.targetTime = targetTime;
-        this.targetStateOfCharge = targetStateOfCharge;
         validate();
     }
 
     private void validate() {
-        if (totalCapacity == null) {
-            throw new NullPointerException("totalCapacity is null");
-        }
-        if (stateOfCharge < 0 || stateOfCharge > 1) {
-            throw new IllegalArgumentException("stateOfCharge should be in [0,1] but is " + stateOfCharge);
-        }
-        if (selfDischarge == null) {
-            throw new NullPointerException("selfDischarge is null");
-        }
-        if (chargeSpeed == null) {
-            throw new NullPointerException("chargeSpeed is null");
-        }
         if (dischargeSpeed == null) {
             throw new NullPointerException("dischargeSpeed is null");
         }
@@ -196,95 +146,16 @@ public final class StorageControlSpace extends ControlSpace {
         if (dischargeEfficiency < 0 || dischargeEfficiency > 1) {
             throw new IllegalArgumentException("dischargeEfficiency should be in [0,1] but is " + dischargeEfficiency);
         }
-        if (minOnPeriod == null) {
-            throw new NullPointerException("minOnPeriod is null");
-        }
-        if (minOffPeriod == null) {
-            throw new NullPointerException("minOffPeriod is null");
-        }
         // TODO -- check validity of chargeSpeed contents
         // TODO -- check validity of dischargeSpeed contents
-
-        if (targetTime == null && targetStateOfCharge != null) {
-            throw new NullPointerException("targetTime is null, not allowed when targetStateOfCharge is specified");
-        }
-        if (targetTime != null && targetStateOfCharge == null) {
-            throw new NullPointerException("targetStateOfCharge is null, not allowed when targetTime is specified");
-        }
-        if (targetStateOfCharge != null && (targetStateOfCharge < 0 || targetStateOfCharge > 1)) {
-            throw new IllegalArgumentException("targetStateOfCharge should be in [0,1] but is " + targetStateOfCharge);
-        }
         // TODO -- check relation with expiration time and target time
-    }
-
-    /**
-     * @return total capacity
-     */
-    public EnergyValue getTotalCapacity() {
-        return totalCapacity;
-    }
-
-    /**
-     * 
-     * @return current SOC
-     */
-    public float getStateOfCharge() {
-        return stateOfCharge;
-    }
-
-    /**
-     * @return minimum on period
-     */
-    public Duration getMinOnPeriod() {
-        return minOnPeriod;
-    }
-
-    /**
-     * @return minimum off period
-     */
-    public Duration getMinOffPeriod() {
-        return minOffPeriod;
-    }
-
-    /**
-     * 
-     * @return charge speed power constraint list
-     */
-    public PowerConstraintList getChargeSpeed() {
-        return chargeSpeed;
-    }
-
-    /**
-     * 
-     * @return self discharge (real power)
-     */
-    public PowerValue getSelfDischarge() {
-        return selfDischarge;
-    }
-
-    /**
-     * get target SOC
-     * 
-     * @return target SOC, null when no target (target time and target SOC) specified
-     */
-    public Float getTargetStateOfCharge() {
-        return targetStateOfCharge;
-    }
-
-    /**
-     * get target time for target SOC
-     * 
-     * @return target time for target SOC, null when no target (target time and target SOC) specified
-     */
-    public Date getTargetTime() {
-        return targetTime;
     }
 
     /**
      * 
      * @return discharge speed power constraint list
      */
-    public PowerConstraintList getDischargeSpeed() {
+    public ConstraintList<Power> getDischargeSpeed() {
         return dischargeSpeed;
     }
 
@@ -309,16 +180,8 @@ public final class StorageControlSpace extends ControlSpace {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + Float.floatToIntBits(chargeEfficiency);
-        result = prime * result + ((chargeSpeed == null) ? 0 : chargeSpeed.hashCode());
         result = prime * result + Float.floatToIntBits(dischargeEfficiency);
         result = prime * result + ((dischargeSpeed == null) ? 0 : dischargeSpeed.hashCode());
-        result = prime * result + ((minOffPeriod == null) ? 0 : minOffPeriod.hashCode());
-        result = prime * result + ((minOnPeriod == null) ? 0 : minOnPeriod.hashCode());
-        result = prime * result + ((selfDischarge == null) ? 0 : selfDischarge.hashCode());
-        result = prime * result + Float.floatToIntBits(stateOfCharge);
-        result = prime * result + ((targetStateOfCharge == null) ? 0 : targetStateOfCharge.hashCode());
-        result = prime * result + ((targetTime == null) ? 0 : targetTime.hashCode());
-        result = prime * result + ((totalCapacity == null) ? 0 : totalCapacity.hashCode());
         return result;
     }
 
@@ -337,13 +200,6 @@ public final class StorageControlSpace extends ControlSpace {
         if (Float.floatToIntBits(chargeEfficiency) != Float.floatToIntBits(other.chargeEfficiency)) {
             return false;
         }
-        if (chargeSpeed == null) {
-            if (other.chargeSpeed != null) {
-                return false;
-            }
-        } else if (!chargeSpeed.equals(other.chargeSpeed)) {
-            return false;
-        }
         if (Float.floatToIntBits(dischargeEfficiency) != Float.floatToIntBits(other.dischargeEfficiency)) {
             return false;
         }
@@ -352,51 +208,6 @@ public final class StorageControlSpace extends ControlSpace {
                 return false;
             }
         } else if (!dischargeSpeed.equals(other.dischargeSpeed)) {
-            return false;
-        }
-        if (minOffPeriod == null) {
-            if (other.minOffPeriod != null) {
-                return false;
-            }
-        } else if (!minOffPeriod.equals(other.minOffPeriod)) {
-            return false;
-        }
-        if (minOnPeriod == null) {
-            if (other.minOnPeriod != null) {
-                return false;
-            }
-        } else if (!minOnPeriod.equals(other.minOnPeriod)) {
-            return false;
-        }
-        if (selfDischarge == null) {
-            if (other.selfDischarge != null) {
-                return false;
-            }
-        } else if (!selfDischarge.equals(other.selfDischarge)) {
-            return false;
-        }
-        if (Float.floatToIntBits(stateOfCharge) != Float.floatToIntBits(other.stateOfCharge)) {
-            return false;
-        }
-        if (targetStateOfCharge == null) {
-            if (other.targetStateOfCharge != null) {
-                return false;
-            }
-        } else if (!targetStateOfCharge.equals(other.targetStateOfCharge)) {
-            return false;
-        }
-        if (targetTime == null) {
-            if (other.targetTime != null) {
-                return false;
-            }
-        } else if (!targetTime.equals(other.targetTime)) {
-            return false;
-        }
-        if (totalCapacity == null) {
-            if (other.totalCapacity != null) {
-                return false;
-            }
-        } else if (!totalCapacity.equals(other.totalCapacity)) {
             return false;
         }
         return true;

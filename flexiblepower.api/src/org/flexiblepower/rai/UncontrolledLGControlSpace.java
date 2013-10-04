@@ -46,13 +46,13 @@ public final class UncontrolledLGControlSpace extends ControlSpace {
      * @throws NullPointerException
      *             if energyProfile is null
      */
-    public UncontrolledLGControlSpace(String applianceId,
+    public UncontrolledLGControlSpace(String resourceId,
                                       Date validFrom,
                                       Date validThru,
                                       Date expirationTime,
                                       Date startTime,
                                       EnergyProfile energyProfile) {
-        super(applianceId, validFrom, validThru, expirationTime);
+        super(resourceId, validFrom, validThru, expirationTime);
         this.startTime = startTime;
         this.energyProfile = energyProfile;
         validate();

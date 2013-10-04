@@ -9,7 +9,8 @@ import org.flexiblepower.observation.ObservationProvider;
  * RefrigeratorDriver interface that describes the state of the Refrigerator and has a method to enable or disable the
  * superCool functionality.
  */
-public interface ResourceDriver<RS extends ResourceState, RCP> extends ObservationProvider<RS> {
+public interface ResourceDriver<RS extends ResourceState, RCP extends ResourceControlParameters> extends
+                                                                                                 ObservationProvider<RS> {
     /**
      * @param resourceControlParameters
      *            The control parameters that need to be applied to the managed resource.

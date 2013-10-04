@@ -29,7 +29,7 @@ public class Allocation extends ResourceInfo {
      *             when the energyProfile is null
      */
     public Allocation(ControlSpace controlSpace, Date startTime, EnergyProfile energyProfile) {
-        super(controlSpace.getApplianceId());
+        super(controlSpace.getResourceId());
         controlSpaceId = controlSpace.getId();
         this.startTime = startTime;
         this.energyProfile = energyProfile;

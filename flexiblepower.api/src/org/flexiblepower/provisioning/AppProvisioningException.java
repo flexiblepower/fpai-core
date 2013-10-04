@@ -1,7 +1,8 @@
 package org.flexiblepower.provisioning;
 
+
 /**
- * The {@link AppProvisioningException} can be thrown during the provisioning of an {@link App} when anything goes
+ * The {@link AppProvisioningException} can be thrown during the provisioning of an {@link AppInfo} when anything goes
  * wrong. For example:
  * <ul>
  * <li>Any one of the download URI's could not be reached</li>
@@ -10,7 +11,7 @@ package org.flexiblepower.provisioning;
  * <li>The set of bundles have missing dependencies</li>
  * </ul>
  */
-public class AppProvisioningException extends Exception {
+public final class AppProvisioningException extends Exception {
     private static final long serialVersionUID = 2701348199303786025L;
 
     private final String bundleLocation;

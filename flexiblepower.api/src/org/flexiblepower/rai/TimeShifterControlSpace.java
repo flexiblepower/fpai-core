@@ -63,14 +63,14 @@ public final class TimeShifterControlSpace extends ControlSpace {
      * @throws IllegalArgumentException
      *             if startAfter is after startBefore
      */
-    public TimeShifterControlSpace(String applianceId,
+    public TimeShifterControlSpace(String resourceId,
                                    Date validFrom,
                                    Date validThru,
                                    Date expirationTime,
                                    EnergyProfile energyProfile,
                                    Date startBefore,
                                    Date startAfter) {
-        super(applianceId, validFrom, validThru, expirationTime);
+        super(resourceId, validFrom, validThru, expirationTime);
         this.energyProfile = energyProfile;
         this.startBefore = startBefore;
         this.startAfter = startAfter;

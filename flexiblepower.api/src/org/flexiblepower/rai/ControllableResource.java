@@ -1,7 +1,6 @@
 package org.flexiblepower.rai;
 
-
-public interface ControllableResource {
+public interface ControllableResource<CS extends ControlSpace> {
     /**
      * Handles the allocation that should be created by a controller. The resource manager should translate this
      * allocation into actions that are executed using the connected driver.
@@ -18,9 +17,9 @@ public interface ControllableResource {
     /**
      * @return The type of resource that this manager represents.
      */
-    ResourceType getResourceType();
+    Class<CS> getControlSpaceType();
 
-    void setController(Controller controller);
+    void setController(Controller<CS> controller);
 
-    void unsetController(Controller controller);
+    void unsetController(Controller<CS> controller);
 }

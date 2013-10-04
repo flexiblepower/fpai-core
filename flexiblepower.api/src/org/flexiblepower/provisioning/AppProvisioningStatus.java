@@ -2,13 +2,11 @@ package org.flexiblepower.provisioning;
 
 import java.util.Locale;
 
-import org.flexiblepower.data.applications.App;
-
 public interface AppProvisioningStatus {
     /**
-     * @return The {@link App} that is being installed.
+     * @return The {@link AppInfo} that is being installed.
      */
-    App getApp();
+    AppInfo getApp();
 
     /**
      * @param locale
