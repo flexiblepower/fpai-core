@@ -1,5 +1,7 @@
 package org.flexiblepower.ral.drivers.microchp;
 
-public interface MicrochpControlParameters {
+import org.flexiblepower.ral.ResourceControlParameters;
+
+public interface MicrochpControlParameters extends ResourceControlParameters {
     boolean systemOn();
 }

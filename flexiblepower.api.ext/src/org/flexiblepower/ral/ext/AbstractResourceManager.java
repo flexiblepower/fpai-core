@@ -2,31 +2,31 @@ package org.flexiblepower.ral.ext;
 
 import org.flexiblepower.rai.ControlSpace;
 import org.flexiblepower.rai.Controller;
-import org.flexiblepower.rai.ResourceType;
+import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.ResourceState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractResourceManager<RS extends ResourceState, RCP, D extends ResourceDriver<RS, RCP>> implements
-                                                                                                                ResourceManager<RS> {
+public abstract class AbstractResourceManager<CS extends ControlSpace, RS extends ResourceState, RCP extends ResourceControlParameters> implements
+                                                                                                                                        ResourceManager<CS, RS, RCP> {
     protected static final String KEY_APPLIANCE_ID = "applianceId";
 
     protected final Logger logger;
 
-    private final Class<D> driverClass;
-    private final ResourceType resourceType;
+    private final Class<ResourceDriver<RS, RCP>> driverClass;
+    private final Class<CS> controlSpaceType;
 
-    private D driver;
+    private ResourceDriver<RS, RCP> driver;
 
-    private ControlSpace currentControlSpace;
+    private CS currentControlSpace;
 
-    private Controller controller;
+    private Controller<? super CS> controller;
 
-    public AbstractResourceManager(Class<D> driverClass, ResourceType resourceType) {
+    protected AbstractResourceManager(Class<ResourceDriver<RS, RCP>> driverClass, Class<CS> controlSpaceType) {
         this.driverClass = driverClass;
-        this.resourceType = resourceType;
+        this.controlSpaceType = controlSpaceType;
         this.logger = LoggerFactory.getLogger(getClass());
     }
 
@@ -34,7 +34,7 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP, D e
         return currentControlSpace;
     }
 
-    protected void publish(ControlSpace controlSpace) {
+    protected void publish(CS controlSpace) {
         this.currentControlSpace = controlSpace;
 
         if (controller != null) {
@@ -43,7 +43,7 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP, D e
     }
 
     @Override
-    public void setController(Controller controller) {
+    public void setController(Controller<? super CS> controller) {
         if (this.controller != null) {
             throw new IllegalStateException("This ResourceManager has already got a controller bound to it");
         }
@@ -51,33 +51,32 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP, D e
     }
 
     @Override
-    public void unsetController(Controller controller) {
+    public void unsetController(Controller<? super CS> controller) {
         this.controller = null;
     }
 
     /**
      * @return The {@link ResourceDriver} that is currently linked to this {@link ResourceManager}
      */
-    public D getDriver() {
+    public ResourceDriver<RS, RCP> getDriver() {
         return driver;
     }
 
     @Override
-    public ResourceType getResourceType() {
-        return resourceType;
+    public Class<CS> getControlSpaceType() {
+        return controlSpaceType;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void registerDriver(ResourceDriver<RS, ?> driver) {
+    public void registerDriver(ResourceDriver<RS, RCP> driver) {
         if (this.driver != null && driverClass.isAssignableFrom(driver.getClass())) {
-            this.driver = (D) driver;
+            this.driver = driver;
             driver.subscribe(this);
         }
     }
 
     @Override
-    public void unregisterDriver(ResourceDriver<RS, ?> driver) {
+    public void unregisterDriver(ResourceDriver<RS, RCP> driver) {
         if (this.driver == driver) {
             driver.unsubscribe(this);
             this.driver = null;

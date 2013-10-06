@@ -1,26 +1,28 @@
 package org.flexiblepower.ral.drivers.battery;
 
-import org.flexiblepower.rai.values.Duration;
-import org.flexiblepower.rai.values.EnergyValue;
-import org.flexiblepower.rai.values.PowerValue;
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
+
 import org.flexiblepower.ral.ResourceState;
 
 public interface BatteryState extends ResourceState {
-    EnergyValue getTotalCapacity();
+    Measurable<Energy> getTotalCapacity();
 
-    PowerValue getChargeSpeed();
+    Measurable<Power> getChargeSpeed();
 
-    PowerValue getDischargeSpeed();
+    Measurable<Power> getDischargeSpeed();
 
-    PowerValue getSelfDischargeSpeed();
+    Measurable<Power> getSelfDischargeSpeed();
 
     double getChargeEfficiency();
 
     double getDischargeEfficiency();
 
-    Duration getMinimumOnTime();
+    Measurable<Duration> getMinimumOnTime();
 
-    Duration getMinimumOffTime();
+    Measurable<Duration> getMinimumOffTime();
 
     double getStateOfCharge();
 
