@@ -1,6 +1,6 @@
 default-buildpath: \
-	flexiblepower.api;version=latest,\
-	flexiblepower.api.ext;version=latest,\
+	flexiblepower.api;version=project,\
+	flexiblepower.api.ext;version=project,\
 	biz.aQute.bnd.annotation;version="[1.43,2.0)",\
 	osgi.core;version="[4.3,5.0)",\
 	osgi.cmpn;version="[4.3,5.0)",\
