@@ -1,4 +1,4 @@
-package org.flexiblepower.simulation.schedule;
+package org.flexiblepower.simulation.scheduling;
 
 import java.util.Date;
 import java.util.concurrent.Callable;

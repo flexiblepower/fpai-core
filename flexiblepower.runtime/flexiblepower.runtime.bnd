@@ -1,3 +1,9 @@
-Bundle-Version: 2.0.0
-Private-Package: org.flexiblepower.runtime.*
-Service-Component: org.flexiblepower.runtime.*
+Bundle-Version: 1.0.0
+Export-Package: \
+	org.flexiblepower.runtime.api
+Private-Package: \
+	org.flexiblepower.runtime.provisioning,\
+	org.flexiblepower.runtime.scheduling,\
+	org.flexiblepower.runtime.wiring
+Service-Component: \
+	org.flexiblepower.runtime.*

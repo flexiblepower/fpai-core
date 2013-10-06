@@ -1,4 +1,4 @@
-package org.flexiblepower.runtime.services;
+package org.flexiblepower.runtime.provisioning;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.flexiblepower.security.SecurityManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -39,7 +38,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 
 @Component
-public class SecurityManagerImpl implements SecurityManager {
+public class SecurityManagerImpl {
     private final static Logger logger = LoggerFactory.getLogger(SecurityManagerImpl.class);
 
     // sslSocketFactory, used to generate secure network connections.
@@ -99,7 +98,6 @@ public class SecurityManagerImpl implements SecurityManager {
         }
     }
 
-    @Override
     public void checkBundleSignature(Bundle bundle, String expectedSigner) {
         logger.debug("Bundle Location condition" + BundleLocationCondition.class.getName());
         logger.debug("Bundle location" + bundle.getLocation());
@@ -125,7 +123,6 @@ public class SecurityManagerImpl implements SecurityManager {
         }
     }
 
-    @Override
     public SSLSocketFactory getSSLSocketFactory() {
         // try {
         // AccessController.checkPermission(new AllPermission());

@@ -1,4 +1,4 @@
-package org.flexiblepower.runtime.schedule;
+package org.flexiblepower.runtime.scheduling;
 
 import java.util.Date;
 

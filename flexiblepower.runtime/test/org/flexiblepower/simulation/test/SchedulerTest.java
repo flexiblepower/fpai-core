@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.flexiblepower.simulation.schedule.SimulatedScheduleService;
+import org.flexiblepower.simulation.scheduling.SimulatedScheduleService;
 
 public class SchedulerTest extends TestCase {
     public void testRecurringTask() {

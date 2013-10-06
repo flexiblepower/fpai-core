@@ -1,18 +1,11 @@
-Bundle-Version: 2.0.0
-Private-Package: org.flexiblepower.runtime.data,\
-	org.flexiblepower.runtime.services,\
-	org.flexiblepower.simulation.schedule
-Service-Component: org.flexiblepower.*
-Export-Package: org.flexiblepower.simulation.api
-
--buildpath: junit.osgi;version='[3.8,4)'
-
-
-Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
-Tester-Plugin: biz.aQute.junit
--runtrace: true
--runbundles: biz.aQute.junit
--runproperties:  \
-    tester.trace=true, \
-    tester.continuous=true, \
-    tester.dir=testdir
+Bundle-Version: 1.0.0
+Export-Package: \
+	org.flexiblepower.runtime.api,\
+	org.flexiblepower.simulation.api
+Private-Package: \
+	org.flexiblepower.runtime.provisioning,\
+	org.flexiblepower.runtime.wiring,\
+	org.flexiblepower.simulation.scheduling
+Service-Component: \
+	org.flexiblepower.runtime.*,\
+	org.flexiblepower.simulation.*
