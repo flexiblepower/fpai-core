@@ -19,7 +19,7 @@ public interface ControllableResource<CS extends ControlSpace> {
      */
     Class<CS> getControlSpaceType();
 
-    void setController(Controller<CS> controller);
+    void setController(Controller<? super CS> controller);
 
-    void unsetController(Controller<CS> controller);
+    void unsetController(Controller<? super CS> controller);
 }

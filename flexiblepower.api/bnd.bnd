@@ -4,19 +4,18 @@
 	osgi.core;version='[4.3,5)',\
 	junit.osgi;version='[3.8,4)'
 
-Bundle-Version: 4.0.0
+Bundle-Version: 1.0.0
 Export-Package: \
+	javax.measure,\
+	javax.measure.converter,\
+	javax.measure.quantity,\
+	javax.measure.unit,\
 	org.flexiblepower.control,\
-	org.flexiblepower.data,\
-	org.flexiblepower.data.appliances,\
-	org.flexiblepower.data.applications,\
 	org.flexiblepower.observation,\
 	org.flexiblepower.provisioning,\
 	org.flexiblepower.rai,\
-	org.flexiblepower.rai.unit,\
 	org.flexiblepower.rai.values,\
 	org.flexiblepower.ral,\
-	org.flexiblepower.security,\
 	org.flexiblepower.time,\
 	org.flexiblepower.ui
 
