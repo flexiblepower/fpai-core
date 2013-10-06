@@ -1,14 +1,11 @@
 package org.flexiblepower.runtime.ui.appinfo;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.flexiblepower.data.applications.App;
-import org.flexiblepower.data.applications.AppDataStore;
+import org.flexiblepower.provisioning.AppInfo;
+import org.flexiblepower.provisioning.AppProvisioner;
 import org.flexiblepower.ui.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -31,64 +28,38 @@ public class AppInfoPage implements Widget {
         this.bundleContext = bundleContext;
     }
 
-    private AppDataStore appDataStore;
+    private AppProvisioner appProvisioner;
 
     @Reference
-    public void setAppDataStore(AppDataStore appDataStore) {
-        this.appDataStore = appDataStore;
+    public void setAppProvisioner(AppProvisioner appProvisioner) {
+        this.appProvisioner = appProvisioner;
     }
 
     public Map<String, AppInfo> getApps(Locale locale) {
-        Map<String, AppInfo> result = new TreeMap<String, AppInfo>();
-
-        try {
-            for (String appId : appDataStore.keySet()) {
-                App app = appDataStore.get(appId);
-
-                boolean isRunning = false;
-                List<String> components = new ArrayList<String>();
-                for (URI bundleLocation : app.getBundleLocations()) {
-                    Bundle bundle = bundleContext.getBundle(bundleLocation.toString());
-                    if (bundle != null) {
-                        isRunning = true;
-                        components.add(bundle.getSymbolicName());
-                    }
-                }
-
-                result.put(app.getId(), new AppInfo(app.getId(),
-                                                    app.getName(),
-                                                    app.getDescription(),
-                                                    components,
-                                                    isRunning));
-            }
-        } catch (Exception ex) {
-            logger.warn("Could not load apps.", ex);
-        }
-
-        return result;
+        return appProvisioner.getInstalledApps();
     }
 
     public void stopApp(AppInfo appInfo) {
-        for (String comp : appInfo.getComponents()) {
-            Bundle bundle = bundleContext.getBundle(comp);
+        for (URI location : appInfo.getBundleLocations()) {
+            Bundle bundle = bundleContext.getBundle(location.toString());
             if (bundle != null && bundle.getState() == Bundle.ACTIVE) {
                 try {
                     bundle.stop();
-                } catch (BundleException e) {
-                    logger.warn("Could not stop bundle: " + bundle, e);
+                } catch (BundleException ex) {
+                    logger.warn("Could not stop bundle: " + bundle, ex);
                 }
             }
         }
     }
 
     public void startApp(AppInfo appInfo) {
-        for (String comp : appInfo.getComponents()) {
-            Bundle bundle = bundleContext.getBundle(comp);
+        for (URI location : appInfo.getBundleLocations()) {
+            Bundle bundle = bundleContext.getBundle(location.toString());
             if (bundle != null && bundle.getState() == Bundle.RESOLVED) {
                 try {
                     bundle.start();
-                } catch (BundleException e) {
-                    logger.warn("Could not start bundle: " + bundle, e);
+                } catch (BundleException ex) {
+                    logger.warn("Could not start bundle: " + bundle, ex);
                 }
             }
         }
