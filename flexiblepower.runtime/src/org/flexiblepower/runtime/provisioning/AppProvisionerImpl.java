@@ -2,12 +2,12 @@ package org.flexiblepower.runtime.provisioning;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.flexiblepower.provisioning.AppInfo;
 import org.flexiblepower.provisioning.AppProvisioner;
 import org.flexiblepower.provisioning.AppProvisioningException;
 import org.flexiblepower.provisioning.AppProvisioningStatus;
-import org.flexiblepower.time.SchedulerService;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.permissionadmin.PermissionAdmin;
 import org.slf4j.Logger;
@@ -28,11 +28,11 @@ public class AppProvisionerImpl implements AppProvisioner {
         this.permAdmin = permAdmin;
     }
 
-    private SchedulerService schedulerService;
+    private ScheduledExecutorService scheduler;
 
     @Reference
-    public void setExecutorService(SchedulerService schedulerService) {
-        this.schedulerService = schedulerService;
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
     }
 
     private BundleContext bundleContext;
@@ -50,7 +50,7 @@ public class AppProvisionerImpl implements AppProvisioner {
     @Override
     public AppProvisioningStatus provision(AppInfo app) {
         Provisioner provisioner = new Provisioner(app);
-        schedulerService.execute(provisioner);
+        scheduler.execute(provisioner);
         return provisioner;
     }
 

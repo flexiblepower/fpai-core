@@ -13,20 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.flexiblepower.simulation.api.Simulation;
-import org.flexiblepower.time.SchedulerService;
 import org.flexiblepower.time.TimeService;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 
-@Component(provide = { ScheduledExecutorService.class, SchedulerService.class, TimeService.class, Simulation.class })
-public class SimulatedScheduleService implements
-                                     ScheduledExecutorService,
-                                     SchedulerService,
-                                     TimeService,
-                                     Simulation,
-                                     Runnable {
+@Component(provide = { ScheduledExecutorService.class, TimeService.class, Simulation.class })
+public class SimulatedScheduleService implements ScheduledExecutorService, TimeService, Simulation, Runnable {
 
     private volatile boolean running;
     private final Thread thread;

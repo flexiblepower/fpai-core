@@ -12,14 +12,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.flexiblepower.time.SchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Deactivate;
 
-@Component(provide = { ScheduledExecutorService.class, SchedulerService.class })
-public class LoggingScheduledExecutorService extends ScheduledThreadPoolExecutor implements SchedulerService {
+@Component
+public class LoggingScheduledExecutorService implements ScheduledExecutorService {
     static final Logger logger = LoggerFactory.getLogger(LoggingScheduledExecutorService.class);
 
     private static class CallableWrapper<T> implements Callable<T> {
@@ -57,23 +57,30 @@ public class LoggingScheduledExecutorService extends ScheduledThreadPoolExecutor
         }
     }
 
+    private final ScheduledExecutorService executor;
+
     public LoggingScheduledExecutorService() {
-        super(Runtime.getRuntime().availableProcessors() * 2);
+        executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2);
+    }
+
+    @Deactivate
+    public void deactivate() {
+        executor.shutdownNow();
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> task) {
-        return super.submit(new CallableWrapper<T>(task));
+        return executor.submit(new CallableWrapper<T>(task));
     }
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        return super.submit(new RunnableWrapper(task), result);
+        return executor.submit(new RunnableWrapper(task), result);
     }
 
     @Override
     public Future<?> submit(Runnable task) {
-        return super.submit(new RunnableWrapper(task));
+        return executor.submit(new RunnableWrapper(task));
     }
 
     private <T> List<Callable<T>> wrap(Collection<? extends Callable<T>> tasks) {
@@ -86,19 +93,19 @@ public class LoggingScheduledExecutorService extends ScheduledThreadPoolExecutor
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-        return super.invokeAll(wrap(tasks));
+        return executor.invokeAll(wrap(tasks));
     }
 
     @Override
     public <T>
             List<Future<T>>
             invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
-        return super.invokeAll(wrap(tasks), timeout, unit);
+        return executor.invokeAll(wrap(tasks), timeout, unit);
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
-        return super.invokeAny(wrap(tasks));
+        return executor.invokeAny(wrap(tasks));
     }
 
     @Override
@@ -107,31 +114,56 @@ public class LoggingScheduledExecutorService extends ScheduledThreadPoolExecutor
             invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException,
                                                                                            ExecutionException,
                                                                                            TimeoutException {
-        return super.invokeAny(wrap(tasks), timeout, unit);
+        return executor.invokeAny(wrap(tasks), timeout, unit);
     }
 
     @Override
     public void execute(Runnable command) {
-        super.execute(new RunnableWrapper(command));
+        executor.execute(new RunnableWrapper(command));
     }
 
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-        return super.schedule(new RunnableWrapper(command), delay, unit);
+        return executor.schedule(new RunnableWrapper(command), delay, unit);
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        return super.schedule(new CallableWrapper<V>(callable), delay, unit);
+        return executor.schedule(new CallableWrapper<V>(callable), delay, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        return super.scheduleAtFixedRate(new RunnableWrapper(command), initialDelay, period, unit);
+        return executor.scheduleAtFixedRate(new RunnableWrapper(command), initialDelay, period, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        return super.scheduleWithFixedDelay(new RunnableWrapper(command), initialDelay, delay, unit);
+        return executor.scheduleWithFixedDelay(new RunnableWrapper(command), initialDelay, delay, unit);
+    }
+
+    @Override
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        throw new SecurityException("The awaitTermination method may not be called by non-runtime components");
+    }
+
+    @Override
+    public boolean isShutdown() {
+        return executor.isShutdown();
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return executor.isTerminated();
+    }
+
+    @Override
+    public void shutdown() {
+        throw new SecurityException("The shutdown method may not be called by non-runtime components");
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+        throw new SecurityException("The shutdownNow method may not be called by non-runtime components");
     }
 }
