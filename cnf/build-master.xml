@@ -43,7 +43,7 @@
 		</subant>
 	</target>
 
-	<target name="test" depends="release">
+	<target name="test" depends="build">
 		<subant target="test">
 			<fileset dir="..">
 				<include name="*.test/build.xml" />
