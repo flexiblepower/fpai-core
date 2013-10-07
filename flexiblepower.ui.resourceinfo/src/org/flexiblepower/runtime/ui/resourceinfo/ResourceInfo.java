@@ -1,17 +1,15 @@
-package org.flexiblepower.runtime.ui.applianceinfo;
+package org.flexiblepower.runtime.ui.resourceinfo;
 
-public class ApplianceInfo {
+public class ResourceInfo {
     private String id;
-    private String identification;
     private String type;
     private boolean isManaged;
 
-    public ApplianceInfo() {
+    public ResourceInfo() {
     }
 
-    public ApplianceInfo(String id, String identification, String type, boolean isManaged) {
+    public ResourceInfo(String id, String type, boolean isManaged) {
         this.id = id;
-        this.identification = identification;
         this.type = type;
         this.isManaged = isManaged;
     }
@@ -30,14 +28,6 @@ public class ApplianceInfo {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getIdentification() {
-        return identification;
-    }
-
-    public void setIdentification(String identification) {
-        this.identification = identification;
     }
 
     public String getType() {

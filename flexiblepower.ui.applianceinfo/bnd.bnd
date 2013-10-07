@@ -1,7 +1,0 @@
--include: ../cnf/base.bnd
--buildpath: ${default-buildpath},\
-	org.apache.felix.http.jetty
-
-Bundle-Version: 1.0.0
-Private-Package: org.flexiblepower.runtime.ui.applianceinfo
-Service-Component: org.flexiblepower.runtime.ui.applianceinfo.*

@@ -34,7 +34,7 @@ $(document).ready(function() {
 		
 		createWidget: function(widgetId, content) {
 			content = '<div id="widget-' + widgetId + '" class="large_tile white">';
-			content += '<h3>' + content.identification + '</h3>';
+			content += '<h3>' + content.id + '</h3>';
 			content += '<div class="content">'
 			content += '<p class="description">' + content.type + '</p>';
 			content += '<img scr="/appliance-icon/' + widgetId + '" />';
@@ -104,7 +104,7 @@ $(document).ready(function() {
 		},
 		
 		update : function() {
-			$.ajax("getAppliances", {
+			$.ajax("getResources", {
 				"type": "POST",
 				"data": {},
 				"dataType": "json"
