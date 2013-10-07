@@ -20,39 +20,41 @@ import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
 /**
- * <p> This class provides the interface for formatting and parsing {@link 
- *     Measure measures}.</p>
- *     
- * <p> As a minimum, instances of this class should be able to parse/format
- *     measure using {@link CompoundUnit}. </p>    
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * <p>
+ * This class provides the interface for formatting and parsing {@link Measure measures}.
+ * </p>
+ * 
+ * <p>
+ * As a minimum, instances of this class should be able to parse/format measure using {@link CompoundUnit}.
+ * </p>
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.2, August 26, 2007
  */
 public abstract class MeasureFormat extends Format {
-   
+
     /**
      * Returns the measure format for the default locale.
      * 
-     *  @return <code>getInstance(Number.getInstance(), Unit.getInstance())</code>
+     * @return <code>getInstance(Number.getInstance(), Unit.getInstance())</code>
      */
     public static MeasureFormat getInstance() {
         return DEFAULT;
     }
 
-    static final NumberUnit DEFAULT = new NumberUnit(NumberFormat
-            .getInstance(), UnitFormat.getInstance());
+    static final NumberUnit DEFAULT = new NumberUnit(NumberFormat.getInstance(), UnitFormat.getInstance());
 
     /**
-     * Returns the measure format using the specified number format and 
-     * unit format (the number and unit are separated by a space).
+     * Returns the measure format using the specified number format and unit format (the number and unit are separated
+     * by a space).
      * 
-     * @param numberFormat the number format.
-     * @param unitFormat the unit format.
+     * @param numberFormat
+     *            the number format.
+     * @param unitFormat
+     *            the unit format.
      * @return the corresponding format.
      */
-    public static MeasureFormat getInstance(NumberFormat numberFormat,
-            UnitFormat unitFormat) {
+    public static MeasureFormat getInstance(NumberFormat numberFormat, UnitFormat unitFormat) {
         return new NumberUnit(numberFormat, unitFormat);
     }
 
@@ -68,15 +70,13 @@ public abstract class MeasureFormat extends Format {
         }
 
         @Override
-        public StringBuffer format(Object obj, StringBuffer toAppendTo,
-                FieldPosition pos) {
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             Measure<?, ?> measure = (Measure<?, ?>) obj;
             Object value = measure.getValue();
             Unit<?> unit = measure.getUnit();
             if (value instanceof Number) {
                 if (unit instanceof CompoundUnit)
-                    return formatCompound(((Number) value).doubleValue(),
-                            (CompoundUnit<?>) unit, toAppendTo, pos);
+                    return formatCompound(((Number) value).doubleValue(), (CompoundUnit<?>) unit, toAppendTo, pos);
                 _numberFormat.format(value, toAppendTo, pos);
             } else {
                 toAppendTo.append(value);
@@ -89,8 +89,7 @@ public abstract class MeasureFormat extends Format {
         }
 
         // Measure using Compound unit have no separators in their representation.
-        StringBuffer formatCompound(double value, Unit<?> unit,
-                StringBuffer toAppendTo, FieldPosition pos) {
+        StringBuffer formatCompound(double value, Unit<?> unit, StringBuffer toAppendTo, FieldPosition pos) {
             if (!(unit instanceof CompoundUnit)) {
                 toAppendTo.append((long) value);
                 return _unitFormat.format(unit, toAppendTo, pos);
@@ -98,8 +97,7 @@ public abstract class MeasureFormat extends Format {
             Unit<?> high = ((CompoundUnit<?>) unit).getHigher();
             Unit<?> low = ((CompoundUnit<?>) unit).getLower(); // The unit in which the value is stated.
             long highValue = (long) low.getConverterTo(high).convert(value);
-            double lowValue = value
-                    - high.getConverterTo(low).convert(highValue);
+            double lowValue = value - high.getConverterTo(low).convert(highValue);
             formatCompound(highValue, high, toAppendTo, pos);
             formatCompound(lowValue, low, toAppendTo, pos);
             return toAppendTo;
@@ -132,18 +130,14 @@ public abstract class MeasureFormat extends Format {
         }
 
         @SuppressWarnings("unchecked")
-        private Object parseCompound(Number highValue, String source,
-                ParsePosition pos) throws ParseException {
+        private Object parseCompound(Number highValue, String source, ParsePosition pos) throws ParseException {
             Unit high = _unitFormat.parseSingleUnit(source, pos);
             int i = pos.getIndex();
-            if (i >= source.length()
-                    || Character.isWhitespace(source.charAt(i)))
+            if (i >= source.length() || Character.isWhitespace(source.charAt(i)))
                 return measureOf(highValue, high);
             Measure lowMeasure = (Measure) parseObject(source, pos);
             Unit unit = lowMeasure.getUnit();
-            long l = lowMeasure.longValue(unit)
-                    + (long) high.getConverterTo(unit).convert(
-                            highValue.longValue());
+            long l = lowMeasure.longValue(unit) + (long) high.getConverterTo(unit).convert(highValue.longValue());
             return Measure.valueOf(l, unit);
         }
 

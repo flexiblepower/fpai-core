@@ -9,10 +9,10 @@
 package javax.measure.converter;
 
 /**
- * Signals that a problem of some sort has occurred either when creating a
- * converter between two units or during the conversion itself.
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * Signals that a problem of some sort has occurred either when creating a converter between two units or during the
+ * conversion itself.
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 2, 2006
  */
 public class ConversionException extends RuntimeException {
@@ -25,10 +25,10 @@ public class ConversionException extends RuntimeException {
     }
 
     /**
-     * Constructs a <code>ConversionException</code> with the specified detail
-     * message.
-     *
-     * @param  message the detail message.
+     * Constructs a <code>ConversionException</code> with the specified detail message.
+     * 
+     * @param message
+     *            the detail message.
      */
     public ConversionException(String message) {
         super(message);

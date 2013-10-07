@@ -15,17 +15,18 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Dimensionless;
 
 /**
- * <p> This class represents the dimension of an unit. Two units <code>u1</code>
- *     and <code>u2</code> are {@link Unit#isCompatible compatible} if and
- *     only if <code>(u1.getDimension().equals(u2.getDimension())))</code>
- *     </p>
- *     
- * <p> Instances of this class are immutable.</p>
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * <p>
+ * This class represents the dimension of an unit. Two units <code>u1</code> and <code>u2</code> are
+ * {@link Unit#isCompatible compatible} if and only if <code>(u1.getDimension().equals(u2.getDimension())))</code>
+ * </p>
+ * 
+ * <p>
+ * Instances of this class are immutable.
+ * </p>
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
- * @see <a href="http://en.wikipedia.org/wiki/Dimensional_analysis">
- *      Wikipedia: Dimensional Analysis</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Dimensional_analysis"> Wikipedia: Dimensional Analysis</a>
  */
 public final class Dimension implements Serializable {
 
@@ -77,17 +78,18 @@ public final class Dimension implements Serializable {
     /**
      * Creates a new dimension associated to the specified symbol.
      * 
-     * @param symbol the associated symbol.
+     * @param symbol
+     *            the associated symbol.
      */
     public Dimension(char symbol) {
         _pseudoUnit = new BaseUnit<Dimensionless>("[" + symbol + "]");
     }
 
     /**
-     * Creates a dimension having the specified pseudo-unit 
-     * (base unit or product of base unit).
+     * Creates a dimension having the specified pseudo-unit (base unit or product of base unit).
      * 
-     * @param pseudoUnit the pseudo-unit identifying this dimension.
+     * @param pseudoUnit
+     *            the pseudo-unit identifying this dimension.
      */
     private Dimension(Unit<?> pseudoUnit) {
         _pseudoUnit = pseudoUnit;
@@ -95,8 +97,9 @@ public final class Dimension implements Serializable {
 
     /**
      * Returns the product of this dimension with the one specified.
-     *
-     * @param  that the dimension multiplicand.
+     * 
+     * @param that
+     *            the dimension multiplicand.
      * @return <code>this * that</code>
      */
     public final Dimension times(Dimension that) {
@@ -105,8 +108,9 @@ public final class Dimension implements Serializable {
 
     /**
      * Returns the quotient of this dimension with the one specified.
-     *
-     * @param  that the dimension divisor.
+     * 
+     * @param that
+     *            the dimension divisor.
      * @return <code>this / that</code>
      */
     public final Dimension divide(Dimension that) {
@@ -115,8 +119,9 @@ public final class Dimension implements Serializable {
 
     /**
      * Returns this dimension raised to an exponent.
-     *
-     * @param  n the exponent.
+     * 
+     * @param n
+     *            the exponent.
      * @return the result of raising this dimension to the exponent.
      */
     public final Dimension pow(int n) {
@@ -125,10 +130,12 @@ public final class Dimension implements Serializable {
 
     /**
      * Returns the given root of this dimension.
-     *
-     * @param  n the root's order.
+     * 
+     * @param n
+     *            the root's order.
      * @return the result of taking the given root of this dimension.
-     * @throws ArithmeticException if <code>n == 0</code>.
+     * @throws ArithmeticException
+     *             if <code>n == 0</code>.
      */
     public final Dimension root(int n) {
         return new Dimension(this._pseudoUnit.root(n));
@@ -136,7 +143,7 @@ public final class Dimension implements Serializable {
 
     /**
      * Returns the representation of this dimension.
-     *
+     * 
      * @return the representation of this dimension.
      */
     public String toString() {
@@ -145,21 +152,20 @@ public final class Dimension implements Serializable {
 
     /**
      * Indicates if the specified dimension is equals to the one specified.
-     *
-     * @param that the object to compare to.
-     * @return <code>true</code> if this dimension is equals to that dimension;
-     *         <code>false</code> otherwise.
+     * 
+     * @param that
+     *            the object to compare to.
+     * @return <code>true</code> if this dimension is equals to that dimension; <code>false</code> otherwise.
      */
     public boolean equals(Object that) {
         if (this == that)
             return true;
-        return (that instanceof Dimension)
-                && _pseudoUnit.equals(((Dimension) that)._pseudoUnit);
+        return (that instanceof Dimension) && _pseudoUnit.equals(((Dimension) that)._pseudoUnit);
     }
 
     /**
      * Returns the hash code for this dimension.
-     *
+     * 
      * @return this dimension hashcode value.
      */
     public int hashCode() {
@@ -168,17 +174,17 @@ public final class Dimension implements Serializable {
 
     /**
      * Sets the model used to determinate the units dimensions.
-     *  
-     * @param model the new model to be used when calculating unit dimensions.
+     * 
+     * @param model
+     *            the new model to be used when calculating unit dimensions.
      */
     public static void setModel(Model model) {
         Dimension.CurrentModel = model;
     }
 
     /**
-     * Returns the model used to determinate the units dimensions
-     * (default {@link Model#STANDARD STANDARD}).
-     *  
+     * Returns the model used to determinate the units dimensions (default {@link Model#STANDARD STANDARD}).
+     * 
      * @return the model used when calculating unit dimensions.
      */
     public static Model getModel() {
@@ -186,29 +192,20 @@ public final class Dimension implements Serializable {
     }
 
     /**
-     * This interface represents the mapping between {@link BaseUnit base units}
-     * and {@link Dimension dimensions}. Custom models may allow
-     * conversions not possible using the {@link #STANDARD standard} model.
-     * For example:[code]
-     * public static void main(String[] args) {
-     *     Dimension.Model relativistic = new Dimension.Model() {
-     *         RationalConverter meterToSecond = new RationalConverter(1, 299792458); // 1/c
-     *   
-     *         public Dimension getDimension(BaseUnit unit) {
-     *             if (unit.equals(SI.METER)) return Dimension.TIME;
-     *             return Dimension.Model.STANDARD.getDimension(unit);
-     *         }
-     *
-     *         public UnitConverter getTransform(BaseUnit unit) {
-     *             if (unit.equals(SI.METER)) return meterToSecond;
-     *             return Dimension.Model.STANDARD.getTransform(unit);
-     *         }};
-     *     Dimension.setModel(relativistic);
+     * This interface represents the mapping between {@link BaseUnit base units} and {@link Dimension dimensions}.
+     * Custom models may allow conversions not possible using the {@link #STANDARD standard} model. For example:[code]
+     * public static void main(String[] args) { Dimension.Model relativistic = new Dimension.Model() { RationalConverter
+     * meterToSecond = new RationalConverter(1, 299792458); // 1/c
      * 
-     *     // Converts 1.0 GeV (energy) to kg (mass).
-     *     System.out.println(Unit.valueOf("GeV").getConverterTo(KILOGRAM).convert(1.0));
-     * }
-     *   
+     * public Dimension getDimension(BaseUnit unit) { if (unit.equals(SI.METER)) return Dimension.TIME; return
+     * Dimension.Model.STANDARD.getDimension(unit); }
+     * 
+     * public UnitConverter getTransform(BaseUnit unit) { if (unit.equals(SI.METER)) return meterToSecond; return
+     * Dimension.Model.STANDARD.getTransform(unit); }}; Dimension.setModel(relativistic);
+     * 
+     * // Converts 1.0 GeV (energy) to kg (mass).
+     * System.out.println(Unit.valueOf("GeV").getConverterTo(KILOGRAM).convert(1.0)); }
+     * 
      * > 1.7826617302520883E-27[/code]
      */
     public interface Model {
@@ -219,37 +216,46 @@ public final class Dimension implements Serializable {
         public Model STANDARD = new Model() {
 
             public Dimension getDimension(BaseUnit<?> unit) {
-                if (unit.equals(SI.METRE)) return Dimension.LENGTH;
-                if (unit.equals(SI.KILOGRAM)) return Dimension.MASS;
-                if (unit.equals(SI.KELVIN)) return Dimension.TEMPERATURE;
-                if (unit.equals(SI.SECOND)) return Dimension.TIME;
-                if (unit.equals(SI.AMPERE)) return Dimension.ELECTRIC_CURRENT;
-                if (unit.equals(SI.MOLE)) return Dimension.AMOUNT_OF_SUBSTANCE;
-                if (unit.equals(SI.CANDELA)) return SI.WATT.getDimension();
+                if (unit.equals(SI.METRE))
+                    return Dimension.LENGTH;
+                if (unit.equals(SI.KILOGRAM))
+                    return Dimension.MASS;
+                if (unit.equals(SI.KELVIN))
+                    return Dimension.TEMPERATURE;
+                if (unit.equals(SI.SECOND))
+                    return Dimension.TIME;
+                if (unit.equals(SI.AMPERE))
+                    return Dimension.ELECTRIC_CURRENT;
+                if (unit.equals(SI.MOLE))
+                    return Dimension.AMOUNT_OF_SUBSTANCE;
+                if (unit.equals(SI.CANDELA))
+                    return SI.WATT.getDimension();
                 return new Dimension(new BaseUnit<Dimensionless>("[" + unit.getSymbol() + "]"));
             }
-            
+
             public UnitConverter getTransform(BaseUnit<?> unit) {
-                if (unit.equals(SI.CANDELA)) return new RationalConverter(1, 683);
+                if (unit.equals(SI.CANDELA))
+                    return new RationalConverter(1, 683);
                 return UnitConverter.IDENTITY;
             }
         };
 
         /**
-         * Returns the dimension of the specified base unit (a dimension 
-         * particular to the base unit if the base unit is not recognized).
+         * Returns the dimension of the specified base unit (a dimension particular to the base unit if the base unit is
+         * not recognized).
          * 
-         * @param unit the base unit for which the dimension is returned.
+         * @param unit
+         *            the base unit for which the dimension is returned.
          * @return the dimension of the specified unit.
          */
         Dimension getDimension(BaseUnit<?> unit);
 
         /**
-         * Returns the normalization transform of the specified base unit
-         * ({@link UnitConverter#IDENTITY IDENTITY} if the base unit is 
-         * not recognized).
+         * Returns the normalization transform of the specified base unit ({@link UnitConverter#IDENTITY IDENTITY} if
+         * the base unit is not recognized).
          * 
-         * @param unit the base unit for which the transform is returned.
+         * @param unit
+         *            the base unit for which the transform is returned.
          * @return the normalization transform.
          */
         UnitConverter getTransform(BaseUnit<?> unit);

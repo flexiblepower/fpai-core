@@ -9,13 +9,16 @@
 package javax.measure.converter;
 
 /**
- * <p> This class represents a converter multiplying numeric values by an
- *     exact scaling factor (represented as the quotient of two 
- *     <code>long</code> numbers).</p>
- *  
- * <p> Instances of this class are immutable.</p>
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * <p>
+ * This class represents a converter multiplying numeric values by an exact scaling factor (represented as the quotient
+ * of two <code>long</code> numbers).
+ * </p>
+ * 
+ * <p>
+ * Instances of this class are immutable.
+ * </p>
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
  */
 public final class RationalConverter extends UnitConverter {
@@ -31,18 +34,21 @@ public final class RationalConverter extends UnitConverter {
     private final long _divisor;
 
     /**
-     * Creates a rational converter with the specified dividend and 
-     * divisor.
-     *
-     * @param dividend the dividend.
-     * @param divisor the positive divisor.
-     * @throws IllegalArgumentException if <code>divisor &lt; 0</code>
-     * @throws IllegalArgumentException if <code>dividend == divisor</code>
+     * Creates a rational converter with the specified dividend and divisor.
+     * 
+     * @param dividend
+     *            the dividend.
+     * @param divisor
+     *            the positive divisor.
+     * @throws IllegalArgumentException
+     *             if <code>divisor &lt; 0</code>
+     * @throws IllegalArgumentException
+     *             if <code>dividend == divisor</code>
      */
     public RationalConverter(long dividend, long divisor) {
         if (divisor < 0)
             throw new IllegalArgumentException("Negative divisor");
-        if (dividend == divisor) 
+        if (dividend == divisor)
             throw new IllegalArgumentException("Identity converter not allowed");
         _dividend = dividend;
         _divisor = divisor;
@@ -50,7 +56,7 @@ public final class RationalConverter extends UnitConverter {
 
     /**
      * Returns the dividend for this rational converter.
-     *
+     * 
      * @return this converter dividend.
      */
     public long getDividend() {
@@ -59,7 +65,7 @@ public final class RationalConverter extends UnitConverter {
 
     /**
      * Returns the positive divisor for this rational converter.
-     *
+     * 
      * @return this converter divisor.
      */
     public long getDivisor() {
@@ -69,7 +75,7 @@ public final class RationalConverter extends UnitConverter {
     @Override
     public UnitConverter inverse() {
         return _dividend < 0 ? new RationalConverter(-_divisor, -_dividend)
-                : new RationalConverter(_divisor, _dividend);
+                            : new RationalConverter(_divisor, _dividend);
     }
 
     @Override
@@ -88,10 +94,9 @@ public final class RationalConverter extends UnitConverter {
             RationalConverter that = (RationalConverter) converter;
             long dividendLong = this._dividend * that._dividend;
             long divisorLong = this._divisor * that._divisor;
-            double dividendDouble = ((double)this._dividend) * that._dividend;
-            double divisorDouble = ((double)this._divisor) * that._divisor;
-            if ((dividendLong != dividendDouble) || 
-                    (divisorLong != divisorDouble)) { // Long overflows.
+            double dividendDouble = ((double) this._dividend) * that._dividend;
+            double divisorDouble = ((double) this._divisor) * that._divisor;
+            if ((dividendLong != dividendDouble) || (divisorLong != divisorDouble)) { // Long overflows.
                 return new MultiplyConverter(dividendDouble / divisorDouble);
             }
             long gcd = gcd(dividendLong, divisorLong);
@@ -104,15 +109,16 @@ public final class RationalConverter extends UnitConverter {
     }
 
     private static UnitConverter valueOf(long dividend, long divisor) {
-        return (dividend == 1L) && (divisor == 1L) ? UnitConverter.IDENTITY
-                : new RationalConverter(dividend, divisor);
+        return (dividend == 1L) && (divisor == 1L) ? UnitConverter.IDENTITY : new RationalConverter(dividend, divisor);
     }
 
     /**
      * Returns the greatest common divisor (Euclid's algorithm).
-     *
-     * @param  m the first number.
-     * @param  nn the second number.
+     * 
+     * @param m
+     *            the first number.
+     * @param nn
+     *            the second number.
      * @return the greatest common divisor.
      */
     private static long gcd(long m, long n) {

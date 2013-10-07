@@ -9,14 +9,16 @@
 package javax.measure.converter;
 
 /**
- * <p> This class represents a logarithmic converter. Such converter 
- *     is typically used to create logarithmic unit. For example:[code]
- *     Unit<Dimensionless> BEL = Unit.ONE.transform(new LogConverter(10).inverse());
- *     [/code]</p>
- *     
- * <p> Instances of this class are immutable.</p>
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * <p>
+ * This class represents a logarithmic converter. Such converter is typically used to create logarithmic unit. For
+ * example:[code] Unit<Dimensionless> BEL = Unit.ONE.transform(new LogConverter(10).inverse()); [/code]
+ * </p>
+ * 
+ * <p>
+ * Instances of this class are immutable.
+ * </p>
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
  */
 public final class LogConverter extends UnitConverter {
@@ -44,8 +46,8 @@ public final class LogConverter extends UnitConverter {
     /**
      * Creates a logarithmic converter having the specified base.
      * 
-     * @param  base the logarithmic base (e.g. <code>Math.E</code> for
-     *         the Natural Logarithm).
+     * @param base
+     *            the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
     public LogConverter(double base) {
         _base = base;
@@ -55,9 +57,8 @@ public final class LogConverter extends UnitConverter {
 
     /**
      * Returns the logarithmic base of this converter.
-     *
-     * @return the logarithmic base (e.g. <code>Math.E</code> for
-     *         the Natural Logarithm).
+     * 
+     * @return the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
     public double getBase() {
         return _base;
@@ -79,11 +80,9 @@ public final class LogConverter extends UnitConverter {
     }
 
     /**
-     * This inner class represents the inverse of the logarithmic converter
-     * (exponentiation converter).
+     * This inner class represents the inverse of the logarithmic converter (exponentiation converter).
      */
     private class Inverse extends UnitConverter {
-
 
         @Override
         public UnitConverter inverse() {

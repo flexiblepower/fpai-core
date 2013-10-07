@@ -12,13 +12,16 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Quantity;
 
 /**
- * <p> This class represents the units used in expressions to distinguish
- *     between quantities of a different nature but of the same dimensions.</p>
- *     
- * <p> Instances of this class are created through the 
- *     {@link Unit#alternate(String)} method.</p>
- *
- * @author  <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
+ * <p>
+ * This class represents the units used in expressions to distinguish between quantities of a different nature but of
+ * the same dimensions.
+ * </p>
+ * 
+ * <p>
+ * Instances of this class are created through the {@link Unit#alternate(String)} method.
+ * </p>
+ * 
+ * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.2, August 26, 2007
  */
 public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
@@ -34,21 +37,20 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
     private final Unit<?> _parent;
 
     /**
-     * Creates an alternate unit for the specified unit identified by the 
-     * specified symbol. 
-     *
-     * @param symbol the symbol for this alternate unit.
-     * @param parent the system unit from which this alternate unit is
-     *        derived.
-     * @throws UnsupportedOperationException if the source is not 
-     *         a standard unit.
-     * @throws IllegalArgumentException if the specified symbol is 
-     *         associated to a different unit.
+     * Creates an alternate unit for the specified unit identified by the specified symbol.
+     * 
+     * @param symbol
+     *            the symbol for this alternate unit.
+     * @param parent
+     *            the system unit from which this alternate unit is derived.
+     * @throws UnsupportedOperationException
+     *             if the source is not a standard unit.
+     * @throws IllegalArgumentException
+     *             if the specified symbol is associated to a different unit.
      */
     AlternateUnit(String symbol, Unit<?> parent) {
         if (!parent.isStandardUnit())
-            throw new UnsupportedOperationException(this
-                    + " is not a standard unit");
+            throw new UnsupportedOperationException(this + " is not a standard unit");
         _symbol = symbol;
         _parent = parent;
         // Checks if the symbol is associated to a different unit.
@@ -60,18 +62,16 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
             }
             if (unit instanceof AlternateUnit) {
                 AlternateUnit<?> existingUnit = (AlternateUnit<?>) unit;
-                if (symbol.equals(existingUnit._symbol)
-                        && _parent.equals(existingUnit._parent))
+                if (symbol.equals(existingUnit._symbol) && _parent.equals(existingUnit._parent))
                     return; // OK, same unit.
             }
-            throw new IllegalArgumentException("Symbol " + symbol
-                    + " is associated to a different unit");
+            throw new IllegalArgumentException("Symbol " + symbol + " is associated to a different unit");
         }
     }
 
     /**
      * Returns the symbol for this alternate unit.
-     *
+     * 
      * @return this alternate unit symbol.
      */
     public final String getSymbol() {
@@ -79,9 +79,8 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
     }
 
     /**
-     * Returns the parent unit from which this alternate unit is derived 
-     * (a system unit itself).
-     *
+     * Returns the parent unit from which this alternate unit is derived (a system unit itself).
+     * 
      * @return the parent of the alternate unit.
      */
     @SuppressWarnings("unchecked")
@@ -100,13 +99,13 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
     }
 
     /**
-     * Indicates if this alternate unit is considered equals to the specified 
-     * object (both are alternate units with equal symbol, equal base units
-     * and equal converter to base units).
-     *
-     * @param  that the object to compare for equality.
-     * @return <code>true</code> if <code>this</code> and <code>that</code>
-     *         are considered equals; <code>false</code>otherwise. 
+     * Indicates if this alternate unit is considered equals to the specified object (both are alternate units with
+     * equal symbol, equal base units and equal converter to base units).
+     * 
+     * @param that
+     *            the object to compare for equality.
+     * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
+     *         otherwise.
      */
     public boolean equals(Object that) {
         if (this == that)
