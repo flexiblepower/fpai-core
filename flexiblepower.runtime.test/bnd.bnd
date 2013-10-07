@@ -5,18 +5,6 @@
 	junit.osgi,
 	org.apache.felix.scr
 
--runbundles: \
-	flexiblepower.api;version=latest,\
-	flexiblepower.runtime;version=latest,\
-	ch.qos.logback.classic;version=latest,\
-	ch.qos.logback.core;version=latest,\
-	org.apache.felix.scr;version=latest,\
-	slf4j.api;version=latest,\
-	flexiblepower.runtime.test;version=project
--runee: JavaSE-1.6
--runfw: org.eclipse.osgi;version='[3.9,4)'
--runtrace: true
--runvm: -ea
-
+Bundle-Version: 1.0.0
 Private-Package: org.flexiblepower.runtime.test
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOTATION;org.junit.Test}

@@ -68,7 +68,7 @@
 	-->
 	<target name="compile" depends="dependencies" if="project.sourcepath">
 		<mkdir dir="${project.output}"/>
-		<javac fork="yes" executable="${javac}" srcdir="${project.sourcepath}" destdir="${project.output}" classpath="${project.buildpath}" bootclasspath="${project.bootclasspath}" deprecation="true" listfiles="true" target="${javac.target}" source="${javac.source}" debug="${javac.debug}" includeAntRuntime="no" verbose="${verbose}" />
+		<javac encoding="UTF-8" fork="yes" executable="${javac}" srcdir="${project.sourcepath}" destdir="${project.output}" classpath="${project.buildpath}" bootclasspath="${project.bootclasspath}" deprecation="true" listfiles="true" target="${javac.target}" source="${javac.source}" debug="${javac.debug}" includeAntRuntime="no" verbose="${verbose}" />
 		<copy todir="${project.output}" verbose="${verbose}" preservelastmodified="true">
 			<fileset dir="${project.sourcepath}">
 				<exclude name="**/*.java" />

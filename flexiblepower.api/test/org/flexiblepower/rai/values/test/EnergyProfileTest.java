@@ -7,7 +7,6 @@ import static javax.measure.unit.SI.SECOND;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
-import javax.measure.unit.NonSI;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -18,8 +17,6 @@ import org.flexiblepower.rai.values.EnergyProfile.Builder;
 public class EnergyProfileTest extends TestCase {
 
     public void testGetDuration() {
-        System.out.println(NonSI.KWH);
-
         // we want a profile of one minute with 30 elements of 2 seconds
         Measurable<Duration> totalDuration = Measure.valueOf(1, MINUTE);
         Measurable<Duration> elementDuration = Measure.valueOf(2, SECOND);
@@ -32,6 +29,6 @@ public class EnergyProfileTest extends TestCase {
         }
 
         // assert that the duration matches one minute
-        Assert.assertEquals(totalDuration, builder.build().getDuration());
+        Assert.assertEquals(totalDuration.doubleValue(SECOND), builder.build().getDuration().doubleValue(SECOND), 0.01);
     }
 }
