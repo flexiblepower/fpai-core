@@ -273,6 +273,11 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
         }
 
         @Override
+        public Measurable<Q> add(Measurable<Q> other) {
+            return other;
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if (obj == null || !(obj instanceof Measurable)) {
                 return false;
@@ -309,6 +314,11 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
         @Override
         public java.lang.Double getValue() {
             return _value;
+        }
+
+        @Override
+        public Measurable<Q> add(Measurable<Q> other) {
+            return new Double<Q>(_value + other.doubleValue(_unit), _unit);
         }
 
         @Override
@@ -352,6 +362,11 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
         @Override
         public java.lang.Long getValue() {
             return _value;
+        }
+
+        @Override
+        public Measurable<Q> add(Measurable<Q> other) {
+            return new Long<Q>(_value + other.longValue(_unit), _unit);
         }
 
         @Override
@@ -407,6 +422,11 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
         }
 
         @Override
+        public Measurable<Q> add(Measurable<Q> other) {
+            return new Double<Q>(_value + other.doubleValue(_unit), _unit);
+        }
+
+        @Override
         public Measure<java.lang.Float, Q> to(Unit<Q> unit) {
             if ((unit == _unit) || (unit.equals(_unit))) {
                 return this;
@@ -447,6 +467,11 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
         @Override
         public java.lang.Integer getValue() {
             return _value;
+        }
+
+        @Override
+        public Measurable<Q> add(Measurable<Q> other) {
+            return new Long<Q>(_value + other.longValue(_unit), _unit);
         }
 
         @Override

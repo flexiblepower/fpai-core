@@ -65,4 +65,12 @@ public interface Measurable<Q extends Quantity> extends Comparable<Measurable<Q>
      */
     long longValue(Unit<Q> unit) throws ArithmeticException;
 
+    /**
+     * Adds the other Measurable to this one, returning a Measurable object of the same type as the original.
+     * 
+     * @param other
+     *            The measurable that should be added to this one.
+     * @return A new measurable that contains the summed up value of this and the other one.
+     */
+    Measurable<Q> add(Measurable<Q> other);
 }

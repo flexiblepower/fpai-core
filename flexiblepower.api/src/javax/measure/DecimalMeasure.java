@@ -173,5 +173,15 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
         return _unit.getConverterTo(unit).convert(_value.doubleValue());
     }
 
+    @Override
+    public Measurable<Q> add(Measurable<Q> other) {
+        if (other instanceof DecimalMeasure) {
+            DecimalMeasure<Q> otherDec = (DecimalMeasure<Q>) other;
+            return new DecimalMeasure<Q>(_value.add(otherDec.to(_unit)._value), _unit);
+        } else {
+            return new DecimalMeasure<Q>(_value.add(BigDecimal.valueOf(other.doubleValue(_unit))), _unit);
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 }

@@ -50,6 +50,25 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
     protected VectorMeasure() {
     }
 
+    @Override
+    public Measurable<Q> add(Measurable<Q> other) {
+        if (other instanceof VectorMeasure) {
+            VectorMeasure<Q> otherVector = (VectorMeasure<Q>) other;
+            double[] left = getValue();
+            double[] right = otherVector.to(getUnit()).getValue();
+            if (left.length != right.length) {
+                throw new UnsupportedOperationException("The 2 vectors have different lengths");
+            }
+            double[] result = new double[left.length];
+            for (int ix = 0; ix < result.length; ix++) {
+                result[ix] = left[ix] + right[ix];
+            }
+            return valueOf(result, getUnit());
+        } else {
+            return Measure.valueOf(doubleValue(getUnit()) + other.doubleValue(getUnit()), getUnit());
+        }
+    }
+
     /**
      * Returns a 2-dimensional measurement vector.
      * 
@@ -202,7 +221,6 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
             _y = y;
             _z = z;
             _unit = unit;
-
         }
 
         @Override
