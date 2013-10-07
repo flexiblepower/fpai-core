@@ -2,8 +2,7 @@
 <project name="fpai" default="build">
 	<property name="version" value="1.0-SNAPSHOT" />
 
-	<!-- TODO: weer terugzetten naar /var/www/html/releases/fpai -->
-	<property name="releasedir" value="C:/temp" />
+	<property name="releasedir" value="/var/www/html/releases/fpai" />
 
 	<!-- TODO: include the appstore again when it is fixed -->
 	<fileset id="build" dir="..">
@@ -59,8 +58,8 @@
 	</target>
 	
 	<target name="checkstyle">
-		<subant target="clean">
-			<fileset refId="checkstyle" />
+		<subant target="checkstyle">
+			<fileset refId="build" />
 		</subant>
 	</target>
 
