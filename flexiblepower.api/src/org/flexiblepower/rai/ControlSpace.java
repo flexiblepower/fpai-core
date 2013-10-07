@@ -25,7 +25,7 @@ public abstract class ControlSpace extends ResourceInfo {
     /**
      * construct control space
      * 
-     * @param resourceManager
+     * @param resourceId
      *            is creator of control space, is the manager of the resource
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
@@ -41,10 +41,8 @@ public abstract class ControlSpace extends ResourceInfo {
      * @throws IllegalArgumentException
      *             when validFrom is not before validThru
      */
-    public ControlSpace(String applianceId, Date validFrom, Date validThru, Date expirationTime) {
-        // TODO if only an appliance ID is required here, why require a reference to a resource manager?
-        // this forces tighter coupling then required ...
-        super(applianceId);
+    public ControlSpace(String resourceId, Date validFrom, Date validThru, Date expirationTime) {
+        super(resourceId);
         this.validFrom = validFrom;
         this.validThru = validThru;
         this.expirationTime = expirationTime;
@@ -61,7 +59,7 @@ public abstract class ControlSpace extends ResourceInfo {
     /**
      * construct control space
      * 
-     * @param resourceManager
+     * @param resourceId
      *            is creator of control space, is the manager of the resource
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
@@ -74,8 +72,8 @@ public abstract class ControlSpace extends ResourceInfo {
      * @throws IllegalArgumentException
      *             when validFrom is not before validThru
      */
-    public ControlSpace(String applianceId, Date validFrom, Date validThru) {
-        this(applianceId, validFrom, validThru, null);
+    public ControlSpace(String resourceId, Date validFrom, Date validThru) {
+        this(resourceId, validFrom, validThru, null);
     }
 
     public ControlSpace(ControlSpace controlSpace) {
