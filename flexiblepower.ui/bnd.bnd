@@ -3,7 +3,7 @@
 	com.google.gson,\
 	org.apache.felix.http.jetty
 
-Bundle-Version: 2.0.0
+Bundle-Version: 1.0.0
 Private-Package: org.flexiblepower.runtime.ui.server,\
 	org.flexiblepower.runtime.ui.server.pages,\
 	org.flexiblepower.runtime.ui.server.widgets,\
