@@ -52,6 +52,8 @@
 	</target>
 
 	<target name="clean">
+		<delete dir="release" />
+		<mkdir dir="release" />
 		<subant target="clean">
 			<fileset refId="build" />
 		</subant>
