@@ -1,4 +1,4 @@
-package org.flexiblepower.runtime.ui.applianceinfo;
+package org.flexiblepower.runtime.ui.resourceinfo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 
 @Component(provide = Servlet.class, properties = "alias=/appliance", immediate = true)
-public class ApplianceImageServlet extends HttpServlet {
+public class ResourceImageServlet extends HttpServlet {
     private static final long serialVersionUID = 1107184413523344215L;
 
     public static URL findImage(Class<?> clazz) {
@@ -39,7 +39,7 @@ public class ApplianceImageServlet extends HttpServlet {
 
     private final URL defaultImage;
 
-    public ApplianceImageServlet() {
+    public ResourceImageServlet() {
         defaultImage = findImage(getClass());
     }
 

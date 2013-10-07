@@ -657,10 +657,10 @@ header .bottom .button{
 	padding: 5px;
 }
 
-#dashboardroot, #appliancelist, #applist {
+#dashboardroot, #resourcelist, #applist {
 	width: 975px;
 }
-#dashboardroot .royalSlider, #appliancelist .royalSlider {
+#dashboardroot .royalSlider, #resourcelist .royalSlider {
 	width: 975px;
 	height: 471px;
 }
@@ -699,7 +699,7 @@ header .bottom .button{
 	width: 975px;
 	height: 464px;
 }*/
-#dashboardroot .slide, #appliancelist .slide, #applist .slide {
+#dashboardroot .slide, #resourcelist .slide, #applist .slide {
 	/*background: #ff0000;*/
 	display: block;
 	width: 975px;
