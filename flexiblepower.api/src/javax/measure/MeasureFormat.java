@@ -32,6 +32,7 @@ import javax.measure.unit.UnitFormat;
  * @version 4.2, August 26, 2007
  */
 public abstract class MeasureFormat extends Format {
+    private static final long serialVersionUID = 5216688014525404033L;
 
     /**
      * Returns the measure format for the default locale.
@@ -75,8 +76,9 @@ public abstract class MeasureFormat extends Format {
             Object value = measure.getValue();
             Unit<?> unit = measure.getUnit();
             if (value instanceof Number) {
-                if (unit instanceof CompoundUnit)
-                    return formatCompound(((Number) value).doubleValue(), (CompoundUnit<?>) unit, toAppendTo, pos);
+                if (unit instanceof CompoundUnit) {
+                    return formatCompound(((Number) value).doubleValue(), unit, toAppendTo, pos);
+                }
                 _numberFormat.format(value, toAppendTo, pos);
             } else {
                 toAppendTo.append(value);
@@ -109,16 +111,20 @@ public abstract class MeasureFormat extends Format {
             try {
                 int i = start;
                 Number value = _numberFormat.parse(source, pos);
-                if (i == pos.getIndex())
+                if (i == pos.getIndex()) {
                     return null; // Cannot parse.
+                }
                 i = pos.getIndex();
-                if (i >= source.length())
+                if (i >= source.length()) {
                     return measureOf(value, Unit.ONE); // No unit.
+                }
                 boolean isCompound = !Character.isWhitespace(source.charAt(i));
-                if (isCompound)
+                if (isCompound) {
                     return parseCompound(value, source, pos);
-                if (++i >= source.length())
+                }
+                if (++i >= source.length()) {
                     return measureOf(value, Unit.ONE); // No unit.
+                }
                 pos.setIndex(i); // Skips separator.
                 Unit<?> unit = _unitFormat.parseProductUnit(source, pos);
                 return measureOf(value, unit);
@@ -129,19 +135,20 @@ public abstract class MeasureFormat extends Format {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private Object parseCompound(Number highValue, String source, ParsePosition pos) throws ParseException {
             Unit high = _unitFormat.parseSingleUnit(source, pos);
             int i = pos.getIndex();
-            if (i >= source.length() || Character.isWhitespace(source.charAt(i)))
+            if (i >= source.length() || Character.isWhitespace(source.charAt(i))) {
                 return measureOf(highValue, high);
+            }
             Measure lowMeasure = (Measure) parseObject(source, pos);
             Unit unit = lowMeasure.getUnit();
             long l = lowMeasure.longValue(unit) + (long) high.getConverterTo(unit).convert(highValue.longValue());
             return Measure.valueOf(l, unit);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private static Measure measureOf(Number value, Unit unit) {
             if (value instanceof Double) {
                 return Measure.valueOf(value.doubleValue(), unit);

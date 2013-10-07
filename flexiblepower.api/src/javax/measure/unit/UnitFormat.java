@@ -61,6 +61,7 @@ import javax.measure.quantity.Quantity;
  * @version 1.3, August 29, 2006
  */
 public abstract class UnitFormat extends Format {
+    private static final long serialVersionUID = 1098093680937760914L;
 
     /**
      * Holds the standard unit format.
@@ -409,7 +410,7 @@ public abstract class UnitFormat extends Format {
         // Parsing.
 
         @Override
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         public Unit<? extends Quantity> parseSingleUnit(CharSequence csq, ParsePosition pos) throws ParseException {
             int startIndex = pos.getIndex();
             String name = readIdentifier(csq, pos);
@@ -418,10 +419,9 @@ public abstract class UnitFormat extends Format {
             return unit;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Unit<? extends Quantity> parseProductUnit(CharSequence csq, ParsePosition pos) throws ParseException {
-            Unit result = Unit.ONE;
+            Unit<?> result = Unit.ONE;
             int token = nextToken(csq, pos);
             switch (token) {
             case IDENTIFIER:

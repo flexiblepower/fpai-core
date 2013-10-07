@@ -28,6 +28,7 @@ import java.io.Serializable;
  * @version 3.1, April 22, 2006
  */
 public abstract class UnitConverter implements Serializable {
+    private static final long serialVersionUID = 7844169487993309253L;
 
     /**
      * Holds the identity converter (unique). This converter does nothing (<code>ONE.convert(x) == x</code>).
@@ -78,10 +79,12 @@ public abstract class UnitConverter implements Serializable {
      * @return <code>true</code> if the specified object is a converter considered equals to this converter;
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object cvtr) {
-        if (!(cvtr instanceof UnitConverter))
+        if (!(cvtr instanceof UnitConverter)) {
             return false;
-        return this.concatenate(((UnitConverter) cvtr).inverse()) == IDENTITY;
+        }
+        return concatenate(((UnitConverter) cvtr).inverse()) == IDENTITY;
     }
 
     /**
@@ -90,6 +93,7 @@ public abstract class UnitConverter implements Serializable {
      * @return this converter hash code value.
      * @see #equals
      */
+    @Override
     public int hashCode() {
         return Float.floatToIntBits((float) convert(1.0));
     }

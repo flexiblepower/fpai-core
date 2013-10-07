@@ -19,6 +19,7 @@ import javax.measure.quantity.Quantity;
  * @version 3.1, April 22, 2006
  */
 public abstract class DerivedUnit<Q extends Quantity> extends Unit<Q> {
+    private static final long serialVersionUID = -6961024809117869978L;
 
     /**
      * Default constructor.

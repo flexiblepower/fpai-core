@@ -30,11 +30,16 @@ import javax.measure.unit.Unit;
  * @version 4.2, August 26, 2007
  */
 public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, Serializable {
+    private static final long serialVersionUID = -3953001540770358347L;
 
     /**
      * Default constructor.
      */
     protected Measure() {
+    }
+
+    public static <Q extends Quantity> Measurable<Q> zero() {
+        return new ZeroMeasurable<Q>();
     }
 
     /**
@@ -245,6 +250,41 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
     @Override
     public int compareTo(Measurable<Q> that) {
         return java.lang.Double.compare(doubleValue(getUnit()), that.doubleValue(getUnit()));
+    }
+
+    private static final class ZeroMeasurable<Q extends Quantity> implements Measurable<Q> {
+        @Override
+        public int compareTo(Measurable<Q> other) {
+            if (other instanceof ZeroMeasurable) {
+                return 0;
+            } else {
+                return -other.compareTo(this);
+            }
+        }
+
+        @Override
+        public double doubleValue(Unit<Q> unit) {
+            return 0;
+        }
+
+        @Override
+        public long longValue(Unit<Q> unit) throws ArithmeticException {
+            return 0;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof Measurable)) {
+                return false;
+            } else {
+                return obj.equals(this);
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return 0xCAFEBABE;
+        }
     }
 
     /**

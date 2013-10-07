@@ -91,11 +91,11 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
             }
         }
         BigDecimal decimal = new BigDecimal(str.substring(0, numberLength));
-        Unit unit = Unit.ONE;
+        Unit<?> unit = Unit.ONE;
         if (unitStartIndex > 0) {
             unit = Unit.valueOf(str.substring(unitStartIndex));
         }
-        return new DecimalMeasure<Q>(decimal, unit);
+        return new DecimalMeasure<Q>(decimal, (Unit<Q>) unit);
     }
 
     @Override
@@ -139,8 +139,9 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
      *         non-terminating decimal expansion.
      */
     public DecimalMeasure<Q> to(Unit<Q> unit, MathContext mathContext) {
-        if ((unit == _unit) || (unit.equals(_unit)))
+        if ((unit == _unit) || (unit.equals(_unit))) {
             return this;
+        }
         UnitConverter cvtr = _unit.getConverterTo(unit);
         if (cvtr instanceof RationalConverter) {
             RationalConverter factor = (RationalConverter) cvtr;
@@ -164,9 +165,11 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
         }
     }
 
+    @Override
     public double doubleValue(Unit<Q> unit) {
-        if ((unit == _unit) || (unit.equals(_unit)))
+        if ((unit == _unit) || (unit.equals(_unit))) {
             return _value.doubleValue();
+        }
         return _unit.getConverterTo(unit).convert(_value.doubleValue());
     }
 

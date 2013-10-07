@@ -57,6 +57,7 @@ import javax.measure.quantity.Quantity;
  * @see <a href="http://en.wikipedia.org/wiki/Units_of_measurement"> Wikipedia: Units of measurement</a>
  */
 public abstract class Unit<Q extends Quantity> implements Serializable {
+    private static final long serialVersionUID = -3618398112494824857L;
 
     /**
      * Holds the dimensionless unit <code>ONE</code>.
@@ -106,6 +107,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      * 
      * @return this unit hashcode value.
      */
+    @Override
     public abstract int hashCode();
 
     /**
@@ -115,6 +117,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      *            the object to compare to.
      * @return <code>true</code> if this unit is considered equal to that unit; <code>false</code> otherwise.
      */
+    @Override
     public abstract boolean equals(Object that);
 
     /**
@@ -165,8 +168,9 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
             throw new Error(e);
         }
         Dimension dim2 = u.getDimension();
-        if (!dim1.equals(dim2))
+        if (!dim1.equals(dim2)) {
             throw new ClassCastException();
+        }
         return (Unit<T>) this;
     }
 
@@ -177,10 +181,12 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      */
     public final Dimension getDimension() {
         Unit<?> systemUnit = this.getStandardUnit();
-        if (systemUnit instanceof BaseUnit)
+        if (systemUnit instanceof BaseUnit) {
             return Dimension.getModel().getDimension((BaseUnit<?>) systemUnit);
-        if (systemUnit instanceof AlternateUnit)
+        }
+        if (systemUnit instanceof AlternateUnit) {
             return ((AlternateUnit<?>) systemUnit).getParent().getDimension();
+        }
         // Product of units.
         ProductUnit<?> productUnit = (ProductUnit<?>) systemUnit;
         Dimension dimension = Dimension.NONE;
@@ -202,15 +208,18 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      *             if the conveter cannot be constructed (e.g. <code>!this.isCompatible(that)</code>).
      */
     public final UnitConverter getConverterTo(Unit<?> that) throws ConversionException {
-        if (this.equals(that))
+        if (this.equals(that)) {
             return UnitConverter.IDENTITY;
+        }
         Unit<?> thisSystemUnit = this.getStandardUnit();
         Unit<?> thatSystemUnit = that.getStandardUnit();
-        if (thisSystemUnit.equals(thatSystemUnit))
+        if (thisSystemUnit.equals(thatSystemUnit)) {
             return that.toStandardUnit().inverse().concatenate(this.toStandardUnit());
+        }
         // Use dimensional transforms.
-        if (!thisSystemUnit.getDimension().equals(thatSystemUnit.getDimension()))
+        if (!thisSystemUnit.getDimension().equals(thatSystemUnit.getDimension())) {
             throw new ConversionException(this + " is not compatible with " + that);
+        }
         // Transform between SystemUnit and BaseUnits is Identity.
         UnitConverter thisTransform = this.toStandardUnit().concatenate(transformOf(this.getBaseUnits()));
         UnitConverter thatTransform = that.toStandardUnit().concatenate(transformOf(that.getBaseUnits()));
@@ -219,10 +228,12 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     private Unit<?> getBaseUnits() {
         Unit<?> systemUnit = this.getStandardUnit();
-        if (systemUnit instanceof BaseUnit)
+        if (systemUnit instanceof BaseUnit) {
             return systemUnit;
-        if (systemUnit instanceof AlternateUnit)
+        }
+        if (systemUnit instanceof AlternateUnit) {
             return ((AlternateUnit<?>) systemUnit).getParent().getBaseUnits();
+        }
         if (systemUnit instanceof ProductUnit) {
             ProductUnit<?> productUnit = (ProductUnit<?>) systemUnit;
             Unit<?> baseUnits = ONE;
@@ -239,18 +250,21 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     }
 
     private static UnitConverter transformOf(Unit<?> baseUnits) {
-        if (baseUnits instanceof BaseUnit)
+        if (baseUnits instanceof BaseUnit) {
             return Dimension.getModel().getTransform((BaseUnit<?>) baseUnits);
+        }
         // Product of units.
         ProductUnit<?> productUnit = (ProductUnit<?>) baseUnits;
         UnitConverter converter = UnitConverter.IDENTITY;
         for (int i = 0; i < productUnit.getUnitCount(); i++) {
             Unit<?> unit = productUnit.getUnit(i);
             UnitConverter cvtr = transformOf(unit);
-            if (!cvtr.isLinear())
+            if (!cvtr.isLinear()) {
                 throw new ConversionException(baseUnits + " is non-linear, cannot convert");
-            if (productUnit.getUnitRoot(i) != 1)
+            }
+            if (productUnit.getUnitRoot(i) != 1) {
                 throw new ConversionException(productUnit + " holds a base unit with fractional exponent");
+            }
             int pow = productUnit.getUnitPow(i);
             if (pow < 0) { // Negative power.
                 pow = -pow;
@@ -313,12 +327,14 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
             TransformedUnit<Q> tf = (TransformedUnit<Q>) this;
             Unit<Q> parent = tf.getParentUnit();
             UnitConverter toParent = tf.toParentUnit().concatenate(operation);
-            if (toParent == UnitConverter.IDENTITY)
+            if (toParent == UnitConverter.IDENTITY) {
                 return parent;
+            }
             return new TransformedUnit<Q>(parent, toParent);
         }
-        if (operation == UnitConverter.IDENTITY)
+        if (operation == UnitConverter.IDENTITY) {
             return this;
+        }
         return new TransformedUnit<Q>(this, operation);
     }
 
@@ -483,6 +499,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      * 
      * @return <code>UnitFormat.getStandardInstance().format(this)</code>
      */
+    @Override
     public final String toString() {
         return UnitFormat.getInstance().format(this);
     }

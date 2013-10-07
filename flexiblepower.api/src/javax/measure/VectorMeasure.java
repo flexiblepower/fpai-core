@@ -42,6 +42,7 @@ import javax.measure.unit.Unit;
  * @version 4.3, October 3, 2007
  */
 public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[], Q> {
+    private static final long serialVersionUID = -6559201419685544465L;
 
     /**
      * Default constructor (for sub-classes).
@@ -98,6 +99,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
      *            the new measurement unit.
      * @return the vector measure stated in the specified unit.
      */
+    @Override
     public abstract VectorMeasure<Q> to(Unit<Q> unit);
 
     /**
@@ -107,6 +109,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
      *            the unit in which the norm is stated.
      * @return <code>|this|</code>
      */
+    @Override
     public abstract double doubleValue(Unit<Q> unit);
 
     /**
@@ -115,6 +118,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
      * 
      * @return the textual representation of the measurement vector.
      */
+    @Override
     public String toString() {
         double[] values = getValue();
         Unit<Q> unit = getUnit();
@@ -153,8 +157,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
         @Override
         public double doubleValue(Unit<Q> unit) {
             double norm = Math.sqrt(_x * _x + _y * _y);
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return norm;
+            }
             return _unit.getConverterTo(unit).convert(norm);
         }
 
@@ -170,8 +175,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
         @Override
         public TwoDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return this;
+            }
             UnitConverter cvtr = _unit.getConverterTo(unit);
             return new TwoDimensional<Q>(cvtr.convert(_x), cvtr.convert(_y), unit);
         }
@@ -202,8 +208,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
         @Override
         public double doubleValue(Unit<Q> unit) {
             double norm = Math.sqrt(_x * _x + _y * _y + _z * _z);
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return norm;
+            }
             return _unit.getConverterTo(unit).convert(norm);
         }
 
@@ -219,8 +226,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
         @Override
         public ThreeDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return this;
+            }
             UnitConverter cvtr = _unit.getConverterTo(unit);
             return new ThreeDimensional<Q>(cvtr.convert(_x), cvtr.convert(_y), cvtr.convert(_z), unit);
         }
@@ -248,8 +256,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
                 double d = _components[i++];
                 normSquare += d * d;
             }
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return Math.sqrt(normSquare);
+            }
             return _unit.getConverterTo(unit).convert(Math.sqrt(normSquare));
         }
 
@@ -265,8 +274,9 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
         @Override
         public MultiDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit)))
+            if ((unit == _unit) || (unit.equals(_unit))) {
                 return this;
+            }
             UnitConverter cvtr = _unit.getConverterTo(unit);
             double[] newValues = new double[_components.length];
             for (int i = 0; i < _components.length; i++) {

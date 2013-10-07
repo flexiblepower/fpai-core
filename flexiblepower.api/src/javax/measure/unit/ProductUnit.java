@@ -81,22 +81,21 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *            right multiplicand elements.
      * @return the corresponding unit.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private static Unit<? extends Quantity> getInstance(Element[] leftElems, Element[] rightElems) {
-
         // Merges left elements with right elements.
         Element[] result = new Element[leftElems.length + rightElems.length];
         int resultIndex = 0;
-        for (int i = 0; i < leftElems.length; i++) {
-            Unit unit = leftElems[i]._unit;
-            int p1 = leftElems[i]._pow;
-            int r1 = leftElems[i]._root;
+        for (Element leftElem : leftElems) {
+            Unit unit = leftElem._unit;
+            int p1 = leftElem._pow;
+            int r1 = leftElem._root;
             int p2 = 0;
             int r2 = 1;
-            for (int j = 0; j < rightElems.length; j++) {
-                if (unit.equals(rightElems[j]._unit)) {
-                    p2 = rightElems[j]._pow;
-                    r2 = rightElems[j]._root;
+            for (Element rightElem : rightElems) {
+                if (unit.equals(rightElem._unit)) {
+                    p2 = rightElem._pow;
+                    r2 = rightElem._root;
                     break; // No duplicate.
                 }
             }
@@ -109,17 +108,17 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
         }
 
         // Appends remaining right elements not merged.
-        for (int i = 0; i < rightElems.length; i++) {
-            Unit unit = rightElems[i]._unit;
+        for (Element rightElem : rightElems) {
+            Unit unit = rightElem._unit;
             boolean hasBeenMerged = false;
-            for (int j = 0; j < leftElems.length; j++) {
-                if (unit.equals(leftElems[j]._unit)) {
+            for (Element leftElem : leftElems) {
+                if (unit.equals(leftElem._unit)) {
                     hasBeenMerged = true;
                     break;
                 }
             }
             if (!hasBeenMerged) {
-                result[resultIndex++] = rightElems[i];
+                result[resultIndex++] = rightElem;
             }
         }
 
@@ -259,7 +258,6 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @throws IndexOutOfBoundsException
      *             if index is out of range <code>(index &lt; 0 || index &gt;= size())</code>.
      */
-    @SuppressWarnings("unchecked")
     public Unit<? extends Quantity> getUnit(int index) {
         return _elements[index].getUnit();
     }
@@ -298,19 +296,21 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
+        }
         if (that instanceof ProductUnit) {
             // Two products are equals if they have the same elements
             // regardless of the elements' order.
             Element[] elems = ((ProductUnit<?>) that)._elements;
             if (_elements.length == elems.length) {
-                for (int i = 0; i < _elements.length; i++) {
+                for (Element _element : _elements) {
                     boolean unitFound = false;
-                    for (int j = 0; j < elems.length; j++) {
-                        if (_elements[i]._unit.equals(elems[j]._unit)) {
-                            if ((_elements[i]._pow != elems[j]._pow) || (_elements[i]._root != elems[j]._root)) {
+                    for (Element elem : elems) {
+                        if (_element._unit.equals(elem._unit)) {
+                            if ((_element._pow != elem._pow) || (_element._root != elem._root)) {
                                 return false;
                             } else {
                                 unitFound = true;
@@ -332,26 +332,28 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     // Implements abstract method.
             public int
             hashCode() {
-        if (_hashCode != 0)
+        if (_hashCode != 0) {
             return _hashCode;
+        }
         int code = 0;
-        for (int i = 0; i < _elements.length; i++) {
-            code += _elements[i]._unit.hashCode() * (_elements[i]._pow * 3 - _elements[i]._root * 2);
+        for (Element _element : _elements) {
+            code += _element._unit.hashCode() * (_element._pow * 3 - _element._root * 2);
         }
         _hashCode = code;
         return code;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Unit<? super Q> getStandardUnit() {
-        if (hasOnlyStandardUnit())
+        if (hasOnlyStandardUnit()) {
             return this;
+        }
         Unit systemUnit = ONE;
-        for (int i = 0; i < _elements.length; i++) {
-            Unit unit = _elements[i]._unit.getStandardUnit();
-            unit = unit.pow(_elements[i]._pow);
-            unit = unit.root(_elements[i]._root);
+        for (Element _element : _elements) {
+            Unit unit = _element._unit.getStandardUnit();
+            unit = unit.pow(_element._pow);
+            unit = unit.root(_element._root);
             systemUnit = systemUnit.times(unit);
         }
         return systemUnit;
@@ -359,16 +361,19 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
 
     @Override
     public UnitConverter toStandardUnit() {
-        if (hasOnlyStandardUnit())
+        if (hasOnlyStandardUnit()) {
             return UnitConverter.IDENTITY;
+        }
         UnitConverter converter = UnitConverter.IDENTITY;
-        for (int i = 0; i < _elements.length; i++) {
-            UnitConverter cvtr = _elements[i]._unit.toStandardUnit();
-            if (!cvtr.isLinear())
-                throw new ConversionException(_elements[i]._unit + " is non-linear, cannot convert");
-            if (_elements[i]._root != 1)
-                throw new ConversionException(_elements[i]._unit + " holds a base unit with fractional exponent");
-            int pow = _elements[i]._pow;
+        for (Element _element : _elements) {
+            UnitConverter cvtr = _element._unit.toStandardUnit();
+            if (!cvtr.isLinear()) {
+                throw new ConversionException(_element._unit + " is non-linear, cannot convert");
+            }
+            if (_element._root != 1) {
+                throw new ConversionException(_element._unit + " holds a base unit with fractional exponent");
+            }
+            int pow = _element._pow;
             if (pow < 0) { // Negative power.
                 pow = -pow;
                 cvtr = cvtr.inverse();
@@ -386,10 +391,11 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if all elements are standard units; <code>false</code> otherwise.
      */
     private boolean hasOnlyStandardUnit() {
-        for (int i = 0; i < _elements.length; i++) {
-            Unit<?> u = _elements[i]._unit;
-            if (!u.isStandardUnit())
+        for (Element _element : _elements) {
+            Unit<?> u = _element._unit;
+            if (!u.isStandardUnit()) {
                 return false;
+            }
         }
         return true;
     }
