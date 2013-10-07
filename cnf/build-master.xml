@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="fpai" default="build">
+	<property name="version" value="1.0-SNAPSHOT" />
 
-	<property name="version" value="development" />
+	<!-- TODO: weer terugzetten naar /var/www/html/releases/fpai -->
+	<property name="releasedir" value="C:/temp" />
 
-	<property name="releasedir" value="/var/www/html/releases/fpai" />
+	<!-- TODO: include the appstore again when it is fixed -->
+	<fileset id="build" dir="..">
+		<include name="*/build.xml" />
+		<exclude name="cnf/*" />
+		<exclude name="*appstore*/*" />
+	</fileset>
 
+	<!-- TODO: include the appstore again when it is fixed -->
+	<fileset id="release" dir="..">
+		<include name="*/build.xml" />
+		<exclude name="cnf/*" />
+		<exclude name="*.test/*" />
+		<exclude name="*appstore*/*" />
+	</fileset>
+
+	<target name="echo">
+		<subant target="echo">
+			<fileset refId="build" />
+		</subant>
+	</target>
+	
 	<target name="build">
-		<ant dir="../flexiblepower.api" target="build" />
-		<ant dir="../flexiblepower.api.ext" target="build" />
-		<ant dir="../flexiblepower.appstore.client" target="build" />
-		<ant dir="../flexiblepower.appstore.common" target="build" />
-		<ant dir="../flexiblepower.appstore.server" target="build" />
-		<ant dir="../flexiblepower.runtime" target="build" />
-		<ant dir="../flexiblepower.ui" target="build" />
-		<ant dir="../flexiblepower.ui.appinfo" target="build" />
-		<ant dir="../flexiblepower.ui.applianceinfo" target="build" />
+		<subant target="build">
+			<fileset refId="build" />
+		</subant>
 	</target>
 
 	<target name="release">
-		<ant dir="../flexiblepower.api" target="release" />
-		<ant dir="../flexiblepower.api.ext" target="release" />
-		<ant dir="../flexiblepower.appstore.client" target="release" />
-		<ant dir="../flexiblepower.appstore.common" target="release" />
-		<ant dir="../flexiblepower.appstore.server" target="release" />
-		<ant dir="../flexiblepower.runtime" target="release" />
-		<ant dir="../flexiblepower.ui" target="release" />
-		<ant dir="../flexiblepower.ui.appinfo" target="release" />
-		<ant dir="../flexiblepower.ui.applianceinfo" target="release" />
+		<subant target="release">
+			<fileset refId="release" />
+		</subant>
 	</target>
 
 	<target name="coverage-report">
-		<ant dir="../flexiblepower.api" target="coverage-report" />
-		<ant dir="../flexiblepower.api.ext" target="coverage-report" />
-		<ant dir="../flexiblepower.appstore.client" target="coverage-report" />
-		<ant dir="../flexiblepower.appstore.common" target="coverage-report" />
-		<ant dir="../flexiblepower.appstore.server" target="coverage-report" />
-		<ant dir="../flexiblepower.runtime" target="coverage-report" />
-		<ant dir="../flexiblepower.ui" target="coverage-report" />
-		<ant dir="../flexiblepower.ui.appinfo" target="coverage-report" />
-		<ant dir="../flexiblepower.ui.applianceinfo" target="coverage-report" />
+		<subant target="coverage-report">
+			<fileset refId="build" />
+		</subant>
+	</target>
+
+	<target name="test">
+		<subant target="test">
+			<fileset dir="..">
+				<include name="*.test/build.xml" />
+			</fileset>
+		</subant>
 	</target>
 
 	<target name="clean">
-		<ant dir="../flexiblepower.api" target="clean" />
-		<ant dir="../flexiblepower.api.ext" target="clean" />
-		<ant dir="../flexiblepower.appstore.client" target="clean" />
-		<ant dir="../flexiblepower.appstore.common" target="clean" />
-		<ant dir="../flexiblepower.appstore.server" target="clean" />
-		<ant dir="../flexiblepower.runtime" target="clean" />
-		<ant dir="../flexiblepower.ui" target="clean" />
-		<ant dir="../flexiblepower.ui.appinfo" target="clean" />
-		<ant dir="../flexiblepower.ui.applianceinfo" target="clean" />
+		<subant target="clean">
+			<fileset refId="build" />
+		</subant>
 	</target>
 	
 	<target name="checkstyle">
-		<ant dir="../flexiblepower.api" target="checkstyle" />
-		<ant dir="../flexiblepower.api.ext" target="checkstyle" />
-		<ant dir="../flexiblepower.appstore.client" target="checkstyle" />
-		<ant dir="../flexiblepower.appstore.common" target="checkstyle" />
-		<ant dir="../flexiblepower.appstore.server" target="checkstyle" />
-		<ant dir="../flexiblepower.runtime" target="checkstyle" />
-		<ant dir="../flexiblepower.ui" target="checkstyle" />
-		<ant dir="../flexiblepower.ui.appinfo" target="checkstyle" />
-		<ant dir="../flexiblepower.ui.applianceinfo" target="checkstyle" />
+		<subant target="clean">
+			<fileset refId="checkstyle" />
+		</subant>
 	</target>
 
 	<target name="publishrelease" depends="release">
@@ -72,7 +71,4 @@
 			<fileset dir="release" />
 		</copy>
 	</target>
-
-
-
 </project>

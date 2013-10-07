@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="project" default="build">
-
-	<!-- -->
-
+<project name="flexiblepower.runtime.test" default="build">
 	<import file="../cnf/build.xml" />
+	
+	<target name="test" depends="compile">
+		<bndtest runfiles="test.bndrun" />
+	</target>
 </project>
