@@ -2,7 +2,7 @@
 <project name="fpai" default="build">
 	<property name="version" value="1.0-SNAPSHOT" />
 
-	<property name="releasedir" value="/var/www/html/releases/fpai" />
+	<property name="releasedir" value="C:\Data\Test" />
 
 	<!-- TODO: include the appstore again when it is fixed -->
 	<fileset id="build" dir="..">
@@ -71,5 +71,16 @@
 		<copy todir="${releasedir}/${version}/repo">
 			<fileset dir="release" />
 		</copy>
+	</target>
+	
+	<target name="publishjavadoc">
+		<delete dir="${releasedir}/${version}/javadoc" />
+		<mkdir dir="${releasedir}/${version}/javadoc" />
+		<javadoc encoding="UTF-8" destdir="${releasedir}/${version}/javadoc" windowtitle="FPAI">
+			<fileset dir="..">
+				<include name="**/*.java" />
+				<exclude name="*.test/*" />
+			</fileset>
+		</javadoc>
 	</target>
 </project>
