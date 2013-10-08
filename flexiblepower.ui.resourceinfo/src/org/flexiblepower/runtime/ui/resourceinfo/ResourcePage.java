@@ -14,7 +14,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 
-@Component(properties = { "widget.type=full", "widget.name=applianceinfo" })
+@Component(properties = { "widget.type=full", "widget.name=resourceinfo" })
 public class ResourcePage implements Widget {
     private BundleContext bundleContext;
 
@@ -45,7 +45,7 @@ public class ResourcePage implements Widget {
 
     private String resourceName(Resource<?, ?> resource) {
         for (ResourceManager<?, ?, ?> r : resource.getResourceManagers()) {
-            r.getControlSpaceType().getSimpleName().replace("ControlSpace", "");
+            return r.getControlSpaceType().getSimpleName().replace("ControlSpace", "");
         }
         return "Unknown";
     }

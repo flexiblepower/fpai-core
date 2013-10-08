@@ -32,12 +32,18 @@ $(document).ready(function() {
 			return this.slider.removeSlide(e);
 		},
 		
-		createWidget: function(widgetId, content) {
+		createWidget: function(widgetId, data) {
 			content = '<div id="widget-' + widgetId + '" class="large_tile white">';
-			content += '<h3>' + content.id + '</h3>';
+			content += '<h3>' + data.id + '</h3>';
 			content += '<div class="content">'
-			content += '<p class="description">' + content.type + '</p>';
-			content += '<img scr="/appliance-icon/' + widgetId + '" />';
+			content += '<p class="description">';
+			content += '<table><tbody>';
+			content += '<tr><th>ID:</th><td>' + data.id + '</td></tr>';
+			content += '<tr><th>Type:</th><td>' + data.type + '</td></tr>';
+			content += '<tr><th>Is managed:</th><td>' + data.isManaged + '</td></tr>';
+			content += '</tbody></table>';
+			content += '</p>';
+//			content += '<img scr="/appliance-icon/' + widgetId + '" />';
 			content += '</div></div>';
 			return $(content);
 		},
