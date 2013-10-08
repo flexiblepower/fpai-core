@@ -1,10 +1,8 @@
--include: ../cnf/base.bnd
-
 -buildpath: osgi.cmpn;version='[4.3,5)',\
 	osgi.core;version='[4.3,5)',\
 	junit.osgi;version='[3.8,4)'
 
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.${qualifier}
 Export-Package: \
 	javax.measure,\
 	javax.measure.converter,\

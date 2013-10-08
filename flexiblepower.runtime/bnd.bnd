@@ -1,4 +1,3 @@
--include: ../cnf/base.bnd
 -buildpath: ${default-buildpath},\
 	junit.osgi
 

@@ -1,10 +1,9 @@
--include: ../cnf/base.bnd
 -buildpath: \
 	${default-buildpath},\
 	flexiblepower.runtime;version=project,\
 	junit.osgi,
 	org.apache.felix.scr
 
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.${qualifier}
 Private-Package: org.flexiblepower.runtime.test
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOTATION;org.junit.Test}

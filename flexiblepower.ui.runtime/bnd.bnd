@@ -1,10 +1,8 @@
--include: ../cnf/base.bnd
-
 -buildpath: ${default-buildpath},\
 	org.apache.felix.http.jetty,\
 	flexiblepower.runtime;version=project,\
 	junit.osgi;version='[3.8,4)'
 
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.${qualifier}
 Private-Package: org.flexiblepower.ui.runtime
 Service-Component: org.flexiblepower.ui.runtime.*

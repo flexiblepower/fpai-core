@@ -1,8 +1,7 @@
--include: ../cnf/base.bnd
 -buildpath: ${default-buildpath},\
 	org.apache.felix.http.jetty,\
 	flexiblepower.runtime;version=latest
 
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.${qualifier}
 Private-Package: org.flexiblepower.runtime.ui.resourceinfo
 Service-Component: org.flexiblepower.runtime.ui.resourceinfo.*
