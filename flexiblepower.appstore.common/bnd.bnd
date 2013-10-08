@@ -1,7 +1,6 @@
--include: ../cnf/base.bnd
 -buildpath: ${default-buildpath},\
 	org.apache.felix.http.jetty,\
 	com.google.gson
 
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.0.${qualifier}
 Export-Package: org.flexiblepower.appstore.common

@@ -4,7 +4,7 @@
 	org.apache.felix.http.jetty,\
 	flexiblepower.appstore.common;version=latest
 
-Bundle-Version: 1.0.4
+Bundle-Version: 1.0.0.${qualifier}
 Private-Package: \
 	org.flexiblepower.appstore.server,\
 	org.flexiblepower.appstore.server.model
