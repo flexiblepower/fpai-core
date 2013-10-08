@@ -1,5 +1,8 @@
 package org.flexiblepower.runtime.ui.resourceinfo;
 
+/**
+ * Data-object containing information on a resource.
+ */
 public class ResourceInfo {
     private String id;
     private String type;
