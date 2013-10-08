@@ -69,7 +69,7 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
 
     @Override
     public void registerDriver(ResourceDriver<RS, RCP> driver) {
-        if (this.driver != null && driverClass.isAssignableFrom(driver.getClass())) {
+        if (driver != null && driverClass.isAssignableFrom(driver.getClass())) {
             this.driver = driver;
             driver.subscribe(this);
         }
