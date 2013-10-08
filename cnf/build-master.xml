@@ -2,7 +2,7 @@
 <project name="fpai" default="build">
 	<property name="version" value="1.0-SNAPSHOT" />
 
-	<property name="releasedir" value="C:\Data\Test" />
+	<property name="releasedir" value="/var/www/html/releases/fpai" />
 
 	<!-- TODO: include the appstore again when it is fixed -->
 	<fileset id="build" dir="..">
