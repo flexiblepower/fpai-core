@@ -76,10 +76,13 @@
 	<target name="publishjavadoc">
 		<delete dir="${releasedir}/${version}/javadoc" />
 		<mkdir dir="${releasedir}/${version}/javadoc" />
-		<javadoc encoding="UTF-8" destdir="${releasedir}/${version}/javadoc" windowtitle="FPAI">
+		<javadoc encoding="UTF-8" destdir="${releasedir}/${version}/javadoc" windowtitle="FlexiblePower Application Infrastructure (FPAI)">
+			<classpath location="../cnf/bnd/biz.aQute.bnd-2.1.0.jar" />
 			<fileset dir="..">
 				<include name="**/*.java" />
 				<exclude name="*.test/*" />
+				<exclude name="**/*Test.java" />
+				<exclude name="*appstore*/**" />
 			</fileset>
 		</javadoc>
 	</target>
