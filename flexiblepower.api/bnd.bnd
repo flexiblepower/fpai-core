@@ -9,13 +9,13 @@ Export-Package: \
 	javax.measure.quantity,\
 	javax.measure.unit,\
 	org.flexiblepower.control,\
-	org.flexiblepower.provisioning,\
+	org.flexiblepower.observation,\
 	org.flexiblepower.rai,\
 	org.flexiblepower.rai.values,\
 	org.flexiblepower.ral,\
 	org.flexiblepower.time,\
 	org.flexiblepower.ui
-#	org.flexiblepower.observation <-- disabled for current release, will be introduced later
+#	org.flexiblepower.provisioning <-- disabled for current release, will be introduced later
 
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
 Tester-Plugin: biz.aQute.junit
