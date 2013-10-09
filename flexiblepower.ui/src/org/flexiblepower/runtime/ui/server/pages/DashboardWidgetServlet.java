@@ -63,6 +63,7 @@ public class DashboardWidgetServlet extends HttpServlet {
                 resp.sendError(500, e.getMessage());
             }
         } else {
+            HttpUtils.setNoCaching(resp);
             HttpUtils.writeFile(url, expirationTime, path, resp, req.getLocale());
         }
         logger.trace("Leaving service");
