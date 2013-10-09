@@ -6,8 +6,8 @@ import java.util.TreeMap;
 
 import org.flexiblepower.rai.ControlSpace;
 import org.flexiblepower.ral.ResourceManager;
-import org.flexiblepower.runtime.api.Resource;
-import org.flexiblepower.runtime.api.ResourceWiringManager;
+import org.flexiblepower.ral.wiring.Resource;
+import org.flexiblepower.ral.wiring.ResourceWiringManager;
 import org.flexiblepower.ui.Widget;
 
 import aQute.bnd.annotation.component.Component;

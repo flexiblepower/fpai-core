@@ -1,4 +1,4 @@
-package org.flexiblepower.simulation.api;
+package org.flexiblepower.simulation;
 
 import java.util.Date;
 

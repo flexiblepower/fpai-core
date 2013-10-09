@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.flexiblepower.simulation.api.Simulation;
+import org.flexiblepower.simulation.Simulation;
 import org.flexiblepower.time.TimeService;
 
 import aQute.bnd.annotation.component.Activate;

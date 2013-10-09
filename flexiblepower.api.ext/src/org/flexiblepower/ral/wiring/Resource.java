@@ -1,4 +1,4 @@
-package org.flexiblepower.runtime.api;
+package org.flexiblepower.ral.wiring;
 
 import java.util.Set;
 

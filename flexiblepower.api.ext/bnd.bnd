@@ -4,4 +4,9 @@
 			flexiblepower.api;version=latest
 
 Bundle-Version: 1.0.0.${qualifier}
-Export-Package: org.flexiblepower.ral.drivers.*, org.flexiblepower.ral.ext
+Export-Package: \
+	org.flexiblepower.ral.drivers.*,\
+	org.flexiblepower.ral.ext,\
+	org.flexiblepower.ral.wiring,\
+	org.flexiblepower.simulation
+	org.flexiblepower.simulation

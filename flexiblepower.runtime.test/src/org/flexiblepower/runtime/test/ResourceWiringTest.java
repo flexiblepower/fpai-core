@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.flexiblepower.control.ControllerManager;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
-import org.flexiblepower.runtime.api.ResourceWiringManager;
+import org.flexiblepower.ral.wiring.ResourceWiringManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;

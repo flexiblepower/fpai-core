@@ -2,8 +2,8 @@ package org.flexiblepower.simulation.scheduling;
 
 import java.util.Date;
 
-import org.flexiblepower.simulation.api.Simulation;
-import org.flexiblepower.simulation.api.Simulation.State;
+import org.flexiblepower.simulation.Simulation;
+import org.flexiblepower.simulation.Simulation.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

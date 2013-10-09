@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.flexiblepower.runtime.api.Resource;
-import org.flexiblepower.runtime.api.ResourceWiringManager;
+import org.flexiblepower.ral.wiring.Resource;
+import org.flexiblepower.ral.wiring.ResourceWiringManager;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;

@@ -1,11 +1,8 @@
 Bundle-Version: 1.0.0.${qualifier}
-Export-Package: \
-	org.flexiblepower.runtime.api,\
-	org.flexiblepower.simulation.api
+
 Private-Package: \
-	org.flexiblepower.runtime.provisioning,\
-	org.flexiblepower.runtime.wiring,\
-	org.flexiblepower.simulation.scheduling
-Service-Component: \
-	org.flexiblepower.runtime.*,\
-	org.flexiblepower.simulation.*
+	org.flexiblepower.simulation.scheduling,\
+	org.flexiblepower.runtime.wiring
+Service-Component: *
+
+#	org.flexiblepower.runtime.provisioning <-- disabled for now, will be reintroduced later

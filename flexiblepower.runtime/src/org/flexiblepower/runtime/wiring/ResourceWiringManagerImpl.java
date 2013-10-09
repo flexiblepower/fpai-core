@@ -13,8 +13,8 @@ import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.ResourceState;
-import org.flexiblepower.runtime.api.Resource;
-import org.flexiblepower.runtime.api.ResourceWiringManager;
+import org.flexiblepower.ral.wiring.Resource;
+import org.flexiblepower.ral.wiring.ResourceWiringManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
