@@ -17,12 +17,12 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ObservationAttribute {
     /**
-     * @return The unit of the attribute.
+     * The unit of the attribute.
      */
     String unit() default "";
 
     /**
-     * @return If the attribute is optional or not. By default it is not.
+     * If the attribute is optional or not. By default it is not.
      */
     boolean optional() default false;
 }

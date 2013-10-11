@@ -19,11 +19,11 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class ObservationProviderRegistrationHelper {
     /**
-     * This is the base for all the property-keys that will be registered
+     * This is the base for all the property-keys that will be registered.
      */
     public static final String KEY_BASE = "org.flexiblepower.monitoring";
     /**
-     * This is the key that will be used for describing who is going to do the observing
+     * This is the key that will be used for describing who is going to do the observing.
      */
     public static final String KEY_OBSERVED_BY = KEY_BASE + ".observedBy";
     /**

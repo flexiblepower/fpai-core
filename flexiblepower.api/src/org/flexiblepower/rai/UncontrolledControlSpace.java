@@ -6,12 +6,12 @@ import org.flexiblepower.rai.values.EnergyProfile;
 import org.flexiblepower.time.TimeUtil;
 
 /**
- * UncontrolledLGControlSpace is a ControlSpace to expose energetic flexibility of Uncontrolled Load Generation
- * resource. The Uncontrolled Load/Generation category are devices for which the energy behavior cannot be actively
- * controlled. One could make forecasts. Examples are: PV (Photo-voltaic) panels, television sets, computers, lighting.
- * This control space specifies a forecast, expressed as an energy profile and a start time.
+ * UncontrolledControlSpace is a ControlSpace to expose energetic flexibility of Uncontrolled Load Generation resource.
+ * The Uncontrolled Load/Generation category are devices for which the energy behavior cannot be actively controlled.
+ * One could make forecasts. Examples are: PV (Photo-voltaic) panels, television sets, computers, lighting. This control
+ * space specifies a forecast, expressed as an energy profile and a start time.
  */
-public class UncontrolledLGControlSpace extends ControlSpace {
+public class UncontrolledControlSpace extends ControlSpace {
     private final Date startTime;
     private final EnergyProfile energyProfile;
 
@@ -32,7 +32,7 @@ public class UncontrolledLGControlSpace extends ControlSpace {
      *             if startTime or the energyProfile is null
      * @see ControlSpace#ControlSpace(String, Date, Date)
      */
-    public UncontrolledLGControlSpace(String resourceId, Date startTime, EnergyProfile energyProfile) {
+    public UncontrolledControlSpace(String resourceId, Date startTime, EnergyProfile energyProfile) {
         super(resourceId, startTime, TimeUtil.add(startTime, energyProfile.getDuration()));
         this.startTime = startTime;
         this.energyProfile = energyProfile;
@@ -71,7 +71,7 @@ public class UncontrolledLGControlSpace extends ControlSpace {
         } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
         } else {
-            UncontrolledLGControlSpace other = (UncontrolledLGControlSpace) obj;
+            UncontrolledControlSpace other = (UncontrolledControlSpace) obj;
             if (!energyProfile.equals(other.energyProfile)) {
                 return false;
             } else if (!startTime.equals(other.startTime)) {
