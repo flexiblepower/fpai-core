@@ -71,6 +71,25 @@
 		<copy todir="${releasedir}/${version}/repo">
 			<fileset dir="release" />
 		</copy>
+		
+		<zip basedir=".." destfile="${releasedir}/${version}/fpai-sources-${version}.zip">
+			<include name="*/src/**"/>
+			<include name="*/test/**"/>
+			<include name="*/res/**"/>
+			<include name="*/*.bnd"/>
+			<include name="*/build*.xml"/>
+			<include name="cnf/**"/>
+			
+			<exclude name="cnf/cache/**"/>
+			<exclude name="cnf/tools/**"/>
+			<exclude name="cnf/release/**"/>
+			<!-- TODO: skip the appstore -->
+			<exclude name="flexiblepower.appstore.*/**"/>
+		</zip>
+		
+		<zip basedir="release" destfile="${releasedir}/${version}/fpai-bundles-${version}.zip">
+			<include name="**" />
+		</zip>
 	</target>
 	
 	<target name="publishjavadoc">
