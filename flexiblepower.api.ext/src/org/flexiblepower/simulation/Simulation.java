@@ -2,26 +2,82 @@ package org.flexiblepower.simulation;
 
 import java.util.Date;
 
-public interface Simulation {
+import org.flexiblepower.time.TimeService;
 
+/**
+ * When a service of this type is available in the service repository, we are running in a simulation environment. It is
+ * possible for any package to give a controlling mechanism for this simulation.
+ */
+public interface Simulation extends TimeService {
+    /**
+     * The current state of the simulation.
+     */
     public static enum State {
-        STOPPED, RUNNING, PAUSED, STOPPING
+        /**
+         * The simulation is currently stopped.
+         */
+        STOPPED,
+        /**
+         * The simulation is currently running.
+         */
+        RUNNING,
+        /**
+         * The simulation is currently paused.
+         */
+        PAUSED,
+        /**
+         * The simulation has been asked to stop, but needs to finish up its tasks first.
+         */
+        STOPPING
     }
 
-    public void startSimulation(Date startTime, double speedFactor);
+    /**
+     * Starts the simulation without a planned ending.
+     * 
+     * @param startTime
+     *            The virtual time at which to start the simulation.
+     * @param speedFactor
+     *            The speedFactor at which to start (this can be changed dynamically during the run).
+     */
+    void startSimulation(Date startTime, double speedFactor);
 
-    public void startSimulation(Date startTime, Date stopTime, double speedFactor);
+    /**
+     * Starts the simulation with a planned ending.
+     * 
+     * @param startTime
+     *            The virtual time at which to start the simulation.
+     * @param stopTime
+     *            The virtual time at which the simulation will be stopped automatically.
+     * @param speedFactor
+     *            The speedFactor at which to start (this can be changed dynamically during the run).
+     */
+    void startSimulation(Date startTime, Date stopTime, double speedFactor);
 
-    public void stopSimulation();
+    /**
+     * Stops the current simulation.
+     */
+    void stopSimulation();
 
-    public void pause();
+    /**
+     * Pauses the current simulation.
+     */
+    void pause();
 
-    public void unpause();
+    /**
+     * Unpauses the current simulation.
+     */
+    void unpause();
 
-    public void changeSpeedFactor(double newSpeedFactor);
+    /**
+     * Changes the speedfactor during the run of the simulation. When the simulation has stopped, this has no effect.
+     * 
+     * @param newSpeedFactor
+     *            The new speedFactor.
+     */
+    void changeSpeedFactor(double newSpeedFactor);
 
-    public Date getTime();
-
-    public State getSimulationClockState();
-
+    /**
+     * @return The current state of simulation.
+     */
+    State getSimulationClockState();
 }
