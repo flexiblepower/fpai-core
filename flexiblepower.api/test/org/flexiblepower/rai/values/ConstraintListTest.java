@@ -1,4 +1,4 @@
-package org.flexiblepower.rai.values.test;
+package org.flexiblepower.rai.values;
 
 import static javax.measure.unit.SI.KILO;
 import static javax.measure.unit.SI.WATT;

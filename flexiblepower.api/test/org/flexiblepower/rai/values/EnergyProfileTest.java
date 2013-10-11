@@ -1,4 +1,4 @@
-package org.flexiblepower.rai.values.test;
+package org.flexiblepower.rai.values;
 
 import static javax.measure.unit.NonSI.MINUTE;
 import static javax.measure.unit.SI.JOULE;
@@ -11,7 +11,6 @@ import javax.measure.quantity.Duration;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.flexiblepower.rai.values.EnergyProfile;
 import org.flexiblepower.rai.values.EnergyProfile.Builder;
 
 public class EnergyProfileTest extends TestCase {
@@ -23,7 +22,7 @@ public class EnergyProfileTest extends TestCase {
         long elementCount = (long) (totalDuration.doubleValue(SECOND) / elementDuration.doubleValue(SECOND));
 
         // build the profile
-        Builder builder = new EnergyProfile.Builder().setDuration(elementDuration);
+        Builder builder = EnergyProfile.create().setDuration(elementDuration);
         for (int i = 0; i < elementCount; i++) {
             builder.add(Measure.valueOf(1, JOULE));
         }
