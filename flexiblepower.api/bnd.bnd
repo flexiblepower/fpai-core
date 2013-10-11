@@ -1,6 +1,8 @@
--buildpath: osgi.cmpn;version='[4.3,5)',\
+-buildpath: \
+	osgi.cmpn;version='[4.3,5)',\
 	osgi.core;version='[4.3,5)',\
-	junit.osgi;version='[3.8,4)'
+	junit.osgi;version='[3.8,4)',\
+	biz.aQute.bnd.annotation
 
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package: \
