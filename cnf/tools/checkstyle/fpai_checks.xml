@@ -15,6 +15,7 @@
       <property name="severity" value="info"/>
       <property name="scope" value="protected"/>
       <property name="allowUndeclaredRTE" value="true"/>
+      <property name="allowThrowsTagsForSubclasses" value="true"/>
     </module>
     <module name="JavadocType">
       <property name="severity" value="info"/>
@@ -28,7 +29,6 @@
     <module name="JavadocStyle">
       <property name="severity" value="info"/>
       <property name="scope" value="protected"/>
-      <property name="checkEmptyJavadoc" value="true"/>
     </module>
     <module name="ConstantName">
       <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)|(logger)"/>
@@ -99,7 +99,6 @@
     <module name="RightCurly">
       <property name="severity" value="warning"/>
     </module>
-    <module name="AvoidInlineConditionals"/>
     <module name="EmptyStatement">
       <property name="severity" value="warning"/>
     </module>
@@ -108,6 +107,7 @@
     </module>
     <module name="HiddenField">
       <property name="severity" value="info"/>
+      <property name="tokens" value="VARIABLE_DEF"/>
       <property name="ignoreConstructorParameter" value="true"/>
       <property name="ignoreSetter" value="true"/>
       <property name="ignoreAbstractMethods" value="true"/>
@@ -150,7 +150,9 @@
     <module name="BooleanExpressionComplexity"/>
     <module name="ClassDataAbstractionCoupling"/>
     <module name="ClassFanOutComplexity"/>
-    <module name="CyclomaticComplexity"/>
+    <module name="CyclomaticComplexity">
+      <property name="max" value="15"/>
+    </module>
     <module name="JavaNCSS"/>
     <module name="NPathComplexity"/>
   </module>
