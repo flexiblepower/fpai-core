@@ -1,4 +1,4 @@
-package org.flexiblepower.ral.ext;
+package org.flexiblepower.ral;
 
 import org.flexiblepower.rai.ControlSpace;
 import org.flexiblepower.rai.Controller;

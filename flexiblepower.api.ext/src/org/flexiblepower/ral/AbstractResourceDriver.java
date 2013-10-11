@@ -1,4 +1,4 @@
-package org.flexiblepower.ral.ext;
+package org.flexiblepower.ral;
 
 import org.flexiblepower.observation.AbstractObservationProvider;
 import org.flexiblepower.ral.ResourceControlParameters;

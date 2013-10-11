@@ -5,8 +5,9 @@
 
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package: \
+	org.flexiblepower.observation;-split-package:=merge-first,\
+	org.flexiblepower.ral;-split-package:=merge-first,\
 	org.flexiblepower.ral.drivers.*,\
-	org.flexiblepower.ral.ext,\
 	org.flexiblepower.ral.wiring,\
 	org.flexiblepower.simulation
 	org.flexiblepower.simulation
