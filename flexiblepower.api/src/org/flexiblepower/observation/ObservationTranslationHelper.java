@@ -5,27 +5,46 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-class ObservationTranslationHelper {
+final class ObservationTranslationHelper {
     private static WeakHashMap<Class<?>, Map<String, Method>> cache = new WeakHashMap<Class<?>, Map<String, Method>>();
+
+    private ObservationTranslationHelper() {
+    }
+
+    private static boolean isGetter(Method method) {
+        String name = method.getName();
+        if (method.getParameterTypes().length == 0 && method.getReturnType() != Void.TYPE) {
+            if (name.startsWith("get") || name.startsWith("is")) {
+                return !name.equals("getClass");
+            }
+        }
+        return false;
+    }
+
+    private static Map<String, Method> createGetterMethods(Class<?> clazz) {
+        Map<String, Method> result = new HashMap<String, Method>();
+        for (Method method : clazz.getMethods()) {
+            if (isGetter(method)) {
+                String name = null;
+                if (name == null || name.isEmpty()) {
+                    name = method.getName();
+                    name = name.startsWith("get") ? name.substring("get".length()) : name.substring("is".length());
+                    name = name.replaceAll("([A-Z])", "_$1").toLowerCase();
+                    if (name.charAt(0) == '_') {
+                        name = name.substring(1);
+                    }
+                }
+
+                result.put(name, method);
+            }
+        }
+        return result;
+    }
 
     static Map<String, Method> getGetterMethods(Class<?> clazz) {
         Map<String, Method> result = cache.get(clazz);
         if (result == null) {
-            result = new HashMap<String, Method>();
-            for (Method method : clazz.getMethods()) {
-                if ((method.getName().startsWith("get") || method.getName().startsWith("is") && method.getParameterTypes().length == 0
-                                                           && method.getReturnType() != Void.TYPE) && !method.getName()
-                                                                                                             .equals("getClass")) {
-                    String name = null;
-                    if (name == null || name.isEmpty()) {
-                        String n = method.getName();
-                        String p = n.startsWith("get") ? n.substring(3) : n.substring(2);
-                        name = p.replaceAll("([A-Z])", " $1").toLowerCase().trim().replace(' ', '_');
-                    }
-
-                    result.put(name, method);
-                }
-            }
+            result = createGetterMethods(clazz);
             cache.put(clazz, result);
         }
         return result;

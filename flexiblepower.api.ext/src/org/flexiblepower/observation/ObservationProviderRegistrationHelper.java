@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.flexiblepower.observation.ObservationAttribute;
+import org.flexiblepower.observation.ObservationProvider;
+import org.flexiblepower.observation.ObservationTranslationHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;

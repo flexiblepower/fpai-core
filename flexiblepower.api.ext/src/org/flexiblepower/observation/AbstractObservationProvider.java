@@ -3,6 +3,10 @@ package org.flexiblepower.observation;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.flexiblepower.observation.Observation;
+import org.flexiblepower.observation.ObservationConsumer;
+import org.flexiblepower.observation.ObservationProvider;
+
 public abstract class AbstractObservationProvider<T> implements ObservationProvider<T> {
     private final Set<ObservationConsumer<? super T>> consumers = new CopyOnWriteArraySet<ObservationConsumer<? super T>>();
 
