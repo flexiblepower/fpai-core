@@ -38,6 +38,8 @@ import javax.measure.unit.Unit;
  * Instances of this class (and sub-classes) are immutable.
  * </p>
  * 
+ * @param <Q>
+ *            The quantity of the vector (e.g. Power)
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.3, October 3, 2007
  */
@@ -158,47 +160,46 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
     }
 
     // Holds 2-dimensional implementation.
-    private static class TwoDimensional<Q extends Quantity> extends VectorMeasure<Q> {
+    private static final class TwoDimensional<Q extends Quantity> extends VectorMeasure<Q> {
 
-        private final double _x;
+        private final double x;
 
-        private final double _y;
+        private final double y;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         private TwoDimensional(double x, double y, Unit<Q> unit) {
-            _x = x;
-            _y = y;
-            _unit = unit;
-
+            this.x = x;
+            this.y = y;
+            this.unit = unit;
         }
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            double norm = Math.sqrt(_x * _x + _y * _y);
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            double norm = Math.sqrt(this.x * this.x + y * y);
+            if ((this.unit == unit) || (this.unit.equals(unit))) {
                 return norm;
             }
-            return _unit.getConverterTo(unit).convert(norm);
+            return this.unit.getConverterTo(unit).convert(norm);
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return unit;
         }
 
         @Override
         public double[] getValue() {
-            return new double[] { _x, _y };
+            return new double[] { this.x, y };
         }
 
         @Override
         public TwoDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((this.unit == unit) || (this.unit.equals(unit))) {
                 return this;
             }
-            UnitConverter cvtr = _unit.getConverterTo(unit);
-            return new TwoDimensional<Q>(cvtr.convert(_x), cvtr.convert(_y), unit);
+            UnitConverter cvtr = this.unit.getConverterTo(unit);
+            return new TwoDimensional<Q>(cvtr.convert(this.x), cvtr.convert(y), unit);
         }
 
         private static final long serialVersionUID = 1L;
@@ -206,49 +207,49 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
     }
 
     // Holds 3-dimensional implementation.
-    private static class ThreeDimensional<Q extends Quantity> extends VectorMeasure<Q> {
+    private static final class ThreeDimensional<Q extends Quantity> extends VectorMeasure<Q> {
 
-        private final double _x;
+        private final double x;
 
-        private final double _y;
+        private final double y;
 
-        private final double _z;
+        private final double z;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         private ThreeDimensional(double x, double y, double z, Unit<Q> unit) {
-            _x = x;
-            _y = y;
-            _z = z;
-            _unit = unit;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.unit = unit;
         }
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            double norm = Math.sqrt(_x * _x + _y * _y + _z * _z);
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            double norm = Math.sqrt(x * x + y * y + z * z);
+            if ((this.unit == unit) || (this.unit.equals(unit))) {
                 return norm;
             }
-            return _unit.getConverterTo(unit).convert(norm);
+            return this.unit.getConverterTo(unit).convert(norm);
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return unit;
         }
 
         @Override
         public double[] getValue() {
-            return new double[] { _x, _y, _z };
+            return new double[] { x, y, z };
         }
 
         @Override
         public ThreeDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((this.unit == unit) || (this.unit.equals(unit))) {
                 return this;
             }
-            UnitConverter cvtr = _unit.getConverterTo(unit);
-            return new ThreeDimensional<Q>(cvtr.convert(_x), cvtr.convert(_y), cvtr.convert(_z), unit);
+            UnitConverter cvtr = this.unit.getConverterTo(unit);
+            return new ThreeDimensional<Q>(cvtr.convert(x), cvtr.convert(y), cvtr.convert(z), unit);
         }
 
         private static final long serialVersionUID = 1L;
@@ -256,49 +257,49 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
     }
 
     // Holds multi-dimensional implementation.
-    private static class MultiDimensional<Q extends Quantity> extends VectorMeasure<Q> {
+    private static final class MultiDimensional<Q extends Quantity> extends VectorMeasure<Q> {
 
-        private final double[] _components;
+        private final double[] components;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         private MultiDimensional(double[] components, Unit<Q> unit) {
-            _components = components.clone();
-            _unit = unit;
+            this.components = components.clone();
+            this.unit = unit;
         }
 
         @Override
-        public double doubleValue(Unit<Q> unit) {
-            double normSquare = _components[0] * _components[0];
-            for (int i = 1, n = _components.length; i < n;) {
-                double d = _components[i++];
+        public double doubleValue(final Unit<Q> unit) {
+            double normSquare = this.components[0] * this.components[0];
+            for (int i = 1, n = this.components.length; i < n;) {
+                double d = this.components[i++];
                 normSquare += d * d;
             }
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return Math.sqrt(normSquare);
             }
-            return _unit.getConverterTo(unit).convert(Math.sqrt(normSquare));
+            return this.unit.getConverterTo(unit).convert(Math.sqrt(normSquare));
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         @Override
         public double[] getValue() {
-            return _components.clone();
+            return this.components.clone();
         }
 
         @Override
         public MultiDimensional<Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return this;
             }
-            UnitConverter cvtr = _unit.getConverterTo(unit);
-            double[] newValues = new double[_components.length];
-            for (int i = 0; i < _components.length; i++) {
-                newValues[i] = cvtr.convert(_components[i]);
+            UnitConverter cvtr = this.unit.getConverterTo(unit);
+            double[] newValues = new double[this.components.length];
+            for (int i = 0; i < this.components.length; i++) {
+                newValues[i] = cvtr.convert(this.components[i]);
             }
             return new MultiDimensional<Q>(newValues, unit);
         }

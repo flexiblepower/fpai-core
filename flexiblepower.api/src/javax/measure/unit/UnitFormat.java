@@ -278,12 +278,12 @@ public abstract class UnitFormat extends Format {
         /**
          * Holds the name to unit mapping.
          */
-        final HashMap<String, Unit<?>> _nameToUnit = new HashMap<String, Unit<?>>();
+        final HashMap<String, Unit<?>> nameToUnit = new HashMap<String, Unit<?>>();
 
         /**
          * Holds the unit to name mapping.
          */
-        final HashMap<Unit<?>, String> _unitToName = new HashMap<Unit<?>, String>();
+        final HashMap<Unit<?>, String> unitToName = new HashMap<Unit<?>, String>();
 
         @Override
         public void label(Unit<?> unit, String label) {
@@ -291,8 +291,8 @@ public abstract class UnitFormat extends Format {
                 throw new IllegalArgumentException("Label: " + label + " is not a valid identifier.");
             }
             synchronized (this) {
-                _nameToUnit.put(label, unit);
-                _unitToName.put(unit, label);
+                nameToUnit.put(label, unit);
+                unitToName.put(unit, label);
             }
         }
 
@@ -302,7 +302,7 @@ public abstract class UnitFormat extends Format {
                 throw new IllegalArgumentException("Alias: " + alias + " is not a valid identifier.");
             }
             synchronized (this) {
-                _nameToUnit.put(alias, unit);
+                nameToUnit.put(alias, unit);
             }
         }
 
@@ -338,7 +338,7 @@ public abstract class UnitFormat extends Format {
         // Returns the name for the specified unit or null if product unit.
         public String nameFor(Unit<?> unit) {
             // Searches label database.
-            String label = _unitToName.get(unit);
+            String label = unitToName.get(unit);
             if (label != null) {
                 return label;
             }
@@ -379,7 +379,6 @@ public abstract class UnitFormat extends Format {
                         result.append('/');
                         result.append(divisor);
                     }
-                    ;
                 } else if (cvtr instanceof MultiplyConverter) {
                     result.append('*');
                     result.append(((MultiplyConverter) cvtr).getFactor());
@@ -398,7 +397,7 @@ public abstract class UnitFormat extends Format {
 
         // Returns the unit for the specified name.
         public Unit<?> unitFor(String name) {
-            Unit<?> unit = _nameToUnit.get(name);
+            Unit<?> unit = nameToUnit.get(name);
             if (unit != null) {
                 return unit;
             }
@@ -762,7 +761,7 @@ public abstract class UnitFormat extends Format {
         @Override
         public String nameFor(Unit<?> unit) {
             // First search if specific ASCII name should be used.
-            String name = _unitToName.get(unit);
+            String name = unitToName.get(unit);
             if (name != null) {
                 return name;
             }
@@ -773,7 +772,7 @@ public abstract class UnitFormat extends Format {
         @Override
         public Unit<?> unitFor(String name) {
             // First search if specific ASCII name.
-            Unit<?> unit = _nameToUnit.get(name);
+            Unit<?> unit = nameToUnit.get(name);
             if (unit != null) {
                 return unit;
             }

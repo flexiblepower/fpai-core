@@ -61,13 +61,13 @@ public abstract class MeasureFormat extends Format {
 
     // Holds default implementation.
     static final class NumberUnit extends MeasureFormat {
-        private final NumberFormat _numberFormat;
+        private final NumberFormat numberFormat;
 
-        private final UnitFormat _unitFormat;
+        private final UnitFormat unitFormat;
 
         private NumberUnit(NumberFormat numberFormat, UnitFormat unitFormat) {
-            _numberFormat = numberFormat;
-            _unitFormat = unitFormat;
+            this.numberFormat = numberFormat;
+            this.unitFormat = unitFormat;
         }
 
         @Override
@@ -79,13 +79,13 @@ public abstract class MeasureFormat extends Format {
                 if (unit instanceof CompoundUnit) {
                     return formatCompound(((Number) value).doubleValue(), unit, toAppendTo, pos);
                 }
-                _numberFormat.format(value, toAppendTo, pos);
+                numberFormat.format(value, toAppendTo, pos);
             } else {
                 toAppendTo.append(value);
             }
             if (!measure.getUnit().equals(Unit.ONE)) {
                 toAppendTo.append(' ');
-                _unitFormat.format(unit, toAppendTo, pos);
+                unitFormat.format(unit, toAppendTo, pos);
             }
             return toAppendTo;
         }
@@ -94,7 +94,7 @@ public abstract class MeasureFormat extends Format {
         StringBuffer formatCompound(double value, Unit<?> unit, StringBuffer toAppendTo, FieldPosition pos) {
             if (!(unit instanceof CompoundUnit)) {
                 toAppendTo.append((long) value);
-                return _unitFormat.format(unit, toAppendTo, pos);
+                return unitFormat.format(unit, toAppendTo, pos);
             }
             Unit<?> high = ((CompoundUnit<?>) unit).getHigher();
             Unit<?> low = ((CompoundUnit<?>) unit).getLower(); // The unit in which the value is stated.
@@ -110,7 +110,7 @@ public abstract class MeasureFormat extends Format {
             int start = pos.getIndex();
             try {
                 int i = start;
-                Number value = _numberFormat.parse(source, pos);
+                Number value = numberFormat.parse(source, pos);
                 if (i == pos.getIndex()) {
                     return null; // Cannot parse.
                 }
@@ -126,7 +126,7 @@ public abstract class MeasureFormat extends Format {
                     return measureOf(value, Unit.ONE); // No unit.
                 }
                 pos.setIndex(i); // Skips separator.
-                Unit<?> unit = _unitFormat.parseProductUnit(source, pos);
+                Unit<?> unit = unitFormat.parseProductUnit(source, pos);
                 return measureOf(value, unit);
             } catch (ParseException e) {
                 pos.setIndex(start);
@@ -137,7 +137,7 @@ public abstract class MeasureFormat extends Format {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         private Object parseCompound(Number highValue, String source, ParsePosition pos) throws ParseException {
-            Unit high = _unitFormat.parseSingleUnit(source, pos);
+            Unit high = unitFormat.parseSingleUnit(source, pos);
             int i = pos.getIndex();
             if (i >= source.length() || Character.isWhitespace(source.charAt(i))) {
                 return measureOf(highValue, high);

@@ -26,22 +26,22 @@ public final class LogConverter extends UnitConverter {
     /**
      * Holds the logarithmic base.
      */
-    private final double _base;
+    private final double base;
 
     /**
      * Holds the natural logarithm of the base.
      */
-    private final double _logBase;
+    private final double logBase;
 
     /**
      * Holds the inverse of the natural logarithm of the base.
      */
-    private final double _invLogBase;
+    private final double invLogBase;
 
     /**
      * Holds the inverse of this converter.
      */
-    private final Inverse _inverse = new Inverse();
+    private final Inverse inverse = new Inverse();
 
     /**
      * Creates a logarithmic converter having the specified base.
@@ -50,9 +50,9 @@ public final class LogConverter extends UnitConverter {
      *            the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
     public LogConverter(double base) {
-        _base = base;
-        _logBase = Math.log(base);
-        _invLogBase = 1.0 / _logBase;
+        this.base = base;
+        logBase = Math.log(base);
+        invLogBase = 1.0 / logBase;
     }
 
     /**
@@ -61,17 +61,17 @@ public final class LogConverter extends UnitConverter {
      * @return the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
     public double getBase() {
-        return _base;
+        return base;
     }
 
     @Override
     public UnitConverter inverse() {
-        return _inverse;
+        return inverse;
     }
 
     @Override
     public double convert(double amount) {
-        return _invLogBase * Math.log(amount);
+        return invLogBase * Math.log(amount);
     }
 
     @Override
@@ -83,7 +83,6 @@ public final class LogConverter extends UnitConverter {
      * This inner class represents the inverse of the logarithmic converter (exponentiation converter).
      */
     private class Inverse extends UnitConverter {
-
         @Override
         public UnitConverter inverse() {
             return LogConverter.this;
@@ -91,7 +90,7 @@ public final class LogConverter extends UnitConverter {
 
         @Override
         public double convert(double amount) {
-            return Math.exp(_logBase * amount);
+            return Math.exp(logBase * amount);
         }
 
         @Override

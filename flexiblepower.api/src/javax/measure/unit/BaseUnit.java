@@ -37,7 +37,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
     /**
      * Holds the symbol.
      */
-    private final String _symbol;
+    private final String symbol;
 
     /**
      * Creates a base unit having the specified symbol.
@@ -48,7 +48,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
      *             if the specified symbol is associated to a different unit.
      */
     public BaseUnit(String symbol) {
-        _symbol = symbol;
+        this.symbol = symbol;
         // Checks if the symbol is associated to a different unit.
         synchronized (Unit.SYMBOL_TO_UNIT) {
             Unit<?> unit = Unit.SYMBOL_TO_UNIT.get(symbol);
@@ -56,8 +56,9 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
                 Unit.SYMBOL_TO_UNIT.put(symbol, this);
                 return;
             }
-            if (!(unit instanceof BaseUnit))
+            if (!(unit instanceof BaseUnit)) {
                 throw new IllegalArgumentException("Symbol " + symbol + " is associated to a different unit");
+            }
         }
     }
 
@@ -67,7 +68,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
      * @return this base unit symbol.
      */
     public final String getSymbol() {
-        return _symbol;
+        return this.symbol;
     }
 
     /**
@@ -79,18 +80,21 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
-        if (!(that instanceof BaseUnit))
+        }
+        if (!(that instanceof BaseUnit)) {
             return false;
+        }
         BaseUnit<?> thatUnit = (BaseUnit<?>) that;
-        return this._symbol.equals(thatUnit._symbol);
+        return this.symbol.equals(thatUnit.symbol);
     }
 
     @Override
     public int hashCode() {
-        return _symbol.hashCode();
+        return this.symbol.hashCode();
     }
 
     @Override

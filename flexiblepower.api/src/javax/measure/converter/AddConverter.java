@@ -25,7 +25,7 @@ public final class AddConverter extends UnitConverter {
     /**
      * Holds the offset.
      */
-    private final double _offset;
+    private final double offset;
 
     /**
      * Creates an add converter with the specified offset.
@@ -36,9 +36,10 @@ public final class AddConverter extends UnitConverter {
      *             if offset is zero (or close to zero).
      */
     public AddConverter(double offset) {
-        if ((float) offset == 0.0)
+        if ((float) offset == 0.0) {
             throw new IllegalArgumentException("Identity converter not allowed");
-        _offset = offset;
+        }
+        this.offset = offset;
     }
 
     /**
@@ -47,17 +48,17 @@ public final class AddConverter extends UnitConverter {
      * @return the offset value.
      */
     public double getOffset() {
-        return _offset;
+        return offset;
     }
 
     @Override
     public UnitConverter inverse() {
-        return new AddConverter(-_offset);
+        return new AddConverter(-offset);
     }
 
     @Override
     public double convert(double amount) {
-        return amount + _offset;
+        return amount + offset;
     }
 
     @Override
@@ -68,7 +69,7 @@ public final class AddConverter extends UnitConverter {
     @Override
     public UnitConverter concatenate(UnitConverter converter) {
         if (converter instanceof AddConverter) {
-            double offset = _offset + ((AddConverter) converter)._offset;
+            double offset = this.offset + ((AddConverter) converter).offset;
             return valueOf(offset);
         } else {
             return super.concatenate(converter);

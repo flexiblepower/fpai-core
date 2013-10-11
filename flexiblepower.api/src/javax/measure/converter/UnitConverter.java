@@ -152,12 +152,12 @@ public abstract class UnitConverter implements Serializable {
         /**
          * Holds the first converter.
          */
-        private final UnitConverter _first;
+        private final UnitConverter first;
 
         /**
          * Holds the second converter.
          */
-        private final UnitConverter _second;
+        private final UnitConverter second;
 
         /**
          * Creates a compound converter resulting from the combined transformation of the specified converters.
@@ -168,23 +168,23 @@ public abstract class UnitConverter implements Serializable {
          *            the second converter.
          */
         private Compound(UnitConverter first, UnitConverter second) {
-            _first = first;
-            _second = second;
+            this.first = first;
+            this.second = second;
         }
 
         @Override
         public UnitConverter inverse() {
-            return new Compound(_second.inverse(), _first.inverse());
+            return new Compound(second.inverse(), first.inverse());
         }
 
         @Override
         public double convert(double x) {
-            return _second.convert(_first.convert(x));
+            return second.convert(first.convert(x));
         }
 
         @Override
         public boolean isLinear() {
-            return _first.isLinear() && _second.isLinear();
+            return first.isLinear() && second.isLinear();
         }
 
         private static final long serialVersionUID = 1L;

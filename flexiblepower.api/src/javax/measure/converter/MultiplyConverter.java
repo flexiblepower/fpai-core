@@ -26,7 +26,7 @@ public final class MultiplyConverter extends UnitConverter {
     /**
      * Holds the scale factor.
      */
-    private final double _factor;
+    private final double factor;
 
     /**
      * Creates a multiply converter with the specified scale factor.
@@ -37,9 +37,10 @@ public final class MultiplyConverter extends UnitConverter {
      *             if offset is one (or close to one).
      */
     public MultiplyConverter(double factor) {
-        if ((float) factor == 1.0)
+        if ((float) factor == 1.0) {
             throw new IllegalArgumentException("Identity converter not allowed");
-        _factor = factor;
+        }
+        this.factor = factor;
     }
 
     /**
@@ -48,17 +49,17 @@ public final class MultiplyConverter extends UnitConverter {
      * @return the scale factor.
      */
     public double getFactor() {
-        return _factor;
+        return factor;
     }
 
     @Override
     public UnitConverter inverse() {
-        return new MultiplyConverter(1.0 / _factor);
+        return new MultiplyConverter(1.0 / factor);
     }
 
     @Override
     public double convert(double amount) {
-        return _factor * amount;
+        return factor * amount;
     }
 
     @Override
@@ -69,10 +70,10 @@ public final class MultiplyConverter extends UnitConverter {
     @Override
     public UnitConverter concatenate(UnitConverter converter) {
         if (converter instanceof MultiplyConverter) {
-            double factor = _factor * ((MultiplyConverter) converter)._factor;
+            double factor = this.factor * ((MultiplyConverter) converter).factor;
             return valueOf(factor);
         } else if (converter instanceof RationalConverter) {
-            double factor = _factor * ((RationalConverter) converter).getDividend()
+            double factor = this.factor * ((RationalConverter) converter).getDividend()
                             / ((RationalConverter) converter).getDivisor();
             return valueOf(factor);
         } else {

@@ -82,7 +82,7 @@ public final class NonSI extends SystemOfUnits {
     /**
      * Holds collection of NonSI units.
      */
-    private static HashSet<Unit<?>> UNITS = new HashSet<Unit<?>>();
+    private static HashSet<Unit<?>> units = new HashSet<Unit<?>>();
 
     /**
      * Holds the standard gravity constant: 9.80665 m/s² exact.
@@ -94,7 +94,7 @@ public final class NonSI extends SystemOfUnits {
      * Holds the international foot: 0.3048 m exact.
      */
     private static final int INTERNATIONAL_FOOT_DIVIDEND = 3048;
-    private static final int INTERNATIONAL_FOOT_DIViSOR = 10000;
+    private static final int INTERNATIONAL_FOOT_DIVISOR = 10000;
 
     /**
      * Holds the avoirdupois pound: 0.45359237 kg exact
@@ -162,7 +162,7 @@ public final class NonSI extends SystemOfUnits {
      * A unit of length equal to <code>0.3048 m</code> (standard name <code>ft</code>).
      */
     public static final Unit<Length> FOOT = nonSI(METRE.times(INTERNATIONAL_FOOT_DIVIDEND)
-                                                       .divide(INTERNATIONAL_FOOT_DIViSOR));
+                                                       .divide(INTERNATIONAL_FOOT_DIVISOR));
 
     /**
      * A unit of length equal to <code>1200/3937 m</code> (standard name <code>foot_survey_us</code>). See also: <a
@@ -713,7 +713,7 @@ public final class NonSI extends SystemOfUnits {
      */
     @Override
     public Set<Unit<?>> getUnits() {
-        return Collections.unmodifiableSet(UNITS);
+        return Collections.unmodifiableSet(units);
     }
 
     /**
@@ -724,7 +724,7 @@ public final class NonSI extends SystemOfUnits {
      * @return <code>unit</code>.
      */
     private static <U extends Unit<?>> U nonSI(U unit) {
-        UNITS.add(unit);
+        units.add(unit);
         return unit;
     }
 

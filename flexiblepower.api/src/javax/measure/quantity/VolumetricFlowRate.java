@@ -25,5 +25,5 @@ public interface VolumetricFlowRate extends Quantity {
      * Holds the SI unit (Système International d'Unités) for this quantity.
      */
     @SuppressWarnings("unchecked")
-    public final static Unit<VolumetricFlowRate> UNIT = (Unit<VolumetricFlowRate>) SI.METRE.pow(3).divide(SI.SECOND);
+    Unit<VolumetricFlowRate> UNIT = (Unit<VolumetricFlowRate>) SI.METRE.pow(3).divide(SI.SECOND);
 }

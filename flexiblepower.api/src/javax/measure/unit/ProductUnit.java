@@ -36,18 +36,18 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Holds the units composing this product unit.
      */
-    private final Element[] _elements;
+    private final Element[] elements;
 
     /**
      * Holds the hashcode (optimization).
      */
-    private int _hashCode;
+    private int hashCode;
 
     /**
      * Default constructor (used solely to create <code>ONE</code> instance).
      */
     ProductUnit() {
-        _elements = new Element[0];
+        this.elements = new Element[0];
     }
 
     /**
@@ -59,7 +59,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if the specified unit is not a product unit.
      */
     public ProductUnit(Unit<?> productUnit) {
-        _elements = ((ProductUnit<?>) productUnit)._elements;
+        this.elements = ((ProductUnit<?>) productUnit).elements;
     }
 
     /**
@@ -69,7 +69,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *            the product elements.
      */
     private ProductUnit(Element[] elements) {
-        _elements = elements;
+        this.elements = elements;
     }
 
     /**
@@ -87,15 +87,15 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
         Element[] result = new Element[leftElems.length + rightElems.length];
         int resultIndex = 0;
         for (Element leftElem : leftElems) {
-            Unit unit = leftElem._unit;
-            int p1 = leftElem._pow;
-            int r1 = leftElem._root;
+            Unit unit = leftElem.unit;
+            int p1 = leftElem.pow;
+            int r1 = leftElem.root;
             int p2 = 0;
             int r2 = 1;
             for (Element rightElem : rightElems) {
-                if (unit.equals(rightElem._unit)) {
-                    p2 = rightElem._pow;
-                    r2 = rightElem._root;
+                if (unit.equals(rightElem.unit)) {
+                    p2 = rightElem.pow;
+                    r2 = rightElem.root;
                     break; // No duplicate.
                 }
             }
@@ -109,10 +109,10 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
 
         // Appends remaining right elements not merged.
         for (Element rightElem : rightElems) {
-            Unit unit = rightElem._unit;
+            Unit unit = rightElem.unit;
             boolean hasBeenMerged = false;
             for (Element leftElem : leftElems) {
-                if (unit.equals(leftElem._unit)) {
+                if (unit.equals(leftElem.unit)) {
                     hasBeenMerged = true;
                     break;
                 }
@@ -125,8 +125,8 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
         // Returns or creates instance.
         if (resultIndex == 0) {
             return ONE;
-        } else if ((resultIndex == 1) && (result[0]._pow == result[0]._root)) {
-            return result[0]._unit;
+        } else if ((resultIndex == 1) && (result[0].pow == result[0].root)) {
+            return result[0].unit;
         } else {
             Element[] elems = new Element[resultIndex];
             for (int i = 0; i < resultIndex; i++) {
@@ -148,13 +148,13 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     static Unit<? extends Quantity> getProductInstance(Unit<?> left, Unit<?> right) {
         Element[] leftElems;
         if (left instanceof ProductUnit) {
-            leftElems = ((ProductUnit<?>) left)._elements;
+            leftElems = ((ProductUnit<?>) left).elements;
         } else {
             leftElems = new Element[] { new Element(left, 1, 1) };
         }
         Element[] rightElems;
         if (right instanceof ProductUnit) {
-            rightElems = ((ProductUnit<?>) right)._elements;
+            rightElems = ((ProductUnit<?>) right).elements;
         } else {
             rightElems = new Element[] { new Element(right, 1, 1) };
         }
@@ -173,16 +173,16 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     static Unit<? extends Quantity> getQuotientInstance(Unit<?> left, Unit<?> right) {
         Element[] leftElems;
         if (left instanceof ProductUnit) {
-            leftElems = ((ProductUnit<?>) left)._elements;
+            leftElems = ((ProductUnit<?>) left).elements;
         } else {
             leftElems = new Element[] { new Element(left, 1, 1) };
         }
         Element[] rightElems;
         if (right instanceof ProductUnit) {
-            Element[] elems = ((ProductUnit<?>) right)._elements;
+            Element[] elems = ((ProductUnit<?>) right).elements;
             rightElems = new Element[elems.length];
             for (int i = 0; i < elems.length; i++) {
-                rightElems[i] = new Element(elems[i]._unit, -elems[i]._pow, elems[i]._root);
+                rightElems[i] = new Element(elems[i].unit, -elems[i].pow, elems[i].root);
             }
         } else {
             rightElems = new Element[] { new Element(right, -1, 1) };
@@ -204,11 +204,11 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     static Unit<? extends Quantity> getRootInstance(Unit<?> unit, int n) {
         Element[] unitElems;
         if (unit instanceof ProductUnit) {
-            Element[] elems = ((ProductUnit<?>) unit)._elements;
+            Element[] elems = ((ProductUnit<?>) unit).elements;
             unitElems = new Element[elems.length];
             for (int i = 0; i < elems.length; i++) {
-                int gcd = gcd(Math.abs(elems[i]._pow), elems[i]._root * n);
-                unitElems[i] = new Element(elems[i]._unit, elems[i]._pow / gcd, elems[i]._root * n / gcd);
+                int gcd = gcd(Math.abs(elems[i].pow), elems[i].root * n);
+                unitElems[i] = new Element(elems[i].unit, elems[i].pow / gcd, elems[i].root * n / gcd);
             }
         } else {
             unitElems = new Element[] { new Element(unit, 1, n) };
@@ -228,11 +228,11 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     static Unit<? extends Quantity> getPowInstance(Unit<?> unit, int n) {
         Element[] unitElems;
         if (unit instanceof ProductUnit) {
-            Element[] elems = ((ProductUnit<?>) unit)._elements;
+            Element[] elems = ((ProductUnit<?>) unit).elements;
             unitElems = new Element[elems.length];
             for (int i = 0; i < elems.length; i++) {
-                int gcd = gcd(Math.abs(elems[i]._pow * n), elems[i]._root);
-                unitElems[i] = new Element(elems[i]._unit, elems[i]._pow * n / gcd, elems[i]._root / gcd);
+                int gcd = gcd(Math.abs(elems[i].pow * n), elems[i].root);
+                unitElems[i] = new Element(elems[i].unit, elems[i].pow * n / gcd, elems[i].root / gcd);
             }
         } else {
             unitElems = new Element[] { new Element(unit, n, 1) };
@@ -246,7 +246,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the number of units being multiplied.
      */
     public int getUnitCount() {
-        return _elements.length;
+        return this.elements.length;
     }
 
     /**
@@ -259,7 +259,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if index is out of range <code>(index &lt; 0 || index &gt;= size())</code>.
      */
     public Unit<? extends Quantity> getUnit(int index) {
-        return _elements[index].getUnit();
+        return this.elements[index].getUnit();
     }
 
     /**
@@ -272,7 +272,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if index is out of range <code>(index &lt; 0 || index &gt;= size())</code>.
      */
     public int getUnitPow(int index) {
-        return _elements[index].getPow();
+        return this.elements[index].getPow();
     }
 
     /**
@@ -285,7 +285,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if index is out of range <code>(index &lt; 0 || index &gt;= size())</code>.
      */
     public int getUnitRoot(int index) {
-        return _elements[index].getRoot();
+        return this.elements[index].getRoot();
     }
 
     /**
@@ -304,13 +304,13 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
         if (that instanceof ProductUnit) {
             // Two products are equals if they have the same elements
             // regardless of the elements' order.
-            Element[] elems = ((ProductUnit<?>) that)._elements;
-            if (_elements.length == elems.length) {
-                for (Element _element : _elements) {
+            Element[] elems = ((ProductUnit<?>) that).elements;
+            if (this.elements.length == elems.length) {
+                for (Element element : this.elements) {
                     boolean unitFound = false;
                     for (Element elem : elems) {
-                        if (_element._unit.equals(elem._unit)) {
-                            if ((_element._pow != elem._pow) || (_element._root != elem._root)) {
+                        if (element.unit.equals(elem.unit)) {
+                            if ((element.pow != elem.pow) || (element.root != elem.root)) {
                                 return false;
                             } else {
                                 unitFound = true;
@@ -332,14 +332,14 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     // Implements abstract method.
             public int
             hashCode() {
-        if (_hashCode != 0) {
-            return _hashCode;
+        if (this.hashCode != 0) {
+            return this.hashCode;
         }
         int code = 0;
-        for (Element _element : _elements) {
-            code += _element._unit.hashCode() * (_element._pow * 3 - _element._root * 2);
+        for (Element element : this.elements) {
+            code += element.unit.hashCode() * (element.pow * 3 - element.root * 2);
         }
-        _hashCode = code;
+        this.hashCode = code;
         return code;
     }
 
@@ -350,10 +350,10 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
             return this;
         }
         Unit systemUnit = ONE;
-        for (Element _element : _elements) {
-            Unit unit = _element._unit.getStandardUnit();
-            unit = unit.pow(_element._pow);
-            unit = unit.root(_element._root);
+        for (Element element : this.elements) {
+            Unit unit = element.unit.getStandardUnit();
+            unit = unit.pow(element.pow);
+            unit = unit.root(element.root);
             systemUnit = systemUnit.times(unit);
         }
         return systemUnit;
@@ -365,15 +365,15 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
             return UnitConverter.IDENTITY;
         }
         UnitConverter converter = UnitConverter.IDENTITY;
-        for (Element _element : _elements) {
-            UnitConverter cvtr = _element._unit.toStandardUnit();
+        for (Element element : this.elements) {
+            UnitConverter cvtr = element.unit.toStandardUnit();
             if (!cvtr.isLinear()) {
-                throw new ConversionException(_element._unit + " is non-linear, cannot convert");
+                throw new ConversionException(element.unit + " is non-linear, cannot convert");
             }
-            if (_element._root != 1) {
-                throw new ConversionException(_element._unit + " holds a base unit with fractional exponent");
+            if (element.root != 1) {
+                throw new ConversionException(element.unit + " holds a base unit with fractional exponent");
             }
-            int pow = _element._pow;
+            int pow = element.pow;
             if (pow < 0) { // Negative power.
                 pow = -pow;
                 cvtr = cvtr.inverse();
@@ -391,8 +391,8 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if all elements are standard units; <code>false</code> otherwise.
      */
     private boolean hasOnlyStandardUnit() {
-        for (Element _element : _elements) {
-            Unit<?> u = _element._unit;
+        for (Element element : this.elements) {
+            Unit<?> u = element.unit;
             if (!u.isStandardUnit()) {
                 return false;
             }
@@ -420,22 +420,22 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Inner product element represents a rational power of a single unit.
      */
-    private final static class Element implements Serializable {
+    private static final class Element implements Serializable {
 
         /**
          * Holds the single unit.
          */
-        private final Unit<?> _unit;
+        private final Unit<?> unit;
 
         /**
          * Holds the power exponent.
          */
-        private final int _pow;
+        private final int pow;
 
         /**
          * Holds the root exponent.
          */
-        private final int _root;
+        private final int root;
 
         /**
          * Structural constructor.
@@ -448,9 +448,9 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
          *            the root exponent.
          */
         private Element(Unit<?> unit, int pow, int root) {
-            _unit = unit;
-            _pow = pow;
-            _root = root;
+            this.unit = unit;
+            this.pow = pow;
+            this.root = root;
         }
 
         /**
@@ -459,7 +459,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
          * @return the single unit.
          */
         public Unit<?> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         /**
@@ -468,7 +468,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
          * @return the power exponent of the single unit.
          */
         public int getPow() {
-            return _pow;
+            return this.pow;
         }
 
         /**
@@ -477,7 +477,7 @@ public final class ProductUnit<Q extends Quantity> extends DerivedUnit<Q> {
          * @return the root exponent of the single unit.
          */
         public int getRoot() {
-            return _root;
+            return this.root;
         }
 
         private static final long serialVersionUID = 1L;

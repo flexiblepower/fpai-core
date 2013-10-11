@@ -55,6 +55,8 @@ import javax.measure.quantity.Quantity;
  * @author Martin Desruisseaux
  * @version 3.2, August 28, 2006
  * @see <a href="http://en.wikipedia.org/wiki/Units_of_measurement"> Wikipedia: Units of measurement</a>
+ * @param <Q>
+ *            The quantity
  */
 public abstract class Unit<Q extends Quantity> implements Serializable {
     private static final long serialVersionUID = -3618398112494824857L;

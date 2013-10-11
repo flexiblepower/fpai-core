@@ -31,25 +31,32 @@ import javax.measure.unit.Unit;
  * 
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.3, October 3, 2007
+ * @param <Q>
+ *            The quantity
  */
 public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
 
     /**
      * Holds the BigDecimal value.
      */
-    private final BigDecimal _value;
+    private final BigDecimal value;
 
     /**
      * Holds the unit.
      */
-    private final Unit<Q> _unit;
+    private final Unit<Q> unit;
 
     /**
      * Creates a decimal measure for the specified number stated in the specified unit.
+     * 
+     * @param value
+     *            The value
+     * @param unit
+     *            The unit
      */
     public DecimalMeasure(BigDecimal value, Unit<Q> unit) {
-        _value = value;
-        _unit = unit;
+        this.value = value;
+        this.unit = unit;
     }
 
     /**
@@ -59,17 +66,20 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
      *            the measurement value.
      * @param unit
      *            the measurement unit.
+     * @param <Q>
+     *            The quantity
      */
     public static <Q extends Quantity> DecimalMeasure<Q> valueOf(BigDecimal decimal, Unit<Q> unit) {
         return new DecimalMeasure<Q>(decimal, unit);
     }
 
     /**
-     * Returns the decimal measure for the specified textual representation. This method first reads the
-     * <code>BigDecimal</code> value, then the unit if any (value and unit should be separated by white spaces).
-     * 
      * @param csq
      *            the decimal measure representation (including unit if any).
+     * @param <Q>
+     *            The quantity
+     * @return the decimal measure for the specified textual representation. This method first reads the
+     *         <code>BigDecimal</code> value, then the unit if any (value and unit should be separated by white spaces).
      * @throws NumberFormatException
      *             if the specified character sequence is not a valid representation of decimal measure.
      */
@@ -100,12 +110,12 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
 
     @Override
     public Unit<Q> getUnit() {
-        return _unit;
+        return this.unit;
     }
 
     @Override
     public BigDecimal getValue() {
-        return _value;
+        return this.value;
     }
 
     /**
@@ -135,51 +145,51 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
      * @return the measure stated in the specified unit.
      * @throws ArithmeticException
      *             if the result is inexact but the rounding mode is <code>MathContext.UNNECESSARY</code> or
-     *             <code>mathContext.precision == 0</tt> and the quotient has a 
-     *         non-terminating decimal expansion.
+     *             <code>mathContext.precision == 0</code> and the quotient has a non-terminating decimal expansion.
      */
     public DecimalMeasure<Q> to(Unit<Q> unit, MathContext mathContext) {
-        if ((unit == _unit) || (unit.equals(_unit))) {
+        if ((unit == this.unit) || (unit.equals(this.unit))) {
             return this;
         }
-        UnitConverter cvtr = _unit.getConverterTo(unit);
+        UnitConverter cvtr = this.unit.getConverterTo(unit);
         if (cvtr instanceof RationalConverter) {
             RationalConverter factor = (RationalConverter) cvtr;
             BigDecimal dividend = BigDecimal.valueOf(factor.getDividend());
             BigDecimal divisor = BigDecimal.valueOf(factor.getDivisor());
-            BigDecimal result = mathContext == null ? _value.multiply(dividend).divide(divisor)
-                                                   : _value.multiply(dividend, mathContext)
-                                                           .divide(divisor, mathContext);
+            BigDecimal result = mathContext == null ? this.value.multiply(dividend).divide(divisor)
+                                                   : this.value.multiply(dividend, mathContext).divide(divisor,
+                                                                                                       mathContext);
             return new DecimalMeasure<Q>(result, unit);
         } else if (cvtr.isLinear()) {
             BigDecimal factor = BigDecimal.valueOf(cvtr.convert(1.0));
-            BigDecimal result = mathContext == null ? _value.multiply(factor) : _value.multiply(factor, mathContext);
+            BigDecimal result = mathContext == null ? this.value.multiply(factor) : this.value.multiply(factor,
+                                                                                                        mathContext);
             return new DecimalMeasure<Q>(result, unit);
         } else if (cvtr instanceof AddConverter) {
             BigDecimal offset = BigDecimal.valueOf(((AddConverter) cvtr).getOffset());
-            BigDecimal result = mathContext == null ? _value.add(offset) : _value.add(offset, mathContext);
+            BigDecimal result = mathContext == null ? this.value.add(offset) : this.value.add(offset, mathContext);
             return new DecimalMeasure<Q>(result, unit);
         } else { // Non-linear and not an offset, convert the double value.
-            BigDecimal result = BigDecimal.valueOf(cvtr.convert(_value.doubleValue()));
+            BigDecimal result = BigDecimal.valueOf(cvtr.convert(this.value.doubleValue()));
             return new DecimalMeasure<Q>(result, unit);
         }
     }
 
     @Override
     public double doubleValue(Unit<Q> unit) {
-        if ((unit == _unit) || (unit.equals(_unit))) {
-            return _value.doubleValue();
+        if ((unit == this.unit) || (unit.equals(this.unit))) {
+            return this.value.doubleValue();
         }
-        return _unit.getConverterTo(unit).convert(_value.doubleValue());
+        return this.unit.getConverterTo(unit).convert(this.value.doubleValue());
     }
 
     @Override
     public Measurable<Q> add(Measurable<Q> other) {
         if (other instanceof DecimalMeasure) {
             DecimalMeasure<Q> otherDec = (DecimalMeasure<Q>) other;
-            return new DecimalMeasure<Q>(_value.add(otherDec.to(_unit)._value), _unit);
+            return new DecimalMeasure<Q>(value.add(otherDec.to(unit).value), unit);
         } else {
-            return new DecimalMeasure<Q>(_value.add(BigDecimal.valueOf(other.doubleValue(_unit))), _unit);
+            return new DecimalMeasure<Q>(value.add(BigDecimal.valueOf(other.doubleValue(unit))), unit);
         }
     }
 

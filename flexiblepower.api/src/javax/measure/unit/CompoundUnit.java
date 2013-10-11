@@ -30,12 +30,12 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Holds the higher unit.
      */
-    private final Unit<Q> _high;
+    private final Unit<Q> high;
 
     /**
      * Holds the lower unit.
      */
-    private final Unit<Q> _low;
+    private final Unit<Q> low;
 
     /**
      * Creates a compound unit from the specified units.
@@ -48,10 +48,11 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if both units do not the same system unit.
      */
     CompoundUnit(Unit<Q> high, Unit<Q> low) {
-        if (!high.getStandardUnit().equals(low.getStandardUnit()))
+        if (!high.getStandardUnit().equals(low.getStandardUnit())) {
             throw new IllegalArgumentException("Both units do not have the same system unit");
-        _high = high;
-        _low = low;
+        }
+        this.high = high;
+        this.low = low;
 
     }
 
@@ -61,7 +62,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the lower unit.
      */
     public Unit<Q> getLower() {
-        return _low;
+        return this.low;
     }
 
     /**
@@ -70,7 +71,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the higher unit.
      */
     public Unit<Q> getHigher() {
-        return _high;
+        return this.high;
     }
 
     /**
@@ -82,28 +83,31 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
-        if (!(that instanceof CompoundUnit))
+        }
+        if (!(that instanceof CompoundUnit)) {
             return false;
+        }
         CompoundUnit<?> thatUnit = (CompoundUnit<?>) that;
-        return this._high.equals(thatUnit._high) && this._low.equals(thatUnit._low);
+        return this.high.equals(thatUnit.high) && this.low.equals(thatUnit.low);
     }
 
     @Override
     public int hashCode() {
-        return _high.hashCode() ^ _low.hashCode();
+        return this.high.hashCode() ^ this.low.hashCode();
     }
 
     @Override
     public Unit<? super Q> getStandardUnit() {
-        return _low.getStandardUnit();
+        return this.low.getStandardUnit();
     }
 
     @Override
     public UnitConverter toStandardUnit() {
-        return _low.toStandardUnit();
+        return this.low.toStandardUnit();
     }
 
     private static final long serialVersionUID = 1L;

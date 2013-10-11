@@ -23,6 +23,6 @@ public interface RadiationDoseAbsorbed extends Quantity {
     /**
      * Holds the SI unit (Système International d'Unités) for this quantity.
      */
-    public final static Unit<RadiationDoseAbsorbed> UNIT = SI.GRAY;
+    Unit<RadiationDoseAbsorbed> UNIT = SI.GRAY;
 
 }

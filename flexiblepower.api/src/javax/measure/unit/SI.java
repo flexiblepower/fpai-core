@@ -14,7 +14,40 @@ import java.util.Set;
 
 import javax.measure.converter.MultiplyConverter;
 import javax.measure.converter.RationalConverter;
-import javax.measure.quantity.*;
+import javax.measure.quantity.Acceleration;
+import javax.measure.quantity.AmountOfSubstance;
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Area;
+import javax.measure.quantity.CatalyticActivity;
+import javax.measure.quantity.DataAmount;
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.ElectricCapacitance;
+import javax.measure.quantity.ElectricCharge;
+import javax.measure.quantity.ElectricConductance;
+import javax.measure.quantity.ElectricCurrent;
+import javax.measure.quantity.ElectricInductance;
+import javax.measure.quantity.ElectricPotential;
+import javax.measure.quantity.ElectricResistance;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Force;
+import javax.measure.quantity.Frequency;
+import javax.measure.quantity.Illuminance;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.LuminousFlux;
+import javax.measure.quantity.LuminousIntensity;
+import javax.measure.quantity.MagneticFlux;
+import javax.measure.quantity.MagneticFluxDensity;
+import javax.measure.quantity.Mass;
+import javax.measure.quantity.Power;
+import javax.measure.quantity.Pressure;
+import javax.measure.quantity.Quantity;
+import javax.measure.quantity.RadiationDoseAbsorbed;
+import javax.measure.quantity.RadiationDoseEffective;
+import javax.measure.quantity.RadioactiveActivity;
+import javax.measure.quantity.SolidAngle;
+import javax.measure.quantity.Temperature;
+import javax.measure.quantity.Velocity;
+import javax.measure.quantity.Volume;
 
 /**
  * <p>
@@ -37,7 +70,7 @@ public final class SI extends SystemOfUnits {
     /**
      * Holds collection of SI units.
      */
-    private static HashSet<Unit<?>> UNITS = new HashSet<Unit<?>>();
+    private static HashSet<Unit<?>> units = new HashSet<Unit<?>>();
 
     /**
      * Default constructor (prevents this class from being instantiated).
@@ -585,8 +618,9 @@ public final class SI extends SystemOfUnits {
      * 
      * @return the collection of SI units.
      */
+    @Override
     public Set<Unit<?>> getUnits() {
-        return Collections.unmodifiableSet(UNITS);
+        return Collections.unmodifiableSet(units);
     }
 
     /**
@@ -597,7 +631,7 @@ public final class SI extends SystemOfUnits {
      * @return <code>unit</code>.
      */
     private static <U extends Unit<?>> U si(U unit) {
-        UNITS.add(unit);
+        units.add(unit);
         return unit;
     }
 
@@ -646,10 +680,12 @@ public final class SI extends SystemOfUnits {
     /**
      * @deprecated replaced by {@link #METRES_PER_SECOND}.
      */
+    @Deprecated
     public static final Unit<Velocity> METRE_PER_SECOND = METRES_PER_SECOND;
 
     /**
      * @deprecated replaced by {@link #METRES_PER_SQUARE_SECOND}.
      */
+    @Deprecated
     public static final Unit<Acceleration> METRE_PER_SQUARE_SECOND = METRES_PER_SQUARE_SECOND;
 }

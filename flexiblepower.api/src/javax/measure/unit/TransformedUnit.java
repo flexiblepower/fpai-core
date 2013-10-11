@@ -40,12 +40,12 @@ public final class TransformedUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Holds the parent unit (not a transformed unit).
      */
-    private final Unit<Q> _parentUnit;
+    private final Unit<Q> parentUnit;
 
     /**
      * Holds the converter to the parent unit.
      */
-    private final UnitConverter _toParentUnit;
+    private final UnitConverter toParentUnit;
 
     /**
      * Creates a transformed unit from the specified parent unit.
@@ -59,10 +59,11 @@ public final class TransformedUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *         {@link UnitConverter#IDENTITY UnitConverter.IDENTITY}</code>
      */
     TransformedUnit(Unit<Q> parentUnit, UnitConverter toParentUnit) {
-        if (toParentUnit == UnitConverter.IDENTITY)
+        if (toParentUnit == UnitConverter.IDENTITY) {
             throw new IllegalArgumentException("Identity not allowed");
-        _parentUnit = parentUnit;
-        _toParentUnit = toParentUnit;
+        }
+        this.parentUnit = parentUnit;
+        this.toParentUnit = toParentUnit;
     }
 
     /**
@@ -71,7 +72,7 @@ public final class TransformedUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the untransformed unit from which this unit is derived.
      */
     public Unit<Q> getParentUnit() {
-        return _parentUnit;
+        return this.parentUnit;
     }
 
     /**
@@ -80,7 +81,7 @@ public final class TransformedUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the converter to the parent unit.
      */
     public UnitConverter toParentUnit() {
-        return _toParentUnit;
+        return this.toParentUnit;
     }
 
     /**
@@ -92,28 +93,34 @@ public final class TransformedUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
-        if (!(that instanceof TransformedUnit))
+        }
+        if (!(that instanceof TransformedUnit)) {
             return false;
+        }
         TransformedUnit<?> thatUnit = (TransformedUnit<?>) that;
-        return this._parentUnit.equals(thatUnit._parentUnit) && this._toParentUnit.equals(thatUnit._toParentUnit);
+        return this.parentUnit.equals(thatUnit.parentUnit) && this.toParentUnit.equals(thatUnit.toParentUnit);
     }
 
     // Implements abstract method.
+    @Override
     public int hashCode() {
-        return _parentUnit.hashCode() + _toParentUnit.hashCode();
+        return this.parentUnit.hashCode() + this.toParentUnit.hashCode();
     }
 
     // Implements abstract method.
+    @Override
     public Unit<? super Q> getStandardUnit() {
-        return _parentUnit.getStandardUnit();
+        return this.parentUnit.getStandardUnit();
     }
 
     // Implements abstract method.
+    @Override
     public UnitConverter toStandardUnit() {
-        return _parentUnit.toStandardUnit().concatenate(_toParentUnit);
+        return this.parentUnit.toStandardUnit().concatenate(this.toParentUnit);
     }
 
     private static final long serialVersionUID = 1L;

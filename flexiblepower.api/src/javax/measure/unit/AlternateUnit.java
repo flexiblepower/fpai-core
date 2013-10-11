@@ -29,12 +29,12 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Holds the symbol.
      */
-    private final String _symbol;
+    private final String symbol;
 
     /**
      * Holds the parent unit (a system unit).
      */
-    private final Unit<?> _parent;
+    private final Unit<?> parent;
 
     /**
      * Creates an alternate unit for the specified unit identified by the specified symbol.
@@ -49,10 +49,11 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
      *             if the specified symbol is associated to a different unit.
      */
     AlternateUnit(String symbol, Unit<?> parent) {
-        if (!parent.isStandardUnit())
+        if (!parent.isStandardUnit()) {
             throw new UnsupportedOperationException(this + " is not a standard unit");
-        _symbol = symbol;
-        _parent = parent;
+        }
+        this.symbol = symbol;
+        this.parent = parent;
         // Checks if the symbol is associated to a different unit.
         synchronized (Unit.SYMBOL_TO_UNIT) {
             Unit<?> unit = Unit.SYMBOL_TO_UNIT.get(symbol);
@@ -62,8 +63,9 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
             }
             if (unit instanceof AlternateUnit) {
                 AlternateUnit<?> existingUnit = (AlternateUnit<?>) unit;
-                if (symbol.equals(existingUnit._symbol) && _parent.equals(existingUnit._parent))
+                if (symbol.equals(existingUnit.symbol) && this.parent.equals(existingUnit.parent)) {
                     return; // OK, same unit.
+                }
             }
             throw new IllegalArgumentException("Symbol " + symbol + " is associated to a different unit");
         }
@@ -74,8 +76,8 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * 
      * @return this alternate unit symbol.
      */
-    public final String getSymbol() {
-        return _symbol;
+    public String getSymbol() {
+        return this.symbol;
     }
 
     /**
@@ -84,17 +86,17 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return the parent of the alternate unit.
      */
     @SuppressWarnings("unchecked")
-    public final Unit<? super Q> getParent() {
-        return (Unit<? super Q>) _parent;
+    public Unit<? super Q> getParent() {
+        return (Unit<? super Q>) this.parent;
     }
 
     @Override
-    public final Unit<? super Q> getStandardUnit() {
+    public Unit<? super Q> getStandardUnit() {
         return this;
     }
 
     @Override
-    public final UnitConverter toStandardUnit() {
+    public UnitConverter toStandardUnit() {
         return UnitConverter.IDENTITY;
     }
 
@@ -107,18 +109,22 @@ public final class AlternateUnit<Q extends Quantity> extends DerivedUnit<Q> {
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
-        if (!(that instanceof AlternateUnit))
+        }
+        if (!(that instanceof AlternateUnit)) {
             return false;
+        }
         AlternateUnit<?> thatUnit = (AlternateUnit<?>) that;
-        return this._symbol.equals(thatUnit._symbol); // Symbols are unique.
+        return this.symbol.equals(thatUnit.symbol); // Symbols are unique.
     }
 
     // Implements abstract method.
+    @Override
     public int hashCode() {
-        return _symbol.hashCode();
+        return this.symbol.hashCode();
     }
 
     private static final long serialVersionUID = 1L;

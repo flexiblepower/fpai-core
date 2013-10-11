@@ -33,7 +33,7 @@ public final class Dimension implements Serializable {
     /**
      * Holds the current physical model.
      */
-    private static Model CurrentModel = Model.STANDARD;
+    private static Model currentModel = Model.STANDARD;
 
     /**
      * Holds dimensionless.
@@ -73,7 +73,7 @@ public final class Dimension implements Serializable {
     /**
      * Holds the pseudo unit associated to this dimension.
      */
-    private final Unit<?> _pseudoUnit;
+    private final Unit<?> pseudoUnit;
 
     /**
      * Creates a new dimension associated to the specified symbol.
@@ -82,7 +82,7 @@ public final class Dimension implements Serializable {
      *            the associated symbol.
      */
     public Dimension(char symbol) {
-        _pseudoUnit = new BaseUnit<Dimensionless>("[" + symbol + "]");
+        pseudoUnit = new BaseUnit<Dimensionless>("[" + symbol + "]");
     }
 
     /**
@@ -92,7 +92,7 @@ public final class Dimension implements Serializable {
      *            the pseudo-unit identifying this dimension.
      */
     private Dimension(Unit<?> pseudoUnit) {
-        _pseudoUnit = pseudoUnit;
+        this.pseudoUnit = pseudoUnit;
     }
 
     /**
@@ -102,8 +102,8 @@ public final class Dimension implements Serializable {
      *            the dimension multiplicand.
      * @return <code>this * that</code>
      */
-    public final Dimension times(Dimension that) {
-        return new Dimension(this._pseudoUnit.times(that._pseudoUnit));
+    public Dimension times(Dimension that) {
+        return new Dimension(pseudoUnit.times(that.pseudoUnit));
     }
 
     /**
@@ -113,8 +113,8 @@ public final class Dimension implements Serializable {
      *            the dimension divisor.
      * @return <code>this / that</code>
      */
-    public final Dimension divide(Dimension that) {
-        return new Dimension(this._pseudoUnit.divide(that._pseudoUnit));
+    public Dimension divide(Dimension that) {
+        return new Dimension(pseudoUnit.divide(that.pseudoUnit));
     }
 
     /**
@@ -124,8 +124,8 @@ public final class Dimension implements Serializable {
      *            the exponent.
      * @return the result of raising this dimension to the exponent.
      */
-    public final Dimension pow(int n) {
-        return new Dimension(this._pseudoUnit.pow(n));
+    public Dimension pow(int n) {
+        return new Dimension(pseudoUnit.pow(n));
     }
 
     /**
@@ -137,8 +137,8 @@ public final class Dimension implements Serializable {
      * @throws ArithmeticException
      *             if <code>n == 0</code>.
      */
-    public final Dimension root(int n) {
-        return new Dimension(this._pseudoUnit.root(n));
+    public Dimension root(int n) {
+        return new Dimension(pseudoUnit.root(n));
     }
 
     /**
@@ -146,8 +146,9 @@ public final class Dimension implements Serializable {
      * 
      * @return the representation of this dimension.
      */
+    @Override
     public String toString() {
-        return _pseudoUnit.toString();
+        return pseudoUnit.toString();
     }
 
     /**
@@ -157,10 +158,12 @@ public final class Dimension implements Serializable {
      *            the object to compare to.
      * @return <code>true</code> if this dimension is equals to that dimension; <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object that) {
-        if (this == that)
+        if (this == that) {
             return true;
-        return (that instanceof Dimension) && _pseudoUnit.equals(((Dimension) that)._pseudoUnit);
+        }
+        return (that instanceof Dimension) && pseudoUnit.equals(((Dimension) that).pseudoUnit);
     }
 
     /**
@@ -168,8 +171,9 @@ public final class Dimension implements Serializable {
      * 
      * @return this dimension hashcode value.
      */
+    @Override
     public int hashCode() {
-        return _pseudoUnit.hashCode();
+        return pseudoUnit.hashCode();
     }
 
     /**
@@ -179,7 +183,7 @@ public final class Dimension implements Serializable {
      *            the new model to be used when calculating unit dimensions.
      */
     public static void setModel(Model model) {
-        Dimension.CurrentModel = model;
+        Dimension.currentModel = model;
     }
 
     /**
@@ -188,7 +192,7 @@ public final class Dimension implements Serializable {
      * @return the model used when calculating unit dimensions.
      */
     public static Model getModel() {
-        return Dimension.CurrentModel;
+        return Dimension.currentModel;
     }
 
     /**
@@ -213,29 +217,38 @@ public final class Dimension implements Serializable {
         /**
          * Holds the standard model (default).
          */
-        public Model STANDARD = new Model() {
-
+        Model STANDARD = new Model() {
+            @Override
             public Dimension getDimension(BaseUnit<?> unit) {
-                if (unit.equals(SI.METRE))
+                if (unit.equals(SI.METRE)) {
                     return Dimension.LENGTH;
-                if (unit.equals(SI.KILOGRAM))
+                }
+                if (unit.equals(SI.KILOGRAM)) {
                     return Dimension.MASS;
-                if (unit.equals(SI.KELVIN))
+                }
+                if (unit.equals(SI.KELVIN)) {
                     return Dimension.TEMPERATURE;
-                if (unit.equals(SI.SECOND))
+                }
+                if (unit.equals(SI.SECOND)) {
                     return Dimension.TIME;
-                if (unit.equals(SI.AMPERE))
+                }
+                if (unit.equals(SI.AMPERE)) {
                     return Dimension.ELECTRIC_CURRENT;
-                if (unit.equals(SI.MOLE))
+                }
+                if (unit.equals(SI.MOLE)) {
                     return Dimension.AMOUNT_OF_SUBSTANCE;
-                if (unit.equals(SI.CANDELA))
+                }
+                if (unit.equals(SI.CANDELA)) {
                     return SI.WATT.getDimension();
+                }
                 return new Dimension(new BaseUnit<Dimensionless>("[" + unit.getSymbol() + "]"));
             }
 
+            @Override
             public UnitConverter getTransform(BaseUnit<?> unit) {
-                if (unit.equals(SI.CANDELA))
+                if (unit.equals(SI.CANDELA)) {
                     return new RationalConverter(1, 683);
+                }
                 return UnitConverter.IDENTITY;
             }
         };

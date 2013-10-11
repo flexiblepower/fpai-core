@@ -23,6 +23,6 @@ public interface Temperature extends Quantity {
     /**
      * Holds the SI unit (Système International d'Unités) for this quantity.
      */
-    public final static Unit<Temperature> UNIT = SI.KELVIN;
+    Unit<Temperature> UNIT = SI.KELVIN;
 
 }

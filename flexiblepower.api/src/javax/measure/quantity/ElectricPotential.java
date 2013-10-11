@@ -23,6 +23,6 @@ public interface ElectricPotential extends Quantity {
     /**
      * Holds the SI unit (Système International d'Unités) for this quantity.
      */
-    public final static Unit<ElectricPotential> UNIT = SI.VOLT;
+    Unit<ElectricPotential> UNIT = SI.VOLT;
 
 }

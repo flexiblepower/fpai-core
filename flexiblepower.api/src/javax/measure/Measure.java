@@ -9,8 +9,6 @@
 package javax.measure;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.MathContext;
 
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.CompoundUnit;
@@ -297,33 +295,33 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      */
     private static final class Double<Q extends Quantity> extends Measure<java.lang.Double, Q> {
 
-        private final double _value;
+        private final double value;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         public Double(double value, Unit<Q> unit) {
-            _value = value;
-            _unit = unit;
+            this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         @Override
         public java.lang.Double getValue() {
-            return _value;
+            return this.value;
         }
 
         @Override
         public Measurable<Q> add(Measurable<Q> other) {
-            return new Double<Q>(_value + other.doubleValue(_unit), _unit);
+            return new Double<Q>(this.value + other.doubleValue(this.unit), this.unit);
         }
 
         @Override
         public Measure<java.lang.Double, Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return this;
             }
             return new Double<Q>(doubleValue(unit), unit);
@@ -331,10 +329,10 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value;
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value;
             }
-            return _unit.getConverterTo(unit).convert(_value);
+            return this.unit.getConverterTo(unit).convert(this.value);
         }
 
         private static final long serialVersionUID = 1L;
@@ -345,33 +343,33 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      */
     private static final class Long<Q extends Quantity> extends Measure<java.lang.Long, Q> {
 
-        private final long _value;
+        private final long value;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         public Long(long value, Unit<Q> unit) {
-            _value = value;
-            _unit = unit;
+            this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         @Override
         public java.lang.Long getValue() {
-            return _value;
+            return this.value;
         }
 
         @Override
         public Measurable<Q> add(Measurable<Q> other) {
-            return new Long<Q>(_value + other.longValue(_unit), _unit);
+            return new Long<Q>(this.value + other.longValue(this.unit), this.unit);
         }
 
         @Override
         public Measure<java.lang.Long, Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return this;
             }
             return new Long<Q>(longValue(unit), unit);
@@ -379,16 +377,16 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value;
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value;
             }
-            return _unit.getConverterTo(unit).convert(_value);
+            return this.unit.getConverterTo(unit).convert(this.value);
         }
 
         @Override
         public long longValue(Unit<Q> unit) throws ArithmeticException {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value; // No conversion, returns value directly.
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value; // No conversion, returns value directly.
             }
             return super.longValue(unit);
         }
@@ -402,33 +400,33 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      */
     private static final class Float<Q extends Quantity> extends Measure<java.lang.Float, Q> {
 
-        private final float _value;
+        private final float value;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         public Float(float value, Unit<Q> unit) {
-            _value = value;
-            _unit = unit;
+            this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         @Override
         public java.lang.Float getValue() {
-            return _value;
+            return this.value;
         }
 
         @Override
         public Measurable<Q> add(Measurable<Q> other) {
-            return new Double<Q>(_value + other.doubleValue(_unit), _unit);
+            return new Double<Q>(this.value + other.doubleValue(this.unit), this.unit);
         }
 
         @Override
         public Measure<java.lang.Float, Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return this;
             }
             return new Float<Q>(floatValue(unit), unit);
@@ -436,10 +434,10 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value;
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value;
             }
-            return _unit.getConverterTo(unit).convert(_value);
+            return this.unit.getConverterTo(unit).convert(this.value);
         }
 
         private static final long serialVersionUID = 1L;
@@ -450,33 +448,33 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      */
     private static final class Integer<Q extends Quantity> extends Measure<java.lang.Integer, Q> {
 
-        private final int _value;
+        private final int value;
 
-        private final Unit<Q> _unit;
+        private final Unit<Q> unit;
 
         public Integer(int value, Unit<Q> unit) {
-            _value = value;
-            _unit = unit;
+            this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public Unit<Q> getUnit() {
-            return _unit;
+            return this.unit;
         }
 
         @Override
         public java.lang.Integer getValue() {
-            return _value;
+            return this.value;
         }
 
         @Override
         public Measurable<Q> add(Measurable<Q> other) {
-            return new Long<Q>(_value + other.longValue(_unit), _unit);
+            return new Long<Q>(this.value + other.longValue(this.unit), this.unit);
         }
 
         @Override
         public Measure<java.lang.Integer, Q> to(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
                 return this;
             }
             return new Integer<Q>(intValue(unit), unit);
@@ -484,48 +482,20 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
         @Override
         public double doubleValue(Unit<Q> unit) {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value;
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value;
             }
-            return _unit.getConverterTo(unit).convert(_value);
+            return this.unit.getConverterTo(unit).convert(this.value);
         }
 
         @Override
         public long longValue(Unit<Q> unit) throws ArithmeticException {
-            if ((unit == _unit) || (unit.equals(_unit))) {
-                return _value; // No conversion, returns value directly.
+            if ((unit == this.unit) || (unit.equals(this.unit))) {
+                return this.value; // No conversion, returns value directly.
             }
             return super.longValue(unit);
         }
 
         private static final long serialVersionUID = 1L;
-
-    }
-
-    /**
-     * @deprecated {@link DecimalMeasure} should be used directly.
-     */
-    @Deprecated
-    public static <Q extends Quantity> Measure<BigDecimal, Q> valueOf(BigDecimal decimal, Unit<Q> unit) {
-        return DecimalMeasure.valueOf(decimal, unit);
-    }
-
-    /**
-     * @deprecated {@link DecimalMeasure} should be used directly and <code>MathContext</code> specified explicitly when
-     *             {@link DecimalMeasure#to(Unit, MathContext) converting}.
-     */
-    @Deprecated
-    public static <Q extends Quantity> Measure<BigDecimal, Q> valueOf(BigDecimal decimal,
-                                                                      Unit<Q> unit,
-                                                                      MathContext mathContext) {
-        return DecimalMeasure.valueOf(decimal, unit);
-    }
-
-    /**
-     * @deprecated {@link VectorMeasure} should be used directly.
-     */
-    @Deprecated
-    public static <Q extends Quantity> Measure<double[], Q> valueOf(double[] components, Unit<Q> unit) {
-        return VectorMeasure.valueOf(components, unit);
     }
 }

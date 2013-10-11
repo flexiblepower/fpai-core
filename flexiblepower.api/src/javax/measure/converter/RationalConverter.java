@@ -26,12 +26,12 @@ public final class RationalConverter extends UnitConverter {
     /**
      * Holds the converter dividend.
      */
-    private final long _dividend;
+    private final long dividend;
 
     /**
      * Holds the converter divisor (always positive).
      */
-    private final long _divisor;
+    private final long divisor;
 
     /**
      * Creates a rational converter with the specified dividend and divisor.
@@ -46,12 +46,14 @@ public final class RationalConverter extends UnitConverter {
      *             if <code>dividend == divisor</code>
      */
     public RationalConverter(long dividend, long divisor) {
-        if (divisor < 0)
+        if (divisor < 0) {
             throw new IllegalArgumentException("Negative divisor");
-        if (dividend == divisor)
+        }
+        if (dividend == divisor) {
             throw new IllegalArgumentException("Identity converter not allowed");
-        _dividend = dividend;
-        _divisor = divisor;
+        }
+        this.dividend = dividend;
+        this.divisor = divisor;
     }
 
     /**
@@ -60,7 +62,7 @@ public final class RationalConverter extends UnitConverter {
      * @return this converter dividend.
      */
     public long getDividend() {
-        return _dividend;
+        return dividend;
     }
 
     /**
@@ -69,18 +71,17 @@ public final class RationalConverter extends UnitConverter {
      * @return this converter divisor.
      */
     public long getDivisor() {
-        return _divisor;
+        return divisor;
     }
 
     @Override
     public UnitConverter inverse() {
-        return _dividend < 0 ? new RationalConverter(-_divisor, -_dividend)
-                            : new RationalConverter(_divisor, _dividend);
+        return dividend < 0 ? new RationalConverter(-divisor, -dividend) : new RationalConverter(divisor, dividend);
     }
 
     @Override
     public double convert(double amount) {
-        return amount * _dividend / _divisor;
+        return amount * dividend / divisor;
     }
 
     @Override
@@ -92,10 +93,10 @@ public final class RationalConverter extends UnitConverter {
     public UnitConverter concatenate(UnitConverter converter) {
         if (converter instanceof RationalConverter) {
             RationalConverter that = (RationalConverter) converter;
-            long dividendLong = this._dividend * that._dividend;
-            long divisorLong = this._divisor * that._divisor;
-            double dividendDouble = ((double) this._dividend) * that._dividend;
-            double divisorDouble = ((double) this._divisor) * that._divisor;
+            long dividendLong = dividend * that.dividend;
+            long divisorLong = divisor * that.divisor;
+            double dividendDouble = ((double) dividend) * that.dividend;
+            double divisorDouble = ((double) divisor) * that.divisor;
             if ((dividendLong != dividendDouble) || (divisorLong != divisorDouble)) { // Long overflows.
                 return new MultiplyConverter(dividendDouble / divisorDouble);
             }
