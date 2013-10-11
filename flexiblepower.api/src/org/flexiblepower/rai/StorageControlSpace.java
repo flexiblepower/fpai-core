@@ -23,7 +23,7 @@ import org.flexiblepower.rai.values.ConstraintList;
  * <p>
  * PMSuite - PM Control Specification - v0.6
  */
-public final class StorageControlSpace extends BufferControlSpace {
+public class StorageControlSpace extends BufferControlSpace {
 
     /**
      * power constraint list to represent discharge speed/curve
@@ -33,18 +33,18 @@ public final class StorageControlSpace extends BufferControlSpace {
     /**
      * charge efficiency percentage [0,1] to represent energy turnover loss on charging
      */
-    private final float chargeEfficiency;
+    private final double chargeEfficiency;
 
     /**
      * discharge efficiency percentage [0,1] to represent energy turnover loss on discharging
      */
-    private final float dischargeEfficiency;
+    private final double dischargeEfficiency;
 
     /**
      * construct storage control space, which exposes the energetic flexibility of a storage resource.
      * 
-     * @param resourceManager
-     *            creator of the control space, the manager of the storage resource
+     * @param resourceId
+     *            is the identifier of the resource that created this control space.
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
      * @param validThru
@@ -108,16 +108,16 @@ public final class StorageControlSpace extends BufferControlSpace {
                                Date validThru,
                                Date expirationTime,
                                Measurable<Energy> totalCapacity,
-                               float stateOfCharge,
+                               double stateOfCharge,
                                ConstraintList<Power> chargeSpeed,
                                ConstraintList<Power> dischargeSpeed,
                                Measurable<Power> selfDischarge,
-                               float chargeEfficiency,
-                               float dischargeEfficiency,
+                               double chargeEfficiency,
+                               double dischargeEfficiency,
                                Measurable<Duration> minOnPeriod,
                                Measurable<Duration> minOffPeriod,
                                Date targetTime,
-                               Float targetStateOfCharge) {
+                               Double targetStateOfCharge) {
         super(resourceId,
               validFrom,
               validThru,
@@ -133,19 +133,10 @@ public final class StorageControlSpace extends BufferControlSpace {
         this.dischargeSpeed = dischargeSpeed;
         this.chargeEfficiency = chargeEfficiency;
         this.dischargeEfficiency = dischargeEfficiency;
-        validate();
-    }
 
-    private void validate() {
-        if (dischargeSpeed == null) {
-            throw new NullPointerException("dischargeSpeed is null");
-        }
-        if (chargeEfficiency < 0 || chargeEfficiency > 1) {
-            throw new IllegalArgumentException("chargeEfficiency should be in [0,1] but is " + chargeEfficiency);
-        }
-        if (dischargeEfficiency < 0 || dischargeEfficiency > 1) {
-            throw new IllegalArgumentException("dischargeEfficiency should be in [0,1] but is " + dischargeEfficiency);
-        }
+        validateNonNull(dischargeSpeed);
+        validateRange(chargeEfficiency, "chargeEfficiency");
+        validateRange(dischargeEfficiency, "dischargeEfficiency");
         // TODO -- check validity of chargeSpeed contents
         // TODO -- check validity of dischargeSpeed contents
         // TODO -- check relation with expiration time and target time
@@ -163,7 +154,7 @@ public final class StorageControlSpace extends BufferControlSpace {
      * 
      * @return charge efficiency (1 is most efficient, so no energy turnover losses on charging)
      */
-    public float getChargeEfficiency() {
+    public double getChargeEfficiency() {
         return chargeEfficiency;
     }
 
@@ -171,16 +162,20 @@ public final class StorageControlSpace extends BufferControlSpace {
      * 
      * @return discharge efficiency (1 is most efficient, so no energy turnover losses on discharging)
      */
-    public float getDischargeEfficiency() {
+    public double getDischargeEfficiency() {
         return dischargeEfficiency;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
+        final int longToIntShift = 32;
         int result = super.hashCode();
-        result = prime * result + Float.floatToIntBits(chargeEfficiency);
-        result = prime * result + Float.floatToIntBits(dischargeEfficiency);
+        long temp;
+        temp = Double.doubleToLongBits(chargeEfficiency);
+        result = prime * result + (int) (temp ^ (temp >>> longToIntShift));
+        temp = Double.doubleToLongBits(dischargeEfficiency);
+        result = prime * result + (int) (temp ^ (temp >>> longToIntShift));
         result = prime * result + ((dischargeSpeed == null) ? 0 : dischargeSpeed.hashCode());
         return result;
     }
@@ -189,28 +184,18 @@ public final class StorageControlSpace extends BufferControlSpace {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (!super.equals(obj)) {
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        StorageControlSpace other = (StorageControlSpace) obj;
-        if (Float.floatToIntBits(chargeEfficiency) != Float.floatToIntBits(other.chargeEfficiency)) {
-            return false;
-        }
-        if (Float.floatToIntBits(dischargeEfficiency) != Float.floatToIntBits(other.dischargeEfficiency)) {
-            return false;
-        }
-        if (dischargeSpeed == null) {
-            if (other.dischargeSpeed != null) {
+        } else {
+            StorageControlSpace other = (StorageControlSpace) obj;
+            if (Double.doubleToLongBits(chargeEfficiency) != Double.doubleToLongBits(other.chargeEfficiency)) {
+                return false;
+            } else if (Double.doubleToLongBits(dischargeEfficiency) != Double.doubleToLongBits(other.dischargeEfficiency)) {
+                return false;
+            } else if (!dischargeSpeed.equals(other.dischargeSpeed)) {
                 return false;
             }
-        } else if (!dischargeSpeed.equals(other.dischargeSpeed)) {
-            return false;
+            return true;
         }
-        return true;
     }
-
 }

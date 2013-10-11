@@ -2,16 +2,14 @@ package org.flexiblepower.rai;
 
 import java.util.UUID;
 
+/**
+ * This is the super-class of both the {@link ControlSpace} and the {@link Allocation}. It describes the unique id that
+ * they should have and the resource identifier.
+ * 
+ * @author TNO
+ */
 public abstract class ResourceInfo {
-
-    /**
-     * Unique identifier for a {@link ResourceInfo}.
-     */
     private final UUID id;
-
-    /**
-     * Identifier of the resource.
-     */
     private final String resourceId;
 
     /**
@@ -43,10 +41,16 @@ public abstract class ResourceInfo {
         resourceId = resourceInfo.resourceId;
     }
 
+    /**
+     * @return The unique identifier for a {@link ResourceInfo}.
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * @return The identifier of the resource to which the {@link ControlSpace} or {@link Allocation} refers.
+     */
     public String getResourceId() {
         return resourceId;
     }
@@ -72,8 +76,8 @@ public abstract class ResourceInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + resourceId.hashCode();
+        result = prime * result + id.hashCode();
         return result;
     }
 

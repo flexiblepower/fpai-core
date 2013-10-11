@@ -9,41 +9,104 @@ import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+import org.flexiblepower.rai.BufferControlSpace;
+
+/**
+ * The {@link ConstraintList} is used as a method to describe several modes. It is most commonly used for representing
+ * different possible charge speeds in the {@link BufferControlSpace}. This is a list of several values or ranges of
+ * values.
+ * 
+ * @author TNO
+ * 
+ * @param <Q>
+ *            The quantity of the values that are stored here.
+ */
 public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<Q>> {
+    /**
+     * Starts a new builder for constructing a {@link ConstraintList} using a default unit value.
+     * 
+     * @param unit
+     *            The default unit value that will be used in the {@link Builder#addSingle(double)} and
+     *            {@link Builder#addRange(double, double)} methods.
+     * @return The new builder.
+     */
     public static <Q extends Quantity> Builder<Q> create(Unit<Q> unit) {
         return new Builder<Q>(unit);
     }
 
+    /**
+     * The {@link Builder} is a convenience class to easily construct new immutable {@link ConstraintList}s.
+     * 
+     * @author TNO
+     * 
+     * @param <Q>
+     *            The quantity of the values that are stored here
+     */
     public static class Builder<Q extends Quantity> {
         private final Unit<Q> defaultUnit;
         private final List<Constraint<Q>> powerConstraints;
 
-        public Builder(Unit<Q> defaultUnit) {
+        Builder(Unit<Q> defaultUnit) {
             this.defaultUnit = defaultUnit;
             powerConstraints = new ArrayList<Constraint<Q>>();
         }
 
+        /**
+         * Adds a single value to the list.
+         * 
+         * @param value
+         *            The value to be added
+         * @return this
+         */
         public Builder<Q> addSingle(Measurable<Q> value) {
             powerConstraints.add(new Constraint<Q>(value));
             return this;
         }
 
+        /**
+         * Adds a single value to the list using the default unit.
+         * 
+         * @param value
+         *            The value to be added
+         * @return this
+         */
         public Builder<Q> addSingle(double value) {
             powerConstraints.add(new Constraint<Q>(Measure.valueOf(value, defaultUnit)));
             return this;
         }
 
+        /**
+         * Adds a ranged value to the list.
+         * 
+         * @param lowerBound
+         *            The lower bound of the range
+         * @param upperBound
+         *            The upper bound of the range
+         * @return this
+         */
         public Builder<Q> addRange(Measurable<Q> lowerBound, Measurable<Q> upperBound) {
             powerConstraints.add(new Constraint<Q>(lowerBound, upperBound));
             return this;
         }
 
+        /**
+         * Adds a ranged value to the list using the default unit.
+         * 
+         * @param lowerBound
+         *            The lower bound of the range
+         * @param upperBound
+         *            The upper bound of the range
+         * @return this
+         */
         public Builder<Q> addRange(double lowerBound, double upperBound) {
             powerConstraints.add(new Constraint<Q>(Measure.valueOf(lowerBound, defaultUnit),
                                                    Measure.valueOf(upperBound, defaultUnit)));
             return this;
         }
 
+        /**
+         * @return The immutable {@link ConstraintList} that contains the values from this Builder.
+         */
         public ConstraintList<Q> build() {
             return new ConstraintList<Q>(powerConstraints);
         }
@@ -51,6 +114,10 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
     private final Constraint<Q>[] powerConstraints;
 
+    /**
+     * @param list
+     *            Creates a new {@link ConstraintList} from a given list of constraints.
+     */
     @SuppressWarnings("unchecked")
     public ConstraintList(List<Constraint<Q>> list) {
         powerConstraints = list.toArray(new Constraint[list.size()]);
@@ -67,7 +134,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
     }
 
     /**
-     * @return The minimum allowed power level according to the list of power constraints.
+     * @return The lowest lower bound of any {@link Constraint} in this list.
      */
     public Measurable<Q> getMinimum() {
         Measurable<Q> min = null;
@@ -82,7 +149,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
     }
 
     /**
-     * @return The maximum allowed power level according to the list of power constraints.
+     * @return The highest upper bound of any {@link Constraint} in this list.
      */
     public Measurable<Q> getMaximum() {
         Measurable<Q> max = null;

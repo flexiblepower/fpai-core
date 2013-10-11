@@ -2,17 +2,41 @@ package org.flexiblepower.rai;
 
 import java.util.Date;
 
+/**
+ * 
+ * 
+ * @author TNO
+ */
 public abstract class ControlSpace extends ResourceInfo {
+    protected static final void validateNonNull(Object... objects) {
+        for (Object o : objects) {
+            if (o == null) {
+                throw new NullPointerException();
+            }
+        }
+    }
 
-    /**
-     * start time instant of the interval [validFrom,validThru[ for which the control space is valid
-     */
+    protected static final void validateRange(double range, String name) {
+        if (range < 0 || range > 1) {
+            throw new IllegalArgumentException(name + " should be in [0,1] but is " + range);
+        }
+    }
+
+    protected static final void validateTarget(Date targetTime, Double targetStateOfCharge) {
+        if (targetTime == null) {
+            if (targetStateOfCharge != null) {
+                throw new IllegalArgumentException("targetTime is null, not allowed when targetStateOfCharge is specified");
+            }
+        } else {
+            if (targetStateOfCharge == null) {
+                throw new IllegalArgumentException("targetStateOfCharge is null, not allowed when targetTime is specified");
+            } else {
+                validateRange(targetStateOfCharge, "targetStateOfCharge");
+            }
+        }
+    }
+
     private final Date validFrom;
-
-    /**
-     * optional end time instant of the interval [validFrom,validThru[ for which the control space is valid. If not
-     * provided, we have the interval [validFrom, infinite[
-     */
     private final Date validThru;
 
     /**
@@ -23,7 +47,7 @@ public abstract class ControlSpace extends ResourceInfo {
     private final Date expirationTime;
 
     /**
-     * construct control space
+     * Creates a new ControlSpace.
      * 
      * @param resourceId
      *            is creator of control space, is the manager of the resource
@@ -37,11 +61,11 @@ public abstract class ControlSpace extends ResourceInfo {
      *            by then. This parameter is optional.
      * 
      * @throws NullPointerException
-     *             when resourceManager or validFrom is null
+     *             when resourceId or validFrom is null
      * @throws IllegalArgumentException
      *             when validFrom is not before validThru
      */
-    public ControlSpace(String resourceId, Date validFrom, Date validThru, Date expirationTime) {
+    protected ControlSpace(String resourceId, Date validFrom, Date validThru, Date expirationTime) {
         super(resourceId);
         this.validFrom = validFrom;
         this.validThru = validThru;
@@ -57,10 +81,10 @@ public abstract class ControlSpace extends ResourceInfo {
     }
 
     /**
-     * construct control space
+     * Creates a new ControlSpace, without any expiration time.
      * 
      * @param resourceId
-     *            is creator of control space, is the manager of the resource
+     *            is creator of control space. This is the identifier of the resource that has created the ControlSpace.
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
      * @param validThru
@@ -68,15 +92,21 @@ public abstract class ControlSpace extends ResourceInfo {
      *            This parameter is optional.
      * 
      * @throws NullPointerException
-     *             when validFrom, validThru or the resourceManager is null
+     *             when validFrom or the resourceManager is null
      * @throws IllegalArgumentException
      *             when validFrom is not before validThru
      */
-    public ControlSpace(String resourceId, Date validFrom, Date validThru) {
+    protected ControlSpace(String resourceId, Date validFrom, Date validThru) {
         this(resourceId, validFrom, validThru, null);
     }
 
-    public ControlSpace(ControlSpace controlSpace) {
+    /**
+     * Copy constructor.
+     * 
+     * @param controlSpace
+     *            The {@link ControlSpace} that is to be copied.
+     */
+    protected ControlSpace(ControlSpace controlSpace) {
         super(controlSpace);
         validFrom = controlSpace.validFrom;
         validThru = controlSpace.validThru;
@@ -84,22 +114,24 @@ public abstract class ControlSpace extends ResourceInfo {
     }
 
     /**
-     * The expiration time is optional.
-     * 
-     * @return expiration time, or null if not provided
+     * @return The expiration time is an absolute time point (time instant) at which the creator of the control space
+     *         will take autonomously action when no allocation is received by then. It is optional, if not provided the
+     *         resource will never take autonomous actions.
      */
     public Date getExpirationTime() {
         return expirationTime;
     }
 
+    /**
+     * @return The start time instant of the interval [validFrom,validThru[ for which the control space is valid.
+     */
     public Date getValidFrom() {
         return validFrom;
     }
 
     /**
-     * The attribute validTru is optional
-     * 
-     * @return validThru or null if not provided
+     * @return The optional end time instant of the interval [validFrom,validThru[ for which the control space is valid.
+     *         If it is null, we have the interval [validFrom, infinite[.
      */
     public Date getValidThru() {
         return validThru;
@@ -117,14 +149,13 @@ public abstract class ControlSpace extends ResourceInfo {
                 return false;
             } else if (expirationTime != null && !expirationTime.equals(other.expirationTime)) {
                 return false;
-            } else if (!validFrom.equals(other.validFrom)) {
-                return false;
             } else if (validThru == null && other.validThru != null) {
                 return false;
             } else if (validThru != null && !validThru.equals(other.validThru)) {
                 return false;
+            } else {
+                return validFrom.equals(other.validFrom);
             }
-            return true;
         }
     }
 
@@ -133,7 +164,7 @@ public abstract class ControlSpace extends ResourceInfo {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((expirationTime == null) ? 0 : expirationTime.hashCode());
-        result = prime * result + ((validFrom == null) ? 0 : validFrom.hashCode());
+        result = prime * result + validFrom.hashCode();
         result = prime * result + ((validThru == null) ? 0 : validThru.hashCode());
         return result;
     }

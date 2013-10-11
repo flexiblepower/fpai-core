@@ -16,7 +16,7 @@ import org.flexiblepower.rai.values.EnergyProfile;
  * <p>
  * PMSuite - PM Control Specification - v0.6
  */
-public final class TimeShifterControlSpace extends ControlSpace {
+public class TimeShifterControlSpace extends ControlSpace {
 
     /**
      * earliest time instant at which the resource wants to start its program
@@ -34,12 +34,12 @@ public final class TimeShifterControlSpace extends ControlSpace {
     private final EnergyProfile energyProfile;
 
     /**
-     * construct time shifter control space, which exposes the energy flexibility of a resource wanting to execute a
+     * Construct time shifter control space, which exposes the energy flexibility of a resource wanting to execute a
      * program with time shifting flexibility. For no flexibility, set startBefore and startAfter to the same time
      * instant.
      * 
-     * @param resourceManager
-     *            is the creator of the control space
+     * @param resourceId
+     *            is the identifier of the resource that created this control space.
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
      * @param validThru
@@ -55,11 +55,7 @@ public final class TimeShifterControlSpace extends ControlSpace {
      *            is the earliest time instant at which the resource wants to start its program
      * 
      * @throws NullPointerException
-     *             if energyProfile is null
-     * @throws NullPointerException
-     *             if startBefore is null
-     * @throws NullPointerException
-     *             if startAfter is null
+     *             if energyProfile, startBefore or startAfter is null
      * @throws IllegalArgumentException
      *             if startAfter is after startBefore
      */
@@ -74,30 +70,9 @@ public final class TimeShifterControlSpace extends ControlSpace {
         this.energyProfile = energyProfile;
         this.startBefore = startBefore;
         this.startAfter = startAfter;
-        validate();
-    }
 
-    public Date getStartAfter() {
-        return startAfter;
-    }
-
-    public Date getStartBefore() {
-        return startBefore;
-    }
-
-    public EnergyProfile getEnergyProfile() {
-        return energyProfile;
-    }
-
-    private void validate() {
-        if (energyProfile == null) {
-            throw new NullPointerException("energyProfile is null");
-        }
-        if (startBefore == null) {
-            throw new NullPointerException("startBefore is null");
-        }
-        if (startAfter == null) {
-            throw new NullPointerException("startAfter is null");
+        if (energyProfile == null || startAfter == null || startBefore == null) {
+            throw new NullPointerException();
         }
         if (startAfter.after(startBefore)) {
             throw new IllegalArgumentException("startAfter (" + startAfter
@@ -105,17 +80,36 @@ public final class TimeShifterControlSpace extends ControlSpace {
                                                + startBefore
                                                + ")");
         }
-        // TODO -- could check here expiration time in relation with startAfter and startBefore
-        // TODO -- could check that energyProfile must have a total energy > 0
+    }
+
+    /**
+     * @return The earliest time instant at which the resource wants to start its program.
+     */
+    public Date getStartAfter() {
+        return startAfter;
+    }
+
+    /**
+     * @return The latest time instant at which the resource wants to start its program.
+     */
+    public Date getStartBefore() {
+        return startBefore;
+    }
+
+    /**
+     * @return The energy profile.
+     */
+    public EnergyProfile getEnergyProfile() {
+        return energyProfile;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((energyProfile == null) ? 0 : energyProfile.hashCode());
-        result = prime * result + ((startAfter == null) ? 0 : startAfter.hashCode());
-        result = prime * result + ((startBefore == null) ? 0 : startBefore.hashCode());
+        result = prime * result + energyProfile.hashCode();
+        result = prime * result + startAfter.hashCode();
+        result = prime * result + startBefore.hashCode();
         return result;
     }
 
@@ -123,36 +117,19 @@ public final class TimeShifterControlSpace extends ControlSpace {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (!super.equals(obj)) {
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TimeShifterControlSpace other = (TimeShifterControlSpace) obj;
-        if (energyProfile == null) {
-            if (other.energyProfile != null) {
+        } else {
+            TimeShifterControlSpace other = (TimeShifterControlSpace) obj;
+            if (!energyProfile.equals(other.energyProfile)) {
+                return false;
+            } else if (!startAfter.equals(other.startAfter)) {
+                return false;
+            } else if (!startBefore.equals(other.startBefore)) {
                 return false;
             }
-        } else if (!energyProfile.equals(other.energyProfile)) {
-            return false;
+            return true;
         }
-        if (startAfter == null) {
-            if (other.startAfter != null) {
-                return false;
-            }
-        } else if (!startAfter.equals(other.startAfter)) {
-            return false;
-        }
-        if (startBefore == null) {
-            if (other.startBefore != null) {
-                return false;
-            }
-        } else if (!startBefore.equals(other.startBefore)) {
-            return false;
-        }
-        return true;
     }
 
     @Override

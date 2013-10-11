@@ -6,14 +6,11 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 /**
- * A PowerConstraint has two (different) power values or a single power value.
+ * A Constraint represents a range of values from the lowerBound to the upperBound. This is mainly used for the
+ * {@link ConstraintList}.
  * 
- * The semantics is the following: To represent two modes one specifies a power constraint list a,b with two
- * single-value power constraints a and b. To represent an operational mode with power in a range, one specifies a power
- * constraint list with a single two-value power constraint <a,b> which represents the range [a,b]. One can specify
- * multiple power constraints in a power constraint list.
- * 
- * PMSuite - PM Data Specification - v0.6
+ * @param <Q>
+ *            The quantity of the constraint (see the javax.measure package)
  */
 public final class Constraint<Q extends Quantity> {
     private final Measurable<Q> lowerBound;
@@ -35,11 +32,9 @@ public final class Constraint<Q extends Quantity> {
     public Constraint(Measurable<Q> lowerBound, Measurable<Q> upperBound) {
         if (lowerBound == null) {
             throw new NullPointerException("lowerBound is null");
-        }
-        if (upperBound == null) {
+        } else if (upperBound == null) {
             throw new NullPointerException("upperBound is null");
-        }
-        if (upperBound.compareTo(lowerBound) < 0) {
+        } else if (upperBound.compareTo(lowerBound) < 0) {
             throw new IllegalArgumentException("The upperBound is lower than the lowerBound");
         }
 
@@ -48,7 +43,7 @@ public final class Constraint<Q extends Quantity> {
     }
 
     /**
-     * Constructs a power constraint with single power value
+     * Constructs a power constraint with single power value.
      * 
      * @param power
      *            is the single power value
@@ -76,6 +71,9 @@ public final class Constraint<Q extends Quantity> {
         this(Measure.valueOf(lowerBound, unit), Measure.valueOf(upperBound, unit));
     }
 
+    /**
+     * @return true when the lower and upper bound are equal, this this represents as single value.
+     */
     public boolean isSingleValue() {
         return lowerBound.equals(upperBound);
     }
@@ -97,7 +95,7 @@ public final class Constraint<Q extends Quantity> {
 
     /**
      * @param value
-     *            The power value that we want to match
+     *            The value that we want to match
      * @return The value that lies the closest to the bounds that are given. If the value is lower than the lower bound,
      *         than the lower bound is returned. If the value is higher that the upper bound, than the upper bound is
      *         returned. If the value is in between the bounds, the value itself is returned.
@@ -125,29 +123,17 @@ public final class Constraint<Q extends Quantity> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (obj == null) {
+        } else if (obj == null || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Constraint<?> other = (Constraint<?>) obj;
-        if (lowerBound == null) {
-            if (other.lowerBound != null) {
+        } else {
+            Constraint<?> other = (Constraint<?>) obj;
+            if (!lowerBound.equals(other.lowerBound)) {
+                return false;
+            } else if (!upperBound.equals(other.upperBound)) {
                 return false;
             }
-        } else if (!lowerBound.equals(other.lowerBound)) {
-            return false;
+            return true;
         }
-        if (upperBound == null) {
-            if (other.upperBound != null) {
-                return false;
-            }
-        } else if (!upperBound.equals(other.upperBound)) {
-            return false;
-        }
-        return true;
     }
 
     @Override

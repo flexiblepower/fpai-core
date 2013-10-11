@@ -5,61 +5,74 @@ import java.util.UUID;
 
 import org.flexiblepower.rai.values.EnergyProfile;
 
+/**
+ * An Allocation is the datatype that will be sent back from the {@link Controller} to the {@link ControllableResource}.
+ * 
+ * @author TNO
+ */
 public class Allocation extends ResourceInfo {
     private final UUID controlSpaceId;
-    private final Date startTime;
+    private final Date energyProfileStartTime;
     private final EnergyProfile energyProfile;
 
     /**
-     * construct an allocation based on a control space. Note that a control space can give rise to zero, one or
-     * multiple allocations.
+     * Creates a new {@link Allocation} based on a given {@link ControlSpace}. Note that one {@link ControlSpace} map
+     * give rise to any number of allocations.
      * 
      * @param controlSpace
-     *            is the control space the allocation is based on
-     * @param startTime
-     *            is the start time of the energy profile
+     *            is the control space the allocation is based on.
+     * @param energyProfileStartTime
+     *            is the start time of the energy profile.
      * @param energyProfile
-     *            is the profile of the allocation
+     *            is the profile of the allocation.
      * 
      * @throws NullPointerException
-     *             when the controlSpace has a null id
-     * @throws NullPointerException
-     *             when the startTime is null
-     * @throws NullPointerException
-     *             when the energyProfile is null
+     *             when one of the parameters is null.
      */
-    public Allocation(ControlSpace controlSpace, Date startTime, EnergyProfile energyProfile) {
+    public Allocation(ControlSpace controlSpace, Date energyProfileStartTime, EnergyProfile energyProfile) {
         super(controlSpace.getResourceId());
+
         controlSpaceId = controlSpace.getId();
-        this.startTime = startTime;
+        this.energyProfileStartTime = energyProfileStartTime;
         this.energyProfile = energyProfile;
 
-        if (controlSpaceId == null) {
-            throw new NullPointerException("controlSpaceId is null");
-        }
-        if (startTime == null) {
-            throw new NullPointerException("startTime is null");
-        }
-        if (energyProfile == null) {
-            throw new NullPointerException("energyProfile is null");
+        if (controlSpaceId == null || energyProfileStartTime == null || energyProfile == null) {
+            throw new NullPointerException();
         }
     }
 
+    /**
+     * Copy constructor, creates a new allocation that is the same as the given one.
+     * 
+     * @param allocation
+     *            The {@link Allocation} that should be copied.
+     */
     public Allocation(Allocation allocation) {
         super(allocation);
         controlSpaceId = allocation.controlSpaceId;
-        startTime = allocation.startTime;
+        energyProfileStartTime = allocation.energyProfileStartTime;
         energyProfile = allocation.energyProfile;
     }
 
+    /**
+     * @return The UUID of the {@link ControlSpace} that has led to this Allocation.
+     */
     public UUID getControlSpaceId() {
         return controlSpaceId;
     }
 
+    /**
+     * @return The start time of the {@link EnergyProfile}.
+     * @see #getEnergyProfile()
+     */
     public Date getStartTime() {
-        return startTime;
+        return energyProfileStartTime;
     }
 
+    /**
+     * @return The {@link EnergyProfile} that describes the expected energy usage of the resource over the period
+     *         starting from the start time.
+     */
     public EnergyProfile getEnergyProfile() {
         return energyProfile;
     }
@@ -68,9 +81,9 @@ public class Allocation extends ResourceInfo {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((controlSpaceId == null) ? 0 : controlSpaceId.hashCode());
-        result = prime * result + ((energyProfile == null) ? 0 : energyProfile.hashCode());
-        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+        result = prime * result + controlSpaceId.hashCode();
+        result = prime * result + energyProfile.hashCode();
+        result = prime * result + energyProfileStartTime.hashCode();
         return result;
     }
 
@@ -78,35 +91,23 @@ public class Allocation extends ResourceInfo {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (!super.equals(obj)) {
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Allocation other = (Allocation) obj;
-        if (controlSpaceId == null) {
-            if (other.controlSpaceId != null) {
+        } else {
+            Allocation other = (Allocation) obj;
+            if (!controlSpaceId.equals(other.controlSpaceId)) {
+                return false;
+            } else if (!energyProfile.equals(other.energyProfile)) {
+                return false;
+            } else if (!energyProfileStartTime.equals(other.energyProfileStartTime)) {
                 return false;
             }
-        } else if (!controlSpaceId.equals(other.controlSpaceId)) {
-            return false;
+            return true;
         }
-        if (energyProfile == null) {
-            if (other.energyProfile != null) {
-                return false;
-            }
-        } else if (!energyProfile.equals(other.energyProfile)) {
-            return false;
-        }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        return true;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " energyProfile = " + energyProfileStartTime + " " + energyProfile;
     }
 }

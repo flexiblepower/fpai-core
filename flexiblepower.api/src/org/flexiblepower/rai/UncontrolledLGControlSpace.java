@@ -3,78 +3,56 @@ package org.flexiblepower.rai;
 import java.util.Date;
 
 import org.flexiblepower.rai.values.EnergyProfile;
+import org.flexiblepower.time.TimeUtil;
 
 /**
  * UncontrolledLGControlSpace is a ControlSpace to expose energetic flexibility of Uncontrolled Load Generation
- * resource.
- * <p>
- * The Uncontrolled Load/Generation category are devices for which the energy behavior cannot be actively controlled.
- * One could make forecasts. Examples are: PV (Photo-voltaic) panels, television sets, computers, lighting.
- * <p>
+ * resource. The Uncontrolled Load/Generation category are devices for which the energy behavior cannot be actively
+ * controlled. One could make forecasts. Examples are: PV (Photo-voltaic) panels, television sets, computers, lighting.
  * This control space specifies a forecast, expressed as an energy profile and a start time.
- * <p>
- * Note that an EnergyProfile has EnergyOverDuration values which have optional confidenceintervals. This can be used to
- * indicate confidence of the forecasted profile.
- * 
- * PMSuite - PM Control Specification - v0.6
  */
-public final class UncontrolledLGControlSpace extends ControlSpace {
-
+public class UncontrolledLGControlSpace extends ControlSpace {
     private final Date startTime;
     private final EnergyProfile energyProfile;
 
     /**
-     * construct uncontrolledLG control space, which exposes the energy flexibility of an uncontrolled LG resource.
+     * Creates a new uncontrolled control space, which exposes the energy profile of an uncontrolled resource.
      * 
-     * @param resourceManager
-     *            is the creator of the control space
-     * @param validFrom
-     *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
-     * @param validThru
-     *            is the end time instant of the interval [validFrom,validThru[ for which the control space is valid
-     * @param expirationTime
-     *            is the time after which the creator will autonomously act when no allocation was received by then. Is
-     *            optional, one can provide null if not specified.
+     * The validFrom and validThru will be calculated using the startTime and length of the enery profile.
+     * 
+     * @param resourceId
+     *            is the identifier of the resource that created this control space.
      * @param startTime
-     *            is the start time of the forecast energyProfile
+     *            is the start time of the forecast energyProfile.
      * @param energyProfile
-     *            is the forecast energy profile
+     *            is the forecast energy profile.
      * 
      * 
      * @throws NullPointerException
-     *             if startTime is null
-     * @throws NullPointerException
-     *             if energyProfile is null
+     *             if startTime or the energyProfile is null
+     * @see ControlSpace#ControlSpace(String, Date, Date)
      */
-    public UncontrolledLGControlSpace(String resourceId,
-                                      Date validFrom,
-                                      Date validThru,
-                                      Date expirationTime,
-                                      Date startTime,
-                                      EnergyProfile energyProfile) {
-        super(resourceId, validFrom, validThru, expirationTime);
+    public UncontrolledLGControlSpace(String resourceId, Date startTime, EnergyProfile energyProfile) {
+        super(resourceId, startTime, TimeUtil.add(startTime, energyProfile.getDuration()));
         this.startTime = startTime;
         this.energyProfile = energyProfile;
-        validate();
+
+        // TODO -- check relation between startTime and expirationTime
+        // TODO -- option to check for total energy of energy profile, which should be >0
     }
 
+    /**
+     * @return The start time of the energy profile.
+     */
     public Date getStartTime() {
         return startTime;
     }
 
+    /**
+     * @return The energy profile.
+     */
     public EnergyProfile getEnergyProfile() {
         return energyProfile;
-    }
-
-    private void validate() {
-        if (startTime == null) {
-            throw new NullPointerException("startTime is null");
-        }
-        if (energyProfile == null) {
-            throw new NullPointerException("energyProfile is null");
-        }
-        // TODO -- check relation between startTime and expirationTime
-        // TODO -- option to check for total energy of energy profile, which should be >0
     }
 
     @Override
@@ -90,29 +68,16 @@ public final class UncontrolledLGControlSpace extends ControlSpace {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (!super.equals(obj)) {
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UncontrolledLGControlSpace other = (UncontrolledLGControlSpace) obj;
-        if (energyProfile == null) {
-            if (other.energyProfile != null) {
+        } else {
+            UncontrolledLGControlSpace other = (UncontrolledLGControlSpace) obj;
+            if (!energyProfile.equals(other.energyProfile)) {
+                return false;
+            } else if (!startTime.equals(other.startTime)) {
                 return false;
             }
-        } else if (!energyProfile.equals(other.energyProfile)) {
-            return false;
+            return true;
         }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        return true;
     }
-
 }

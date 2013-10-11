@@ -37,7 +37,7 @@ public class BufferControlSpace extends ControlSpace {
     /**
      * state of charge, percentage expressed as float in [0,1]
      */
-    private final float stateOfCharge;
+    private final double stateOfCharge;
 
     /**
      * power constraint list to represent charge speed/curve
@@ -64,7 +64,7 @@ public class BufferControlSpace extends ControlSpace {
      * <p>
      * Is an optional attribute, null when not specified. When not specified also targetTime is not specified.
      */
-    private final Float targetStateOfCharge;
+    private final Double targetStateOfCharge;
 
     /**
      * target time at which one wants to achieve the target state of charge. Is an optional attribute, null when not
@@ -75,8 +75,8 @@ public class BufferControlSpace extends ControlSpace {
     /**
      * construct buffer control space, which exposes the energetic flexibility of a buffer resource.
      * 
-     * @param resourceManager
-     *            creator of the control space, the manager of the buffer resource
+     * @param resourceId
+     *            is the identifier of the resource that created this control space.
      * @param validFrom
      *            is the start time instant of the interval [validFrom,validThru[ for which the control space is valid
      * @param validThru
@@ -106,36 +106,26 @@ public class BufferControlSpace extends ControlSpace {
      *            specified, when not specified then targetTime should not be specified.
      * 
      * @throws NullPointerException
-     *             when totalCapacity is null
-     * @throws NullPointerException
-     *             when chargeSpeed is null
-     * @throws NullPointerException
-     *             when selfDischarge is null
-     * @throws NullPointerException
-     *             when minOnPeriod is null
-     * @throws NullPointerException
-     *             when minOffPeriod is null
-     * @throws NullPointerException
-     *             when targetTime is null and targetStateOfCharge is not null
-     * @throws NullPointerException
-     *             when targetStateOfCharge is null and targetTime is not null
+     *             when totalCapacity, chargeSpeed, selfDischarge, minOnPeriod or minOffPeriod is null.
      * @throws IllegalArgumentException
-     *             when stateOfCharge is not null but not in [0,1]
+     *             when targetTime is null and targetStateOfCharge is not null.
      * @throws IllegalArgumentException
-     *             when targetStateOfCharge is not null but not in [0,1]
+     *             when targetStateOfCharge is null and targetTime is not null.
+     * @throws IllegalArgumentException
+     *             when stateOfCharge or targetStateOfCharge is not in the [0,1] range.
      */
     public BufferControlSpace(String resourceId,
                               Date validFrom,
                               Date validThru,
                               Date expirationTime,
                               Measurable<Energy> totalCapacity,
-                              float stateOfCharge,
+                              double stateOfCharge,
                               ConstraintList<Power> chargeSpeed,
                               Measurable<Power> selfDischarge,
                               Measurable<Duration> minOnPeriod,
                               Measurable<Duration> minOffPeriod,
                               Date targetTime,
-                              Float targetStateOfCharge) {
+                              Double targetStateOfCharge) {
         super(resourceId, validFrom, validThru, expirationTime);
         this.totalCapacity = totalCapacity;
         this.stateOfCharge = stateOfCharge;
@@ -145,38 +135,10 @@ public class BufferControlSpace extends ControlSpace {
         this.minOffPeriod = minOffPeriod;
         this.targetTime = targetTime;
         this.targetStateOfCharge = targetStateOfCharge;
-        validate();
-    }
 
-    private void validate() {
-        if (totalCapacity == null) {
-            throw new NullPointerException("totalCapacity is null");
-        }
-        if (stateOfCharge < 0 || stateOfCharge > 1) {
-            throw new IllegalArgumentException("stateOfCharge should be in [0,1] but is " + stateOfCharge);
-        }
-        if (selfDischarge == null) {
-            throw new NullPointerException("selfDischarge is null");
-        }
-        if (chargeSpeed == null) {
-            throw new NullPointerException("chargeSpeed is null");
-        }
-        if (minOnPeriod == null) {
-            throw new NullPointerException("minOnPeriod is null");
-        }
-        if (minOffPeriod == null) {
-            throw new NullPointerException("minOffPeriod is null");
-        }
-        // TODO -- check validity of chargeSpeed contents
-        if (targetTime == null && targetStateOfCharge != null) {
-            throw new NullPointerException("targetTime is null, not allowed when targetStateOfCharge is specified");
-        }
-        if (targetTime != null && targetStateOfCharge == null) {
-            throw new NullPointerException("targetStateOfCharge is null, not allowed when targetTime is specified");
-        }
-        if (targetStateOfCharge != null && (targetStateOfCharge < 0 || targetStateOfCharge > 1)) {
-            throw new IllegalArgumentException("targetStateOfCharge should be in [0,1] but is " + targetStateOfCharge);
-        }
+        validateNonNull(totalCapacity, selfDischarge, chargeSpeed, minOffPeriod, minOnPeriod);
+        validateRange(stateOfCharge, "stateOfCharge");
+        validateTarget(targetTime, targetStateOfCharge);
         // TODO -- check relation with expiration time and target time
     }
 
@@ -191,7 +153,7 @@ public class BufferControlSpace extends ControlSpace {
      * 
      * @return current SOC
      */
-    public float getStateOfCharge() {
+    public double getStateOfCharge() {
         return stateOfCharge;
     }
 
@@ -226,18 +188,14 @@ public class BufferControlSpace extends ControlSpace {
     }
 
     /**
-     * get target SOC
-     * 
-     * @return target SOC, null when no target (target time and target SOC) specified
+     * @return Target SOC, null when no target (target time and target SOC) specified.
      */
-    public Float getTargetStateOfCharge() {
+    public Double getTargetStateOfCharge() {
         return targetStateOfCharge;
     }
 
     /**
-     * get target time for target SOC
-     * 
-     * @return target time for target SOC, null when no target (target time and target SOC) specified
+     * @return Target time for target SOC, null when no target (target time and target SOC) specified.
      */
     public Date getTargetTime() {
         return targetTime;
@@ -247,14 +205,14 @@ public class BufferControlSpace extends ControlSpace {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((chargeSpeed == null) ? 0 : chargeSpeed.hashCode());
-        result = prime * result + ((minOffPeriod == null) ? 0 : minOffPeriod.hashCode());
-        result = prime * result + ((minOnPeriod == null) ? 0 : minOnPeriod.hashCode());
-        result = prime * result + ((selfDischarge == null) ? 0 : selfDischarge.hashCode());
-        result = prime * result + Float.floatToIntBits(stateOfCharge);
+        result = prime * result + chargeSpeed.hashCode();
+        result = prime * result + minOffPeriod.hashCode();
+        result = prime * result + minOnPeriod.hashCode();
+        result = prime * result + selfDischarge.hashCode();
+        result = (int) (prime * result + Double.doubleToRawLongBits(stateOfCharge));
         result = prime * result + ((targetStateOfCharge == null) ? 0 : targetStateOfCharge.hashCode());
         result = prime * result + ((targetTime == null) ? 0 : targetTime.hashCode());
-        result = prime * result + ((totalCapacity == null) ? 0 : totalCapacity.hashCode());
+        result = prime * result + totalCapacity.hashCode();
         return result;
     }
 
@@ -262,67 +220,28 @@ public class BufferControlSpace extends ControlSpace {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        if (!super.equals(obj)) {
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        BufferControlSpace other = (BufferControlSpace) obj;
-        if (chargeSpeed == null) {
-            if (other.chargeSpeed != null) {
+        } else {
+            BufferControlSpace other = (BufferControlSpace) obj;
+            if (!chargeSpeed.equals(other.chargeSpeed) || !selfDischarge.equals(other.selfDischarge)) {
+                return false;
+            } else if (!minOffPeriod.equals(other.minOffPeriod) || !minOnPeriod.equals(other.minOnPeriod)) {
+                return false;
+            } else if (!totalCapacity.equals(other.totalCapacity)) {
+                return false;
+            } else if (Double.doubleToRawLongBits(stateOfCharge) != Double.doubleToRawLongBits(other.stateOfCharge)) {
+                return false;
+            } else if (targetStateOfCharge == null && other.targetStateOfCharge != null) {
+                return false;
+            } else if (targetStateOfCharge != null && !targetStateOfCharge.equals(other.targetStateOfCharge)) {
+                return false;
+            } else if (targetTime == null && other.targetTime != null) {
+                return false;
+            } else if (targetTime != null && !targetTime.equals(other.targetTime)) {
                 return false;
             }
-        } else if (!chargeSpeed.equals(other.chargeSpeed)) {
-            return false;
+            return true;
         }
-        if (minOffPeriod == null) {
-            if (other.minOffPeriod != null) {
-                return false;
-            }
-        } else if (!minOffPeriod.equals(other.minOffPeriod)) {
-            return false;
-        }
-        if (minOnPeriod == null) {
-            if (other.minOnPeriod != null) {
-                return false;
-            }
-        } else if (!minOnPeriod.equals(other.minOnPeriod)) {
-            return false;
-        }
-        if (selfDischarge == null) {
-            if (other.selfDischarge != null) {
-                return false;
-            }
-        } else if (!selfDischarge.equals(other.selfDischarge)) {
-            return false;
-        }
-        if (Float.floatToIntBits(stateOfCharge) != Float.floatToIntBits(other.stateOfCharge)) {
-            return false;
-        }
-        if (targetStateOfCharge == null) {
-            if (other.targetStateOfCharge != null) {
-                return false;
-            }
-        } else if (!targetStateOfCharge.equals(other.targetStateOfCharge)) {
-            return false;
-        }
-        if (targetTime == null) {
-            if (other.targetTime != null) {
-                return false;
-            }
-        } else if (!targetTime.equals(other.targetTime)) {
-            return false;
-        }
-        if (totalCapacity == null) {
-            if (other.totalCapacity != null) {
-                return false;
-            }
-        } else if (!totalCapacity.equals(other.totalCapacity)) {
-            return false;
-        }
-        return true;
     }
-
 }
