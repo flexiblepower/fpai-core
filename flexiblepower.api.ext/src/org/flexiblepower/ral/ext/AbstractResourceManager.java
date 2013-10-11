@@ -1,4 +1,4 @@
-package org.flexiblepower.ral;
+package org.flexiblepower.ral.ext;
 
 import org.flexiblepower.rai.ControlSpace;
 import org.flexiblepower.rai.Controller;
@@ -9,10 +9,23 @@ import org.flexiblepower.ral.ResourceState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Gives a basic implementation for a {@link ResourceManager}. Any subclass of this class should only implement the
+ * {@link #consume(org.flexiblepower.observation.ObservationProvider, org.flexiblepower.observation.Observation)}
+ * method.
+ * 
+ * @param <CS>
+ *            The type of {@link ControlSpace}
+ * @param <RS>
+ *            The type of {@link ResourceState}
+ * @param <RCP>
+ *            The type of {@link ResourceControlParameters}
+ */
 public abstract class AbstractResourceManager<CS extends ControlSpace, RS extends ResourceState, RCP extends ResourceControlParameters> implements
                                                                                                                                         ResourceManager<CS, RS, RCP> {
-    protected static final String KEY_APPLIANCE_ID = "applianceId";
-
+    /**
+     * The logger that should by any subclass.
+     */
     protected final Logger logger;
 
     private final Class<? extends ResourceDriver<RS, RCP>> driverClass;
@@ -24,16 +37,33 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
 
     private Controller<? super CS> controller;
 
+    /**
+     * Creates a new instance for the specific driver class type and the control space class.
+     * 
+     * @param driverClass
+     *            The class of the driver that is expected.
+     * @param controlSpaceType
+     *            The class of the control space that is expected.
+     */
     protected AbstractResourceManager(Class<? extends ResourceDriver<RS, RCP>> driverClass, Class<CS> controlSpaceType) {
         this.driverClass = driverClass;
         this.controlSpaceType = controlSpaceType;
         this.logger = LoggerFactory.getLogger(getClass());
     }
 
+    /**
+     * @return The last control space that has been sent
+     */
     public ControlSpace getCurrentControlSpace() {
         return currentControlSpace;
     }
 
+    /**
+     * This helper method publishes the {@link ControlSpace} to its controller if its available.
+     * 
+     * @param controlSpace
+     *            The {@link ControlSpace} that must be published.
+     */
     protected void publish(CS controlSpace) {
         this.currentControlSpace = controlSpace;
 

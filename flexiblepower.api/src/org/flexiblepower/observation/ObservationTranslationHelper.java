@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-final class ObservationTranslationHelper {
+public final class ObservationTranslationHelper {
     private static WeakHashMap<Class<?>, Map<String, Method>> cache = new WeakHashMap<Class<?>, Map<String, Method>>();
 
     private ObservationTranslationHelper() {
@@ -41,7 +41,7 @@ final class ObservationTranslationHelper {
         return result;
     }
 
-    static Map<String, Method> getGetterMethods(Class<?> clazz) {
+    public static Map<String, Method> getGetterMethods(Class<?> clazz) {
         Map<String, Method> result = cache.get(clazz);
         if (result == null) {
             result = createGetterMethods(clazz);

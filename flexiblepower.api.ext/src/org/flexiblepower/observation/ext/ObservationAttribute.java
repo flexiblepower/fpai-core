@@ -1,4 +1,4 @@
-package org.flexiblepower.observation;
+package org.flexiblepower.observation.ext;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

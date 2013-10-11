@@ -1,13 +1,15 @@
--buildpath: osgi.core;version="[4.3,5)",\
-			osgi.cmpn;version="[4.3,5)",\
-			slf4j.api;version="[1.6,2.0)",\
-			flexiblepower.api;version=latest
+-buildpath: \
+	osgi.cmpn;version='[4.3,5)',\
+	osgi.core;version='[4.3,5)',\
+	junit.osgi;version='[3.8,4)',\
+	biz.aQute.bnd.annotation,\
+	slf4j.api;version='[1.7,2)',\
+	flexiblepower.api;version=latest
 
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package: \
-	org.flexiblepower.observation;-split-package:=merge-first,\
-	org.flexiblepower.ral;-split-package:=merge-first,\
+	org.flexiblepower.observation.ext,\
+	org.flexiblepower.ral.ext,\
 	org.flexiblepower.ral.drivers.*,\
 	org.flexiblepower.ral.wiring,\
-	org.flexiblepower.simulation
 	org.flexiblepower.simulation
