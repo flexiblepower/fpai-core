@@ -500,7 +500,7 @@ public final class NonSI extends SystemOfUnits {
     public static final Unit<Energy> ELECTRON_VOLT = nonSI(JOULE.times(ELEMENTARY_CHARGE));
 
     /**
-     * A unit of energy equal to <code>3.6E6 J</code> (standard name <code>KilloWattHour</code>).
+     * A unit of energy equal to <code>3.6E6 J</code> (standard name <code>KiloWattHour</code>).
      */
     public static final Unit<Energy> KWH = nonSI(SI.JOULE.times(60 * 60 * 1000));
 
