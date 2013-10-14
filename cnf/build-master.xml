@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="fpai" default="snapshot">
 	<tstamp />
-	<property name="targetversion" value="13.10" />
+	<property name="targetversion" value="14.02" />
 
 	<property name="releasedir" value="/var/www/html/releases/${ant.project.name}" />
 
