@@ -45,7 +45,7 @@
 	</target>
 
 	<target name="really-do-release">
-		<property name="version" value="${targetversion}-RELEASE" />
+		<property name="version" value="${targetversion}" />
 		
 		<antcall target="clean" />
 		<antcall target="release" />
