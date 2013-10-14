@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="fpai" default="build">
-	<property name="version" value="1.0-SNAPSHOT" />
+<project name="fpai" default="snapshot">
+	<tstamp />
+	<property name="targetversion" value="1.0" />
 
-	<property name="releasedir" value="/var/www/html/releases/fpai" />
+	<property name="releasedir" value="/var/www/html/releases/${ant.project.name}" />
 
 	<!-- TODO: include the appstore again when it is fixed -->
 	<fileset id="build" dir="..">
@@ -18,6 +19,30 @@
 		<exclude name="*.test/*" />
 		<exclude name="*appstore*/*" />
 	</fileset>
+	
+	<target name="snapshot">
+		<property name="version" value="${targetversion}-SNAPSHOT" />
+
+		<antcall target="clean" />
+		<antcall target="release" />
+		<antcall target="coverage-report" />
+		<antcall target="test" />
+		<antcall target="checkstyle" />
+		<antcall target="publishrelease" />
+		<antcall target="publishjavadoc" />
+	</target>
+
+	<target name="nightly">
+		<property name="version" value="${DSTAMP}-NIGHTLY-${targetversion}" />
+		
+		<antcall target="clean" />
+		<antcall target="release" />
+		<antcall target="coverage-report" />
+		<antcall target="test" />
+		<antcall target="checkstyle" />
+		<antcall target="publishrelease" />
+		<antcall target="publishjavadoc" />
+	</target>
 
 	<target name="echo">
 		<subant target="echo">
@@ -92,17 +117,23 @@
 		</zip>
 	</target>
 	
+	<fileset dir=".." id="javadoc_files">
+		<include name="flexiblepower.api/**/*.java" />
+		<include name="flexiblepower.api.ext/**/*.java" />
+		<exclude name="*.test/*" />
+		<exclude name="**/*Test.java" />
+	</fileset>
+	
 	<target name="publishjavadoc">
 		<delete dir="${releasedir}/${version}/javadoc" />
 		<mkdir dir="${releasedir}/${version}/javadoc" />
 		<javadoc encoding="UTF-8" destdir="${releasedir}/${version}/javadoc" windowtitle="FlexiblePower Application Infrastructure (FPAI)">
 			<classpath location="../cnf/bnd/biz.aQute.bnd-2.1.0.jar" />
-			<fileset dir="..">
-				<include name="flexiblepower.api/**/*.java" />
-				<include name="flexiblepower.api.ext/**/*.java" />
-				<exclude name="*.test/*" />
-				<exclude name="**/*Test.java" />
-			</fileset>
+			<fileset refid="javadoc_files" />
 		</javadoc>
+		
+		<zip basedir="${releasedir}/${version}/javadoc" destfile="${releasedir}/${version}/fpai-javadoc-${version}.zip">
+			<include name="**" />
+		</zip>
 	</target>
 </project>
