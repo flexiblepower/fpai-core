@@ -1,0 +1,3 @@
+[submodule "cnf.shared"]
+	path = cnf.shared
+	url = git@openemf.labsgn.tno.nl:cnf.shared

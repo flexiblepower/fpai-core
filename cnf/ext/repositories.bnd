@@ -1,4 +1,4 @@
-plugindir: ${workspace}/cnf/bnd
+plugindir: ${workspace}/cnf.shared/bnd
 
 -pluginpath: \
 	${plugindir}/biz.aQute.repository-2.0.5.jar,\
