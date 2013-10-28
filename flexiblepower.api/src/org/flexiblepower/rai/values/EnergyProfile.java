@@ -115,6 +115,34 @@ public class EnergyProfile extends AbstractList<Element> {
         }
 
         /**
+         * Adds an element using the average amount of power in this element
+         * 
+         * @param duration
+         *            The duration for this element
+         * @param averagePower
+         *            The average amount of power in this element
+         * @return this
+         */
+        public Builder addPower(Measurable<Duration> duration, Measurable<Power> averagePower) {
+            double powerW = averagePower.doubleValue(WATT);
+            double durationS = duration.doubleValue(SECOND);
+            profile.add(new Element(duration, Measure.valueOf(powerW * durationS, JOULE)));
+            return this;
+        }
+
+        /**
+         * Adds an element using the default duration as set by the {@link #setDuration(Measurable)} method.
+         * 
+         * @param averagePower
+         *            The average amount of power in this element
+         * @return this
+         */
+        public Builder addPower(Measurable<Power> averagePower) {
+            this.addPower(duration, averagePower);
+            return this;
+        }
+
+        /**
          * Sets the current duration that will be used in any subsequent calls to {@link #add(Measurable)}.
          * 
          * @param duration
