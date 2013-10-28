@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="fpai" default="snapshot">
-	<import file="../cnf.shared/build-jenkins.xml" />
-		
-	<tstamp />
 	<property name="targetversion" value="14.02" />
-
-	<target name="snapshot">
-		<property name="version" value="${targetversion}-SNAPSHOT" />
-		<antcall target="distribute" />
-	</target>
-
-	<target name="nightly">
-		<property name="version" value="${targetversion}-${DSTAMP}-NIGHTLY" />
-		<antcall target="distribute" />
-	</target>
-
-	<target name="really-do-release">
-		<property name="version" value="${targetversion}" />
-		<antcall target="distribute" />
-	</target>
+	<import file="../cnf.shared/build-jenkins.xml" />
 </project>
