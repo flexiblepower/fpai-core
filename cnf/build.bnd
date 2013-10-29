@@ -1,4 +1,4 @@
--include: ../cnf.shared/build.bnd
+-include: cnf.shared/build.bnd
 
 Bundle-Category: FlexiblePower Application Infrastructure
 qualifier: SNAPSHOT-${tstamp}
