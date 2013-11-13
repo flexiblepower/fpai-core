@@ -109,23 +109,43 @@ public class ObservationProviderRegistrationHelper {
         addInterfaces(observationClass, interfaces);
         setProperty(KEY_OBSERVATION_TYPE, interfaces.toArray(new String[interfaces.size()]));
 
-        Map<String, Method> methods = ObservationTranslationHelper.getGetterMethods(observationClass);
-        for (Entry<String, Method> entry : methods.entrySet()) {
-            String name = entry.getKey();
-            Method method = entry.getValue();
-
-            Class<?> type = method.getReturnType();
-            String typeName = type.isEnum() ? String.class.getName() : type.getName();
-            setProperty(KEY_OBSERVATION_TYPE + "." + name, typeName);
-
-            ObservationAttribute annotation = method.getAnnotation(ObservationAttribute.class);
-            if (annotation != null) {
-                setProperty(KEY_OBSERVATION_TYPE + "." + name + ".unit", annotation.unit());
-                setProperty(KEY_OBSERVATION_TYPE + "." + name + ".optional", annotation.optional());
-            }
-        }
+        addType(KEY_OBSERVATION_TYPE, observationClass, new HashSet<Class<?>>());
 
         return this;
+    }
+
+    private void addType(String parentPrefix, Class<?> observationClass, HashSet<Class<?>> visitedClasses) {
+        Map<String, Method> methods = ObservationTranslationHelper.getGetterMethods(observationClass);
+        for (Entry<String, Method> entry : methods.entrySet()) {
+            addTypeField(parentPrefix, entry, visitedClasses);
+        }
+    }
+
+    private void addTypeField(String parentPrefix, Entry<String, Method> typeField, HashSet<Class<?>> visitedClasses) {
+        String name = typeField.getKey();
+        String prefix = parentPrefix + "." + name;
+
+        Method method = typeField.getValue();
+        Class<?> type = method.getReturnType();
+
+        if (visitedClasses.contains(type)) {
+            throw new IllegalArgumentException("Circular typing detected in Observation type!");
+        } else {
+            visitedClasses.add(type);
+        }
+
+        String typeName = type.isEnum() ? String.class.getName() : type.getName();
+        setProperty(prefix, typeName);
+
+        ObservationAttribute annotation = method.getAnnotation(ObservationAttribute.class);
+        if (annotation != null) {
+            setProperty(prefix + ".unit", annotation.unit());
+            setProperty(prefix + ".optional", annotation.optional());
+        }
+
+        if (!type.getPackage().getName().startsWith("java.")) {
+            addType(prefix, type, visitedClasses);
+        }
     }
 
     /**
