@@ -119,7 +119,7 @@ public class ObservationProviderRegistrationHelper {
     public ObservationProviderRegistrationHelper observationType(Class<?> observationClass) {
         Set<String> interfaces = new HashSet<String>();
         addInterfaces(observationClass, interfaces);
-        setProperty(KEY_OBSERVATION_TYPE, observationClass.getName());
+        setProperty(KEY_OBSERVATION_TYPE, interfaces.toArray(new String[interfaces.size()]));
         addType(KEY_OBSERVATION_TYPE, observationClass, new HashSet<Class<?>>());
         return this;
     }

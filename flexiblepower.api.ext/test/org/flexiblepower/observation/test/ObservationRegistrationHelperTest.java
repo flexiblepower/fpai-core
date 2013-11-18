@@ -3,10 +3,12 @@ package org.flexiblepower.observation.test;
 import static org.flexiblepower.observation.ext.ObservationProviderRegistrationHelper.KEY_OBSERVATION_OF;
 import static org.flexiblepower.observation.ext.ObservationProviderRegistrationHelper.KEY_OBSERVATION_TYPE;
 import static org.flexiblepower.observation.ext.ObservationProviderRegistrationHelper.KEY_OBSERVED_BY;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -15,7 +17,10 @@ import junit.framework.TestCase;
 import org.flexiblepower.observation.ObservationProvider;
 import org.flexiblepower.observation.ext.ObservationAttribute;
 import org.flexiblepower.observation.ext.ObservationProviderRegistrationHelper;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 public class ObservationRegistrationHelperTest extends TestCase {
     interface SubType {
@@ -34,24 +39,34 @@ public class ObservationRegistrationHelperTest extends TestCase {
         int getInt();
     }
 
+    @SuppressWarnings("unchecked")
     public void testComplexObservationType() {
+        final ServiceRegistration<?> reg = mock(ServiceRegistration.class);
         BundleContext context = mock(BundleContext.class);
-        new ObservationProviderRegistrationHelper(this, context).observationType(ComplexType.class).register();
+        when(context.registerService(any(String[].class), eq(this), any(Hashtable.class))).then(new Answer<ServiceRegistration<?>>() {
+            @Override
+            public ServiceRegistration<?> answer(InvocationOnMock invocation) throws Throwable {
+                String[] interfaces = (String[]) invocation.getArguments()[0];
+                assertTrue(Arrays.equals(new String[] { ObservationProvider.class.getName() }, interfaces));
 
-        Map<String, Object> expectedProperties = new HashMap<String, Object>();
-        expectedProperties.put(KEY_OBSERVED_BY, getClass().getName());
-        expectedProperties.put(KEY_OBSERVATION_OF, "unknown");
-        expectedProperties.put(KEY_OBSERVATION_TYPE, ComplexType.class.getName());
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".sub_type", SubType.class.getName());
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".sub_type.int", "int");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".sub_type.double", "double");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".sub_type.string", "string");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".sub_type.map", Map.class.getName());
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".int", "int");
+                Hashtable<?, ?> table = (Hashtable<?, ?>) invocation.getArguments()[2];
+                assertEquals(9, table.size());
+                assertEquals(ObservationRegistrationHelperTest.class.getName(), table.get(KEY_OBSERVED_BY));
+                assertEquals("unknown", table.get(KEY_OBSERVATION_OF));
+                assertTrue(Arrays.equals(new String[] { ComplexType.class.getName() },
+                                         (String[]) table.get(KEY_OBSERVATION_TYPE)));
+                assertEquals(SubType.class.getName(), table.get(KEY_OBSERVATION_TYPE + ".sub_type"));
+                assertEquals("int", table.get(KEY_OBSERVATION_TYPE + ".sub_type.int"));
+                assertEquals("double", table.get(KEY_OBSERVATION_TYPE + ".sub_type.double"));
+                assertEquals("string", table.get(KEY_OBSERVATION_TYPE + ".sub_type.string"));
+                assertEquals(Map.class.getName(), table.get(KEY_OBSERVATION_TYPE + ".sub_type.map"));
+                assertEquals("int", table.get(KEY_OBSERVATION_TYPE + ".int"));
 
-        verify(context).registerService(new String[] { ObservationProvider.class.getName() },
-                                        this,
-                                        new Hashtable<String, Object>(expectedProperties));
+                return reg;
+            }
+        });
+        assertEquals(reg, new ObservationProviderRegistrationHelper(this, context).observationType(ComplexType.class)
+                                                                                  .register());
     }
 
     interface CyclicType {
@@ -76,23 +91,33 @@ public class ObservationRegistrationHelperTest extends TestCase {
         double getTotal();
     }
 
+    @SuppressWarnings({ "unchecked" })
     public void testUnitType() {
+        final ServiceRegistration<?> reg = mock(ServiceRegistration.class);
         BundleContext context = mock(BundleContext.class);
-        new ObservationProviderRegistrationHelper(this, context).observationType(UnitType.class).register();
+        when(context.registerService(any(String[].class), eq(this), any(Hashtable.class))).then(new Answer<ServiceRegistration<?>>() {
+            @Override
+            public ServiceRegistration<?> answer(InvocationOnMock invocation) throws Throwable {
+                String[] interfaces = (String[]) invocation.getArguments()[0];
+                assertTrue(Arrays.equals(new String[] { ObservationProvider.class.getName() }, interfaces));
 
-        Map<String, Object> expectedProperties = new HashMap<String, Object>();
-        expectedProperties.put(KEY_OBSERVED_BY, getClass().getName());
-        expectedProperties.put(KEY_OBSERVATION_OF, "unknown");
-        expectedProperties.put(KEY_OBSERVATION_TYPE, UnitType.class.getName());
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".power", "int");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".power.unit", "Watt");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".power.optional", false);
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".total", "double");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".total.unit", "kWh");
-        expectedProperties.put(KEY_OBSERVATION_TYPE + ".total.optional", true);
+                Hashtable<?, ?> table = (Hashtable<?, ?>) invocation.getArguments()[2];
+                assertEquals(9, table.size());
+                assertEquals(ObservationRegistrationHelperTest.class.getName(), table.get(KEY_OBSERVED_BY));
+                assertEquals("unknown", table.get(KEY_OBSERVATION_OF));
+                assertTrue(Arrays.equals(new String[] { UnitType.class.getName() },
+                                         (String[]) table.get(KEY_OBSERVATION_TYPE)));
+                assertEquals("int", table.get(KEY_OBSERVATION_TYPE + ".power"));
+                assertEquals("Watt", table.get(KEY_OBSERVATION_TYPE + ".power.unit"));
+                assertEquals(false, table.get(KEY_OBSERVATION_TYPE + ".power.optional"));
+                assertEquals("double", table.get(KEY_OBSERVATION_TYPE + ".total"));
+                assertEquals("kWh", table.get(KEY_OBSERVATION_TYPE + ".total.unit"));
+                assertEquals(true, table.get(KEY_OBSERVATION_TYPE + ".total.optional"));
 
-        verify(context).registerService(new String[] { ObservationProvider.class.getName() },
-                                        this,
-                                        new Hashtable<String, Object>(expectedProperties));
+                return reg;
+            }
+        });
+        assertEquals(reg, new ObservationProviderRegistrationHelper(this, context).observationType(UnitType.class)
+                                                                                  .register());
     }
 }
