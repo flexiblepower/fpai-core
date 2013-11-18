@@ -1,7 +1,0 @@
-(org.osgi.framework.ServicePermission "*" "get,register")
-(org.osgi.framework.PackagePermission "*" "import,exportonly")
-(java.util.PropertyPermission "*" "read,write")
-(java.lang.RuntimePermission "getClassLoader" "*")
-(java.lang.RuntimePermission "accessDeclaredMembers" "*")
-(java.lang.reflect.ReflectPermission "suppressAccessChecks" "*")
-(java.io.FilePermission "<<ALL FILES>>" "read,write,delete")
