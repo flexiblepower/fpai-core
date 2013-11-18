@@ -8,6 +8,9 @@ bin
 bin_test
 generated
 *playground
+cobertura.ser
+instrumented
+coverage.xml
 
 # GWT generated stuff
 .gwt
