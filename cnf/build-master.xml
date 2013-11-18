@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="fpai" default="snapshot">
 	<property name="targetversion" value="14.02" />
+	<property name="project.title" value="FlexiblePower Application Infrastructure" />
 	<import file="../cnf.shared/build-jenkins.xml" />
 </project>
