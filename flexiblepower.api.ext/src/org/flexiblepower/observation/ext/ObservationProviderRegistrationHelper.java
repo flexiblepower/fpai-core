@@ -147,7 +147,7 @@ public class ObservationProviderRegistrationHelper {
             setProperty(prefix + ".optional", annotation.optional());
         }
 
-        if (!type.isPrimitive() && !type.getPackage().getName().startsWith("java.")) {
+        if (ObservationTranslationHelper.isJavaBean(type)) {
             if (!visitedClasses.add(type)) {
                 throw new IllegalArgumentException("Circular typing detected in Observation type [" + type + "]");
             }

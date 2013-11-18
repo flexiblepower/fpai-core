@@ -4,7 +4,7 @@
 	junit.osgi;version='[3.8,4)',\
 	biz.aQute.bnd.annotation
 
-Bundle-Version: 1.0.0.${qualifier}
+Bundle-Version: 1.1.0.${qualifier}
 Export-Package: \
 	javax.measure,\
 	javax.measure.converter,\
