@@ -1,5 +1,8 @@
 package org.flexiblepower.ral.drivers.refrigerator;
 
+import javax.measure.Measurable;
+import javax.measure.quantity.Temperature;
+
 import org.flexiblepower.ral.ResourceState;
 
 /**
@@ -7,20 +10,20 @@ import org.flexiblepower.ral.ResourceState;
  */
 public interface RefrigeratorState extends ResourceState {
     /**
-     * @return The current temperature in the refrigerator in degrees Celcius.
+     * @return The current temperature in the refrigerator.
      */
-    double getCurrentTemperature();
+    Measurable<Temperature> getCurrentTemperature();
 
     /**
-     * @return The target temperature in the refrigerator in degrees Celcius. The current temperature should always be
-     *         lower than the target.
+     * @return The target temperature in the refrigerator. The current temperature should always be lower than the
+     *         target.
      */
-    double getTargetTemperature();
+    Measurable<Temperature> getTargetTemperature();
 
     /**
-     * @return The minimum temperature in the refrigerator in degrees Celcius.
+     * @return The minimum temperature in the refrigerator
      */
-    double getMinimumTemperature();
+    Measurable<Temperature> getMinimumTemperature();
 
     /**
      * @return true when super cool is currently on, false if not.
