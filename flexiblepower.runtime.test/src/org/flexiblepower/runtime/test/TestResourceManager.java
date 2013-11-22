@@ -15,7 +15,7 @@ import org.flexiblepower.ral.ResourceState;
 public class TestResourceManager extends IdentifyableObject implements
                                                            ResourceManager<ControlSpace, ResourceState, ResourceControlParameters> {
     private Controller<? super ControlSpace> controller;
-    private ResourceDriver<ResourceState, ResourceControlParameters> driver;
+    private ResourceDriver<? extends ResourceState, ? super ResourceControlParameters> driver;
 
     public void assertCorrectWiring(Controller<ControlSpace> expectedController,
                                     ResourceDriver<ResourceState, ResourceControlParameters> expectedDriver) {
@@ -49,13 +49,13 @@ public class TestResourceManager extends IdentifyableObject implements
     }
 
     @Override
-    public void registerDriver(ResourceDriver<ResourceState, ResourceControlParameters> driver) {
+    public void registerDriver(ResourceDriver<? extends ResourceState, ? super ResourceControlParameters> driver) {
         this.driver = driver;
         driver.subscribe(this);
     }
 
     @Override
-    public void unregisterDriver(ResourceDriver<ResourceState, ResourceControlParameters> driver) {
+    public void unregisterDriver(ResourceDriver<? extends ResourceState, ? super ResourceControlParameters> driver) {
         this.driver = null;
         driver.unsubscribe(this);
     }

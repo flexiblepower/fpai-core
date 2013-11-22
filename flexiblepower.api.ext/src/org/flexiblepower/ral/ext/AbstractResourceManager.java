@@ -28,10 +28,10 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
      */
     protected final Logger logger;
 
-    private final Class<? extends ResourceDriver<RS, RCP>> driverClass;
+    private final Class<? extends ResourceDriver<? extends RS, ? super RCP>> driverClass;
     private final Class<CS> controlSpaceType;
 
-    private ResourceDriver<RS, RCP> driver;
+    private ResourceDriver<? extends RS, ? super RCP> driver;
 
     private CS currentControlSpace;
 
@@ -45,7 +45,8 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
      * @param controlSpaceType
      *            The class of the control space that is expected.
      */
-    protected AbstractResourceManager(Class<? extends ResourceDriver<RS, RCP>> driverClass, Class<CS> controlSpaceType) {
+    protected AbstractResourceManager(Class<? extends ResourceDriver<? extends RS, ? super RCP>> driverClass,
+                                      Class<CS> controlSpaceType) {
         this.driverClass = driverClass;
         this.controlSpaceType = controlSpaceType;
         this.logger = LoggerFactory.getLogger(getClass());
@@ -88,7 +89,7 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
     /**
      * @return The {@link ResourceDriver} that is currently linked to this {@link ResourceManager}
      */
-    public ResourceDriver<RS, RCP> getDriver() {
+    public ResourceDriver<? extends RS, ? super RCP> getDriver() {
         return driver;
     }
 
@@ -98,7 +99,7 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
     }
 
     @Override
-    public void registerDriver(ResourceDriver<RS, RCP> driver) {
+    public void registerDriver(ResourceDriver<? extends RS, ? super RCP> driver) {
         if (driver != null && driverClass.isAssignableFrom(driver.getClass())) {
             this.driver = driver;
             driver.subscribe(this);
@@ -106,7 +107,7 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
     }
 
     @Override
-    public void unregisterDriver(ResourceDriver<RS, RCP> driver) {
+    public void unregisterDriver(ResourceDriver<? extends RS, ? super RCP> driver) {
         if (this.driver == driver) {
             driver.unsubscribe(this);
             this.driver = null;
