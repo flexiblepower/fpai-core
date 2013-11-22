@@ -29,7 +29,7 @@ public interface ResourceManager<CS extends ControlSpace, RS extends ResourceSta
      * @param driver
      *            The driver that will be bound to this manager.
      */
-    void registerDriver(ResourceDriver<RS, RCP> driver);
+    void registerDriver(ResourceDriver<? extends RS, ? super RCP> driver);
 
     /**
      * Unbinds the given driver from this resource manager. The implementation of this method must make sure to call the
@@ -38,5 +38,5 @@ public interface ResourceManager<CS extends ControlSpace, RS extends ResourceSta
      * @param driver
      *            The driver that will be unbound from this manager.
      */
-    void unregisterDriver(ResourceDriver<RS, RCP> driver);
+    void unregisterDriver(ResourceDriver<? extends RS, ? super RCP> driver);
 }
