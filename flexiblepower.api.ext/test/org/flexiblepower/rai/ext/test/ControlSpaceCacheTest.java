@@ -141,4 +141,19 @@ public class ControlSpaceCacheTest extends TestCase {
         // Test
         assertEquals(c.nextControlSpaceChange().getTime(), 5000);
     }
+
+    public void testCacheCleanup() {
+        // Create
+        ControlSpaceCache<MockCS> c = new ControlSpaceCache<MockCS>(timeService);
+        // Add
+        MockCS controlSpace = new MockCS(1000, 1001);
+        c.addNewControlSpace(controlSpace);
+        for (int i = 0; i < 500; i++) {
+            c.addNewControlSpace(new MockCS(i, i + 1));
+        }
+        // Test
+        assertNotNull(c.getAllControlSpaces());
+        assertEquals(1, c.getAllControlSpaces().size());
+        assertEquals(controlSpace, c.getAllControlSpaces().get(0));
+    }
 }

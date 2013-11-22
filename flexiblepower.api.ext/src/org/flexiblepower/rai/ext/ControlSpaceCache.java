@@ -1,7 +1,6 @@
 package org.flexiblepower.rai.ext;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -59,32 +58,15 @@ public class ControlSpaceCache<CS extends ControlSpace> {
      * @return Active ControlSpace for the given {@link Date}, or null if no active {@link ControlSpace} is known.
      */
     public synchronized CS getActiveControlSpace(Date date) {
-        if (controlSpaceQueue.size() > CLEAN_THRESHOLD) {
-            // Search for the active ControlSpace and clean it while we're at it
-            CS cs = null;
-            Iterator<CS> it = controlSpaceQueue.iterator();
-            while (it.hasNext()) {
-                CS itCs = it.next();
-                if (cs == null && controlSpaceIsValid(itCs, date)) {
-                    cs = itCs;
-                }
-                if (controlSpaceExpired(itCs)) {
-                    it.remove();
-                }
+        Iterator<CS> it = controlSpaceQueue.iterator();
+        while (it.hasNext()) {
+            CS itCs = it.next();
+            if (controlSpaceIsValid(itCs, date)) {
+                return itCs;
             }
-            return cs;
-        } else {
-            // Only search for the active ControlSpace, return asap
-            Iterator<CS> it = controlSpaceQueue.iterator();
-            while (it.hasNext()) {
-                CS itCs = it.next();
-                if (controlSpaceIsValid(itCs, date)) {
-                    return itCs;
-                }
-            }
-            // Nothing found
-            return null;
         }
+        // Nothing found
+        return null;
     }
 
     /**
@@ -104,7 +86,9 @@ public class ControlSpaceCache<CS extends ControlSpace> {
     public synchronized List<CS> getAllControlSpaces() {
         cleanCache(true);
         ArrayList<CS> copy = new ArrayList<CS>(controlSpaceQueue.size());
-        Collections.copy(copy, controlSpaceQueue);
+        if (!controlSpaceQueue.isEmpty()) {
+            copy.addAll(controlSpaceQueue);
+        }
         return copy;
     }
 
