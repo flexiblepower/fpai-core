@@ -34,7 +34,7 @@ public abstract class AbstractObservationProvider<T> implements ObservationProvi
      * @param observation
      *            The observation that will be sent.
      */
-    protected final void publish(Observation<T> observation) {
+    protected final void publish(Observation<? extends T> observation) {
         for (ObservationConsumer<? super T> consumer : consumers) {
             consumer.consume(this, observation);
         }
