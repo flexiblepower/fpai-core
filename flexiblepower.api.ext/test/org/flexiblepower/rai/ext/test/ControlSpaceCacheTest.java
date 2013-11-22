@@ -142,7 +142,7 @@ public class ControlSpaceCacheTest extends TestCase {
         assertEquals(c.nextControlSpaceChange().getTime(), 5000);
     }
 
-    public void testCacheCleanup() {
+    public void testCacheCleanupExpired() {
         // Create
         ControlSpaceCache<MockCS> c = new ControlSpaceCache<MockCS>(timeService);
         // Add
@@ -155,5 +155,34 @@ public class ControlSpaceCacheTest extends TestCase {
         assertNotNull(c.getAllControlSpaces());
         assertEquals(1, c.getAllControlSpaces().size());
         assertEquals(controlSpace, c.getAllControlSpaces().get(0));
+    }
+
+    public void testCacheCleanupCoverageDelete() {
+        // Create
+        ControlSpaceCache<MockCS> c = new ControlSpaceCache<MockCS>(timeService);
+        // Add
+        // they all cover each other, only one should be survive the cleaning process
+        for (int i = 0; i < 500; i++) {
+            c.addNewControlSpace(new MockCS(1000 + i, 3000 - i));
+        }
+        for (int i = 0; i < 500; i++) {
+            c.addNewControlSpace(new MockCS(1000, 3000));
+        }
+        // Test
+        assertNotNull(c.getAllControlSpaces());
+        assertEquals(1, c.getAllControlSpaces().size());
+    }
+
+    public void testCacheCleanupCoverageNoDelete() {
+        // Create
+        ControlSpaceCache<MockCS> c = new ControlSpaceCache<MockCS>(timeService);
+        // Add
+        // They don't cover each other, no ControlSpace should be removed in the cleaning process
+        for (int i = 0; i < 500; i++) {
+            c.addNewControlSpace(new MockCS(1000 + 1, 3000 - i));
+        }
+        // Test
+        assertNotNull(c.getAllControlSpaces());
+        assertEquals(500, c.getAllControlSpaces().size());
     }
 }

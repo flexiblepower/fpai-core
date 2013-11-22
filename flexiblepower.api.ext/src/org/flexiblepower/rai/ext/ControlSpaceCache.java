@@ -14,6 +14,12 @@ import org.flexiblepower.time.TimeService;
  * Class for keeping track of received ControlSpaces and determining which {@link ControlSpace} is active at a certain
  * point in time. This might come in handy while writing a {@link Controller}. Class is thread-safe.
  * 
+ * Each {@link ControlSpace} has a validFrom and a validThru field. Together they define the timeframe in which the
+ * given {@link ControlSpace} is valid. It is possible that a {@link Controller} receives two ControlSpaces with
+ * overlapping timeframes. In that case the most recently received {@link ControlSpace} should be used. This class keeps
+ * track of all the received ControlSpaces, determines the active ControlSpace for a given point in time and
+ * automatically removes ControlSpaces which cannot become active anymore.
+ * 
  * @param <CS>
  *            Type of {@link ControlSpace}
  */
@@ -128,19 +134,54 @@ public class ControlSpaceCache<CS extends ControlSpace> {
     }
 
     /**
-     * Clean the cache if the number of elements exceeds CLEAN_THRESHOLD or the parameter force is true
+     * Clean the cache if the number of elements exceeds CLEAN_THRESHOLD or the parameter force is true.
+     * 
+     * The algorithm removes ControlSpaces which have expired, but also ControlSpaces which haven't expried but are
+     * covered by more recent ControlSpaces.
+     * 
+     * <code>
+     *    |-----------|     // last received CS
+     *  |----|              // 
+     *   |--------|         // can be removed
+     * 
+     *     -> time ->  
+     * </code>
      * 
      * @param force
      *            Indicates if cleaning should be forced
      */
     private void cleanCache(boolean force) {
         if (controlSpaceQueue.size() > CLEAN_THRESHOLD || force) {
+            long now = timeService.getCurrentTimeMillis();
             Iterator<CS> it = controlSpaceQueue.iterator();
+            // keep track of covered time frame
+            long timeFrameStart = -1; // covered time frame start
+            long timeFrameEnd = -1; // covered time frame end
             while (it.hasNext()) {
                 CS cs = it.next();
-                if (controlSpaceExpired(cs)) {
+                if (cs.getValidThru().getTime() < now) {
+                    // already expired, throw away
                     it.remove();
+                    continue;
                 }
+                if (timeFrameStart == -1) {
+                    // first, initialize timeFrameStart and timeFrameEnd
+                    timeFrameStart = cs.getValidFrom().getTime();
+                    timeFrameEnd = cs.getValidThru().getTime();
+                    continue;
+                }
+                // before now is not relevant
+                timeFrameStart = Math.max(timeFrameStart, now);
+                timeFrameEnd = Math.max(timeFrameEnd, now);
+                if (Math.max(now, cs.getValidFrom().getTime()) >= timeFrameStart && cs.getValidThru().getTime() <= timeFrameEnd) {
+                    // ControlSpace is already entirely covered by more recent ControlSpaces
+                    it.remove();
+                } else {
+                    // Expand covered area
+                    timeFrameStart = Math.min(timeFrameStart, cs.getValidFrom().getTime());
+                    timeFrameEnd = Math.max(timeFrameEnd, cs.getValidFrom().getTime());
+                }
+
             }
         }
     }
@@ -159,14 +200,4 @@ public class ControlSpaceCache<CS extends ControlSpace> {
         return controlSpace.getValidFrom().getTime() <= t && controlSpace.getValidThru().getTime() >= t;
     }
 
-    /**
-     * Check if the {@link ControlSpace} has been expired by using the {@link TimeService}
-     * 
-     * @param controlSpace
-     * @return
-     */
-    private boolean controlSpaceExpired(CS controlSpace) {
-        long now = timeService.getCurrentTimeMillis();
-        return controlSpace.getValidThru().getTime() < now;
-    }
 }
