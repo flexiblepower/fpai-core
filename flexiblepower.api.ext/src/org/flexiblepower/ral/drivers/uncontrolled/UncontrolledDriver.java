@@ -6,9 +6,9 @@ import org.flexiblepower.ral.ResourceDriver;
  * To represent any uncontrolled resource, using the {@link UncontrolledState} and {@link UncontrolledControlParameters}
  * types.
  * 
- * @param S
+ * @param <RS>
  *            the type of UncontrolledState
  */
-public interface UncontrolledDriver<S extends UncontrolledState> extends
-                                                                 ResourceDriver<S, UncontrolledControlParameters> {
+public interface UncontrolledDriver<RS extends UncontrolledState> extends
+                                                                  ResourceDriver<RS, UncontrolledControlParameters> {
 }

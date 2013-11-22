@@ -28,7 +28,8 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
      */
     protected final Logger logger;
 
-    private final Class<? extends ResourceDriver<? extends RS, ? super RCP>> driverClass;
+    @SuppressWarnings("rawtypes")
+    private final Class<? extends ResourceDriver> driverClass;
     private final Class<CS> controlSpaceType;
 
     private ResourceDriver<? extends RS, ? super RCP> driver;
@@ -45,8 +46,8 @@ public abstract class AbstractResourceManager<CS extends ControlSpace, RS extend
      * @param controlSpaceType
      *            The class of the control space that is expected.
      */
-    protected AbstractResourceManager(Class<? extends ResourceDriver<? extends RS, ? super RCP>> driverClass,
-                                      Class<CS> controlSpaceType) {
+    @SuppressWarnings("rawtypes")
+    protected AbstractResourceManager(Class<? extends ResourceDriver> driverClass, Class<CS> controlSpaceType) {
         this.driverClass = driverClass;
         this.controlSpaceType = controlSpaceType;
         this.logger = LoggerFactory.getLogger(getClass());
