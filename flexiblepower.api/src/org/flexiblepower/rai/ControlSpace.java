@@ -2,6 +2,13 @@ package org.flexiblepower.rai;
 
 import java.util.Date;
 
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Quantity;
+
+import org.flexiblepower.rai.values.Constraint;
+import org.flexiblepower.rai.values.ConstraintList;
+
 /**
  * 
  * 
@@ -33,6 +40,29 @@ public abstract class ControlSpace extends ResourceInfo {
             } else {
                 validateRange(targetStateOfCharge, "targetStateOfCharge");
             }
+        }
+    }
+
+    protected static final <Q extends Quantity> void validateConstaintList(ConstraintList<Q> list,
+                                                                           boolean acceptNegative) {
+        boolean foundPositiveValues = false;
+        boolean foundNegativeValue = false;
+        final Measurable<Q> zero = Measure.zero();
+
+        for (Constraint<Q> c : list) {
+            if (c.getUpperBound().compareTo(zero) > 0) {
+                foundPositiveValues = true;
+            }
+            if (c.getLowerBound().compareTo(zero) < 0) {
+                foundNegativeValue = true;
+            }
+        }
+
+        if (foundPositiveValues && foundNegativeValue) {
+            throw new IllegalArgumentException("constraintlist should not contain both negative and positive values, see the storage type for this behavior");
+        }
+        if (!acceptNegative && foundNegativeValue) {
+            throw new IllegalArgumentException("constraintlist should not contain negative value");
         }
     }
 

@@ -139,6 +139,7 @@ public class BufferControlSpace extends ControlSpace {
         validateNonNull(totalCapacity, selfDischarge, chargeSpeed, minOffPeriod, minOnPeriod);
         validateRange(stateOfCharge, "stateOfCharge");
         validateTarget(targetTime, targetStateOfCharge);
+        validateConstaintList(chargeSpeed, true);
         // TODO -- check relation with expiration time and target time
     }
 

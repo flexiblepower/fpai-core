@@ -137,6 +137,8 @@ public class StorageControlSpace extends BufferControlSpace {
         validateNonNull(dischargeSpeed);
         validateRange(chargeEfficiency, "chargeEfficiency");
         validateRange(dischargeEfficiency, "dischargeEfficiency");
+        validateConstaintList(chargeSpeed, false);
+        validateConstaintList(dischargeSpeed, false);
         // TODO -- check validity of chargeSpeed contents
         // TODO -- check validity of dischargeSpeed contents
         // TODO -- check relation with expiration time and target time
