@@ -9,9 +9,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, ResourceDriver> {
+    private static final Logger logger = LoggerFactory.getLogger(ResourceDriverTracker.class);
+
     private final ResourceWiringManagerImpl wiring;
     private final ServiceTracker<ResourceDriver, ResourceDriver> tracker;
 
@@ -33,6 +37,7 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
         ResourceDriver resourceDriver = tracker.addingService(reference);
 
         Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
+        logger.debug("Adding driver {} for id [{}]", resourceDriver, resourceId);
         if (resourceId != null) {
             resourceIds.put(resourceDriver, resourceId.toString());
             wiring.getResource(resourceId.toString()).addDriver(resourceDriver);
@@ -48,6 +53,7 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
             Object currId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
 
             if (!oldId.equals(currId)) {
+                logger.debug("Modifying driver {} for id [{}]", resourceDriver, currId);
                 resourceIds.put(resourceDriver, currId.toString());
                 wiring.getResource(oldId).removeDriver(resourceDriver);
                 wiring.getResource(currId.toString()).addDriver(resourceDriver);
@@ -59,6 +65,7 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
     public synchronized void removedService(ServiceReference<ResourceDriver> reference, ResourceDriver resourceDriver) {
         if (resourceIds.containsKey(resourceDriver)) {
             String id = resourceIds.get(resourceDriver);
+            logger.debug("Removing driver {} for id [{}]", resourceDriver, id);
             wiring.getResource(id).removeDriver(resourceDriver);
             resourceIds.remove(resourceDriver);
         }

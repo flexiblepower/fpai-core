@@ -9,9 +9,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager, ResourceManager> {
+    private static final Logger logger = LoggerFactory.getLogger(ResourceManagerTracker.class);
+
     private final ResourceWiringManagerImpl wiring;
     private final ServiceTracker<ResourceManager, ResourceManager> tracker;
 
@@ -34,6 +38,7 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
 
         Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
         if (resourceId != null) {
+            logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
             resourceIds.put(resourceManager, resourceId.toString());
             wiring.getResource(resourceId.toString()).addManager(resourceManager);
         }
@@ -49,6 +54,7 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
             Object currId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
 
             if (!oldId.equals(currId)) {
+                logger.debug("Modifying manager {} for id [{}]", resourceManager, currId);
                 resourceIds.put(resourceManager, currId.toString());
                 wiring.getResource(oldId).removeManager(resourceManager);
                 wiring.getResource(currId.toString()).addManager(resourceManager);
@@ -61,6 +67,7 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
             removedService(ServiceReference<ResourceManager> reference, ResourceManager resourceManager) {
         if (resourceIds.containsKey(resourceManager)) {
             String id = resourceIds.get(resourceManager);
+            logger.debug("Removing manager {} for id [{}]", resourceManager, id);
             wiring.getResource(id).removeManager(resourceManager);
             resourceIds.remove(resourceManager);
         }

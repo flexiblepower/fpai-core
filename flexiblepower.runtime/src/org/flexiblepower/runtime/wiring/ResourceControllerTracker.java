@@ -13,8 +13,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerManager, ControllerManager> {
+    private static final Logger logger = LoggerFactory.getLogger(ResourceControllerTracker.class);
+
     private final ResourceWiringManagerImpl wiring;
     private final ServiceTracker<ControllerManager, ControllerManager> tracker;
 
@@ -57,6 +61,7 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
         ControllerManager controller = tracker.addingService(reference);
 
         Set<String> ids = getIds(reference);
+        logger.debug("Registering controller {} for ids {}", controller, ids);
         resourceIds.put(controller, ids);
         for (String id : ids) {
             wiring.getResource(id).setControllerManager(controller);
@@ -73,6 +78,7 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
             Set<String> currIds = getIds(reference);
 
             if (!oldIds.equals(currIds)) {
+                logger.debug("Modifying controller {} for ids {}", controller, currIds);
                 Set<String> toRemove = new HashSet<String>(oldIds);
                 toRemove.removeAll(currIds);
                 for (String id : toRemove) {
@@ -95,6 +101,7 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
             removedService(ServiceReference<ControllerManager> reference, ControllerManager controller) {
         if (resourceIds.containsKey(controller)) {
             Set<String> ids = resourceIds.get(controller);
+            logger.debug("Removing controller {} for ids {}", controller, ids);
             for (String id : ids) {
                 wiring.getResource(id).unsetControllerManager(controller);
             }
