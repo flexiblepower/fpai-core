@@ -58,6 +58,8 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
                 resourceIds.put(resourceManager, currId.toString());
                 wiring.getResource(oldId).removeManager(resourceManager);
                 wiring.getResource(currId.toString()).addManager(resourceManager);
+
+                wiring.cleanUp();
             }
         }
     }
@@ -70,6 +72,8 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
             logger.debug("Removing manager {} for id [{}]", resourceManager, id);
             wiring.getResource(id).removeManager(resourceManager);
             resourceIds.remove(resourceManager);
+
+            wiring.cleanUp();
         }
 
         tracker.removedService(reference, resourceManager);

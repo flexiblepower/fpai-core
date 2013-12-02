@@ -57,6 +57,8 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
                 resourceIds.put(resourceDriver, currId.toString());
                 wiring.getResource(oldId).removeDriver(resourceDriver);
                 wiring.getResource(currId.toString()).addDriver(resourceDriver);
+
+                wiring.cleanUp();
             }
         }
     }
@@ -68,6 +70,8 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
             logger.debug("Removing driver {} for id [{}]", resourceDriver, id);
             wiring.getResource(id).removeDriver(resourceDriver);
             resourceIds.remove(resourceDriver);
+
+            wiring.cleanUp();
         }
 
         tracker.removedService(reference, resourceDriver);

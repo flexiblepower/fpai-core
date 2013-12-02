@@ -105,6 +105,10 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         return resourceId;
     }
 
+    public boolean isEmpty() {
+        return controllerManager == null && drivers.isEmpty() && managers.isEmpty();
+    }
+
     @Override
     public ControllerManager getControllerManager() {
         return controllerManager;

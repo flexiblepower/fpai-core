@@ -92,6 +92,8 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
                 }
 
                 resourceIds.put(controller, currIds);
+
+                wiring.cleanUp();
             }
         }
     }
@@ -106,6 +108,8 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
                 wiring.getResource(id).unsetControllerManager(controller);
             }
             resourceIds.remove(controller);
+
+            wiring.cleanUp();
         }
 
         tracker.removedService(reference, controller);

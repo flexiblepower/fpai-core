@@ -3,6 +3,7 @@ package org.flexiblepower.runtime.wiring;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.flexiblepower.ral.ResourceControlParameters;
@@ -39,6 +40,15 @@ public class ResourceWiringManagerImpl implements ResourceWiringManager {
         driverTracker.close();
         managerTracker.close();
         controllerTracker.close();
+    }
+
+    public void cleanUp() {
+        for (Iterator<ResourceImpl<?, ?>> it = resources.values().iterator(); it.hasNext();) {
+            ResourceImpl<?, ?> resource = it.next();
+            if (resource.isEmpty()) {
+                it.remove();
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
