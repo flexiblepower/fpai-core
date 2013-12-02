@@ -11,6 +11,9 @@ import org.flexiblepower.ral.ResourceManager;
  * {@link Controller} types together using the resourceId properties in the service repository.
  */
 public interface ResourceWiringManager {
+    final String RESOURCE_ID = "resourceId";
+    final String RESOURCE_IDS = "resourceIds";
+
     /**
      * @return A collection with all the resources that are currently active.
      */

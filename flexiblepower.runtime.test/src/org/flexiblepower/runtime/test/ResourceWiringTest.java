@@ -41,13 +41,13 @@ public class ResourceWiringTest extends TestCase {
 
     private <T> ServiceRegistration<T> registerService(Class<T> serviceClass, T service, String resourceId) {
         Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put("resourceId", resourceId);
+        props.put(ResourceWiringManager.RESOURCE_ID, resourceId);
         return bundleContext.registerService(serviceClass, service, props);
     }
 
     private <T> ServiceRegistration<T> registerService(Class<T> serviceClass, T service, String... resourceIds) {
         Dictionary<String, Object> props = new Hashtable<String, Object>();
-        props.put("resourceIds", resourceIds);
+        props.put(ResourceWiringManager.RESOURCE_IDS, resourceIds);
         return bundleContext.registerService(serviceClass, service, props);
     }
 
@@ -89,5 +89,42 @@ public class ResourceWiringTest extends TestCase {
         rm2.assertCorrectWiring(null, null);
         rd1.assertCorrectWiring(null);
         rd2.assertCorrectWiring(null);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void testModified() {
+        TestControllerManager cm = new TestControllerManager();
+        TestResourceManager rm = new TestResourceManager();
+        TestResourceDriver rd = new TestResourceDriver();
+
+        rm.assertCorrectWiring(null, null);
+        rd.assertCorrectWiring(null);
+
+        ServiceRegistration<ControllerManager> srCm = registerService(ControllerManager.class, cm, "type1", "type2");
+        ServiceRegistration<ResourceManager> srRm1 = registerService(ResourceManager.class, rm, "type1");
+        ServiceRegistration<ResourceDriver> srRd1 = registerService(ResourceDriver.class, rd, "type1");
+
+        rm.assertCorrectWiring(cm, rd);
+        rd.assertCorrectWiring(rm);
+
+        Dictionary<String, Object> props = new Hashtable<String, Object>();
+        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "type2" });
+        srCm.setProperties(props);
+
+        rm.assertCorrectWiring(null, rd);
+        rd.assertCorrectWiring(rm);
+
+        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "type1" });
+        srCm.setProperties(props);
+
+        rm.assertCorrectWiring(cm, rd);
+        rd.assertCorrectWiring(rm);
+
+        srCm.unregister();
+        srRd1.unregister();
+        srRm1.unregister();
+
+        rm.assertCorrectWiring(null, null);
+        rd.assertCorrectWiring(null);
     }
 }

@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlParameters> implements Resource<RS, RCP> {
-    private final static Logger logger = LoggerFactory.getLogger(ResourceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceImpl.class);
 
     private final String resourceId;
 
@@ -32,14 +32,13 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         }
 
         if (this.controllerManager != null) {
-            logger.warn("Setting the controller while there is already one active! Removed the old one...");
-            unsetControllerManager(this.controllerManager);
-        }
-
-        this.controllerManager = controller;
-        for (ResourceManager<?, RS, RCP> manager : managers) {
-            logger.debug("Bound resource manager for [" + resourceId + "] to controller " + controller);
-            controller.registerResource(manager);
+            logger.warn("Setting the controller while there is already one active! Ignoring...");
+        } else {
+            this.controllerManager = controller;
+            for (ResourceManager<?, RS, RCP> manager : managers) {
+                logger.debug("Bound resource manager for [" + resourceId + "] to controller " + controller);
+                controller.registerResource(manager);
+            }
         }
     }
 
