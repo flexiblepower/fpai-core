@@ -33,6 +33,10 @@ public class ResourceWiringManagerImpl implements ResourceWiringManager {
         driverTracker = new ResourceDriverTracker(this, context);
         managerTracker = new ResourceManagerTracker(this, context);
         controllerTracker = new ResourceControllerTracker(this, context);
+
+        driverTracker.start();
+        managerTracker.start();
+        controllerTracker.start();
     }
 
     @Deactivate
