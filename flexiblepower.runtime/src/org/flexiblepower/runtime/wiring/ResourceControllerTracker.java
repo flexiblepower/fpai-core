@@ -84,12 +84,14 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
                 for (String id : toRemove) {
                     wiring.getResource(id).unsetControllerManager(controller);
                 }
+                logger.debug("Removed controller ids {}", toRemove);
 
                 Set<String> toAdd = new HashSet<String>(currIds);
                 toAdd.removeAll(oldIds);
                 for (String id : toAdd) {
                     wiring.getResource(id).setControllerManager(controller);
                 }
+                logger.debug("Added controller ids {}", toAdd);
 
                 resourceIds.put(controller, currIds);
 
