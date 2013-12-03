@@ -35,14 +35,7 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
     @Override
     public synchronized ResourceDriver addingService(ServiceReference<ResourceDriver> reference) {
         ResourceDriver resourceDriver = tracker.addingService(reference);
-
-        Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
-        logger.debug("Adding driver {} for id [{}]", resourceDriver, resourceId);
-        if (resourceId != null) {
-            resourceIds.put(resourceDriver, resourceId.toString());
-            wiring.getResource(resourceId.toString()).addDriver(resourceDriver);
-        }
-
+        modifiedService(reference, resourceDriver);
         return resourceDriver;
     }
 
@@ -59,6 +52,13 @@ class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, 
                 wiring.getResource(currId.toString()).addDriver(resourceDriver);
 
                 wiring.cleanUp();
+            }
+        } else {
+            Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
+            logger.debug("Adding driver {} for id [{}]", resourceDriver, resourceId);
+            if (resourceId != null) {
+                resourceIds.put(resourceDriver, resourceId.toString());
+                wiring.getResource(resourceId.toString()).addDriver(resourceDriver);
             }
         }
     }

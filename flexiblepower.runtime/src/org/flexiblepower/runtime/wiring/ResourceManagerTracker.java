@@ -35,14 +35,7 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
     @Override
     public synchronized ResourceManager addingService(ServiceReference<ResourceManager> reference) {
         ResourceManager resourceManager = tracker.addingService(reference);
-
-        Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
-        if (resourceId != null) {
-            logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
-            resourceIds.put(resourceManager, resourceId.toString());
-            wiring.getResource(resourceId.toString()).addManager(resourceManager);
-        }
-
+        modifiedService(reference, resourceManager);
         return resourceManager;
     }
 
@@ -60,6 +53,13 @@ class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager
                 wiring.getResource(currId.toString()).addManager(resourceManager);
 
                 wiring.cleanUp();
+            }
+        } else {
+            Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
+            if (resourceId != null) {
+                logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
+                resourceIds.put(resourceManager, resourceId.toString());
+                wiring.getResource(resourceId.toString()).addManager(resourceManager);
             }
         }
     }

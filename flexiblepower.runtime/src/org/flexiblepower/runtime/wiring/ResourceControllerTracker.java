@@ -59,14 +59,7 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
     @Override
     public synchronized ControllerManager addingService(ServiceReference<ControllerManager> reference) {
         ControllerManager controller = tracker.addingService(reference);
-
-        Set<String> ids = getIds(reference);
-        logger.debug("Registering controller {} for ids {}", controller, ids);
-        resourceIds.put(controller, ids);
-        for (String id : ids) {
-            wiring.getResource(id).setControllerManager(controller);
-        }
-
+        modifiedService(reference, controller);
         return controller;
     }
 
@@ -96,6 +89,13 @@ class ResourceControllerTracker implements ServiceTrackerCustomizer<ControllerMa
                 resourceIds.put(controller, currIds);
 
                 wiring.cleanUp();
+            }
+        } else {
+            Set<String> ids = getIds(reference);
+            logger.debug("Registering controller {} for ids {}", controller, ids);
+            resourceIds.put(controller, ids);
+            for (String id : ids) {
+                wiring.getResource(id).setControllerManager(controller);
             }
         }
     }
