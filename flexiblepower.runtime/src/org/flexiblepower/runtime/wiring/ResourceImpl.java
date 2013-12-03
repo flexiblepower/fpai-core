@@ -32,11 +32,12 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         }
 
         if (this.controllerManager != null) {
-            logger.warn("Setting the controller while there is already one active! Ignoring...");
+            logger.warn("Adding the controller while there is already one active! Ignoring...");
         } else {
+            logger.debug("Adding resource controller for [{}]: {}", resourceId, controller);
             this.controllerManager = controller;
             for (ResourceManager<?, RS, RCP> manager : managers) {
-                logger.debug("Bound resource manager for [" + resourceId + "] to controller " + controller);
+                logger.debug("Bound resource manager [{}] to controller [{}]", manager, controller);
                 controller.registerResource(manager);
             }
         }
@@ -44,57 +45,62 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
 
     public synchronized void unsetControllerManager(ControllerManager controller) {
         if (this.controllerManager != controller) {
-            logger.error("Could not unset the controller, because it does not match the registered one");
+            logger.error("Could not remove the controller, because it does not match the registered one");
             return;
         }
 
+        logger.debug("Removing resource controller for [{}]: {}", resourceId, controller);
         for (ResourceManager<?, RS, RCP> manager : managers) {
-            logger.debug("Unbound resource manager for [" + resourceId + "] to controller " + controller);
+            logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controller);
             controller.unregisterResource(manager);
         }
         this.controllerManager = null;
     }
 
     public synchronized void addManager(ResourceManager<?, RS, RCP> manager) {
+        logger.debug("Adding resource manager for [{}]: {}", resourceId, manager);
         if (managers.add(manager)) {
             if (controllerManager != null) {
-                logger.debug("Bound resource manager for [" + resourceId + "] to controller " + controllerManager);
+                logger.debug("Bound resource manager [{}] to controller [{}]", manager, controllerManager);
                 controllerManager.registerResource(manager);
             }
 
             for (ResourceDriver<RS, RCP> driver : drivers) {
-                logger.debug("Bound resource driver for [" + resourceId + "] to its manager " + manager);
+                logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
                 manager.registerDriver(driver);
             }
         }
     }
 
     public synchronized void removeManager(ResourceManager<?, RS, RCP> manager) {
+        logger.debug("Removing resource manager for [{}]: {}", resourceId, manager);
         if (managers.remove(manager)) {
             if (controllerManager != null) {
-                logger.debug("Unbound resource manager for [" + resourceId + "] to controller " + controllerManager);
+                logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controllerManager);
                 controllerManager.unregisterResource(manager);
             }
             for (ResourceDriver<RS, RCP> driver : drivers) {
-                logger.debug("Unbound resource driver for [" + resourceId + "] to its manager " + manager);
+                logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 manager.unregisterDriver(driver);
             }
         }
     }
 
     public synchronized void addDriver(ResourceDriver<RS, RCP> driver) {
+        logger.debug("Adding resource driver for [{}]: {}", resourceId, driver);
         if (drivers.add(driver)) {
             for (ResourceManager<?, RS, RCP> manager : managers) {
-                logger.debug("Bound resource driver for [" + resourceId + "] to its manager " + manager);
+                logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
                 manager.registerDriver(driver);
             }
         }
     }
 
     public synchronized void removeDriver(ResourceDriver<RS, RCP> driver) {
+        logger.debug("Removing resource driver for [{}]: {}", resourceId, driver);
         if (drivers.remove(driver)) {
             for (ResourceManager<?, RS, RCP> manager : managers) {
-                logger.debug("Unbound resource driver for [" + resourceId + "] to its manager " + manager);
+                logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 manager.unregisterDriver(driver);
             }
         }

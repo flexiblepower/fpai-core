@@ -5,77 +5,47 @@ import java.util.Map;
 
 import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.wiring.ResourceWiringManager;
+import org.osgi.framework.AllServiceListener;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-class ResourceManagerTracker implements ServiceTrackerCustomizer<ResourceManager, ResourceManager> {
-    private static final Logger logger = LoggerFactory.getLogger(ResourceManagerTracker.class);
-
-    private final ResourceWiringManagerImpl wiring;
-    private final ServiceTracker<ResourceManager, ResourceManager> tracker;
-
+class ResourceManagerTracker extends SimpleTracker<ResourceManager> implements AllServiceListener {
     private final Map<ResourceManager, String> resourceIds;
 
     public ResourceManagerTracker(ResourceWiringManagerImpl wiring, BundleContext context) {
-        this.wiring = wiring;
+        super(wiring, context, ResourceManager.class, ResourceWiringManager.RESOURCE_ID);
         resourceIds = new HashMap<ResourceManager, String>();
-        tracker = new ServiceTracker<ResourceManager, ResourceManager>(context, ResourceManager.class, this);
-        tracker.open();
-    }
-
-    public void close() {
-        tracker.close();
     }
 
     @Override
-    public synchronized ResourceManager addingService(ServiceReference<ResourceManager> reference) {
-        ResourceManager resourceManager = tracker.addingService(reference);
-        modifiedService(reference, resourceManager);
-        return resourceManager;
-    }
-
-    @Override
-    public synchronized void modifiedService(ServiceReference<ResourceManager> reference,
-                                             ResourceManager resourceManager) {
-        if (resourceIds.containsKey(resourceManager)) {
-            String oldId = resourceIds.get(resourceManager);
-            Object currId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
-
-            if (!oldId.equals(currId)) {
-                logger.debug("Modifying manager {} for id [{}]", resourceManager, currId);
-                resourceIds.put(resourceManager, currId.toString());
-                wiring.getResource(oldId).removeManager(resourceManager);
-                wiring.getResource(currId.toString()).addManager(resourceManager);
-
-                wiring.cleanUp();
-            }
+    protected void addedService(ResourceManager resourceManager, Object resourceId) {
+        if (resourceId != null) {
+            logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
+            resourceIds.put(resourceManager, resourceId.toString());
+            getResource(resourceId).addManager(resourceManager);
         } else {
-            Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
-            if (resourceId != null) {
-                logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
-                resourceIds.put(resourceManager, resourceId.toString());
-                wiring.getResource(resourceId.toString()).addManager(resourceManager);
-            }
+            resourceIds.put(resourceManager, null);
         }
     }
 
     @Override
-    public synchronized void
-            removedService(ServiceReference<ResourceManager> reference, ResourceManager resourceManager) {
-        if (resourceIds.containsKey(resourceManager)) {
-            String id = resourceIds.get(resourceManager);
-            logger.debug("Removing manager {} for id [{}]", resourceManager, id);
-            wiring.getResource(id).removeManager(resourceManager);
-            resourceIds.remove(resourceManager);
+    protected void modifiedService(ResourceManager resourceManager, Object currId) {
+        String oldId = resourceIds.get(resourceManager);
 
-            wiring.cleanUp();
+        if (!oldId.equals(currId)) {
+            logger.debug("Modifying manager {} for id [{}]", resourceManager, currId);
+            resourceIds.put(resourceManager, currId.toString());
+            getResource(oldId).removeManager(resourceManager);
+            getResource(currId).addManager(resourceManager);
         }
+    }
 
-        tracker.removedService(reference, resourceManager);
+    @Override
+    protected void removingService(ResourceManager resourceManager) {
+        String id = resourceIds.remove(resourceManager);
+        if (id != null) {
+            logger.debug("Removing manager {} for id [{}]", resourceManager, id);
+            getResource(id).removeManager(resourceManager);
+        }
     }
 }

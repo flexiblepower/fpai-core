@@ -73,6 +73,7 @@ public class ResourceWiringTest extends TestCase {
         logger.debug("Expecting wiring of {} - {} - {}", cm, rm1, rd1);
         logger.debug("Expecting wiring of {} - {} - {}", cm, rm2, rd2);
         logger.debug("Current state: " + resourceWiringManager.getResources());
+        assertEquals(2, resourceWiringManager.size());
 
         rm1.assertCorrectWiring(cm, rd1);
         rm2.assertCorrectWiring(cm, rd2);
@@ -89,6 +90,8 @@ public class ResourceWiringTest extends TestCase {
         rm2.assertCorrectWiring(null, null);
         rd1.assertCorrectWiring(null);
         rd2.assertCorrectWiring(null);
+
+        assertEquals(0, resourceWiringManager.size());
     }
 
     @SuppressWarnings("rawtypes")
@@ -100,21 +103,21 @@ public class ResourceWiringTest extends TestCase {
         rm.assertCorrectWiring(null, null);
         rd.assertCorrectWiring(null);
 
-        ServiceRegistration<ControllerManager> srCm = registerService(ControllerManager.class, cm, "type1", "type2");
-        ServiceRegistration<ResourceManager> srRm1 = registerService(ResourceManager.class, rm, "type1");
-        ServiceRegistration<ResourceDriver> srRd1 = registerService(ResourceDriver.class, rd, "type1");
+        ServiceRegistration<ControllerManager> srCm = registerService(ControllerManager.class, cm, "x", "y");
+        ServiceRegistration<ResourceManager> srRm1 = registerService(ResourceManager.class, rm, "x");
+        ServiceRegistration<ResourceDriver> srRd1 = registerService(ResourceDriver.class, rd, "x");
 
         rm.assertCorrectWiring(cm, rd);
         rd.assertCorrectWiring(rm);
 
         Dictionary<String, Object> props = new Hashtable<String, Object>();
-        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "type2" });
+        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "y" });
         srCm.setProperties(props);
 
         rm.assertCorrectWiring(null, rd);
         rd.assertCorrectWiring(rm);
 
-        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "type1" });
+        props.put(ResourceWiringManager.RESOURCE_IDS, new String[] { "x" });
         srCm.setProperties(props);
 
         rm.assertCorrectWiring(cm, rd);

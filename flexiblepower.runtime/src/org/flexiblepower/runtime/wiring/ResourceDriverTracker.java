@@ -6,74 +6,45 @@ import java.util.Map;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.wiring.ResourceWiringManager;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-class ResourceDriverTracker implements ServiceTrackerCustomizer<ResourceDriver, ResourceDriver> {
-    private static final Logger logger = LoggerFactory.getLogger(ResourceDriverTracker.class);
-
-    private final ResourceWiringManagerImpl wiring;
-    private final ServiceTracker<ResourceDriver, ResourceDriver> tracker;
-
+class ResourceDriverTracker extends SimpleTracker<ResourceDriver> {
     private final Map<ResourceDriver, String> resourceIds;
 
     public ResourceDriverTracker(ResourceWiringManagerImpl wiring, BundleContext context) {
-        this.wiring = wiring;
+        super(wiring, context, ResourceDriver.class, ResourceWiringManager.RESOURCE_ID);
         resourceIds = new HashMap<ResourceDriver, String>();
-        tracker = new ServiceTracker<ResourceDriver, ResourceDriver>(context, ResourceDriver.class, this);
-        tracker.open();
-    }
-
-    public void close() {
-        tracker.close();
     }
 
     @Override
-    public synchronized ResourceDriver addingService(ServiceReference<ResourceDriver> reference) {
-        ResourceDriver resourceDriver = tracker.addingService(reference);
-        modifiedService(reference, resourceDriver);
-        return resourceDriver;
-    }
-
-    @Override
-    public synchronized void modifiedService(ServiceReference<ResourceDriver> reference, ResourceDriver resourceDriver) {
-        if (resourceIds.containsKey(resourceDriver)) {
-            String oldId = resourceIds.get(resourceDriver);
-            Object currId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
-
-            if (!oldId.equals(currId)) {
-                logger.debug("Modifying driver {} for id [{}]", resourceDriver, currId);
-                resourceIds.put(resourceDriver, currId.toString());
-                wiring.getResource(oldId).removeDriver(resourceDriver);
-                wiring.getResource(currId.toString()).addDriver(resourceDriver);
-
-                wiring.cleanUp();
-            }
-        } else {
-            Object resourceId = reference.getProperty(ResourceWiringManager.RESOURCE_ID);
+    protected void addedService(ResourceDriver resourceDriver, Object resourceId) {
+        if (resourceId != null) {
             logger.debug("Adding driver {} for id [{}]", resourceDriver, resourceId);
-            if (resourceId != null) {
-                resourceIds.put(resourceDriver, resourceId.toString());
-                wiring.getResource(resourceId.toString()).addDriver(resourceDriver);
-            }
+            resourceIds.put(resourceDriver, resourceId.toString());
+            getResource(resourceId).addDriver(resourceDriver);
+        } else {
+            resourceIds.put(resourceDriver, null);
         }
     }
 
     @Override
-    public synchronized void removedService(ServiceReference<ResourceDriver> reference, ResourceDriver resourceDriver) {
-        if (resourceIds.containsKey(resourceDriver)) {
-            String id = resourceIds.get(resourceDriver);
-            logger.debug("Removing driver {} for id [{}]", resourceDriver, id);
-            wiring.getResource(id).removeDriver(resourceDriver);
-            resourceIds.remove(resourceDriver);
+    protected void modifiedService(ResourceDriver resourceDriver, Object currId) {
+        String oldId = resourceIds.get(resourceDriver);
 
-            wiring.cleanUp();
+        if (!oldId.equals(currId)) {
+            logger.debug("Modifying driver {} for id [{}]", resourceDriver, currId);
+            resourceIds.put(resourceDriver, currId.toString());
+            getResource(oldId).removeDriver(resourceDriver);
+            getResource(currId).addDriver(resourceDriver);
         }
+    }
 
-        tracker.removedService(reference, resourceDriver);
+    @Override
+    protected void removingService(ResourceDriver resourceDriver) {
+        String id = resourceIds.remove(resourceDriver);
+        if (id != null) {
+            logger.debug("Removing driver {} for id [{}]", resourceDriver, id);
+            getResource(id).removeDriver(resourceDriver);
+        }
     }
 }
