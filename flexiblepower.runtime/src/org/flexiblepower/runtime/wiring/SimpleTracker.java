@@ -31,14 +31,12 @@ public abstract class SimpleTracker<T> implements ServiceListener {
         logger = LoggerFactory.getLogger(getClass());
 
         try {
-            synchronized (this) {
-                context.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + clazz.getName() + ")");
-                Collection<ServiceReference<T>> references = context.getServiceReferences(clazz, null);
-                for (ServiceReference<T> reference : references) {
-                    track(reference);
-                }
-                logger.info("Tracker started");
+            context.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + clazz.getName() + ")");
+            Collection<ServiceReference<T>> references = context.getServiceReferences(clazz, null);
+            for (ServiceReference<T> reference : references) {
+                track(reference);
             }
+            logger.info("Tracker started");
         } catch (InvalidSyntaxException e) {
             // Should never happen with the null
             throw new RuntimeException(e);
@@ -57,7 +55,7 @@ public abstract class SimpleTracker<T> implements ServiceListener {
 
     @SuppressWarnings("unchecked")
     @Override
-    public synchronized void serviceChanged(ServiceEvent event) {
+    public void serviceChanged(ServiceEvent event) {
         switch (event.getType()) {
         case ServiceEvent.REGISTERED:
         case ServiceEvent.MODIFIED:
@@ -82,7 +80,7 @@ public abstract class SimpleTracker<T> implements ServiceListener {
 
     protected abstract void removingService(T service);
 
-    private void track(ServiceReference<T> reference) {
+    private synchronized void track(ServiceReference<T> reference) {
         if (!trackedReferences.containsKey(reference)) {
             T resourceManager = context.getService(reference);
             trackedReferences.put(reference, resourceManager);
@@ -94,7 +92,7 @@ public abstract class SimpleTracker<T> implements ServiceListener {
         }
     }
 
-    private void untrack(ServiceReference<T> reference) {
+    private synchronized void untrack(ServiceReference<T> reference) {
         T resourceManager = trackedReferences.remove(reference);
         if (resourceManager != null) {
             removingService(resourceManager);
