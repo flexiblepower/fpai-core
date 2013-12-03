@@ -13,7 +13,8 @@ import org.flexiblepower.ral.wiring.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceContainer<RS extends ResourceState, RCP extends ResourceControlParameters> implements Resource<RS, RCP> {
+public class ResourceContainer<RS extends ResourceState, RCP extends ResourceControlParameters> implements
+                                                                                                Resource<RS, RCP> {
     private static final Logger logger = LoggerFactory.getLogger(ResourceContainer.class);
 
     private final String resourceId;
@@ -40,7 +41,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Bound resource manager [{}] to controller [{}]", manager, controller);
                 try {
                     controller.registerResource(manager);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
             }
@@ -58,7 +59,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
             logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controller);
             try {
                 controller.unregisterResource(manager);
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 logger.error("Error during unbind: {}", ex.getMessage(), ex);
             }
         }
@@ -72,7 +73,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Bound resource manager [{}] to controller [{}]", manager, controllerManager);
                 try {
                     controllerManager.registerResource(manager);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
             }
@@ -81,7 +82,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
                 try {
                     manager.registerDriver(driver);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
             }
@@ -95,7 +96,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controllerManager);
                 try {
                     controllerManager.unregisterResource(manager);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during unbind: {}", ex.getMessage(), ex);
                 }
             }
@@ -103,7 +104,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 try {
                     manager.unregisterDriver(driver);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during unbind: {}", ex.getMessage(), ex);
                 }
             }
@@ -117,7 +118,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
                 try {
                     manager.registerDriver(driver);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
             }
@@ -131,7 +132,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 try {
                     manager.unregisterDriver(driver);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     logger.error("Error during unbind: {}", ex.getMessage(), ex);
                 }
             }
