@@ -38,7 +38,11 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
             this.controllerManager = controller;
             for (ResourceManager<?, RS, RCP> manager : managers) {
                 logger.debug("Bound resource manager [{}] to controller [{}]", manager, controller);
-                controller.registerResource(manager);
+                try {
+                    controller.registerResource(manager);
+                } catch (Exception ex) {
+                    logger.error("Error during bind: {}", ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -52,7 +56,11 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         logger.debug("Removing resource controller for [{}]: {}", resourceId, controller);
         for (ResourceManager<?, RS, RCP> manager : managers) {
             logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controller);
-            controller.unregisterResource(manager);
+            try {
+                controller.unregisterResource(manager);
+            } catch (Exception ex) {
+                logger.error("Error during unbind: {}", ex.getMessage(), ex);
+            }
         }
         this.controllerManager = null;
     }
@@ -62,12 +70,20 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         if (managers.add(manager)) {
             if (controllerManager != null) {
                 logger.debug("Bound resource manager [{}] to controller [{}]", manager, controllerManager);
-                controllerManager.registerResource(manager);
+                try {
+                    controllerManager.registerResource(manager);
+                } catch (Exception ex) {
+                    logger.error("Error during bind: {}", ex.getMessage(), ex);
+                }
             }
 
             for (ResourceDriver<RS, RCP> driver : drivers) {
                 logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
-                manager.registerDriver(driver);
+                try {
+                    manager.registerDriver(driver);
+                } catch (Exception ex) {
+                    logger.error("Error during bind: {}", ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -77,11 +93,19 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         if (managers.remove(manager)) {
             if (controllerManager != null) {
                 logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controllerManager);
-                controllerManager.unregisterResource(manager);
+                try {
+                    controllerManager.unregisterResource(manager);
+                } catch (Exception ex) {
+                    logger.error("Error during unbind: {}", ex.getMessage(), ex);
+                }
             }
             for (ResourceDriver<RS, RCP> driver : drivers) {
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
-                manager.unregisterDriver(driver);
+                try {
+                    manager.unregisterDriver(driver);
+                } catch (Exception ex) {
+                    logger.error("Error during unbind: {}", ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -91,7 +115,11 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         if (drivers.add(driver)) {
             for (ResourceManager<?, RS, RCP> manager : managers) {
                 logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
-                manager.registerDriver(driver);
+                try {
+                    manager.registerDriver(driver);
+                } catch (Exception ex) {
+                    logger.error("Error during bind: {}", ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -101,7 +129,11 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
         if (drivers.remove(driver)) {
             for (ResourceManager<?, RS, RCP> manager : managers) {
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
-                manager.unregisterDriver(driver);
+                try {
+                    manager.unregisterDriver(driver);
+                } catch (Exception ex) {
+                    logger.error("Error during unbind: {}", ex.getMessage(), ex);
+                }
             }
         }
     }
