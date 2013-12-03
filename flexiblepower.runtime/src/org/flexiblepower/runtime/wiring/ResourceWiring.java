@@ -1,6 +1,7 @@
 package org.flexiblepower.runtime.wiring;
 
 import java.util.Collection;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,19 +10,18 @@ import java.util.Map;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceState;
 import org.flexiblepower.ral.wiring.Resource;
-import org.flexiblepower.ral.wiring.ResourceWiringManager;
 import org.osgi.framework.BundleContext;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 
-@Component(immediate = true, provide = ResourceWiringManager.class)
-public class ResourceWiringManagerImpl implements ResourceWiringManager {
-    private final Map<String, ResourceImpl<?, ?>> resources;
+@Component(immediate = true, provide = org.flexiblepower.ral.wiring.ResourceWiringManager.class)
+public class ResourceWiring implements org.flexiblepower.ral.wiring.ResourceWiringManager {
+    private final Map<String, ResourceContainer<?, ?>> resources;
 
-    public ResourceWiringManagerImpl() {
-        resources = new HashMap<String, ResourceImpl<?, ?>>();
+    public ResourceWiring() {
+        resources = new HashMap<String, ResourceContainer<?, ?>>();
     }
 
     private ResourceDriverTracker driverTracker;
@@ -47,8 +47,8 @@ public class ResourceWiringManagerImpl implements ResourceWiringManager {
     }
 
     public void cleanUp() {
-        for (Iterator<ResourceImpl<?, ?>> it = resources.values().iterator(); it.hasNext();) {
-            ResourceImpl<?, ?> resource = it.next();
+        for (Iterator<ResourceContainer<?, ?>> it = resources.values().iterator(); it.hasNext();) {
+            ResourceContainer<?, ?> resource = it.next();
             if (resource.isEmpty()) {
                 it.remove();
             }
@@ -57,15 +57,15 @@ public class ResourceWiringManagerImpl implements ResourceWiringManager {
 
     @SuppressWarnings("unchecked")
     public <RS extends ResourceState, RCP extends ResourceControlParameters>
-            ResourceImpl<RS, RCP>
+            ResourceContainer<RS, RCP>
             getResource(String resourceId) {
         if (resourceId == null) {
             return null;
         }
         if (!resources.containsKey(resourceId)) {
-            resources.put(resourceId, new ResourceImpl<RS, RCP>(resourceId));
+            resources.put(resourceId, new ResourceContainer<RS, RCP>(resourceId));
         }
-        return (ResourceImpl<RS, RCP>) resources.get(resourceId);
+        return (ResourceContainer<RS, RCP>) resources.get(resourceId);
     }
 
     @Override

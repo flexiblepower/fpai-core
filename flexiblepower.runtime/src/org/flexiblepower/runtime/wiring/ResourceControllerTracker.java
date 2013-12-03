@@ -14,7 +14,7 @@ import org.osgi.framework.BundleContext;
 class ResourceControllerTracker extends SimpleTracker<ControllerManager> {
     private final Map<ControllerManager, Set<String>> resourceIds;
 
-    public ResourceControllerTracker(ResourceWiringManagerImpl wiring, BundleContext context) {
+    public ResourceControllerTracker(ResourceWiring wiring, BundleContext context) {
         super(wiring, context, ControllerManager.class, ResourceWiringManager.RESOURCE_IDS);
         resourceIds = new HashMap<ControllerManager, Set<String>>();
     }

@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
 
 public abstract class SimpleTracker<T> implements ServiceListener {
     protected final Logger logger;
-    private final ResourceWiringManagerImpl wiring;
+    private final ResourceWiring wiring;
     private final BundleContext context;
     private final Map<ServiceReference<T>, T> trackedReferences;
     private final String propertyKey;
     private final Class<T> clazz;
     private final AtomicBoolean started;
 
-    public SimpleTracker(ResourceWiringManagerImpl wiring, BundleContext context, Class<T> clazz, String propertyKey) {
+    public SimpleTracker(ResourceWiring wiring, BundleContext context, Class<T> clazz, String propertyKey) {
         this.wiring = wiring;
         this.context = context;
         this.trackedReferences = new HashMap<ServiceReference<T>, T>();
@@ -81,7 +81,7 @@ public abstract class SimpleTracker<T> implements ServiceListener {
         }
     }
 
-    protected ResourceImpl<ResourceState, ResourceControlParameters> getResource(Object id) {
+    protected ResourceContainer<ResourceState, ResourceControlParameters> getResource(Object id) {
         return wiring.getResource(id.toString());
     }
 

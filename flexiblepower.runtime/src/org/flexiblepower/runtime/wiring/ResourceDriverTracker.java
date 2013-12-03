@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 class ResourceDriverTracker extends SimpleTracker<ResourceDriver> {
     private final Map<ResourceDriver, String> resourceIds;
 
-    public ResourceDriverTracker(ResourceWiringManagerImpl wiring, BundleContext context) {
+    public ResourceDriverTracker(ResourceWiring wiring, BundleContext context) {
         super(wiring, context, ResourceDriver.class, ResourceWiringManager.RESOURCE_ID);
         resourceIds = new HashMap<ResourceDriver, String>();
     }

@@ -13,8 +13,8 @@ import org.flexiblepower.ral.wiring.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlParameters> implements Resource<RS, RCP> {
-    private static final Logger logger = LoggerFactory.getLogger(ResourceImpl.class);
+public class ResourceContainer<RS extends ResourceState, RCP extends ResourceControlParameters> implements Resource<RS, RCP> {
+    private static final Logger logger = LoggerFactory.getLogger(ResourceContainer.class);
 
     private final String resourceId;
 
@@ -22,7 +22,7 @@ public class ResourceImpl<RS extends ResourceState, RCP extends ResourceControlP
     private final Set<ResourceManager<?, RS, RCP>> managers = new HashSet<ResourceManager<?, RS, RCP>>();
     private final Set<ResourceDriver<RS, RCP>> drivers = new HashSet<ResourceDriver<RS, RCP>>();
 
-    public ResourceImpl(String resourceId) {
+    public ResourceContainer(String resourceId) {
         this.resourceId = resourceId;
     }
 

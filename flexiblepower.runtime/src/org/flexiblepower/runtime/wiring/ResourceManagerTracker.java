@@ -12,7 +12,7 @@ import org.osgi.framework.BundleContext;
 class ResourceManagerTracker extends SimpleTracker<ResourceManager> implements AllServiceListener {
     private final Map<ResourceManager, String> resourceIds;
 
-    public ResourceManagerTracker(ResourceWiringManagerImpl wiring, BundleContext context) {
+    public ResourceManagerTracker(ResourceWiring wiring, BundleContext context) {
         super(wiring, context, ResourceManager.class, ResourceWiringManager.RESOURCE_ID);
         resourceIds = new HashMap<ResourceManager, String>();
     }
