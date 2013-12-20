@@ -2,6 +2,7 @@ package org.flexiblepower.runtime.test;
 
 import junit.framework.Assert;
 
+import org.flexiblepower.observation.Observation;
 import org.flexiblepower.observation.ObservationConsumer;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
@@ -28,5 +29,11 @@ public class TestResourceDriver extends IdentifyableObject implements
 
     @Override
     public void setControlParameters(ResourceControlParameters resourceControlParameters) {
+    }
+
+    @Override
+    public Observation<? extends ResourceState> getLastObservation() {
+        // not used in test
+        return null;
     }
 }
