@@ -19,7 +19,7 @@ public abstract class AbstractObservationProvider<T> implements ObservationProvi
     private final Set<ObservationConsumer<? super T>> consumers = new CopyOnWriteArraySet<ObservationConsumer<? super T>>();
 
     @Override
-    public final void subscribe(ObservationConsumer<? super T> consumer) {
+    public void subscribe(ObservationConsumer<? super T> consumer) {
         consumers.add(consumer);
     }
 
@@ -34,7 +34,7 @@ public abstract class AbstractObservationProvider<T> implements ObservationProvi
      * @param observation
      *            The observation that will be sent.
      */
-    protected final void publish(Observation<? extends T> observation) {
+    protected void publish(Observation<? extends T> observation) {
         for (ObservationConsumer<? super T> consumer : consumers) {
             consumer.consume(this, observation);
         }
