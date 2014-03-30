@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.measure.Measure;
+
 /**
  * An {@link Observation} is a measurement that has been done at a certain time. It is a tuple with the observedAt date
  * and the value (of dynamic type). This class provides a couple of helpful methods, like getting the value as a
@@ -107,14 +109,17 @@ public class Observation<T> {
             Method method = entry.getValue();
             Object object = ObservationTranslationHelper.executeMethod(value, method);
             if (object != null) {
-                if (object.getClass().isEnum()) {
+                if (object instanceof Measure) {
+                    result.put(key, ((Measure<?, ?>) object).getValue());
+                    result.put(key + ".unit", ((Measure<?, ?>) object).getUnit().toString());
+                } else if (object.getClass().isEnum()) {
                     result.put(key, object.toString());
                 } else {
                     result.put(key, object);
-                }
 
-                if (ObservationTranslationHelper.isJavaBean(object.getClass())) {
-                    fillValueMap(key, result, object);
+                    if (ObservationTranslationHelper.isJavaBean(object.getClass())) {
+                        fillValueMap(key, result, object);
+                    }
                 }
             }
         }
