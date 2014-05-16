@@ -1,4 +1,4 @@
-package org.flexiblepower.ui.runtime;
+package org.flexiblepower.felix.webconsole.plugins;
 
 import java.io.IOException;
 import java.io.PrintWriter;

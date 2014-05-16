@@ -4,5 +4,5 @@
 	junit.osgi;version='[3.8,4)'
 
 Bundle-Version: 1.0.0.${qualifier}
-Private-Package: org.flexiblepower.ui.runtime
-Service-Component: org.flexiblepower.ui.runtime.*
+Private-Package: org.flexiblepower.felix.webconsole.plugins
+Service-Component: org.flexiblepower.felix.webconsole.plugins.*
