@@ -1,5 +1,5 @@
 # Generate Java / Eclipse generated stuff
-.metadata
+.metadata/
 *.swp
 cnf/db
 cnf/cache
