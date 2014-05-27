@@ -12,6 +12,9 @@ cobertura.ser
 instrumented
 coverage.xml
 
+# Keep the projects list
+!.metadata/.plugins/org.eclipse.core.resources/.projects/
+
 # GWT generated stuff
 .gwt
 gwt-unitCache
