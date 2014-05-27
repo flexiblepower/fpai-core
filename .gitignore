@@ -1,5 +1,4 @@
 # Generate Java / Eclipse generated stuff
-.metadata/
 *.swp
 cnf/db
 cnf/cache
@@ -13,7 +12,10 @@ instrumented
 coverage.xml
 
 # Keep the projects list
-!.metadata/.plugins/org.eclipse.core.resources/.projects/
+.metadata/*
+!.metadata/.plugins/
+.metadata/.plugins/*
+!.metadata/.plugins/org.eclipse.core.resources/
 
 # GWT generated stuff
 .gwt
