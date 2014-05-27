@@ -16,6 +16,8 @@ coverage.xml
 !.metadata/.plugins/
 .metadata/.plugins/*
 !.metadata/.plugins/org.eclipse.core.resources/
+.metadata/.plugins/org.eclipse.core.resources/*
+!.metadata/.plugins/org.eclipse.core.resources/.plugins/
 
 # GWT generated stuff
 .gwt
