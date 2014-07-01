@@ -1,5 +1,5 @@
 -buildpath: ${default-buildpath},\
-	org.apache.felix.http.jetty,\
+	org.apache.felix.http.servlet-api,\
 	flexiblepower.runtime;version=project,\
 	junit.osgi;version='[3.8,4)'
 
