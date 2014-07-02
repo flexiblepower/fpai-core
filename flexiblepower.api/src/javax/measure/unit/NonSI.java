@@ -67,6 +67,7 @@ import javax.measure.quantity.SolidAngle;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Velocity;
 import javax.measure.quantity.Volume;
+import javax.measure.quantity.VolumetricFlowRate;
 
 /**
  * <p>
@@ -675,6 +676,12 @@ public final class NonSI extends SystemOfUnits {
      * A unit of volume equal to <code>1 / 160 {@link #GALLON_UK}</code> (standard name <code>oz_fl_uk</code>).
      */
     public static final Unit<Volume> OUNCE_LIQUID_UK = nonSI(GALLON_UK.divide(160));
+
+    /**
+     * The metric unit for volume quantities (<code>m³</code>).
+     */
+    public static final Unit<VolumetricFlowRate> CUBIC_METRE_PER_SECOND = nonSI(new ProductUnit<VolumetricFlowRate>(METRE.pow(3)
+                                                                                                                         .divide(SECOND)));
 
     // /////////////
     // Viscosity //

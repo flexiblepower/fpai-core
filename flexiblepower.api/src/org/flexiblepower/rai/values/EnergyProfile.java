@@ -15,6 +15,7 @@ import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.flexiblepower.rai.values.EnergyProfile.Element;
@@ -23,7 +24,7 @@ import org.flexiblepower.rai.values.EnergyProfile.Element;
  * EnergyProfile represents a list of duration/energy tuples (see {@link Element}) that represent an energy profile over
  * time, without an explicit starting time.
  */
-public class EnergyProfile extends AbstractList<Element> {
+public class EnergyProfile<Q extends Quantity> extends AbstractList<Element<Q>> {
     /**
      * @return A new Builder that can be used as a convenient method for creating an instance of the immutable
      *         {@link EnergyProfile}.
@@ -35,11 +36,11 @@ public class EnergyProfile extends AbstractList<Element> {
     /**
      * Represents the elements of an EnergyProfile.
      */
-    public static class Element {
+    public static class Element<Q extends Quantity> {
         private final Measurable<Duration> duration;
-        private final Measurable<Energy> energy;
+        private final Measurable<Q> energy;
 
-        Element(Measurable<Duration> duration, Measurable<Energy> energy) {
+        Element(Measurable<Duration> duration, Measurable<Q> energy) {
             if (duration == null || energy == null) {
                 throw new NullPointerException();
             }
@@ -57,18 +58,18 @@ public class EnergyProfile extends AbstractList<Element> {
         /**
          * @return The amount of energy of this element
          */
-        public Measurable<Energy> getEnergy() {
+        public Measurable<Q> getEnergy() {
             return energy;
         }
 
         /**
          * @return The average power that has been produced or consumed during this period.
          */
-        public Measurable<Power> getAveragePower() {
-            double joules = energy.doubleValue(JOULE);
-            double seconds = duration.doubleValue(SECOND);
-            return Measure.valueOf(joules / seconds, WATT);
-        }
+        // public Measurable<Power> getAveragePower() {
+        // double joules = energy.doubleValue(JOULE);
+        // double seconds = duration.doubleValue(SECOND);
+        // return Measure.valueOf(joules / seconds, WATT);
+        // }
 
         @Override
         public String toString() {
