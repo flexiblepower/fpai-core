@@ -12,7 +12,7 @@ Export-Package: \
 	javax.measure.unit,\
 	org.flexiblepower.control,\
 	org.flexiblepower.observation,\
-	org.flexiblepower.rai,\
+	org.flexiblepower.rai.comm,\
 	org.flexiblepower.rai.values,\
 	org.flexiblepower.ral,\
 	org.flexiblepower.time,\

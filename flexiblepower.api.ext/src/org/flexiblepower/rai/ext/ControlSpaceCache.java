@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.flexiblepower.rai.ControlSpace;
-import org.flexiblepower.rai.Controller;
+import org.flexiblepower.rai.comm.ControlSpace;
+import org.flexiblepower.rai.comm.Controller;
 import org.flexiblepower.time.TimeService;
 
 /**

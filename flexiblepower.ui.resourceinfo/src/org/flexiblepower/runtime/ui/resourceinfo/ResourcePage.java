@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.flexiblepower.rai.ControlSpace;
+import org.flexiblepower.rai.comm.ControlSpace;
 import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.wiring.Resource;
 import org.flexiblepower.ral.wiring.ResourceWiringManager;

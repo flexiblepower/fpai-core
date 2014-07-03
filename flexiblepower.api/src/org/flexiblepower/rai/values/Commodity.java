@@ -28,6 +28,15 @@ public abstract class Commodity<BU extends Quantity, FU extends Quantity> implem
             }
             return Measure.valueOf(amount.doubleValue(SI.CUBIC_METRE) / seconds, NonSI.CUBIC_METRE_PER_SECOND);
         }
+
+        @Override
+        public Measurable<Volume> amount(Measurable<VolumetricFlowRate> average, Measurable<Duration> duration) {
+            double seconds = duration.doubleValue(SI.SECOND);
+            if (seconds <= 0) {
+                throw new IllegalArgumentException("invalid duration: " + seconds + " seconds");
+            }
+            return Measure.valueOf(average.doubleValue(NonSI.CUBIC_METRE_PER_SECOND) * seconds, SI.CUBIC_METRE);
+        }
     };
 
     public static final Commodity<Energy, Power> ELECTRICITY = new Commodity<Energy, Power>(NonSI.KWH, SI.WATT) {
@@ -40,6 +49,15 @@ public abstract class Commodity<BU extends Quantity, FU extends Quantity> implem
                 throw new IllegalArgumentException("invalid duration: " + seconds + " seconds");
             }
             return Measure.valueOf(amount.doubleValue(SI.JOULE) / seconds, SI.WATT);
+        }
+
+        @Override
+        public Measurable<Energy> amount(Measurable<Power> average, Measurable<Duration> duration) {
+            double seconds = duration.doubleValue(SI.SECOND);
+            if (seconds <= 0) {
+                throw new IllegalArgumentException("invalid duration: " + seconds + " seconds");
+            }
+            return Measure.valueOf(average.doubleValue(SI.WATT) * seconds, SI.JOULE);
         }
     };
 
@@ -63,5 +81,7 @@ public abstract class Commodity<BU extends Quantity, FU extends Quantity> implem
     }
 
     public abstract Measurable<FU> average(Measurable<BU> amount, Measurable<Duration> duration);
+
+    public abstract Measurable<BU> amount(Measurable<FU> average, Measurable<Duration> duration);
 
 }
