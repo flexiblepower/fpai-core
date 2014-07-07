@@ -3,10 +3,10 @@ package org.flexiblepower.efi.buffer;
 import java.util.Date;
 import java.util.Set;
 
-import org.flexiblepower.rai.comm.ResourceCapabilities;
+import org.flexiblepower.rai.comm.ResourceHandshake;
 import org.flexiblepower.rai.values.Commodity;
 
-public class BufferCapabilities extends ResourceCapabilities {
+public class BufferCapabilities extends ResourceHandshake {
 
 	public static class ActuatorCapabilities {
 		private String actuatorId;

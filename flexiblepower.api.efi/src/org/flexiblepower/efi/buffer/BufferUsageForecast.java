@@ -5,20 +5,33 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ResourceInfo;
+import org.flexiblepower.rai.comm.ResourceUpdate;
 
-public class BufferUsageForecast extends ResourceInfo {
+public class BufferUsageForecast extends ResourceUpdate {
 
-	public BufferUsageForecast(String resourceId, Date timestamp) {
+	// TODO Hier ben ik nog niet happy mee...
+
+	private final Date startTime;
+	private final Element[] profile;
+
+	public BufferUsageForecast(String resourceId, Date timestamp,
+			Date startTime, Element[] profile) {
 		super(resourceId, timestamp);
+		this.startTime = startTime;
+		this.profile = profile;
 	}
-
-	private final Date startTime = null;
-	private final Element[] profile = null;
 
 	public static class Element {
 		private final Measurable<Duration> duration = null;
-		private final Double xs = null;
+		private final double xsMean;
+		private final double xsStandardDeviation;
+
+		public Element(double xsMean, double xsStandardDeviation) {
+			super();
+			this.xsMean = xsMean;
+			this.xsStandardDeviation = xsStandardDeviation;
+		}
+
 	}
 
 }

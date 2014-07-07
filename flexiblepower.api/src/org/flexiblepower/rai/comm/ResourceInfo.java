@@ -1,13 +1,16 @@
 package org.flexiblepower.rai.comm;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public abstract class ResourceInfo {
+public abstract class ResourceInfo implements Serializable {
 
-    public final UUID resourceInfoId;
-    public final String resourceId;
-    public final Date timestamp;
+    private static final long serialVersionUID = -313146669543611880L;
+
+    private final UUID resourceInfoId;
+    private final String resourceId;
+    private final Date timestamp;
 
     public ResourceInfo(String resourceId, Date timestamp) {
         super();
@@ -18,6 +21,14 @@ public abstract class ResourceInfo {
 
     public UUID getResourceInfoId() {
         return resourceInfoId;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 
 }
