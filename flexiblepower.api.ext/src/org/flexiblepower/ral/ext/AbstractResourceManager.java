@@ -1,7 +1,7 @@
 package org.flexiblepower.ral.ext;
 
-import org.flexiblepower.rai.comm.ControlSpace;
-import org.flexiblepower.rai.comm.Controller;
+import org.flexiblepower.rai.old.ControlSpace;
+import org.flexiblepower.rai.old.Controller;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;

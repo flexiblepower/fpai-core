@@ -9,7 +9,7 @@ import org.flexiblepower.rai.values.Commodity;
 public class BufferCapabilities extends ResourceHandshake {
 
 	public static class ActuatorCapabilities {
-		private String actuatorId;
+		private int actuatorId;
 		private String actuatorLabel;
 		private Set<Commodity> commodities;
 	}

@@ -5,7 +5,7 @@
 	biz.aQute.bnd.annotation
 
 Bundle-Version: 1.1.0.${qualifier}
-Export-Package: \
+Export-Package:  \
 	javax.measure,\
 	javax.measure.converter,\
 	javax.measure.quantity,\
@@ -16,7 +16,8 @@ Export-Package: \
 	org.flexiblepower.rai.values,\
 	org.flexiblepower.ral,\
 	org.flexiblepower.time,\
-	org.flexiblepower.ui
+	org.flexiblepower.ui,\
+	org.flexiblepower.rai.old
 #	org.flexiblepower.provisioning <-- disabled for current release, will be introduced later
 
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}

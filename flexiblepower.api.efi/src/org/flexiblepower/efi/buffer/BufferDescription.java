@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
+
 import org.flexiblepower.rai.comm.ResourceUpdate;
 
 public class BufferDescription extends ResourceUpdate {
@@ -25,10 +28,10 @@ public class BufferDescription extends ResourceUpdate {
 
 	private RunningMode bufferLeakage;
 
-	public BufferDescription(String resourceId, Date timestamp,
-			List<Actuator> actuators, String xLabel, String xUnit,
-			RunningMode bufferLeakage) {
-		super(resourceId, timestamp);
+	public BufferDescription(String resourceId, Date timestamp, Date validFrom,
+			Measurable<Duration> allocationDelay, List<Actuator> actuators,
+			String xLabel, String xUnit, RunningMode bufferLeakage) {
+		super(resourceId, timestamp, validFrom, allocationDelay);
 		this.actuators = actuators;
 		this.xLabel = xLabel;
 		this.xUnit = xUnit;

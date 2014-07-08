@@ -1,4 +1,4 @@
-package org.flexiblepower.rai;
+package org.flexiblepower.rai.old;
 
 import java.util.Date;
 import java.util.UUID;

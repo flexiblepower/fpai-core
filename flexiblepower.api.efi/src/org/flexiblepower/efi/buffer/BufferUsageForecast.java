@@ -15,8 +15,9 @@ public class BufferUsageForecast extends ResourceUpdate {
 	private final Element[] profile;
 
 	public BufferUsageForecast(String resourceId, Date timestamp,
+			Date validFrom, Measurable<Duration> allocationDelay,
 			Date startTime, Element[] profile) {
-		super(resourceId, timestamp);
+		super(resourceId, timestamp, validFrom, allocationDelay);
 		this.startTime = startTime;
 		this.profile = profile;
 	}

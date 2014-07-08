@@ -1,9 +1,9 @@
 package org.flexiblepower.runtime.test;
 
 import org.flexiblepower.control.ControllerManager;
-import org.flexiblepower.rai.comm.ControlSpace;
-import org.flexiblepower.rai.comm.ControllableResource;
-import org.flexiblepower.rai.comm.Controller;
+import org.flexiblepower.rai.old.ControlSpace;
+import org.flexiblepower.rai.old.ControllableResource;
+import org.flexiblepower.rai.old.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.flexiblepower.rai;
+package org.flexiblepower.rai.old;
 
 import org.flexiblepower.control.ControllerManager;
 import org.flexiblepower.ral.ResourceManager;

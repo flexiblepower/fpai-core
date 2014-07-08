@@ -12,6 +12,7 @@ import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
+import org.flexiblepower.rai.old.BufferControlSpace;
 import org.flexiblepower.rai.values.ConstraintList;
 import org.flexiblepower.time.TimeUtil;
 

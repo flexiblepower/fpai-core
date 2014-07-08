@@ -4,8 +4,8 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.flexiblepower.rai.comm.ControlSpace;
 import org.flexiblepower.rai.ext.ControlSpaceCache;
+import org.flexiblepower.rai.old.ControlSpace;
 import org.flexiblepower.time.TimeService;
 
 public class ControlSpaceCacheTest extends TestCase {

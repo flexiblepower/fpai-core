@@ -4,9 +4,9 @@ import junit.framework.Assert;
 
 import org.flexiblepower.observation.Observation;
 import org.flexiblepower.observation.ObservationProvider;
-import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ControlSpace;
-import org.flexiblepower.rai.comm.Controller;
+import org.flexiblepower.rai.old.Allocation;
+import org.flexiblepower.rai.old.ControlSpace;
+import org.flexiblepower.rai.old.Controller;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
