@@ -9,12 +9,12 @@ import org.flexiblepower.rai.values.Commodity;
 /**
  * Represents the elements of an EnergyProfile.
  */
-public class Element<BU extends Quantity, FU extends Quantity> {
+public class CommodityProfileElement<BU extends Quantity, FU extends Quantity> {
 	private final Measurable<Duration> duration;
 	private final Measurable<BU> amount;
 	private Commodity<BU, FU> commodity;
 
-	Element(Commodity<BU, FU> commodity, Measurable<Duration> duration,
+	CommodityProfileElement(Commodity<BU, FU> commodity, Measurable<Duration> duration,
 			Measurable<BU> amount) {
 		if (duration == null || amount == null) {
 			throw new NullPointerException();
