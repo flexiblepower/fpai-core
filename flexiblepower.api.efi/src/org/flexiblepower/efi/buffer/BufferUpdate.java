@@ -3,9 +3,14 @@ package org.flexiblepower.efi.buffer;
 import java.util.Date;
 import java.util.Set;
 
-import org.flexiblepower.rai.comm.ResourceInfo;
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
 
-public class BufferUpdate extends ResourceInfo {
+import org.flexiblepower.rai.comm.ResourceUpdate;
+
+public class BufferUpdate extends BufferResourceUpdate {
+
+	private static final long serialVersionUID = 899987142667364534L;
 
 	public static class ActuatorUpdate {
 		private final int actuatorId;
@@ -42,9 +47,10 @@ public class BufferUpdate extends ResourceInfo {
 	private double xValue;
 	private Set<ActuatorUpdate> currentRunningMode;
 
-	public BufferUpdate(String resourceId, Date timestamp, double xValue,
+	public BufferUpdate(String resourceId, Date timestamp, Date validFrom,
+			Measurable<Duration> allocationDelay, double xValue,
 			Set<ActuatorUpdate> currentRunningMode) {
-		super(resourceId, timestamp);
+		super(resourceId, timestamp, validFrom, allocationDelay);
 		this.xValue = xValue;
 		this.currentRunningMode = currentRunningMode;
 	}

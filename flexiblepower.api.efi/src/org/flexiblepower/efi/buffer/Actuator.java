@@ -1,31 +1,61 @@
 package org.flexiblepower.efi.buffer;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-public class Actuator {
-	private int id;
+public class Actuator implements Serializable {
+
+	private static final long serialVersionUID = -7888970166563077855L;
+
+	private final int id;
 
 	// Timers associated with this actuator
-	public List<Timer> timerList;
+	private final List<Timer> timerList;
 
 	// List of running modes
-	private List<RunningMode> runningModes;
-	private RunningMode currentRunningMode;
-	private Date startTimeCurrentRunningMode;
+	private final List<RunningMode> runningModes;
+	private final RunningMode currentRunningMode;
+	private final Date startTimeCurrentRunningMode;
 
 	// Defines possible Transitions
-	private final List<Transition> transitions;
+	private final Set<Transition> transitions;
 
-	// Constructor
-	public Actuator(List<RunningMode> runningModes,
-			RunningMode currentRunningMode, Date timeInCurrentRunningMode,
-			List<Transition> transitions) {
-
+	public Actuator(int id, List<Timer> timerList,
+			List<RunningMode> runningModes, RunningMode currentRunningMode,
+			Date startTimeCurrentRunningMode, Set<Transition> transitions) {
+		super();
+		this.id = id;
+		this.timerList = timerList;
 		this.runningModes = runningModes;
 		this.currentRunningMode = currentRunningMode;
-		this.startTimeCurrentRunningMode = timeInCurrentRunningMode;
-
+		this.startTimeCurrentRunningMode = startTimeCurrentRunningMode;
 		this.transitions = transitions;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public List<Timer> getTimerList() {
+		return timerList;
+	}
+
+	public List<RunningMode> getRunningModes() {
+		return runningModes;
+	}
+
+	public RunningMode getCurrentRunningMode() {
+		return currentRunningMode;
+	}
+
+	public Date getStartTimeCurrentRunningMode() {
+		return startTimeCurrentRunningMode;
+	}
+
+	public Set<Transition> getTransitions() {
+		return transitions;
+	}
+
 }

@@ -6,10 +6,11 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
+import javax.measure.unit.Unit;
 
-import org.flexiblepower.rai.comm.ResourceUpdate;
+public class BufferDescription extends BufferResourceUpdate {
 
-public class BufferDescription extends ResourceUpdate {
+	private static final long serialVersionUID = -581627020537487583L;
 
 	/**
 	 * The list of actuator that can affect the range of the buffer
@@ -24,18 +25,34 @@ public class BufferDescription extends ResourceUpdate {
 	/**
 	 * The unit of x for display purposes in the UI
 	 */
-	private final String xUnit;
+	private final Unit<?> xUnit;
 
 	private RunningMode bufferLeakage;
 
 	public BufferDescription(String resourceId, Date timestamp, Date validFrom,
 			Measurable<Duration> allocationDelay, List<Actuator> actuators,
-			String xLabel, String xUnit, RunningMode bufferLeakage) {
+			String xLabel, Unit<?> xUnit, RunningMode bufferLeakage) {
 		super(resourceId, timestamp, validFrom, allocationDelay);
 		this.actuators = actuators;
 		this.xLabel = xLabel;
 		this.xUnit = xUnit;
 		this.bufferLeakage = bufferLeakage;
+	}
+
+	public List<Actuator> getActuators() {
+		return actuators;
+	}
+
+	public String getxLabel() {
+		return xLabel;
+	}
+
+	public Unit<?> getxUnit() {
+		return xUnit;
+	}
+
+	public RunningMode getBufferLeakage() {
+		return bufferLeakage;
 	}
 
 }

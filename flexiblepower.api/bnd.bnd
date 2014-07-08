@@ -8,6 +8,7 @@ Bundle-Version: 1.1.0.${qualifier}
 Export-Package:  \
 	javax.measure,\
 	javax.measure.converter,\
+	org.flexiblepower.rai,\
 	javax.measure.quantity,\
 	javax.measure.unit,\
 	org.flexiblepower.control,\

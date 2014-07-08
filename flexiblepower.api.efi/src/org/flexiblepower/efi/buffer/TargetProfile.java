@@ -6,9 +6,9 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ResourceUpdate;
+public class TargetProfile extends BufferResourceUpdate {
 
-public class TargetProfile extends ResourceUpdate {
+	private static final long serialVersionUID = 8241650405419768302L;
 
 	private final Date startTime;
 	private final List<TargetProfileElement> targetProfileElements;

@@ -18,4 +18,12 @@ public abstract class ResourceUpdate extends ResourceInfo {
         this.allocationDelay = allocationDelay;
     }
 
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public Measurable<Duration> getAllocationDelay() {
+        return allocationDelay;
+    }
+
 }

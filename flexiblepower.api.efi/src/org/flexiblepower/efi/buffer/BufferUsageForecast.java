@@ -7,7 +7,7 @@ import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.comm.ResourceUpdate;
 
-public class BufferUsageForecast extends ResourceUpdate {
+public class BufferUsageForecast extends BufferResourceUpdate {
 
 	// TODO Hier ben ik nog niet happy mee...
 
