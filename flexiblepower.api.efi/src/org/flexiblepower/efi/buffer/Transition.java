@@ -6,7 +6,7 @@ public class Transition {
 	private final RunningMode toRunningMode;
 
 	/** Timers to be (re)started when this transition is made */
-	private Set<Timer> startTimes;
+	private Set<Timer> startTimers;
 
 	/** This transition can only be made when all these timers are finished */
 	private Set<Timer> blockingTimers;
@@ -14,11 +14,11 @@ public class Transition {
 	// Optional: The costs of a transition
 	private Double transitionCosts;
 
-	public Transition(RunningMode toRunningMode, Set<Timer> startTimes,
+	public Transition(RunningMode toRunningMode, Set<Timer> startTimers,
 			Set<Timer> blockingTimers, Double transitionCosts) {
 		super();
 		this.toRunningMode = toRunningMode;
-		this.startTimes = startTimes;
+		this.startTimers = startTimers;
 		this.blockingTimers = blockingTimers;
 		this.transitionCosts = transitionCosts;
 	}
