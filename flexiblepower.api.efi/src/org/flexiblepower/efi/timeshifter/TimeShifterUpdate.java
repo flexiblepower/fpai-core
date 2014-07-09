@@ -6,14 +6,14 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ResourceUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
-public class TimeShifterControlSpace extends ResourceUpdate {
+public class TimeShifterUpdate extends ControlSpaceUpdate {
 
 	private final Date endBefore;
 	private final List<SequentialProfile> timeshiferProfiles;
 
-	public TimeShifterControlSpace(String resourceId, Date timestamp,
+	public TimeShifterUpdate(String resourceId, Date timestamp,
 			Date validFrom, Measurable<Duration> allocationDelay,
 			Date endBefore, List<SequentialProfile> timeshiferProfiles) {
 		super(resourceId, timestamp, validFrom, allocationDelay);

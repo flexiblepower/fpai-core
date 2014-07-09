@@ -4,6 +4,7 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
 public class TargetProfileElement {
+
 	private final Measurable<Duration> duration;
 	private final double xLowerLimit;
 	private final double xUpperLimit;

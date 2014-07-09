@@ -1,10 +1,10 @@
 package org.flexiblepower.rai;
 
 import org.flexiblepower.rai.comm.AllocationStatusUpdate;
-import org.flexiblepower.rai.comm.ResourceHandshake;
-import org.flexiblepower.rai.comm.ResourceUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceRegistration;
+import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
-public interface ResourceController<RH extends ResourceHandshake, RU extends ResourceUpdate> {
+public interface ResourceController<RH extends ControlSpaceRegistration, RU extends ControlSpaceUpdate> {
 
     public void setResourceType(ResourceType<?, RH, RU> resourceType);
 

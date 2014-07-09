@@ -2,11 +2,11 @@ package org.flexiblepower.rai.comm;
 
 import java.util.Date;
 
-public abstract class ResourceHandshake extends ResourceInfo {
+public abstract class ControlSpaceRegistration extends ResourceMessage {
 
     private static final long serialVersionUID = 8841022716486854027L;
 
-    public ResourceHandshake(String resourceId, Date timestamp) {
+    public ControlSpaceRegistration(String resourceId, Date timestamp) {
         super(resourceId, timestamp);
     }
 

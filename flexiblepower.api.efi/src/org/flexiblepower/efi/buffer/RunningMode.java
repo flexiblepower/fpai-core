@@ -10,18 +10,18 @@ public class RunningMode {
 
 	private final String name;
 
-	private List<RunningModeLine> runningMode;
+	private List<RunningModeLine> runningModeLines;
 
 	private List<Transition> possibleTransition;
 
 	public RunningMode(int id, String name) {
 		this.id = id;
 		this.name = name;
-		this.runningMode = new ArrayList<RunningMode.RunningModeLine>();
+		this.runningModeLines = new ArrayList<RunningMode.RunningModeLine>();
 	}
 
 	public void addLine(RunningModeLine line) {
-		runningMode.add(line);
+		runningModeLines.add(line);
 	}
 
 	public static class RunningModeLine {

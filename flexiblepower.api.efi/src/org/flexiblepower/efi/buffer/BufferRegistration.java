@@ -3,10 +3,10 @@ package org.flexiblepower.efi.buffer;
 import java.util.Date;
 import java.util.Set;
 
-import org.flexiblepower.rai.comm.ResourceHandshake;
+import org.flexiblepower.rai.comm.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 
-public class BufferCapabilities extends ResourceHandshake {
+public class BufferRegistration extends ControlSpaceRegistration {
 
 	public static class ActuatorCapabilities {
 		private int actuatorId;
@@ -14,15 +14,12 @@ public class BufferCapabilities extends ResourceHandshake {
 		private Set<Commodity> commodities;
 	}
 
-	public BufferCapabilities(String resourceId, Date timestamp,
-			long capabilitiesMessageNr,
+	public BufferRegistration(String resourceId, Date timestamp,
 			Set<ActuatorCapabilities> actuatorCapabilities) {
 		super(resourceId, timestamp);
-		this.capabilitiesMessageNr = capabilitiesMessageNr;
 		this.actuatorCapabilities = actuatorCapabilities;
 	}
 
-	private long capabilitiesMessageNr;
 	private Set<ActuatorCapabilities> actuatorCapabilities;
 
 }

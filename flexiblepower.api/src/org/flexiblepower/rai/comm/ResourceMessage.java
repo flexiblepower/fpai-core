@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public abstract class ResourceInfo implements Serializable {
+public abstract class ResourceMessage implements Serializable {
 
     private static final long serialVersionUID = -313146669543611880L;
 
@@ -12,7 +12,7 @@ public abstract class ResourceInfo implements Serializable {
     private final String resourceId;
     private final Date timestamp;
 
-    public ResourceInfo(String resourceId, Date timestamp) {
+    public ResourceMessage(String resourceId, Date timestamp) {
         super();
         resourceInfoId = UUID.randomUUID();
         this.resourceId = resourceId;

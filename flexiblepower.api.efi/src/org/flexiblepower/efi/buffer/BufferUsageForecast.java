@@ -5,9 +5,9 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ResourceUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
-public class BufferUsageForecast extends BufferResourceUpdate {
+public class BufferUsageForecast extends BufferUpdate {
 
 	// TODO Hier ben ik nog niet happy mee...
 

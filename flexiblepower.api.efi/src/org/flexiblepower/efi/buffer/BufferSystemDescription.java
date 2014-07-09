@@ -8,7 +8,7 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 import javax.measure.unit.Unit;
 
-public class BufferDescription extends BufferResourceUpdate {
+public class BufferSystemDescription extends BufferUpdate {
 
 	private static final long serialVersionUID = -581627020537487583L;
 
@@ -29,7 +29,7 @@ public class BufferDescription extends BufferResourceUpdate {
 
 	private RunningMode bufferLeakage;
 
-	public BufferDescription(String resourceId, Date timestamp, Date validFrom,
+	public BufferSystemDescription(String resourceId, Date timestamp, Date validFrom,
 			Measurable<Duration> allocationDelay, List<Actuator> actuators,
 			String xLabel, Unit<?> xUnit, RunningMode bufferLeakage) {
 		super(resourceId, timestamp, validFrom, allocationDelay);

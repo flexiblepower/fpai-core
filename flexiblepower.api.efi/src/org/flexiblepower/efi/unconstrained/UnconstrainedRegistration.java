@@ -5,14 +5,14 @@ import java.util.Set;
 
 import javax.measure.Measurable;
 
-import org.flexiblepower.rai.comm.ResourceHandshake;
+import org.flexiblepower.rai.comm.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 
-public class UnconstrainedCapabilities extends ResourceHandshake {
+public class UnconstrainedRegistration extends ControlSpaceRegistration {
 
 	private final Set<Commodity> supportedCommodities;
 
-	public UnconstrainedCapabilities(String resourceId, Date timestamp,
+	public UnconstrainedRegistration(String resourceId, Date timestamp,
 			Set<Commodity> supportedCommodities) {
 		super(resourceId, timestamp);
 		this.supportedCommodities = supportedCommodities;

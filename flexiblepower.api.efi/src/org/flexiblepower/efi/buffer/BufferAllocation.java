@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ResourceUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class BufferAllocation extends Allocation {
 
@@ -14,7 +14,7 @@ public class BufferAllocation extends Allocation {
 		private Date startTime;
 	}
 
-	public BufferAllocation(String resourceId, ResourceUpdate resourceUpdate,
+	public BufferAllocation(String resourceId, ControlSpaceUpdate resourceUpdate,
 			Date timestamp, Set<RunningModeSelector> runningModeSelectors) {
 		super(resourceId, resourceUpdate, timestamp);
 		this.runningModeSelectors = runningModeSelectors;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.4" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="org.flexiblepower.efi.buffer.BufferCapabilities" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferCapabilities.java" binary="false" 
+  <class id="1" language="java" name="org.flexiblepower.efi.buffer.BufferRegistration" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="76" width="160" x="1038" y="359"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -11,9 +11,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="org.flexiblepower.efi.buffer.BufferCapabilities.ActuatorCapabilities" 
+  <class id="2" language="java" name="org.flexiblepower.efi.buffer.BufferRegistration.ActuatorCapabilities" 
     project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferCapabilities.java" binary="false" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="112" width="171" x="1038" y="498"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -43,8 +43,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferDescription" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferDescription.java" binary="false" 
+  <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferSystemDescription" 
+    project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferSystemDescription.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="112" width="131" x="682" y="498"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -53,8 +54,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="org.flexiblepower.efi.buffer.TargetProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/TargetProfile.java" binary="false" 
+  <class id="6" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfile" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfile.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="94" width="131" x="511" y="498"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -140,8 +141,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="org.flexiblepower.rai.comm.ResourceInfo" project="flexiblepower.api" 
-    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceInfo.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="15" language="java" name="org.flexiblepower.rai.comm.ResourceMessage" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceMessage.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="130" width="131" x="1038" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -149,8 +150,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="org.flexiblepower.rai.comm.ResourceUpdate" project="flexiblepower.api" 
-    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceUpdate.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="16" language="java" name="org.flexiblepower.rai.comm.ControlSpaceUpdate" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceUpdate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="112" width="212" x="786" y="207"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -158,8 +160,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="org.flexiblepower.rai.comm.ResourceHandshake" project="flexiblepower.api" 
-    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceHandshake.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="17" language="java" name="org.flexiblepower.rai.comm.ControlSpaceRegistration" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceRegistration.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="76" width="145" x="1038" y="207"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -176,9 +179,10 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate.TimerUpdate" 
-    project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUpdate.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+  <class id="19" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.TimerUpdate" 
+    project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="117" width="123" x="288" y="902"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -186,9 +190,10 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate.ActuatorUpdate" 
-    project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUpdate.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
+  <class id="20" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.ActuatorUpdate" 
+    project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="171" width="226" x="41" y="691"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -196,8 +201,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUpdate.java" binary="false" 
+  <class id="21" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="153" width="430" x="41" y="498"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -206,9 +211,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="org.flexiblepower.efi.buffer.BufferResourceUpdate" 
-    project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferResourceUpdate.java" binary="false" 
+  <class id="22" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="99" width="335" x="663" y="359"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 

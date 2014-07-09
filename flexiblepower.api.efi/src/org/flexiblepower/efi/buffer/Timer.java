@@ -8,19 +8,19 @@ import javax.measure.quantity.Duration;
 public class Timer {
 
 	private int id;
-	private final String name;
+	private final String label;
 	private final Measurable<Duration> duration;
 	private final Date finishedAt;
 
-	public Timer(String name, Measurable<Duration> duration, Date finishedAt) {
+	public Timer(String label, Measurable<Duration> duration, Date finishedAt) {
 		super();
-		this.name = name;
+		this.label = label;
 		this.duration = duration;
 		this.finishedAt = finishedAt;
 	}
 
-	public String getName() {
-		return name;
+	public String getLabel() {
+		return label;
 	}
 
 	public Measurable<Duration> getDuration() {

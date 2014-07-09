@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ResourceUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class TimeShifterAllocation extends Allocation {
 
@@ -35,7 +35,7 @@ public class TimeShifterAllocation extends Allocation {
 	private List<SequentialProfileAllocation> sequentialProfileAllocation;
 
 	public TimeShifterAllocation(String resourceId,
-			ResourceUpdate resourceUpdate, Date timestamp,
+			ControlSpaceUpdate resourceUpdate, Date timestamp,
 			List<SequentialProfileAllocation> sequentialProfileAllocation) {
 		super(resourceId, resourceUpdate, timestamp);
 		this.sequentialProfileAllocation = sequentialProfileAllocation;

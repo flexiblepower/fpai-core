@@ -4,9 +4,9 @@ import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceType;
 
 public interface BufferResourceController extends
-		ResourceController<BufferCapabilities, BufferUpdate> {
+		ResourceController<BufferRegistration, BufferStateUpdate> {
 
-	public static final ResourceType<BufferAllocation, BufferCapabilities, BufferUpdate> BUFFER = new ResourceType<BufferAllocation, BufferCapabilities, BufferUpdate>() {
+	public static final ResourceType<BufferAllocation, BufferRegistration, BufferStateUpdate> BUFFER = new ResourceType<BufferAllocation, BufferRegistration, BufferStateUpdate>() {
 
 	};
 
