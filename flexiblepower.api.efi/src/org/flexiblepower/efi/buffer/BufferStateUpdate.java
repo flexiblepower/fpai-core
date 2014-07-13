@@ -6,12 +6,14 @@ import java.util.Set;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
-
+// TODO Moeten alle actuator-states worden opgestuurd en het fill level, of mag je ook een incomplete toestand opsturen.
 public class BufferStateUpdate extends BufferUpdate {
 
 	private static final long serialVersionUID = 899987142667364534L;
 
+	/**
+	 * May be sent only after a {@link BufferSystemDescription} has taken place.
+	 */
 	public static class ActuatorUpdate {
 		private final int actuatorId;
 		private final int currentRunningModeId;
@@ -40,12 +42,12 @@ public class BufferStateUpdate extends BufferUpdate {
 	}
 
 	public static class TimerUpdate {
-		public int timedId;
+		public int timerId;
 		public Date finishedAt;
 	}
 
-	private double xValue;
-	private Set<ActuatorUpdate> currentRunningMode;
+	private final double xValue;
+	private final Set<ActuatorUpdate> currentRunningMode;
 
 	public BufferStateUpdate(String resourceId, Date timestamp, Date validFrom,
 			Measurable<Duration> allocationDelay, double xValue,
