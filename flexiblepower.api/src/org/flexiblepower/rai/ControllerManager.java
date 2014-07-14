@@ -1,12 +1,8 @@
 package org.flexiblepower.rai;
 
-import org.flexiblepower.rai.comm.Allocation;
+public interface ControllerManager {
 
-public interface ControllerManager<A extends Allocation> {
+    void registerResource(ControllableResource<?> resource, ResourceType<?, ?, ?> resourceType);
 
-    public void setResourceType(ResourceType<A, ?, ?> resourceType);
-
-    void registerResource(ControllableResource<A> resource);
-
-    void unregisterResource(ControllableResource<A> resource);
+    void unregisterResource(ControllableResource<?> resource, ResourceType<?, ?, ?> resourceType);
 }

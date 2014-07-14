@@ -21,4 +21,5 @@ Export-Package:  \
 	org.flexiblepower.efi.unconstrained,\
 	org.flexiblepower.efi.values,\
 	org.flexiblepower.efi.timeshifter,\
-	org.flexiblepower.efi.uncontrolled
+	org.flexiblepower.efi.uncontrolled,\
+	org.flexiblepower.efi

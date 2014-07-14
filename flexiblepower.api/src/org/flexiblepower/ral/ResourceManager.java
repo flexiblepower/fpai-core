@@ -1,9 +1,9 @@
 package org.flexiblepower.ral;
 
 import org.flexiblepower.observation.ObservationConsumer;
-import org.flexiblepower.rai.old.Allocation;
+import org.flexiblepower.rai.ControllableResource;
+import org.flexiblepower.rai.comm.Allocation;
 import org.flexiblepower.rai.old.ControlSpace;
-import org.flexiblepower.rai.old.ControllableResource;
 
 /**
  * The {@link ResourceManager} is responsible to translating the current state of an appliance (as retrieved through a
@@ -19,9 +19,9 @@ import org.flexiblepower.rai.old.ControllableResource;
  * @param <RCP>
  *            The type of {@link ResourceControlParameters} that will we written to the driver.
  */
-public interface ResourceManager<CS extends ControlSpace, RS extends ResourceState, RCP extends ResourceControlParameters> extends
-                                                                                                                           ObservationConsumer<RS>,
-                                                                                                                           ControllableResource<CS> {
+public interface ResourceManager<A extends Allocation, RS extends ResourceState, RCP extends ResourceControlParameters> extends
+                                                                                                                        ObservationConsumer<RS>,
+                                                                                                                        ControllableResource<A> {
     /**
      * Bind the given driver to this resource manager. The implementation of this method must make sure to call the
      * {@link ResourceDriver#subscribe(ObservationConsumer)} method with <code>this</code> as its parameter.
