@@ -1,19 +1,20 @@
 package org.flexiblepower.efi.timeshifter;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
 import org.flexiblepower.efi.values.CommodityProfile;
+import org.flexiblepower.rai.values.Commodity;
 
 public class SequentialProfile {
 	private int id;
 	private Measurable<Duration> maxIntervalBefore;
-	private List<CommodityProfile> commodityProfiles;
+	private Map<Commodity, CommodityProfile> commodityProfiles;
 
 	public SequentialProfile(int id, Measurable<Duration> maxIntervalBefore,
-			List<CommodityProfile> commodityProfiles) {
+			Map<Commodity, CommodityProfile> commodityProfiles) {
 		super();
 		this.id = id;
 		this.maxIntervalBefore = maxIntervalBefore;
@@ -28,7 +29,7 @@ public class SequentialProfile {
 		return maxIntervalBefore;
 	}
 
-	public List<CommodityProfile> getCommodityProfiles() {
+	public Map<Commodity, CommodityProfile> getCommodityProfiles() {
 		return commodityProfiles;
 	}
 
