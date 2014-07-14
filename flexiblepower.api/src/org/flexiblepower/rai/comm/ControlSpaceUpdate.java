@@ -9,7 +9,13 @@ public abstract class ControlSpaceUpdate extends ResourceMessage {
 
     private static final long serialVersionUID = -242149664875591012L;
 
+    /**
+     * This indicates from which point in time onward this {@link ControlSpaceUpdate} is valid. This may be earlier than
+     * the timestamp of this message.
+     */
     private final Date validFrom;
+
+    // TODO JP/Wilco: Does this belong here?
     private final Measurable<Duration> allocationDelay;
 
     public ControlSpaceUpdate(String resourceId, Date timestamp, Date validFrom, Measurable<Duration> allocationDelay) {
