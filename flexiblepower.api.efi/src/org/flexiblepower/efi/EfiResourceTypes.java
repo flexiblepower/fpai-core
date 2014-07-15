@@ -1,23 +1,30 @@
 package org.flexiblepower.efi;
 
 import org.flexiblepower.efi.buffer.BufferAllocation;
+import org.flexiblepower.efi.buffer.BufferCommunicationValidator;
 import org.flexiblepower.efi.buffer.BufferRegistration;
 import org.flexiblepower.efi.buffer.BufferStateUpdate;
+import org.flexiblepower.efi.buffer.BufferUpdate;
 import org.flexiblepower.efi.timeshifter.TimeShifterAllocation;
+import org.flexiblepower.efi.timeshifter.TimeShifterCommunicationValidator;
 import org.flexiblepower.efi.timeshifter.TimeShifterRegistration;
 import org.flexiblepower.efi.timeshifter.TimeShifterUpdate;
+import org.flexiblepower.efi.unconstrained.UnconstrainedAllocation;
+import org.flexiblepower.efi.unconstrained.UnconstrainedCommunicationValidator;
 import org.flexiblepower.efi.unconstrained.UnconstrainedRegistration;
 import org.flexiblepower.efi.unconstrained.UnconstrainedUpdate;
 import org.flexiblepower.efi.uncontrolled.UncontrolledAllocation;
+import org.flexiblepower.efi.uncontrolled.UncontrolledCommunicationValidator;
 import org.flexiblepower.efi.uncontrolled.UncontrolledRegistration;
 import org.flexiblepower.efi.uncontrolled.UncontrolledUpdate;
+import org.flexiblepower.rai.CommunicationValidator;
 import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceType;
 
 public interface EfiResourceTypes extends
 		ResourceController<BufferRegistration, BufferStateUpdate> {
 
-	public static final ResourceType<BufferAllocation, BufferRegistration, BufferStateUpdate> BUFFER = new ResourceType<BufferAllocation, BufferRegistration, BufferStateUpdate>() {
+	public static final ResourceType<BufferAllocation, BufferRegistration, BufferUpdate> BUFFER = new ResourceType<BufferAllocation, BufferRegistration, BufferUpdate>() {
 
 		@Override
 		public Class<BufferAllocation> getAllocationClass() {
@@ -30,8 +37,13 @@ public interface EfiResourceTypes extends
 		}
 
 		@Override
-		public Class<BufferStateUpdate> getControlSpaceUpdateClass() {
-			return BufferStateUpdate.class;
+		public Class<BufferUpdate> getControlSpaceUpdateClass() {
+			return BufferUpdate.class;
+		}
+
+		@Override
+		public Class<? extends CommunicationValidator<BufferAllocation, BufferRegistration, BufferUpdate>> getCommunicationValidatorClass() {
+			return BufferCommunicationValidator.class;
 		}
 
 	};
@@ -52,13 +64,18 @@ public interface EfiResourceTypes extends
 		public Class<TimeShifterUpdate> getControlSpaceUpdateClass() {
 			return TimeShifterUpdate.class;
 		}
-	};
-
-	public static final ResourceType<UncontrolledAllocation, UnconstrainedRegistration, UnconstrainedUpdate> UNCONSTRAINED = new ResourceType<UncontrolledAllocation, UnconstrainedRegistration, UnconstrainedUpdate>() {
 
 		@Override
-		public Class<UncontrolledAllocation> getAllocationClass() {
-			return UncontrolledAllocation.class;
+		public Class<? extends CommunicationValidator<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>> getCommunicationValidatorClass() {
+			return TimeShifterCommunicationValidator.class;
+		}
+	};
+
+	public static final ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate> UNCONSTRAINED = new ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>() {
+
+		@Override
+		public Class<UnconstrainedAllocation> getAllocationClass() {
+			return UnconstrainedAllocation.class;
 		}
 
 		@Override
@@ -69,6 +86,11 @@ public interface EfiResourceTypes extends
 		@Override
 		public Class<UnconstrainedUpdate> getControlSpaceUpdateClass() {
 			return UnconstrainedUpdate.class;
+		}
+
+		@Override
+		public Class<? extends CommunicationValidator<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>> getCommunicationValidatorClass() {
+			return UnconstrainedCommunicationValidator.class;
 		}
 	};
 
@@ -87,6 +109,11 @@ public interface EfiResourceTypes extends
 		@Override
 		public Class<UncontrolledUpdate> getControlSpaceUpdateClass() {
 			return UncontrolledUpdate.class;
+		}
+
+		@Override
+		public Class<? extends CommunicationValidator<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>> getCommunicationValidatorClass() {
+			return UncontrolledCommunicationValidator.class;
 		}
 	};
 
