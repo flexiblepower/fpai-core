@@ -3,7 +3,7 @@
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="org.flexiblepower.rai.comm.ResourceMessage" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceMessage.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="130" width="151" x="253" y="-17"/>    
+    <position height="130" width="151" x="320" y="-4"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -13,18 +13,18 @@
   <class id="2" language="java" name="org.flexiblepower.rai.comm.ControlSpaceRegistration" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="329" y="176"/>    
+    <position height="-1" width="-1" x="396" y="184"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="org.flexiblepower.efi.uncontrolled.UncontrolledRegistration" 
+  <class id="3" language="java" name="org.flexiblepower.efi.unconstrained.UnconstrainedRegistration" 
     project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/uncontrolled/UncontrolledRegistration.java" binary="false" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/unconstrained/UnconstrainedRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="331" y="280"/>    
+    <position height="-1" width="-1" x="397" y="288"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -33,7 +33,7 @@
   </class>  
   <class id="4" language="java" name="org.flexiblepower.rai.values.Commodity" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/values/Commodity.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="621" y="280"/>    
+    <position height="-1" width="-1" x="684" y="288"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -48,30 +48,30 @@
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="8">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <association id="9">    
+  <association id="8">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="10" name="ELECTRICITY"/>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
+      <attribute id="9" name="ELECTRICITY"/>      
+      <multiplicity id="10" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="12">    
+  <association id="11">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="12" name="supportedCommodities"/>      
+      <multiplicity id="13" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="14">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <association id="13">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="14" name="supportedCommodities"/>      
-      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
