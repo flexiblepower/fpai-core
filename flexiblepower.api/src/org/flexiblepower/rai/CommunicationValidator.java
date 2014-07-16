@@ -8,9 +8,11 @@ public interface CommunicationValidator<A extends Allocation, CSR extends Contro
 
     public ResourceType<A, CSR, CSU> getResourceType();
 
-    public void validateResourceHandshake(CSR resourceHandshake) throws IllegalArgumentException, IllegalStateException;
+    public void validateControlSpaceRegistration(CSR controlSpaceRegistration) throws IllegalArgumentException,
+                                                                              IllegalStateException;
 
-    public void validateResourceUpdate(CSU resourceUpdate) throws IllegalArgumentException, IllegalStateException;
+    public void validateControlSpaceUpdate(CSU controlSpaceUpdate) throws IllegalArgumentException,
+                                                                  IllegalStateException;
 
     public void validateAllocation(A allocation) throws IllegalArgumentException, IllegalStateException;
 

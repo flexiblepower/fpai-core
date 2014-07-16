@@ -14,7 +14,7 @@ public class TimeShifterCommunicationValidator
 	}
 
 	@Override
-	public void validateResourceHandshake(
+	public void validateControlSpaceRegistration(
 			TimeShifterRegistration resourceHandshake)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
@@ -22,7 +22,7 @@ public class TimeShifterCommunicationValidator
 	}
 
 	@Override
-	public void validateResourceUpdate(TimeShifterUpdate resourceUpdate)
+	public void validateControlSpaceUpdate(TimeShifterUpdate resourceUpdate)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
 

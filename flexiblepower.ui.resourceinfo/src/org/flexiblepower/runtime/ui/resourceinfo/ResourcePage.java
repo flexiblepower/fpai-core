@@ -51,7 +51,7 @@ public class ResourcePage implements Widget {
      */
     private String resourceType(Resource<?, ?> resource) {
         for (ResourceManager<?, ?, ?> r : resource.getResourceManagers()) {
-            return r.getControlSpaceType().getSimpleName().replace("ControlSpace", "");
+            return r.getResourceType().getName();
         }
         return "Unknown";
     }

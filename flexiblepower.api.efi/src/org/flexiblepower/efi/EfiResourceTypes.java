@@ -46,6 +46,11 @@ public interface EfiResourceTypes extends
 			return BufferCommunicationValidator.class;
 		}
 
+		@Override
+		public String getName() {
+			return "Buffer";
+		}
+
 	};
 
 	public static final ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate> TIMESHIFTER = new ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>() {
@@ -68,6 +73,11 @@ public interface EfiResourceTypes extends
 		@Override
 		public Class<? extends CommunicationValidator<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>> getCommunicationValidatorClass() {
 			return TimeShifterCommunicationValidator.class;
+		}
+
+		@Override
+		public String getName() {
+			return "TimeShifter";
 		}
 	};
 
@@ -92,6 +102,11 @@ public interface EfiResourceTypes extends
 		public Class<? extends CommunicationValidator<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>> getCommunicationValidatorClass() {
 			return UnconstrainedCommunicationValidator.class;
 		}
+
+		@Override
+		public String getName() {
+			return "Unconstrained";
+		}
 	};
 
 	public static final ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate> UNCONTROLLED = new ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>() {
@@ -114,6 +129,11 @@ public interface EfiResourceTypes extends
 		@Override
 		public Class<? extends CommunicationValidator<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>> getCommunicationValidatorClass() {
 			return UncontrolledCommunicationValidator.class;
+		}
+
+		@Override
+		public String getName() {
+			return "Uncontrolled";
 		}
 	};
 

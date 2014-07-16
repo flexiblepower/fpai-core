@@ -14,14 +14,14 @@ public class BufferCommunicationValidator
 	}
 
 	@Override
-	public void validateResourceHandshake(BufferRegistration resourceHandshake)
+	public void validateControlSpaceRegistration(BufferRegistration resourceHandshake)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateResourceUpdate(BufferUpdate resourceUpdate)
+	public void validateControlSpaceUpdate(BufferUpdate resourceUpdate)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
 

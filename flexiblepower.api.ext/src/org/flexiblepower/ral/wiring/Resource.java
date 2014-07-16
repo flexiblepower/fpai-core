@@ -3,6 +3,7 @@ package org.flexiblepower.ral.wiring;
 import java.util.Set;
 
 import org.flexiblepower.control.ControllerManager;
+import org.flexiblepower.rai.ResourceType;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
@@ -23,6 +24,9 @@ public interface Resource<RS extends ResourceState, RCP extends ResourceControlP
      */
     String getId();
 
+    // TODO javadoc
+    ResourceType<?, ?, ?> getResourceType();
+
     /**
      * @return The {@link ControllerManager} that is responsible for creating the Controller for the
      *         {@link ResourceManager}.
@@ -38,4 +42,5 @@ public interface Resource<RS extends ResourceState, RCP extends ResourceControlP
      * @return The {@link ResourceDriver} that have the same identifier.
      */
     Set<ResourceDriver<RS, RCP>> getResourceDrivers();
+
 }

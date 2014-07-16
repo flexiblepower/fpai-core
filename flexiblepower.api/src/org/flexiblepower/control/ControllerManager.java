@@ -1,7 +1,9 @@
 package org.flexiblepower.control;
 
+import org.flexiblepower.rai.ControllableResource;
+import org.flexiblepower.rai.ResourceController;
+import org.flexiblepower.rai.ResourceType;
 import org.flexiblepower.rai.old.ControlSpace;
-import org.flexiblepower.rai.old.ControllableResource;
 import org.flexiblepower.rai.old.Controller;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
@@ -39,7 +41,7 @@ public interface ControllerManager {
      * @param resource
      *            The resource that will be controlled by this Energy App.
      */
-    void registerResource(ControllableResource<?> resource);
+    ResourceController<?, ?> registerResource(ControllableResource<?> resource, ResourceType<?, ?, ?> resourceType);
 
     /**
      * This method is called by the runtime when a resource is unbound from this manager. The implementation must always

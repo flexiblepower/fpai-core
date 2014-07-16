@@ -16,7 +16,7 @@ public class UnconstrainedCommunicationValidator
 	}
 
 	@Override
-	public void validateResourceHandshake(
+	public void validateControlSpaceRegistration(
 			UnconstrainedRegistration resourceHandshake)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
@@ -24,7 +24,7 @@ public class UnconstrainedCommunicationValidator
 	}
 
 	@Override
-	public void validateResourceUpdate(UnconstrainedUpdate resourceUpdate)
+	public void validateControlSpaceUpdate(UnconstrainedUpdate resourceUpdate)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
 

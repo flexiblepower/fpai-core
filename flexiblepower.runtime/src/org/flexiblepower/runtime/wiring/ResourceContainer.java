@@ -1,10 +1,13 @@
 package org.flexiblepower.runtime.wiring;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.flexiblepower.control.ControllerManager;
+import org.flexiblepower.rai.ResourceType;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
@@ -19,8 +22,10 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
 
     private final String resourceId;
 
+    private final ResourceType<?, ?, ?> resourceType = null;
+
     private ControllerManager controllerManager;
-    private final Set<ResourceManager<?, RS, RCP>> managers = new HashSet<ResourceManager<?, RS, RCP>>();
+    private final Map<ResourceManager<?, RS, RCP>, ControlCommunication> resourceManagers = new HashMap<ResourceManager<?, RS, RCP>, ControlCommunication>();
     private final Set<ResourceDriver<RS, RCP>> drivers = new HashSet<ResourceDriver<RS, RCP>>();
 
     public ResourceContainer(String resourceId) {
@@ -37,10 +42,11 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
         } else {
             logger.debug("Adding resource controller for [{}]: {}", resourceId, controller);
             this.controllerManager = controller;
-            for (ResourceManager<?, RS, RCP> manager : managers) {
-                logger.debug("Bound resource manager [{}] to controller [{}]", manager, controller);
+            for (ResourceManager<?, RS, RCP> resourceManager : resourceManagers.keySet()) {
+                logger.debug("Bound resource manager [{}] to controller [{}]", resourceManager, controller);
                 try {
-                    controller.registerResource(manager);
+                    ControlCommunication communication = new ControlCommunication(controllerManager, resourceManager);
+                    resourceManagers.put(resourceManager, communication);
                 } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
@@ -55,10 +61,14 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
         }
 
         logger.debug("Removing resource controller for [{}]: {}", resourceId, controller);
-        for (ResourceManager<?, RS, RCP> manager : managers) {
+        for (ResourceManager<?, RS, RCP> manager : resourceManagers.keySet()) {
             logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controller);
             try {
-                controller.unregisterResource(manager);
+                ControlCommunication controlCommunication = resourceManagers.get(manager);
+                if (controlCommunication != null) {
+                    controlCommunication.disconnect();
+                    resourceManagers.put(manager, null);
+                }
             } catch (Throwable ex) {
                 logger.error("Error during unbind: {}", ex.getMessage(), ex);
             }
@@ -66,22 +76,23 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
         this.controllerManager = null;
     }
 
-    public synchronized void addManager(ResourceManager<?, RS, RCP> manager) {
-        logger.debug("Adding resource manager for [{}]: {}", resourceId, manager);
-        if (managers.add(manager)) {
+    public synchronized void addResourceManager(ResourceManager<?, RS, RCP> resourceManager) {
+        logger.debug("Adding resource manager for [{}]: {}", resourceId, resourceManager);
+        if (!resourceManagers.containsKey(resourceManager)) {
             if (controllerManager != null) {
-                logger.debug("Bound resource manager [{}] to controller [{}]", manager, controllerManager);
+                logger.debug("Bound resource manager [{}] to controller [{}]", resourceManager, controllerManager);
                 try {
-                    controllerManager.registerResource(manager);
+                    ControlCommunication communication = new ControlCommunication(controllerManager, resourceManager);
+                    resourceManagers.put(resourceManager, communication);
                 } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
             }
 
             for (ResourceDriver<RS, RCP> driver : drivers) {
-                logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
+                logger.debug("Bound resource manager [{}] to driver [{}]", resourceManager, driver);
                 try {
-                    manager.registerDriver(driver);
+                    resourceManager.registerDriver(driver);
                 } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
@@ -89,17 +100,21 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
         }
     }
 
-    public synchronized void removeManager(ResourceManager<?, RS, RCP> manager) {
+    public synchronized void removeResourceManager(ResourceManager<?, RS, RCP> manager) {
         logger.debug("Removing resource manager for [{}]: {}", resourceId, manager);
-        if (managers.remove(manager)) {
+        if (resourceManagers.containsKey(manager)) {
             if (controllerManager != null) {
                 logger.debug("Unbound resource manager [{}] from controller [{}]", manager, controllerManager);
                 try {
-                    controllerManager.unregisterResource(manager);
+                    ControlCommunication controlCommunication = resourceManagers.get(manager);
+                    if (controlCommunication != null) {
+                        controlCommunication.disconnect();
+                    }
                 } catch (Throwable ex) {
                     logger.error("Error during unbind: {}", ex.getMessage(), ex);
                 }
             }
+            resourceManagers.remove(manager);
             for (ResourceDriver<RS, RCP> driver : drivers) {
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 try {
@@ -114,7 +129,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
     public synchronized void addDriver(ResourceDriver<RS, RCP> driver) {
         logger.debug("Adding resource driver for [{}]: {}", resourceId, driver);
         if (drivers.add(driver)) {
-            for (ResourceManager<?, RS, RCP> manager : managers) {
+            for (ResourceManager<?, RS, RCP> manager : resourceManagers.keySet()) {
                 logger.debug("Bound resource manager [{}] to driver [{}]", manager, driver);
                 try {
                     manager.registerDriver(driver);
@@ -128,7 +143,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
     public synchronized void removeDriver(ResourceDriver<RS, RCP> driver) {
         logger.debug("Removing resource driver for [{}]: {}", resourceId, driver);
         if (drivers.remove(driver)) {
-            for (ResourceManager<?, RS, RCP> manager : managers) {
+            for (ResourceManager<?, RS, RCP> manager : resourceManagers.keySet()) {
                 logger.debug("Unbound resource manager [{}] from driver [{}]", manager, driver);
                 try {
                     manager.unregisterDriver(driver);
@@ -145,7 +160,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
     }
 
     public boolean isEmpty() {
-        return controllerManager == null && drivers.isEmpty() && managers.isEmpty();
+        return controllerManager == null && drivers.isEmpty() && resourceManagers.isEmpty();
     }
 
     @Override
@@ -160,7 +175,7 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
 
     @Override
     public Set<ResourceManager<?, RS, RCP>> getResourceManagers() {
-        return Collections.unmodifiableSet(managers);
+        return Collections.unmodifiableSet(resourceManagers.keySet());
     }
 
     @Override
@@ -169,8 +184,13 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                + "]: Controller: "
                + controllerManager
                + ", managers: "
-               + managers
+               + resourceManagers
                + ", drivers: "
                + drivers;
+    }
+
+    @Override
+    public ResourceType<?, ?, ?> getResourceType() {
+        return this.resourceType;
     }
 }

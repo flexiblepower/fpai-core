@@ -10,4 +10,6 @@ public interface ControllableResource<A extends Allocation> {
 
     public void handleAllocation(A allocation);
 
+    public void disconnect();
+
 }

@@ -22,7 +22,7 @@ class ResourceManagerTracker extends SimpleTracker<ResourceManager> implements A
         if (resourceId != null) {
             logger.debug("Adding manager {} for id [{}]", resourceManager, resourceId);
             resourceIds.put(resourceManager, resourceId.toString());
-            getResource(resourceId).addManager(resourceManager);
+            getResource(resourceId).addResourceManager(resourceManager);
         } else {
             resourceIds.put(resourceManager, null);
         }
@@ -35,8 +35,8 @@ class ResourceManagerTracker extends SimpleTracker<ResourceManager> implements A
         if (!oldId.equals(currId)) {
             logger.debug("Modifying manager {} for id [{}]", resourceManager, currId);
             resourceIds.put(resourceManager, currId.toString());
-            getResource(oldId).removeManager(resourceManager);
-            getResource(currId).addManager(resourceManager);
+            getResource(oldId).removeResourceManager(resourceManager);
+            getResource(currId).addResourceManager(resourceManager);
         }
     }
 
@@ -45,7 +45,7 @@ class ResourceManagerTracker extends SimpleTracker<ResourceManager> implements A
         String id = resourceIds.remove(resourceManager);
         if (id != null) {
             logger.debug("Removing manager {} for id [{}]", resourceManager, id);
-            getResource(id).removeManager(resourceManager);
+            getResource(id).removeResourceManager(resourceManager);
         }
     }
 }
