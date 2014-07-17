@@ -2,7 +2,7 @@ package org.flexiblepower.efi.unconstrained;
 
 import java.util.Set;
 
-import org.flexiblepower.efi.buffer.Timer;
+import org.flexiblepower.efi.util.Timer;
 
 public class UnconstrainedTransition {
 	private final UnconstrainedRunningMode toRunningMode;
@@ -16,8 +16,9 @@ public class UnconstrainedTransition {
 	// Optional: The costs of a transition
 	private Double transitionCosts;
 
-	public UnconstrainedTransition(UnconstrainedRunningMode toRunningMode, Set<Timer> startTimers,
-			Set<Timer> blockingTimers, Double transitionCosts) {
+	public UnconstrainedTransition(UnconstrainedRunningMode toRunningMode,
+			Set<Timer> startTimers, Set<Timer> blockingTimers,
+			Double transitionCosts) {
 		super();
 		this.toRunningMode = toRunningMode;
 		this.startTimers = startTimers;
