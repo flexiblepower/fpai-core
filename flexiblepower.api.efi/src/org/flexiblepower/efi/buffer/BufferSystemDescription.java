@@ -36,4 +36,14 @@ public class BufferSystemDescription extends BufferUpdate {
 		return bufferLeakage;
 	}
 
+	public double getMinimumFillLevel() {
+		// TODO: implement
+		return 0;
+	}
+
+	public double getMaximumFillLevel() {
+		// TODO: implement
+		return 0;
+	}
+
 }

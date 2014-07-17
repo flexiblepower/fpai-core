@@ -15,6 +15,7 @@ public abstract class ControlSpaceUpdate extends ResourceMessage {
      */
     private final Date validFrom;
 
+    // TODO Delete this field.
     private final Measurable<Duration> allocationDelay;
 
     public ControlSpaceUpdate(String resourceId, Date timestamp, Date validFrom, Measurable<Duration> allocationDelay) {
