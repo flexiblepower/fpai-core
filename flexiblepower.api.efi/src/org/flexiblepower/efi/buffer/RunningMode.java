@@ -10,21 +10,21 @@ public class RunningMode {
 
 	private final String name;
 
-	private List<RunningModeLine> runningModeLines;
+	private List<RunningModeRangeElement> runningModeRangeElements;
 
 	private List<Transition> possibleTransition;
 
 	public RunningMode(int id, String name) {
 		this.id = id;
 		this.name = name;
-		this.runningModeLines = new ArrayList<RunningMode.RunningModeLine>();
+		this.runningModeRangeElements = new ArrayList<RunningMode.RunningModeRangeElement>();
 	}
 
-	public void addLine(RunningModeLine line) {
-		runningModeLines.add(line);
+	public void addLine(RunningModeRangeElement line) {
+		runningModeRangeElements.add(line);
 	}
 
-	public static class RunningModeLine {
+	public static class RunningModeRangeElement {
 
 		// Defines the range of the line
 		private double lowerBound;
@@ -40,7 +40,7 @@ public class RunningMode {
 		// Optional: Running costs for this runningmode expressed per second
 		private Double runningCostsPerSecond;
 
-		public RunningModeLine(double rangeLow, double rangeUp, double xs,
+		public RunningModeRangeElement(double rangeLow, double rangeUp, double xs,
 				List<Measurable<?>> commodities, Double runningCostsPerSecond) {
 			this.upperBound = rangeLow;
 			this.lowerBound = rangeUp;

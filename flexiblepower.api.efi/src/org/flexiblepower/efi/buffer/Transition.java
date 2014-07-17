@@ -2,17 +2,23 @@ package org.flexiblepower.efi.buffer;
 
 import java.util.Set;
 
+import javax.measure.Measurable;
+import javax.measure.quantity.Duration;
+
 public class Transition {
 	private final RunningMode toRunningMode;
 
 	/** Timers to be (re)started when this transition is made */
-	private Set<Timer> startTimers;
+	private final Set<Timer> startTimers;
 
 	/** This transition can only be made when all these timers are finished */
-	private Set<Timer> blockingTimers;
+	private final Set<Timer> blockingTimers;
 
 	// Optional: The costs of a transition
-	private Double transitionCosts;
+	private final Double transitionCosts;
+
+	/** The time duration it takes for a transition */
+	private Measurable<Duration> transitionTime;
 
 	public Transition(RunningMode toRunningMode, Set<Timer> startTimers,
 			Set<Timer> blockingTimers, Double transitionCosts) {

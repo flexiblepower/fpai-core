@@ -9,6 +9,7 @@ public class Timer {
 
 	private int id;
 	private final String label;
+	/** Total duration of this timer. It includes the transition period. */
 	private final Measurable<Duration> duration;
 	private final Date finishedAt;
 

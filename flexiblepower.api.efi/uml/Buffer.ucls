@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.5" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+<class-diagram version="1.1.6" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="org.flexiblepower.efi.buffer.BufferRegistration" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferRegistration.java" binary="false" 
@@ -26,7 +26,7 @@
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUsageForecast.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="211" x="43" y="716"/>    
+    <position height="-1" width="-1" x="159" y="795"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -47,7 +47,7 @@
   <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfile" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfile.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="101" width="162" x="509" y="516"/>    
+    <position height="-1" width="-1" x="593" y="550"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -56,17 +56,17 @@
   </class>  
   <class id="6" language="java" name="org.flexiblepower.efi.buffer.Actuator" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Actuator.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="101" width="153" x="773" y="716"/>    
+    <position height="-1" width="-1" x="850" y="785"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="org.flexiblepower.efi.buffer.RunningMode.RunningModeLine" 
+  <class id="7" language="java" name="org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement" 
     project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/RunningMode.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="155" width="299" x="315" y="1111"/>    
+    <position height="-1" width="-1" x="372" y="1184"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -76,7 +76,7 @@
   <class id="8" language="java" name="org.flexiblepower.efi.buffer.BufferUsageForecast" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUsageForecast.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="83" width="176" x="293" y="516"/>    
+    <position height="-1" width="-1" x="390" y="527"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -85,7 +85,7 @@
   </class>  
   <class id="9" language="java" name="org.flexiblepower.efi.buffer.Transition" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Transition.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="703" y="997"/>    
+    <position height="-1" width="-1" x="745" y="1054"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -94,7 +94,7 @@
   </class>  
   <class id="10" language="java" name="org.flexiblepower.efi.buffer.RunningMode" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/RunningMode.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="349" y="1011"/>    
+    <position height="-1" width="-1" x="311" y="1004"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -105,7 +105,7 @@
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/TargetProfileElement.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="119" width="211" x="522" y="716"/>    
+    <position height="-1" width="-1" x="597" y="778"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -114,7 +114,7 @@
   </class>  
   <class id="12" language="java" name="org.flexiblepower.efi.buffer.Timer" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="932" y="1061"/>    
+    <position height="-1" width="-1" x="1025" y="1052"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -222,193 +222,193 @@
     </display>  
   </class>  
   <association id="23">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="24" name="actuators"/>      
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="24" name="targetProfileElements"/>      
       <multiplicity id="25" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="8"/>    
+  <association id="26">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="27" name="timerUpdates">        
+        <position height="20" width="85" x="355" y="716"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="29">    
+    <bendpoint x="284" y="716"/>    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="30" name="bufferLeakage">        
+        <position height="20" width="88" x="296" y="822"/>      
+      </attribute>      
+      <multiplicity id="31" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="32">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="20"/>  
   </generalization>  
-  <association id="27">    
+  <association id="34">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="35" name="possibleTransition"/>      
+      <multiplicity id="36" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
     <end type="SOURCE" refId="19" navigable="false">      
-      <attribute id="28" name="currentRunningMode">        
-        <position height="20" width="127" x="27" y="740"/>      
+      <attribute id="38" name="currentRunningMode">        
+        <position height="20" width="127" x="1144" y="689"/>      
       </attribute>      
-      <multiplicity id="29" minimum="0" maximum="2147483647">        
+      <multiplicity id="39" minimum="0" maximum="2147483647">        
         <position height="18" width="25" x="1179" y="722"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="30">    
+  <generalization id="40">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <association id="41">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="42" name="actuators"/>      
+      <multiplicity id="43" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="44">    
     <end type="SOURCE" refId="22"/>    
     <end type="TARGET" refId="16"/>  
   </generalization>  
-  <generalization id="31">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="33">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="34" name="actuatorAllocations"/>      
-      <multiplicity id="35" minimum="0" maximum="2147483647"/>    
+  <association id="45">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="46" name="toRunningMode"/>      
+      <multiplicity id="47" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
+    <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="36">    
+  <association id="48">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="49" name="profile"/>      
+      <multiplicity id="50" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="51">    
+    <bendpoint x="1265" y="716"/>    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="17"/>  
+  </nesting>  
+  <association id="52">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="37" name="runningModes">        
-        <position height="18" width="76" x="193" y="648"/>      
+      <attribute id="53" name="runningModes">        
+        <position height="20" width="89" x="582" y="886"/>      
       </attribute>      
-      <multiplicity id="38" minimum="0" maximum="2147483647">        
-        <position height="16" width="21" x="294" y="616"/>      
+      <multiplicity id="54" minimum="0" maximum="2147483647">        
+        <position height="16" width="21" x="256" y="609"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="39">    
+  <generalization id="55">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="20"/>  
+  </generalization>  
+  <nesting id="56">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </nesting>  
+  <nesting id="57">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="21"/>  
+  </nesting>  
+  <nesting id="58">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="18"/>  
+  </nesting>  
+  <association id="59">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="40" name="timerList">        
-        <position height="20" width="58" x="659" y="1187"/>      
+      <attribute id="60" name="timerList">        
+        <position height="20" width="58" x="865" y="988"/>      
       </attribute>      
-      <multiplicity id="41" minimum="0" maximum="2147483647"/>    
+      <multiplicity id="61" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="42">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <nesting id="43">    
-    <bendpoint x="1265" y="716"/>    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="17"/>  
-  </nesting>  
-  <generalization id="44">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
+  <generalization id="62">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="20"/>  
   </generalization>  
-  <generalization id="45">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <association id="46">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="47" name="targetProfileElements"/>      
-      <multiplicity id="48" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="49">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <nesting id="50">    
+  <nesting id="63">    
     <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
-  <association id="51">    
+  <association id="64">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="65" name="actuatorAllocations"/>      
+      <multiplicity id="66" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="67">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="52" name="toRunningMode"/>      
-      <multiplicity id="53" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="54">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="18"/>  
-  </nesting>  
-  <nesting id="55">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="21"/>  
-  </nesting>  
-  <association id="56">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="57" name="timerUpdates">        
-        <position height="20" width="85" x="355" y="716"/>      
+      <attribute id="68" name="blockingTimers">        
+        <position height="20" width="95" x="844" y="873"/>      
       </attribute>      
-      <multiplicity id="58" minimum="0" maximum="2147483647"/>    
+      <multiplicity id="69" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="59">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="60">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="61" name="profile"/>      
-      <multiplicity id="62" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="63">    
+  <association id="70">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="64" name="actuatorCapabilities"/>      
-      <multiplicity id="65" minimum="0" maximum="2147483647">        
+      <attribute id="71" name="actuatorCapabilities"/>      
+      <multiplicity id="72" minimum="0" maximum="2147483647">        
         <position height="18" width="25" x="45" y="465"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="66">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="67" name="blockingTimers">        
-        <position height="20" width="95" x="802" y="1249"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="69">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <generalization id="70">    
+  <generalization id="73">    
     <end type="SOURCE" refId="16"/>    
     <end type="TARGET" refId="13"/>  
   </generalization>  
-  <association id="71">    
-    <bendpoint x="284" y="716"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="72" name="bufferLeakage">        
-        <position height="20" width="88" x="371" y="646"/>      
-      </attribute>      
-      <multiplicity id="73" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="74">    
+  <generalization id="74">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <generalization id="75">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <generalization id="76">    
     <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </nesting>  
-  <association id="75">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="76" name="possibleTransition"/>      
-      <multiplicity id="77" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="77">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="20"/>  
+  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
