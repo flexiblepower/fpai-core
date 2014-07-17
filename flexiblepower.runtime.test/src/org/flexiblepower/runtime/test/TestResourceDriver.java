@@ -12,8 +12,8 @@ public class TestResourceDriver extends IdentifyableObject implements
                                                           ResourceDriver<ResourceState, ResourceControlParameters> {
     private ObservationConsumer<? super ResourceState> consumer;
 
-    public void assertCorrectWiring(ObservationConsumer<? super ResourceState> expectedConsumer) {
-        Assert.assertEquals(toString(), expectedConsumer, consumer);
+    public void assertCorrectResourceManager(ObservationConsumer<? super ResourceState> expectedResourceManager) {
+        Assert.assertEquals(toString(), expectedResourceManager, consumer);
     }
 
     @Override

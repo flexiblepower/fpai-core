@@ -87,6 +87,8 @@ public class ResourceContainer<RS extends ResourceState, RCP extends ResourceCon
                 } catch (Throwable ex) {
                     logger.error("Error during bind: {}", ex.getMessage(), ex);
                 }
+            } else {
+                resourceManagers.put(resourceManager, null);
             }
 
             for (ResourceDriver<RS, RCP> driver : drivers) {
