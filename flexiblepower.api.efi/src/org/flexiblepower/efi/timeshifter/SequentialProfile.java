@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.efi.values.CommodityProfile;
+import org.flexiblepower.efi.util.CommodityProfile;
 import org.flexiblepower.rai.values.Commodity;
 
 public class SequentialProfile {

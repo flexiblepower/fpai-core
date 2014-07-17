@@ -42,8 +42,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.flexiblepower.efi.values.CommodityProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/values/CommodityProfile.java" binary="false" 
+  <class id="5" language="java" name="org.flexiblepower.efi.util.CommodityProfile" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/CommodityProfile.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="662" y="426"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -52,9 +52,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="org.flexiblepower.efi.values.CommodityProfileElement" 
+  <class id="6" language="java" name="org.flexiblepower.efi.util.CommodityProfileElement" 
     project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/values/CommodityProfileElement.java" binary="false" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/CommodityProfileElement.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="922" y="429"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -72,8 +72,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.flexiblepower.efi.values.GasProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/values/GasProfile.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="org.flexiblepower.efi.util.GasProfile" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/GasProfile.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="595" y="504"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -81,8 +81,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="org.flexiblepower.efi.values.ElectricityProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/values/ElectricityProfile.java" binary="false" 
+  <class id="9" language="java" name="org.flexiblepower.efi.util.ElectricityProfile" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/ElectricityProfile.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="729" y="505"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 

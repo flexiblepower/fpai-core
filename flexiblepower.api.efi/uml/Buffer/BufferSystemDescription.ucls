@@ -69,8 +69,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.flexiblepower.efi.buffer.Timer" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="org.flexiblepower.efi.util.Timer" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="848" y="459"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

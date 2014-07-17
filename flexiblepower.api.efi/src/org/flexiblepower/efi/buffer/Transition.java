@@ -2,6 +2,8 @@ package org.flexiblepower.efi.buffer;
 
 import java.util.Set;
 
+import org.flexiblepower.efi.util.Timer;
+
 public class Transition {
 	private final RunningMode toRunningMode;
 

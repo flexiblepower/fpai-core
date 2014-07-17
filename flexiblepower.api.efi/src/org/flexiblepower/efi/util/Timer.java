@@ -1,22 +1,30 @@
-package org.flexiblepower.efi.buffer;
+package org.flexiblepower.efi.util;
 
 import java.util.Date;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
+import org.flexiblepower.time.TimeService;
+
 public class Timer {
 
-	private int id;
+	private final int id;
 	private final String label;
 	private final Measurable<Duration> duration;
 	private final Date finishedAt;
 
-	public Timer(String label, Measurable<Duration> duration, Date finishedAt) {
+	public Timer(int id, String label, Measurable<Duration> duration,
+			Date finishedAt) {
 		super();
+		this.id = id;
 		this.label = label;
 		this.duration = duration;
 		this.finishedAt = finishedAt;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public String getLabel() {
@@ -31,8 +39,7 @@ public class Timer {
 		return finishedAt;
 	}
 
-	public boolean timerIsFinished() {
-		// TODO
-		return true;
+	public boolean timerIsFinished(TimeService timeService) {
+		return finishedAt.getTime() <= timeService.getCurrentTimeMillis();
 	}
 }

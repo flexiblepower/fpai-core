@@ -44,8 +44,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfile.java" binary="false" 
+  <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfileUpdate" 
+    project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfileUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="101" width="162" x="509" y="516"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -112,8 +113,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="org.flexiblepower.efi.buffer.Timer" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="12" language="java" name="org.flexiblepower.efi.util.Timer" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="932" y="1061"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

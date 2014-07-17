@@ -30,8 +30,9 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfile.java" binary="false" 
+  <class id="4" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfileUpdate" 
+    project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfileUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="547" y="299"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 

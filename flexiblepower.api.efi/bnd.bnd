@@ -19,7 +19,7 @@ Tester-Plugin: biz.aQute.junit
 Export-Package:  \
 	org.flexiblepower.efi.buffer,\
 	org.flexiblepower.efi.unconstrained,\
-	org.flexiblepower.efi.values,\
+	org.flexiblepower.efi.util,\
 	org.flexiblepower.efi.timeshifter,\
 	org.flexiblepower.efi.uncontrolled,\
 	org.flexiblepower.efi

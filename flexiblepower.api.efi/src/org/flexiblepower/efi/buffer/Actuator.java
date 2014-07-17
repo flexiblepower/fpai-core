@@ -3,6 +3,8 @@ package org.flexiblepower.efi.buffer;
 import java.io.Serializable;
 import java.util.List;
 
+import org.flexiblepower.efi.util.Timer;
+
 public class Actuator implements Serializable {
 
 	private static final long serialVersionUID = -7888970166563077855L;

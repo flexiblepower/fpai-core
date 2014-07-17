@@ -14,7 +14,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-public abstract class Commodity<BU extends Quantity, FU extends Quantity> implements Serializable {
+public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implements Serializable {
 
     public static final Commodity<Volume, VolumetricFlowRate> GAS = new Commodity<Volume, VolumetricFlowRate>(SI.CUBIC_METRE,
                                                                                                               NonSI.CUBIC_METRE_PER_SECOND) {
@@ -64,24 +64,24 @@ public abstract class Commodity<BU extends Quantity, FU extends Quantity> implem
     private static final long serialVersionUID = 1L;
 
     // TODO do we have better names for these?
-    private final Unit<BU> billableUnit;
-    private final Unit<FU> flowUnit;
+    private final Unit<BQ> billableUnit;
+    private final Unit<FQ> flowUnit;
 
-    public Commodity(Unit<BU> billableUnit, Unit<FU> flowUnit) {
+    public Commodity(Unit<BQ> billableUnit, Unit<FQ> flowUnit) {
         this.billableUnit = billableUnit;
         this.flowUnit = flowUnit;
     }
 
-    public Unit<BU> getBillableUnit() {
+    public Unit<BQ> getBillableUnit() {
         return billableUnit;
     }
 
-    public Unit<FU> getFlowUnit() {
+    public Unit<FQ> getFlowUnit() {
         return flowUnit;
     }
 
-    public abstract Measurable<FU> average(Measurable<BU> amount, Measurable<Duration> duration);
+    public abstract Measurable<FQ> average(Measurable<BQ> amount, Measurable<Duration> duration);
 
-    public abstract Measurable<BU> amount(Measurable<FU> average, Measurable<Duration> duration);
+    public abstract Measurable<BQ> amount(Measurable<FQ> average, Measurable<Duration> duration);
 
 }
