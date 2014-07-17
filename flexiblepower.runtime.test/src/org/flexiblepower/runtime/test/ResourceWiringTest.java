@@ -1,10 +1,14 @@
 package org.flexiblepower.runtime.test;
 
 import java.util.Dictionary;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import junit.framework.TestCase;
 
+import org.flexiblepower.control.ControllerManager;
+import org.flexiblepower.efi.buffer.BufferRegistration;
+import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.wiring.ResourceWiringManager;
@@ -22,6 +26,8 @@ public class ResourceWiringTest extends TestCase {
 
     private final ServiceReference<ResourceWiringManager> rwmReference;
     private final ResourceWiringManager resourceWiringManager;
+
+    public static HashSet<ResourceController> resourceControllers = new HashSet<ResourceController>();
 
     public ResourceWiringTest() {
         bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
@@ -51,10 +57,9 @@ public class ResourceWiringTest extends TestCase {
     }
 
     @SuppressWarnings("rawtypes")
-    public void testResourceDriverResourceManagerWiring() {
-        // TestControllerManager cm = new TestControllerManager();
-        TestResourceManager rm1 = new TestResourceManager();
-        TestResourceManager rm2 = new TestResourceManager();
+    public void testResourceDriverToResourceManagerWiring() {
+        TestBufferResourceManager rm1 = new TestBufferResourceManager("type1");
+        TestBufferResourceManager rm2 = new TestBufferResourceManager("type2");
         TestResourceDriver rd1 = new TestResourceDriver();
         TestResourceDriver rd2 = new TestResourceDriver();
 
@@ -63,15 +68,17 @@ public class ResourceWiringTest extends TestCase {
         rd1.assertCorrectResourceManager(null);
         rd2.assertCorrectResourceManager(null);
 
-        // ServiceRegistration<ControllerManager> srCm = registerService(ControllerManager.class, cm, "type1", "type2");
+        assertEquals(0, resourceWiringManager.size());
+
         ServiceRegistration<ResourceManager> srRm1 = registerService(ResourceManager.class, rm1, "type1");
-        ServiceRegistration<ResourceManager> srRm2 = registerService(ResourceManager.class, rm2, "type2");
         ServiceRegistration<ResourceDriver> srRd1 = registerService(ResourceDriver.class, rd1, "type1");
+        ServiceRegistration<ResourceManager> srRm2 = registerService(ResourceManager.class, rm2, "type2");
         ServiceRegistration<ResourceDriver> srRd2 = registerService(ResourceDriver.class, rd2, "type2");
 
         logger.debug("Expecting wiring of {} - {}", rm1, rd1);
         logger.debug("Expecting wiring of {} - {}", rm2, rd2);
         logger.debug("Current state: " + resourceWiringManager.getResources());
+
         assertEquals(2, resourceWiringManager.size());
 
         rm1.assertCorrectResourceDriver(rd1);
@@ -93,6 +100,40 @@ public class ResourceWiringTest extends TestCase {
         assertEquals(0, resourceWiringManager.size());
     }
 
+    @SuppressWarnings("rawtypes")
+    public void testResourceManagerToResourceControllerWiring() {
+        TestControllerManager cm = new TestControllerManager();
+        TestBufferResourceManager rm1 = new TestBufferResourceManager("type1");
+        // TestBufferResourceManager rm2 = new TestBufferResourceManager("type2");
+
+        cm.assertNrOfConnections(0);
+        rm1.assertCorrectResourceDriver(null);
+        // rm2.assertCorrectResourceDriver(null);
+
+        assertEquals(0, resourceWiringManager.size());
+
+        ServiceRegistration<ControllerManager> srCm = registerService(ControllerManager.class, cm, "type1", "type2");
+        ServiceRegistration<ResourceManager> srRm1 = registerService(ResourceManager.class, rm1, "type1");
+        // ServiceRegistration<ResourceManager> srRm2 = registerService(ResourceManager.class, rm2, "type2");
+
+        logger.debug("Expecting wiring of {} - {}", cm, rm1);
+        // logger.debug("Expecting wiring of {} - {}", cm, rm2);
+        logger.debug("Current state: " + resourceWiringManager.getResources());
+        assertEquals(2, resourceWiringManager.size());
+        cm.assertNrOfConnections(1);
+
+        // TODO test other communication
+        BufferRegistration sentBufferRegistration = rm1.sendBufferRegistration();
+        ((TestBufferResourceController) ResourceWiringTest.resourceControllers.iterator().next()).assertReceivedBufferRegistration(sentBufferRegistration);
+
+        srCm.unregister();
+        srRm1.unregister();
+        // srRm2.unregister();
+
+        assertEquals(0, resourceWiringManager.size());
+    }
+
+    // TODO
     // @SuppressWarnings("rawtypes")
     // public void testModified() {
     // TestControllerManager cm = new TestControllerManager();

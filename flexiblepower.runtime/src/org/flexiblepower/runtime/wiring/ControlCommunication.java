@@ -57,6 +57,9 @@ public class ControlCommunication {
 
     public ControlCommunication(ControllerManager controllerManager, ControllableResource controllableResource) throws InstantiationException,
                                                                                                                IllegalAccessException {
+        if (controllerManager == null || controllableResource == null) {
+            throw new NullPointerException("ControllerManager or ControllableResource cannot be null when creating a ControlCommunication");
+        }
         resourceType = controllableResource.getResourceType();
         communicationValidator = (CommunicationValidator) resourceType.getCommunicationValidatorClass().newInstance();
         this.controllerManager = controllerManager;
@@ -84,7 +87,7 @@ public class ControlCommunication {
     }
 
     protected void handleControlSpaceRegistration(ControlSpaceRegistration controlSpaceRegistration) {
-        if (controlSpaceRegistration == null) {
+        if (this.controlSpaceRegistration == null) {
             communicationValidator.validateControlSpaceRegistration(controlSpaceRegistration);
             this.controlSpaceRegistration = controlSpaceRegistration;
             resourceController.initialize(controlSpaceRegistration, controllerConnection);

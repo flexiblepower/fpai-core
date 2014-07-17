@@ -1,5 +1,6 @@
 -runbundles: \
 	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
 	flexiblepower.api.ext;version=latest,\
 	flexiblepower.runtime;version=latest,\
 	flexiblepower.runtime.test;version=latest,\

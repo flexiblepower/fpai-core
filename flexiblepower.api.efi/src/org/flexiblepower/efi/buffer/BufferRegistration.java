@@ -32,6 +32,27 @@ public class BufferRegistration extends ControlSpaceRegistration {
 		private int actuatorId;
 		private String actuatorLabel;
 		private Set<Commodity> commodities;
+
+		public ActuatorCapabilities(int actuatorId, String actuatorLabel,
+				Set<Commodity> commodities) {
+			super();
+			this.actuatorId = actuatorId;
+			this.actuatorLabel = actuatorLabel;
+			this.commodities = commodities;
+		}
+
+		public int getActuatorId() {
+			return actuatorId;
+		}
+
+		public String getActuatorLabel() {
+			return actuatorLabel;
+		}
+
+		public Set<Commodity> getCommodities() {
+			return commodities;
+		}
+
 	}
 
 	private final Set<ActuatorCapabilities> actuatorCapabilities;
