@@ -3,8 +3,6 @@ package org.flexiblepower.control;
 import org.flexiblepower.rai.ControllableResource;
 import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceType;
-import org.flexiblepower.rai.old.ControlSpace;
-import org.flexiblepower.rai.old.Controller;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
 

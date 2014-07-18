@@ -3,7 +3,6 @@ package org.flexiblepower.ral;
 import org.flexiblepower.observation.ObservationConsumer;
 import org.flexiblepower.rai.ControllableResource;
 import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.old.ControlSpace;
 
 /**
  * The {@link ResourceManager} is responsible to translating the current state of an appliance (as retrieved through a
