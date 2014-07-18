@@ -7,9 +7,9 @@
 	org.mockito.mockito-all;verion='[1.9,2)'
 
 Bundle-Version: 1.1.0.${qualifier}
-Export-Package: org.flexiblepower.observation.ext,\
+Export-Package:  \
+	org.flexiblepower.observation.ext,\
 	org.flexiblepower.ral.ext,\
 	org.flexiblepower.ral.drivers.*,\
 	org.flexiblepower.ral.wiring,\
-	org.flexiblepower.simulation,\
-	org.flexiblepower.rai.ext
+	org.flexiblepower.simulation

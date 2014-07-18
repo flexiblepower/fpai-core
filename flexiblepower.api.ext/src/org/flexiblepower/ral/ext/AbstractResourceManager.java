@@ -4,7 +4,6 @@ import org.flexiblepower.rai.ResourceMessageSubmitter;
 import org.flexiblepower.rai.ResourceType;
 import org.flexiblepower.rai.comm.Allocation;
 import org.flexiblepower.rai.comm.ResourceMessage;
-import org.flexiblepower.rai.old.ControlSpace;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;

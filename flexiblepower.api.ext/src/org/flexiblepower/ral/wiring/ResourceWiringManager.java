@@ -2,7 +2,6 @@ package org.flexiblepower.ral.wiring;
 
 import java.util.Collection;
 
-import org.flexiblepower.rai.old.Controller;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
 
