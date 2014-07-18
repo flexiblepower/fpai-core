@@ -16,5 +16,5 @@ public interface DishwasherControlParameters extends ResourceControlParameters {
     /**
      * @return true when the given startTime will be used..
      */
-    boolean setStartTime(Date startTime);
+    Date getStartTime();
 }
