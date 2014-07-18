@@ -43,7 +43,7 @@ public class TimeShifterAllocation extends Allocation {
 		this.sequentialProfileAllocation = sequentialProfileAllocation;
 	}
 	
-	protected List<SequentialProfileAllocation> getSequentialProfileAllocation(){
+	public List<SequentialProfileAllocation> getSequentialProfileAllocation(){
 		return sequentialProfileAllocation;
 		
 	}

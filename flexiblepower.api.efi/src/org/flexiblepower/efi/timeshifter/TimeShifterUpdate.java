@@ -21,7 +21,7 @@ public class TimeShifterUpdate extends ControlSpaceUpdate {
 		this.timeshifterProfiles = timeshifterProfiles;
 	}
 	
-	protected List<SequentialProfile> getTimeShifterProfiles(){
+	public List<SequentialProfile> getTimeShifterProfiles(){
 		return timeshifterProfiles;
 		
 	}
