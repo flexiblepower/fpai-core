@@ -90,4 +90,9 @@ public abstract class AbstractResourceManager<A extends Allocation, RS extends R
             this.driver = null;
         }
     }
+
+    public ResourceDriver<? extends RS, ? super RCP> getDriver() {
+        return this.driver;
+    }
+
 }
