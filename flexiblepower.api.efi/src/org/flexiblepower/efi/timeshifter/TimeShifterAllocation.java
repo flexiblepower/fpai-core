@@ -29,6 +29,8 @@ public class TimeShifterAllocation extends Allocation {
 			return startTime;
 		}
 
+		
+		
 	}
 
 	// Can be complete list or can be one at a time and everything in between
@@ -40,5 +42,11 @@ public class TimeShifterAllocation extends Allocation {
 		super(resourceId, resourceUpdate, timestamp);
 		this.sequentialProfileAllocation = sequentialProfileAllocation;
 	}
+	
+	public List<SequentialProfileAllocation> getSequentialProfileAllocation(){
+		return sequentialProfileAllocation;
+		
+	}
+
 
 }
