@@ -4,8 +4,8 @@ import java.util.Set;
 
 import org.flexiblepower.efi.util.Timer;
 
-public class UnconstrainedTransition {
-	private final UnconstrainedRunningMode toRunningMode;
+public class Transition {
+	private final RunningMode toRunningMode;
 
 	/** Timers to be (re)started when this transition is made */
 	private Set<Timer> startTimers;
@@ -16,7 +16,7 @@ public class UnconstrainedTransition {
 	// Optional: The costs of a transition
 	private Double transitionCosts;
 
-	public UnconstrainedTransition(UnconstrainedRunningMode toRunningMode,
+	public Transition(RunningMode toRunningMode,
 			Set<Timer> startTimers, Set<Timer> blockingTimers,
 			Double transitionCosts) {
 		super();
