@@ -4,16 +4,16 @@ import org.flexiblepower.rai.comm.Allocation;
 import org.flexiblepower.rai.comm.ControlSpaceRegistration;
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
-public abstract class ResourceType<A extends Allocation, CSR extends ControlSpaceRegistration, CSU extends ControlSpaceUpdate> {
+public interface ResourceType<A extends Allocation, CSR extends ControlSpaceRegistration, CSU extends ControlSpaceUpdate> {
 
-    public abstract String getName();
+    String getName();
 
-    public abstract Class<? extends CommunicationValidator<A, CSR, CSU>> getCommunicationValidatorClass();
+    Class<? extends CommunicationValidator<A, CSR, CSU>> getCommunicationValidatorClass();
 
-    public abstract Class<A> getAllocationClass();
+    Class<A> getAllocationClass();
 
-    public abstract Class<CSR> getControlSpaceRegistrationClass();
+    Class<CSR> getControlSpaceRegistrationClass();
 
-    public abstract Class<CSU> getControlSpaceUpdateClass();
+    Class<CSU> getControlSpaceUpdateClass();
 
 }

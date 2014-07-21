@@ -3,7 +3,7 @@ package org.flexiblepower.rai.comm;
 import java.util.Date;
 import java.util.UUID;
 
-public class AllocationStatusUpdate extends ResourceMessage {
+public final class AllocationStatusUpdate extends ResourceMessage {
 
     private static final long serialVersionUID = 9119759551623204007L;
 
