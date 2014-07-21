@@ -17,4 +17,9 @@ public interface DishwasherControlParameters extends ResourceControlParameters {
      * @return true when the given startTime will be used..
      */
     Date getStartTime();
+
+    /**
+     * @return program that will be used..
+     */
+    String getProgram();
 }
