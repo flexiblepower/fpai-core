@@ -28,6 +28,14 @@ public class BufferRegistration extends ControlSpaceRegistration {
      */
     private Measurable<Duration> allocationDelay;
 
+    public Measurable<Duration> getAllocationDelay() {
+        return allocationDelay;
+    }
+
+    public Set<ActuatorCapabilities> getActuatorCapabilities() {
+        return actuatorCapabilities;
+    }
+
     public static class ActuatorCapabilities {
         private final int actuatorId;
         private final String actuatorLabel;
@@ -65,5 +73,13 @@ public class BufferRegistration extends ControlSpaceRegistration {
         this.xLabel = xLabel;
         this.xUnit = xUnit;
         this.actuatorCapabilities = actuatorCapabilities;
+    }
+
+    public String getxLabel() {
+        return xLabel;
+    }
+
+    public Unit<?> getxUnit() {
+        return xUnit;
     }
 }
