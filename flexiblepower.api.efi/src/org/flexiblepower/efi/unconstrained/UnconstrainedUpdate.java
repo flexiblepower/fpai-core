@@ -9,11 +9,10 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class UnconstrainedUpdate extends ControlSpaceUpdate {
 
-	private static final long serialVersionUID = 3798980923200359354L;
+    private static final long serialVersionUID = 3798980923200359354L;
 
-	public UnconstrainedUpdate(String resourceId, Date timestamp,
-			Date validFrom, Measurable<Duration> allocationDelay) {
-		super(resourceId, timestamp, validFrom, allocationDelay);
-	}
+    public UnconstrainedUpdate(String resourceId, Date timestamp, Date validFrom, Measurable<Duration> allocationDelay) {
+        super(resourceId, timestamp, validFrom, allocationDelay);
+    }
 
 }

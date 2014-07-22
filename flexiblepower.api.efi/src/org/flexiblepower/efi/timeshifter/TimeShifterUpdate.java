@@ -10,20 +10,23 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class TimeShifterUpdate extends ControlSpaceUpdate {
 
-	private final Date endBefore;
-	private final List<SequentialProfile> timeshifterProfiles;
+    private final Date endBefore;
+    private final List<SequentialProfile> timeshifterProfiles;
 
-	public TimeShifterUpdate(String resourceId, Date timestamp,
-			Date validFrom, Measurable<Duration> allocationDelay,
-			Date endBefore, List<SequentialProfile> timeshifterProfiles) {
-		super(resourceId, timestamp, validFrom, allocationDelay);
-		this.endBefore = endBefore;
-		this.timeshifterProfiles = timeshifterProfiles;
-	}
-	
-	public List<SequentialProfile> getTimeShifterProfiles(){
-		return timeshifterProfiles;
-		
-	}
+    public TimeShifterUpdate(String resourceId,
+                             Date timestamp,
+                             Date validFrom,
+                             Measurable<Duration> allocationDelay,
+                             Date endBefore,
+                             List<SequentialProfile> timeshifterProfiles) {
+        super(resourceId, timestamp, validFrom, allocationDelay);
+        this.endBefore = endBefore;
+        this.timeshifterProfiles = timeshifterProfiles;
+    }
+
+    public List<SequentialProfile> getTimeShifterProfiles() {
+        return timeshifterProfiles;
+
+    }
 
 }

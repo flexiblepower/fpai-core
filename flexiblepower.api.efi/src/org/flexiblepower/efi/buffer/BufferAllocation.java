@@ -8,42 +8,40 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class BufferAllocation extends Allocation {
 
-	public static class ActuatorAllocation {
-		private int actuatorId;
-		private int runningModeId;
-		private Date startTime;
-	}
+    public static class ActuatorAllocation {
+        private int actuatorId;
+        private int runningModeId;
+        private Date startTime;
+    }
 
-	private final Set<ActuatorAllocation> actuatorAllocations;
+    private final Set<ActuatorAllocation> actuatorAllocations;
 
-	/**
-	 * A buffer allocation contains allocations for the actuators that it wishes
-	 * to change. The unmentioned actuators of the buffer may do as they please.
-	 * */
-	public BufferAllocation(String resourceId,
-			ControlSpaceUpdate resourceUpdate, Date timestamp,
-			Set<ActuatorAllocation> actuatorAllocations) {
-		super(resourceId, resourceUpdate, timestamp);
+    /**
+     * A buffer allocation contains allocations for the actuators that it wishes to change. The unmentioned actuators of
+     * the buffer may do as they please.
+     * */
+    public BufferAllocation(String resourceId,
+                            ControlSpaceUpdate resourceUpdate,
+                            Date timestamp,
+                            Set<ActuatorAllocation> actuatorAllocations) {
+        super(resourceId, resourceUpdate, timestamp);
 
-		this.actuatorAllocations = actuatorAllocations;
+        this.actuatorAllocations = actuatorAllocations;
 
-		validate();
-	}
+        validate();
+    }
 
-	/**
-	 * Checks the internal consistency of this message. It does not check
-	 * whether the actuator ids are really part of the buffer with this resource
-	 * id.
-	 */
-	private void validate() {
-		if (this.actuatorAllocations == null) {
-			throw new NullPointerException(
-					"Field runningModeSelectors cannot be null.");
-		}
-		if (this.actuatorAllocations.isEmpty()) {
-			throw new IllegalArgumentException(
-					"There must be at least one actuator allocation in this buffer allocation.");
-		}
-	}
+    /**
+     * Checks the internal consistency of this message. It does not check whether the actuator ids are really part of
+     * the buffer with this resource id.
+     */
+    private void validate() {
+        if (actuatorAllocations == null) {
+            throw new NullPointerException("Field runningModeSelectors cannot be null.");
+        }
+        if (actuatorAllocations.isEmpty()) {
+            throw new IllegalArgumentException("There must be at least one actuator allocation in this buffer allocation.");
+        }
+    }
 
 }

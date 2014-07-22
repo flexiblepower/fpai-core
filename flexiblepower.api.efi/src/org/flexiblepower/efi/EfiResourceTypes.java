@@ -21,120 +21,123 @@ import org.flexiblepower.rai.CommunicationValidator;
 import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceType;
 
-public interface EfiResourceTypes extends
-		ResourceController<BufferRegistration, BufferStateUpdate> {
+public interface EfiResourceTypes extends ResourceController<BufferRegistration, BufferStateUpdate> {
 
-	public static final ResourceType<BufferAllocation, BufferRegistration, BufferUpdate> BUFFER = new ResourceType<BufferAllocation, BufferRegistration, BufferUpdate>() {
+    public static final ResourceType<BufferAllocation, BufferRegistration, BufferUpdate> BUFFER = new ResourceType<BufferAllocation, BufferRegistration, BufferUpdate>() {
 
-		@Override
-		public Class<BufferAllocation> getAllocationClass() {
-			return BufferAllocation.class;
-		}
+        @Override
+        public Class<BufferAllocation> getAllocationClass() {
+            return BufferAllocation.class;
+        }
 
-		@Override
-		public Class<BufferRegistration> getControlSpaceRegistrationClass() {
-			return BufferRegistration.class;
-		}
+        @Override
+        public Class<BufferRegistration> getControlSpaceRegistrationClass() {
+            return BufferRegistration.class;
+        }
 
-		@Override
-		public Class<BufferUpdate> getControlSpaceUpdateClass() {
-			return BufferUpdate.class;
-		}
+        @Override
+        public Class<BufferUpdate> getControlSpaceUpdateClass() {
+            return BufferUpdate.class;
+        }
 
-		@Override
-		public Class<? extends CommunicationValidator<BufferAllocation, BufferRegistration, BufferUpdate>> getCommunicationValidatorClass() {
-			return BufferCommunicationValidator.class;
-		}
+        @Override
+        public Class<? extends CommunicationValidator<BufferAllocation, BufferRegistration, BufferUpdate>>
+                getCommunicationValidatorClass() {
+            return BufferCommunicationValidator.class;
+        }
 
-		@Override
-		public String getName() {
-			return "Buffer";
-		}
+        @Override
+        public String getName() {
+            return "Buffer";
+        }
 
-	};
+    };
 
-	public static final ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate> TIMESHIFTER = new ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>() {
+    public static final ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate> TIMESHIFTER = new ResourceType<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>() {
 
-		@Override
-		public Class<TimeShifterAllocation> getAllocationClass() {
-			return TimeShifterAllocation.class;
-		}
+        @Override
+        public Class<TimeShifterAllocation> getAllocationClass() {
+            return TimeShifterAllocation.class;
+        }
 
-		@Override
-		public Class<TimeShifterRegistration> getControlSpaceRegistrationClass() {
-			return TimeShifterRegistration.class;
-		}
+        @Override
+        public Class<TimeShifterRegistration> getControlSpaceRegistrationClass() {
+            return TimeShifterRegistration.class;
+        }
 
-		@Override
-		public Class<TimeShifterUpdate> getControlSpaceUpdateClass() {
-			return TimeShifterUpdate.class;
-		}
+        @Override
+        public Class<TimeShifterUpdate> getControlSpaceUpdateClass() {
+            return TimeShifterUpdate.class;
+        }
 
-		@Override
-		public Class<? extends CommunicationValidator<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>> getCommunicationValidatorClass() {
-			return TimeShifterCommunicationValidator.class;
-		}
+        @Override
+        public Class<? extends CommunicationValidator<TimeShifterAllocation, TimeShifterRegistration, TimeShifterUpdate>>
+                getCommunicationValidatorClass() {
+            return TimeShifterCommunicationValidator.class;
+        }
 
-		@Override
-		public String getName() {
-			return "TimeShifter";
-		}
-	};
+        @Override
+        public String getName() {
+            return "TimeShifter";
+        }
+    };
 
-	public static final ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate> UNCONSTRAINED = new ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>() {
+    public static final ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate> UNCONSTRAINED = new ResourceType<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>() {
 
-		@Override
-		public Class<UnconstrainedAllocation> getAllocationClass() {
-			return UnconstrainedAllocation.class;
-		}
+        @Override
+        public Class<UnconstrainedAllocation> getAllocationClass() {
+            return UnconstrainedAllocation.class;
+        }
 
-		@Override
-		public Class<UnconstrainedRegistration> getControlSpaceRegistrationClass() {
-			return UnconstrainedRegistration.class;
-		}
+        @Override
+        public Class<UnconstrainedRegistration> getControlSpaceRegistrationClass() {
+            return UnconstrainedRegistration.class;
+        }
 
-		@Override
-		public Class<UnconstrainedUpdate> getControlSpaceUpdateClass() {
-			return UnconstrainedUpdate.class;
-		}
+        @Override
+        public Class<UnconstrainedUpdate> getControlSpaceUpdateClass() {
+            return UnconstrainedUpdate.class;
+        }
 
-		@Override
-		public Class<? extends CommunicationValidator<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>> getCommunicationValidatorClass() {
-			return UnconstrainedCommunicationValidator.class;
-		}
+        @Override
+        public Class<? extends CommunicationValidator<UnconstrainedAllocation, UnconstrainedRegistration, UnconstrainedUpdate>>
+                getCommunicationValidatorClass() {
+            return UnconstrainedCommunicationValidator.class;
+        }
 
-		@Override
-		public String getName() {
-			return "Unconstrained";
-		}
-	};
+        @Override
+        public String getName() {
+            return "Unconstrained";
+        }
+    };
 
-	public static final ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate> UNCONTROLLED = new ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>() {
+    public static final ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate> UNCONTROLLED = new ResourceType<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>() {
 
-		@Override
-		public Class<UncontrolledAllocation> getAllocationClass() {
-			return UncontrolledAllocation.class;
-		}
+        @Override
+        public Class<UncontrolledAllocation> getAllocationClass() {
+            return UncontrolledAllocation.class;
+        }
 
-		@Override
-		public Class<UncontrolledRegistration> getControlSpaceRegistrationClass() {
-			return UncontrolledRegistration.class;
-		}
+        @Override
+        public Class<UncontrolledRegistration> getControlSpaceRegistrationClass() {
+            return UncontrolledRegistration.class;
+        }
 
-		@Override
-		public Class<UncontrolledUpdate> getControlSpaceUpdateClass() {
-			return UncontrolledUpdate.class;
-		}
+        @Override
+        public Class<UncontrolledUpdate> getControlSpaceUpdateClass() {
+            return UncontrolledUpdate.class;
+        }
 
-		@Override
-		public Class<? extends CommunicationValidator<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>> getCommunicationValidatorClass() {
-			return UncontrolledCommunicationValidator.class;
-		}
+        @Override
+        public Class<? extends CommunicationValidator<UncontrolledAllocation, UncontrolledRegistration, UncontrolledUpdate>>
+                getCommunicationValidatorClass() {
+            return UncontrolledCommunicationValidator.class;
+        }
 
-		@Override
-		public String getName() {
-			return "Uncontrolled";
-		}
-	};
+        @Override
+        public String getName() {
+            return "Uncontrolled";
+        }
+    };
 
 }

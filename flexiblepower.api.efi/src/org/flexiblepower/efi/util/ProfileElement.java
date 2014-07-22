@@ -5,9 +5,8 @@ import javax.measure.quantity.Duration;
 
 public interface ProfileElement<PE extends ProfileElement<PE>> {
 
-	public Measurable<Duration> getDuration();
+    public Measurable<Duration> getDuration();
 
-	public PE subProfile(Measurable<Duration> offset,
-			Measurable<Duration> duration);
+    public PE subProfile(Measurable<Duration> offset, Measurable<Duration> duration);
 
 }

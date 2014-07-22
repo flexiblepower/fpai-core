@@ -8,34 +8,34 @@ import javax.measure.quantity.Duration;
 
 public class Profile<PE extends ProfileElement<PE>> extends AbstractList<PE> {
 
-	protected final PE[] elements;
+    protected final PE[] elements;
 
-	public Profile(PE[] elements) {
-		super();
-		this.elements = elements;
-	}
+    public Profile(PE[] elements) {
+        super();
+        this.elements = elements;
+    }
 
-	@Override
-	public PE get(int index) {
-		return elements[index];
-	}
+    @Override
+    public PE get(int index) {
+        return elements[index];
+    }
 
-	@Override
-	public int size() {
-		return elements.length;
-	}
+    @Override
+    public int size() {
+        return elements.length;
+    }
 
-	public Measurable<Duration> getTotalDuration() {
-		double total = 0;
-		for (PE e : elements) {
-			total += e.getDuration().doubleValue(Duration.UNIT);
-		}
-		return Measure.valueOf(total, Duration.UNIT);
-	}
-	
-	public Profile<PE> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
-		// TODO
-		return null;
-	}
+    public Measurable<Duration> getTotalDuration() {
+        double total = 0;
+        for (final PE e : elements) {
+            total += e.getDuration().doubleValue(Duration.UNIT);
+        }
+        return Measure.valueOf(total, Duration.UNIT);
+    }
+
+    public Profile<PE> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+        // TODO
+        return null;
+    }
 
 }

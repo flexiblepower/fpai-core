@@ -13,23 +13,25 @@ import org.flexiblepower.rai.values.Commodity;
 @SuppressWarnings("rawtypes")
 public class UncontrolledUpdate extends ControlSpaceUpdate {
 
-	private static final long serialVersionUID = 9154440319073601863L;
+    private static final long serialVersionUID = 9154440319073601863L;
 
-	private final Map<Commodity, CommodityProfile> profiles;
+    private final Map<Commodity, CommodityProfile> profiles;
 
-	public UncontrolledUpdate(String resourceId, Date timestamp,
-			Date validFrom, Measurable<Duration> allocationDelay,
-			Map<Commodity, CommodityProfile> profiles) {
-		super(resourceId, timestamp, validFrom, allocationDelay);
-		this.profiles = profiles;
-	}
+    public UncontrolledUpdate(String resourceId,
+                              Date timestamp,
+                              Date validFrom,
+                              Measurable<Duration> allocationDelay,
+                              Map<Commodity, CommodityProfile> profiles) {
+        super(resourceId, timestamp, validFrom, allocationDelay);
+        this.profiles = profiles;
+    }
 
-	public Map<Commodity, CommodityProfile> getProfiles() {
-		return profiles;
-	}
+    public Map<Commodity, CommodityProfile> getProfiles() {
+        return profiles;
+    }
 
-	public CommodityProfile getProfileForCommodity(Commodity commodity) {
-		return profiles.get(commodity);
-	}
+    public CommodityProfile getProfileForCommodity(Commodity commodity) {
+        return profiles.get(commodity);
+    }
 
 }

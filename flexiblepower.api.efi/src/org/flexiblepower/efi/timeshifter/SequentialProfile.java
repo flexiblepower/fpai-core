@@ -9,28 +9,29 @@ import org.flexiblepower.efi.util.CommodityProfile;
 import org.flexiblepower.rai.values.Commodity;
 
 public class SequentialProfile {
-	private int id;
-	private Measurable<Duration> maxIntervalBefore;
-	private Map<Commodity, CommodityProfile> commodityProfiles;
+    private final int id;
+    private final Measurable<Duration> maxIntervalBefore;
+    private final Map<Commodity, CommodityProfile> commodityProfiles;
 
-	public SequentialProfile(int id, Measurable<Duration> maxIntervalBefore,
-			Map<Commodity, CommodityProfile> commodityProfiles) {
-		super();
-		this.id = id;
-		this.maxIntervalBefore = maxIntervalBefore;
-		this.commodityProfiles = commodityProfiles;
-	}
+    public SequentialProfile(int id,
+                             Measurable<Duration> maxIntervalBefore,
+                             Map<Commodity, CommodityProfile> commodityProfiles) {
+        super();
+        this.id = id;
+        this.maxIntervalBefore = maxIntervalBefore;
+        this.commodityProfiles = commodityProfiles;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public Measurable<Duration> getMaxIntervalBefore() {
-		return maxIntervalBefore;
-	}
+    public Measurable<Duration> getMaxIntervalBefore() {
+        return maxIntervalBefore;
+    }
 
-	public Map<Commodity, CommodityProfile> getCommodityProfiles() {
-		return commodityProfiles;
-	}
+    public Map<Commodity, CommodityProfile> getCommodityProfiles() {
+        return commodityProfiles;
+    }
 
 }

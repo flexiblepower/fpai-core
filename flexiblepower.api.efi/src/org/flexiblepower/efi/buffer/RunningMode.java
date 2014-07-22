@@ -6,47 +6,50 @@ import java.util.List;
 import javax.measure.Measurable;
 
 public class RunningMode {
-	private final int id;
+    private final int id;
 
-	private final String name;
+    private final String name;
 
-	private List<RunningModeRangeElement> runningModeRangeElements;
+    private final List<RunningModeRangeElement> runningModeRangeElements;
 
-	private List<Transition> possibleTransition;
+    private List<Transition> possibleTransition;
 
-	public RunningMode(int id, String name) {
-		this.id = id;
-		this.name = name;
-		this.runningModeRangeElements = new ArrayList<RunningMode.RunningModeRangeElement>();
-	}
+    public RunningMode(int id, String name) {
+        this.id = id;
+        this.name = name;
+        runningModeRangeElements = new ArrayList<RunningMode.RunningModeRangeElement>();
+    }
 
-	public void addLine(RunningModeRangeElement line) {
-		runningModeRangeElements.add(line);
-	}
+    public void addLine(RunningModeRangeElement line) {
+        runningModeRangeElements.add(line);
+    }
 
-	public static class RunningModeRangeElement {
+    public static class RunningModeRangeElement {
 
-		// Defines the range of the line
-		private double lowerBound;
-		private double upperBound;
+        // Defines the range of the line
+        private final double lowerBound;
+        private final double upperBound;
 
-		// Charge speed x / seconds
-		private double xs;
+        // Charge speed x / seconds
+        private final double xs;
 
-		// Commodity consumed or produced
-		// TODO
-		private List<Measurable<?>> commoditiesPerSecond;
+        // Commodity consumed or produced
+        // TODO
+        private final List<Measurable<?>> commoditiesPerSecond;
 
-		// Optional: Running costs for this runningmode expressed per second
-		private Double runningCostsPerSecond;
+        // Optional: Running costs for this runningmode expressed per second
+        private final Double runningCostsPerSecond;
 
-		public RunningModeRangeElement(double rangeLow, double rangeUp, double xs,
-				List<Measurable<?>> commodities, Double runningCostsPerSecond) {
-			this.upperBound = rangeLow;
-			this.lowerBound = rangeUp;
-			this.xs = xs;
-			this.commoditiesPerSecond = commodities;
-			this.runningCostsPerSecond = runningCostsPerSecond;
-		}
-	}
+        public RunningModeRangeElement(double rangeLow,
+                                       double rangeUp,
+                                       double xs,
+                                       List<Measurable<?>> commodities,
+                                       Double runningCostsPerSecond) {
+            upperBound = rangeLow;
+            lowerBound = rangeUp;
+            this.xs = xs;
+            commoditiesPerSecond = commodities;
+            this.runningCostsPerSecond = runningCostsPerSecond;
+        }
+    }
 }
