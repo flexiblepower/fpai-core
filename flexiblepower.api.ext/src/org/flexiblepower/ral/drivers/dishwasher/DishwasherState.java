@@ -2,27 +2,29 @@ package org.flexiblepower.ral.drivers.dishwasher;
 
 import java.util.Date;
 
-import org.flexiblepower.rai.values.EnergyProfile;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
+
+import org.flexiblepower.efi.util.CommodityProfile;
 import org.flexiblepower.ral.ResourceState;
 
 /**
- * The {@link DishwasherState}.
+ * The {@link DishwasherState} that describes.
  */
 public interface DishwasherState extends ResourceState {
-
     /**
      * @return The latest time at which the current program should start.
      */
-    Date getStartTime();
+    Date getLatestStartTime();
 
     /**
-     * @return The user friendly name of the selected program.
+     * @return The unique name of the selected program. This will be used for display purposes and in the
+     *         {@link DishwasherControlParameters#getProgram()} to make sure that this program will be started.
      */
     String getProgram();
 
     /**
-     * @return The energy profile of the selected program.
+     * @return The corresponding energy profile of the selected program.
      */
-    EnergyProfile getEnergyProfile();
-
+    CommodityProfile<Energy, Power> getEnergyProfile();
 }
