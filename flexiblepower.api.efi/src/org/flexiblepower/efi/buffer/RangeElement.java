@@ -7,13 +7,13 @@ public class RangeElement {
     private final double upperBound;
 
     // Charge speed x / seconds
-    private final double xs;
+    private final double fillingSpeed;
 
-    public RangeElement(double lowerBound, double upperBound, double xs) {
+    public RangeElement(double lowerBound, double upperBound, double fillingSpeed) {
         super();
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
-        this.xs = xs;
+        this.fillingSpeed = fillingSpeed;
     }
 
     public double getLowerBound() {
@@ -25,7 +25,7 @@ public class RangeElement {
     }
 
     public double getXs() {
-        return xs;
+        return fillingSpeed;
     }
 
 }

@@ -13,14 +13,14 @@ import org.flexiblepower.rai.values.Commodity;
 public class BufferRegistration extends ControlSpaceRegistration {
 
     /**
-     * The label of x for display purposes in the UI
+     * The label of fill level for display purposes in the UI
      */
-    private final String xLabel;
+    private final String fillLevelLabel;
 
     /**
-     * The unit of x for display purposes in the UI
+     * The unit of fill level for display purposes in the UI
      */
-    private final Unit<?> xUnit;
+    private final Unit<?> fillLevelUnit;
 
     /**
      * The duration of the delay in communications channel from the moment of sending to the moment the command is
@@ -66,20 +66,20 @@ public class BufferRegistration extends ControlSpaceRegistration {
 
     public BufferRegistration(String resourceId,
                               Date timestamp,
-                              String xLabel,
-                              Unit<?> xUnit,
+                              String label,
+                              Unit<?> unit,
                               Set<ActuatorCapabilities> actuatorCapabilities) {
         super(resourceId, timestamp);
-        this.xLabel = xLabel;
-        this.xUnit = xUnit;
+        fillLevelLabel = label;
+        fillLevelUnit = unit;
         this.actuatorCapabilities = actuatorCapabilities;
     }
 
     public String getxLabel() {
-        return xLabel;
+        return fillLevelLabel;
     }
 
     public Unit<?> getxUnit() {
-        return xUnit;
+        return fillLevelUnit;
     }
 }
