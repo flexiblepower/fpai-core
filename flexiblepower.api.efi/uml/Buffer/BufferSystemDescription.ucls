@@ -88,102 +88,103 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="10">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="11" name="bufferLeakage"/>      
-      <multiplicity id="12" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="13">    
+  <class id="10" language="java" name="org.flexiblepower.efi.buffer.FillLevelFunction" project="flexiblepower.api.efi" 
+    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/FillLevelFunction.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="58" width="142" x="27" y="522"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <association id="11">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="14" name="runningModes"/>      
-      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
+      <attribute id="12" name="runningModes"/>      
+      <multiplicity id="13" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <generalization id="14">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
   <association id="16">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="17" name="rangeElements"/>      
-      <multiplicity id="18" minimum="0" maximum="2147483647"/>    
+    <bendpoint x="689" y="648"/>    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="17" name="toRunningMode"/>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="19">    
-    <bendpoint x="937" y="543"/>    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="20" name="blockingTimers"/>      
-      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <association id="23">    
-    <bendpoint x="776" y="544"/>    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="24" name="startTimers"/>      
-      <multiplicity id="25" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="26">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="27" name="timerList"/>      
-      <multiplicity id="28" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="30">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="31" name="runningModeRangeElements"/>      
-      <multiplicity id="32" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="33">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="34" name="actuators"/>      
-      <multiplicity id="35" minimum="0" maximum="2147483647"/>    
+      <attribute id="20" name="actuators"/>      
+      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="36">    
-    <bendpoint x="687" y="589"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="37" name="possibleTransition"/>      
-      <multiplicity id="38" minimum="0" maximum="2147483647"/>    
+  <association id="22">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="23" name="timerList"/>      
+      <multiplicity id="24" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="39">    
-    <bendpoint x="689" y="648"/>    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="40" name="toRunningMode"/>      
-      <multiplicity id="41" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="42">    
+  <generalization id="25">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <nesting id="26">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
+  <association id="27">    
+    <bendpoint x="937" y="543"/>    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="28" name="blockingTimers"/>      
+      <multiplicity id="29" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <association id="31">    
+    <bendpoint x="776" y="544"/>    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="32" name="startTimers"/>      
+      <multiplicity id="33" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="35" name="bufferLeakage"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="38" name="elements"/>      
+      <multiplicity id="39" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
