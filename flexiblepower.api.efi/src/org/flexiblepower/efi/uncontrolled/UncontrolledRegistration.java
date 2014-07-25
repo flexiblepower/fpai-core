@@ -10,9 +10,15 @@ public class UncontrolledRegistration extends ControlSpaceRegistration {
 
     private final Set<Commodity> supportedCommodities;
 
-    public UncontrolledRegistration(String resourceId, Date timestamp, Set<Commodity> supportedCommodities) {
+    private final Set<CurtailmentInfo> curtailmentInfoSet;
+
+    public UncontrolledRegistration(String resourceId,
+                                    Date timestamp,
+                                    Set<Commodity> supportedCommodities,
+                                    Set<CurtailmentInfo> curtailmentInfoSet) {
         super(resourceId, timestamp);
         this.supportedCommodities = supportedCommodities;
+        this.curtailmentInfoSet = curtailmentInfoSet;
     }
 
     public Set<Commodity> getSupportedCommodities() {
