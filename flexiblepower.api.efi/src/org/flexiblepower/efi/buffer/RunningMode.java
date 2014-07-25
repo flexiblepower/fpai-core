@@ -1,27 +1,23 @@
 package org.flexiblepower.efi.buffer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.measure.Measurable;
 
-public class RunningMode {
+import org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement;
+
+public class RunningMode extends FillLevelFunction<RunningModeRangeElement> {
     private final int id;
 
     private final String name;
 
-    private final List<RunningModeRangeElement> runningModeRangeElements;
+    private final Transition[] possibleTransitions;
 
-    private List<Transition> possibleTransition;
-
-    public RunningMode(int id, String name) {
+    public RunningMode(int id, String name, RunningModeRangeElement[] elements, Transition[] possibleTransitions) {
+        super(elements);
         this.id = id;
         this.name = name;
-        runningModeRangeElements = new ArrayList<RunningMode.RunningModeRangeElement>();
-    }
-
-    public void addLine(RunningModeRangeElement line) {
-        runningModeRangeElements.add(line);
+        this.possibleTransitions = possibleTransitions;
     }
 
     public static class RunningModeRangeElement extends RangeElement {
@@ -43,4 +39,5 @@ public class RunningMode {
             this.runningCostsPerSecond = runningCostsPerSecond;
         }
     }
+
 }

@@ -1,20 +1,15 @@
 package org.flexiblepower.efi.buffer;
 
-import java.util.List;
-
-public class LeakageProfile {
+public class LeakageProfile extends FillLevelFunction<RangeElement> {
 
     private final int id;
 
     private final String name;
 
-    private final List<RangeElement> rangeElements;
-
-    public LeakageProfile(int id, String name, List<RangeElement> rangeElements) {
-        super();
+    public LeakageProfile(int id, String name, RangeElement[] rangeElements) {
+        super(rangeElements);
         this.id = id;
         this.name = name;
-        this.rangeElements = rangeElements;
     }
 
     public int getId() {
@@ -23,10 +18,6 @@ public class LeakageProfile {
 
     public String getName() {
         return name;
-    }
-
-    public List<RangeElement> getRangeElements() {
-        return rangeElements;
     }
 
 }
