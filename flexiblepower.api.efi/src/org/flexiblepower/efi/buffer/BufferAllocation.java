@@ -23,8 +23,9 @@ public class BufferAllocation extends Allocation {
     public BufferAllocation(String resourceId,
                             ControlSpaceUpdate resourceUpdate,
                             Date timestamp,
+                            boolean isEmergencyAllocation,
                             Set<ActuatorAllocation> actuatorAllocations) {
-        super(resourceId, resourceUpdate, timestamp);
+        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
 
         this.actuatorAllocations = actuatorAllocations;
 

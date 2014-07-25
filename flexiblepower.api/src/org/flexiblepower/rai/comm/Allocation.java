@@ -10,9 +10,16 @@ public abstract class Allocation extends ResourceMessage {
     /** The id of the control space update on which this allocation message is based. */
     private final UUID controlSpaceUpdateId;
 
-    public Allocation(String resourceId, ControlSpaceUpdate controlSpaceUpdate, Date timestamp) {
+    /** This boolean indicates whether this is an emergency allocation, in which case it has to be strictly followed. */
+    private final boolean isEmergencyAllocation;
+
+    public Allocation(String resourceId,
+                      ControlSpaceUpdate controlSpaceUpdate,
+                      Date timestamp,
+                      boolean isEmergencyAllocation) {
         super(resourceId, timestamp);
         controlSpaceUpdateId = controlSpaceUpdate.getResourceMessageId();
+        this.isEmergencyAllocation = isEmergencyAllocation;
     }
 
     /**

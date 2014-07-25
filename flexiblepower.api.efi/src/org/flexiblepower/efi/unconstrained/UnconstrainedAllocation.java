@@ -16,8 +16,9 @@ public class UnconstrainedAllocation extends Allocation {
     public UnconstrainedAllocation(String resourceId,
                                    ControlSpaceUpdate resourceUpdate,
                                    Date timestamp,
+                                   boolean isEmergencyAllocation,
                                    Set<RunningModeSelector> runningModeSelectors) {
-        super(resourceId, resourceUpdate, timestamp);
+        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
         this.runningModeSelectors = runningModeSelectors;
     }
 

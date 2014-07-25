@@ -36,8 +36,9 @@ public class TimeShifterAllocation extends Allocation {
     public TimeShifterAllocation(String resourceId,
                                  ControlSpaceUpdate resourceUpdate,
                                  Date timestamp,
+                                 boolean isEmergencyAllocation,
                                  List<SequentialProfileAllocation> sequentialProfileAllocation) {
-        super(resourceId, resourceUpdate, timestamp);
+        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
         this.sequentialProfileAllocation = sequentialProfileAllocation;
     }
 

@@ -15,8 +15,12 @@ public class UncontrolledAllocation extends Allocation {
     private final Date startTime;
     private final Element[] profile;
 
-    public UncontrolledAllocation(String resourceId, ControlSpaceUpdate resourceUpdate, Date timestamp, Date startTime) {
-        super(resourceId, resourceUpdate, timestamp);
+    public UncontrolledAllocation(String resourceId,
+                                  ControlSpaceUpdate resourceUpdate,
+                                  Date timestamp,
+                                  boolean isEmergencyAllocation,
+                                  Date startTime) {
+        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
 
         this.startTime = startTime;
         profile = null;
