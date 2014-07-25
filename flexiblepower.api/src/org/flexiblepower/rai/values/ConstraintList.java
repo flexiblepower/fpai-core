@@ -42,11 +42,11 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
      */
     public static class Builder<Q extends Quantity> {
         private final Unit<Q> defaultUnit;
-        private final List<Constraint<Q>> powerConstraints;
+        private final List<Constraint<Q>> commodityConstraints;
 
         Builder(Unit<Q> defaultUnit) {
             this.defaultUnit = defaultUnit;
-            powerConstraints = new ArrayList<Constraint<Q>>();
+            commodityConstraints = new ArrayList<Constraint<Q>>();
         }
 
         /**
@@ -57,7 +57,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          * @return this
          */
         public Builder<Q> addSingle(Measurable<Q> value) {
-            powerConstraints.add(new Constraint<Q>(value));
+            commodityConstraints.add(new Constraint<Q>(value));
             return this;
         }
 
@@ -69,7 +69,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          * @return this
          */
         public Builder<Q> addSingle(double value) {
-            powerConstraints.add(new Constraint<Q>(Measure.valueOf(value, defaultUnit)));
+            commodityConstraints.add(new Constraint<Q>(Measure.valueOf(value, defaultUnit)));
             return this;
         }
 
@@ -83,7 +83,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          * @return this
          */
         public Builder<Q> addRange(Measurable<Q> lowerBound, Measurable<Q> upperBound) {
-            powerConstraints.add(new Constraint<Q>(lowerBound, upperBound));
+            commodityConstraints.add(new Constraint<Q>(lowerBound, upperBound));
             return this;
         }
 
@@ -97,7 +97,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          * @return this
          */
         public Builder<Q> addRange(double lowerBound, double upperBound) {
-            powerConstraints.add(new Constraint<Q>(Measure.valueOf(lowerBound, defaultUnit),
+            commodityConstraints.add(new Constraint<Q>(Measure.valueOf(lowerBound, defaultUnit),
                                                    Measure.valueOf(upperBound, defaultUnit)));
             return this;
         }
@@ -106,11 +106,11 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          * @return The immutable {@link ConstraintList} that contains the values from this Builder.
          */
         public ConstraintList<Q> build() {
-            return new ConstraintList<Q>(powerConstraints);
+            return new ConstraintList<Q>(commodityConstraints);
         }
     }
 
-    private final Constraint<Q>[] powerConstraints;
+    private final Constraint<Q>[] commodityConstraints;
 
     /**
      * @param list
@@ -118,17 +118,17 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
      */
     @SuppressWarnings("unchecked")
     public ConstraintList(List<Constraint<Q>> list) {
-        powerConstraints = list.toArray(new Constraint[list.size()]);
+        commodityConstraints = list.toArray(new Constraint[list.size()]);
     }
 
     @Override
     public Constraint<Q> get(int index) {
-        return powerConstraints[index];
+        return commodityConstraints[index];
     }
 
     @Override
     public int size() {
-        return powerConstraints.length;
+        return commodityConstraints.length;
     }
 
     /**

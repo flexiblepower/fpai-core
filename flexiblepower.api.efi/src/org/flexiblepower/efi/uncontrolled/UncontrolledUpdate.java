@@ -8,29 +8,29 @@ import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 import org.flexiblepower.rai.values.Commodity;
-import org.flexiblepower.rai.values.CommodityProfile;
+import org.flexiblepower.rai.values.CommodityForecast;
 
 @SuppressWarnings("rawtypes")
 public class UncontrolledUpdate extends ControlSpaceUpdate {
 
     private static final long serialVersionUID = 9154440319073601863L;
 
-    private final Map<Commodity, CommodityProfile> profiles;
+    private final Map<Commodity, CommodityForecast> profiles;
 
     public UncontrolledUpdate(String resourceId,
                               Date timestamp,
                               Date validFrom,
                               Measurable<Duration> allocationDelay,
-                              Map<Commodity, CommodityProfile> profiles) {
+                              Map<Commodity, CommodityForecast> profiles) {
         super(resourceId, timestamp, validFrom, allocationDelay);
         this.profiles = profiles;
     }
 
-    public Map<Commodity, CommodityProfile> getProfiles() {
+    public Map<Commodity, CommodityForecast> getProfiles() {
         return profiles;
     }
 
-    public CommodityProfile getProfileForCommodity(Commodity commodity) {
+    public CommodityForecast getProfileForCommodity(Commodity commodity) {
         return profiles.get(commodity);
     }
 

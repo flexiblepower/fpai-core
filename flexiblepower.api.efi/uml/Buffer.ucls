@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+<class-diagram version="1.1.5" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="org.flexiblepower.efi.buffer.BufferRegistration" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferRegistration.java" binary="false" 
@@ -22,18 +22,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="org.flexiblepower.efi.buffer.BufferUsageForecast.Element" 
-    project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUsageForecast.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="159" y="795"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="4" language="java" name="org.flexiblepower.efi.buffer.BufferSystemDescription" 
+  <class id="3" language="java" name="org.flexiblepower.efi.buffer.BufferSystemDescription" 
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferSystemDescription.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -44,7 +33,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfileUpdate" 
+  <class id="4" language="java" name="org.flexiblepower.efi.buffer.BufferTargetProfileUpdate" 
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferTargetProfileUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -55,7 +44,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="org.flexiblepower.efi.buffer.Actuator" project="flexiblepower.api.efi" 
+  <class id="5" language="java" name="org.flexiblepower.efi.buffer.Actuator" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Actuator.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="850" y="785"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -64,7 +53,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement" 
+  <class id="6" language="java" name="org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement" 
     project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/RunningMode.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="372" y="1184"/>    
@@ -74,7 +63,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.flexiblepower.efi.buffer.BufferUsageForecast" project="flexiblepower.api.efi" 
+  <class id="7" language="java" name="org.flexiblepower.efi.buffer.BufferUsageForecast" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUsageForecast.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="390" y="527"/>    
@@ -84,7 +73,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="org.flexiblepower.efi.buffer.Transition" project="flexiblepower.api.efi" 
+  <class id="8" language="java" name="org.flexiblepower.efi.buffer.Transition" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/Transition.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="745" y="1054"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -93,7 +82,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="org.flexiblepower.efi.buffer.RunningMode" project="flexiblepower.api.efi" 
+  <class id="9" language="java" name="org.flexiblepower.efi.buffer.RunningMode" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/RunningMode.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="311" y="1004"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -102,18 +91,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="org.flexiblepower.efi.buffer.TargetProfileElement" 
-    project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/TargetProfileElement.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="597" y="778"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="org.flexiblepower.efi.util.Timer" project="flexiblepower.api.efi" 
+  <class id="10" language="java" name="org.flexiblepower.efi.util.Timer" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/Timer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="932" y="1061"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -122,7 +100,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="org.flexiblepower.rai.comm.ResourceMessage" project="flexiblepower.api" 
+  <class id="11" language="java" name="org.flexiblepower.rai.comm.ResourceMessage" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ResourceMessage.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="136" width="157" x="656" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -131,7 +109,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="org.flexiblepower.rai.comm.ControlSpaceUpdate" project="flexiblepower.api" 
+  <class id="12" language="java" name="org.flexiblepower.rai.comm.ControlSpaceUpdate" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="118" width="253" x="656" y="213"/>    
@@ -141,7 +119,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="org.flexiblepower.rai.comm.ControlSpaceRegistration" project="flexiblepower.api" 
+  <class id="13" language="java" name="org.flexiblepower.rai.comm.ControlSpaceRegistration" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="82" width="206" x="350" y="213"/>    
@@ -151,7 +129,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="org.flexiblepower.rai.comm.Allocation" project="flexiblepower.api" 
+  <class id="14" language="java" name="org.flexiblepower.rai.comm.Allocation" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/Allocation.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="100" width="165" x="1102" y="213"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -160,7 +138,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.TimerUpdate" 
+  <class id="15" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.TimerUpdate" 
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -171,7 +149,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.ActuatorUpdate" 
+  <class id="16" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate.ActuatorUpdate" 
     project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -182,7 +160,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate" project="flexiblepower.api.efi" 
+  <class id="17" language="java" name="org.flexiblepower.efi.buffer.BufferStateUpdate" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferStateUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="160" width="542" x="966" y="516"/>    
@@ -192,7 +170,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate" project="flexiblepower.api.efi" 
+  <class id="18" language="java" name="org.flexiblepower.efi.buffer.BufferUpdate" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferUpdate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="105" width="339" x="656" y="371"/>    
@@ -202,7 +180,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation.ActuatorAllocation" 
+  <class id="19" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation.ActuatorAllocation" 
     project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferAllocation.java" 
     binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1793" y="666"/>    
@@ -212,7 +190,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation" project="flexiblepower.api.efi" 
+  <class id="20" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferAllocation.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1798" y="448"/>    
@@ -222,186 +200,166 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
   <generalization id="23">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="18"/>  
   </generalization>  
   <generalization id="24">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="20"/>  
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="12"/>  
   </generalization>  
-  <generalization id="25">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <association id="27">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="28" name="actuatorAllocations"/>      
-      <multiplicity id="29" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <nesting id="31">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <association id="32">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="33" name="toRunningMode"/>      
-      <multiplicity id="34" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="35">    
-    <bendpoint x="284" y="716"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="36" name="bufferLeakage">        
-        <position height="20" width="88" x="296" y="822"/>      
+  <association id="25">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="26" name="blockingTimers">        
+        <position height="20" width="95" x="844" y="873"/>      
       </attribute>      
-      <multiplicity id="37" minimum="0" maximum="1"/>    
+      <multiplicity id="27" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="38">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="20"/>  
+  <generalization id="28">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="18"/>  
   </generalization>  
-  <association id="39">    
+  <generalization id="29">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="11"/>  
+  </generalization>  
+  <association id="31">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="32" name="runningModes">        
+        <position height="20" width="89" x="582" y="886"/>      
+      </attribute>      
+      <multiplicity id="33" minimum="0" maximum="2147483647">        
+        <position height="16" width="21" x="256" y="609"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="35" name="toRunningMode"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="38" name="timerUpdates">        
+        <position height="20" width="85" x="355" y="716"/>      
+      </attribute>      
+      <multiplicity id="39" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="40" name="actuatorCapabilities"/>      
-      <multiplicity id="41" minimum="0" maximum="2147483647">        
+      <attribute id="41" name="actuatorCapabilities"/>      
+      <multiplicity id="42" minimum="0" maximum="2147483647">        
         <position height="18" width="25" x="45" y="465"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="42">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
   <association id="43">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="44" name="possibleTransition"/>      
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="44" name="timerList">        
+        <position height="20" width="58" x="865" y="988"/>      
+      </attribute>      
       <multiplicity id="45" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="46">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <association id="47">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="48" name="profile"/>      
-      <multiplicity id="49" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="50">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="51" name="timerUpdates">        
-        <position height="20" width="85" x="355" y="716"/>      
-      </attribute>      
-      <multiplicity id="52" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="53">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </nesting>  
-  <nesting id="54">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="3"/>  
-  </nesting>  
-  <association id="55">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="56" name="runningModes">        
-        <position height="20" width="89" x="582" y="886"/>      
-      </attribute>      
-      <multiplicity id="57" minimum="0" maximum="2147483647">        
-        <position height="16" width="21" x="256" y="609"/>      
-      </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="58">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="18"/>  
+  <nesting id="46">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
   </nesting>  
-  <nesting id="59">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="21"/>  
-  </nesting>  
-  <generalization id="60">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="61">    
-    <end type="SOURCE" refId="19" navigable="false">      
-      <attribute id="62" name="currentRunningMode">        
+  <association id="47">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="48" name="actuatorAllocations"/>      
+      <multiplicity id="49" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="50">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="51" name="actuators"/>      
+      <multiplicity id="52" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="53">    
+    <end type="SOURCE" refId="17" navigable="false">      
+      <attribute id="54" name="currentRunningMode">        
         <position height="20" width="127" x="1144" y="689"/>      
       </attribute>      
-      <multiplicity id="63" minimum="0" maximum="2147483647">        
+      <multiplicity id="55" minimum="0" maximum="2147483647">        
         <position height="18" width="25" x="1179" y="722"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
+    <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="64">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="65" name="blockingTimers">        
-        <position height="20" width="95" x="844" y="873"/>      
-      </attribute>      
-      <multiplicity id="66" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="67">    
-    <bendpoint x="1265" y="716"/>    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="17"/>  
+  <nesting id="56">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="6"/>  
   </nesting>  
-  <association id="68">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="69" name="actuators"/>      
-      <multiplicity id="70" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="71">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="72" name="timerList">        
-        <position height="20" width="58" x="865" y="988"/>      
-      </attribute>      
-      <multiplicity id="73" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="74">    
-    <end type="SOURCE" refId="15"/>    
+  <nesting id="57">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="16"/>  
+  </nesting>  
+  <generalization id="58">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <generalization id="59">    
+    <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="13"/>  
   </generalization>  
+  <generalization id="60">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="11"/>  
+  </generalization>  
+  <nesting id="61">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="19"/>  
+  </nesting>  
+  <association id="62">    
+    <bendpoint x="284" y="716"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="63" name="bufferLeakage">        
+        <position height="20" width="88" x="296" y="822"/>      
+      </attribute>      
+      <multiplicity id="64" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="65">    
+    <bendpoint x="1265" y="716"/>    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="15"/>  
+  </nesting>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

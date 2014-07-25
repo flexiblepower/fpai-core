@@ -6,16 +6,16 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.values.Commodity;
-import org.flexiblepower.rai.values.CommodityProfile;
+import org.flexiblepower.rai.values.CommodityForecast;
 
 public class SequentialProfile {
     private final int id;
     private final Measurable<Duration> maxIntervalBefore;
-    private final Map<Commodity, CommodityProfile> commodityProfiles;
+    private final Map<Commodity, CommodityForecast> commodityProfiles;
 
     public SequentialProfile(int id,
                              Measurable<Duration> maxIntervalBefore,
-                             Map<Commodity, CommodityProfile> commodityProfiles) {
+                             Map<Commodity, CommodityForecast> commodityProfiles) {
         super();
         this.id = id;
         this.maxIntervalBefore = maxIntervalBefore;
@@ -30,7 +30,7 @@ public class SequentialProfile {
         return maxIntervalBefore;
     }
 
-    public Map<Commodity, CommodityProfile> getCommodityProfiles() {
+    public Map<Commodity, CommodityForecast> getCommodityProfiles() {
         return commodityProfiles;
     }
 
