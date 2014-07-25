@@ -1,4 +1,4 @@
-package org.flexiblepower.efi.util;
+package org.flexiblepower.rai.values;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;

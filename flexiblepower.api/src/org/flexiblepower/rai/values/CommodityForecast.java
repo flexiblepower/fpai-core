@@ -1,9 +1,6 @@
-package org.flexiblepower.efi.util;
+package org.flexiblepower.rai.values;
 
 import javax.measure.quantity.Quantity;
-
-import org.flexiblepower.rai.values.Commodity;
-import org.flexiblepower.rai.values.UncertainMeasure;
 
 /**
  * Class for representing an commodity consumption / production forecast over time. This class is similar to

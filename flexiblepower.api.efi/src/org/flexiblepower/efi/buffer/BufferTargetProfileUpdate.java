@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.efi.util.TargetProfile;
+import org.flexiblepower.rai.values.TargetProfile;
 
 public class BufferTargetProfileUpdate extends BufferUpdate {
 

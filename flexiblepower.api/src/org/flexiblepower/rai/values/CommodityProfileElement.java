@@ -1,11 +1,9 @@
-package org.flexiblepower.efi.util;
+package org.flexiblepower.rai.values;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Quantity;
-
-import org.flexiblepower.rai.values.Commodity;
 
 public class CommodityProfileElement<BQ extends Quantity, FQ extends Quantity> implements
                                                                                ProfileElement<CommodityProfileElement<BQ, FQ>> {

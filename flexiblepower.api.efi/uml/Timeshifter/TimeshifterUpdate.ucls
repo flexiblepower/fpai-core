@@ -42,8 +42,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="org.flexiblepower.efi.util.CommodityProfile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/CommodityProfile.java" binary="false" 
+  <class id="5" language="java" name="org.flexiblepower.rai.values.CommodityProfile" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/values/CommodityProfile.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="689" y="427"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -52,9 +52,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="org.flexiblepower.efi.util.CommodityProfileElement" 
-    project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/CommodityProfileElement.java" binary="false" 
+  <class id="6" language="java" name="org.flexiblepower.rai.values.CommodityProfileElement" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/values/CommodityProfileElement.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="902" y="431"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
@@ -72,8 +71,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.flexiblepower.efi.util.Profile" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/Profile.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="org.flexiblepower.rai.values.Profile" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/values/Profile.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="691" y="314"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -81,9 +80,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <interface id="9" language="java" name="org.flexiblepower.efi.util.ProfileElement" project="flexiblepower.api.efi" 
-    file="/flexiblepower.api.efi/src/org/flexiblepower/efi/util/ProfileElement.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <interface id="9" language="java" name="org.flexiblepower.rai.values.ProfileElement" project="flexiblepower.api" 
+    file="/flexiblepower.api/src/org/flexiblepower/rai/values/ProfileElement.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="903" y="314"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

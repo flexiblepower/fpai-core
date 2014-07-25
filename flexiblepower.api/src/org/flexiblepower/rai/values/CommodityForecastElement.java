@@ -1,11 +1,8 @@
-package org.flexiblepower.efi.util;
+package org.flexiblepower.rai.values;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Quantity;
-
-import org.flexiblepower.rai.values.Commodity;
-import org.flexiblepower.rai.values.UncertainMeasure;
 
 public class CommodityForecastElement<BQ extends Quantity, FQ extends Quantity> implements
                                                                                 ProfileElement<CommodityForecastElement<BQ, FQ>> {
