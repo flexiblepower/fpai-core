@@ -24,14 +24,7 @@ public class RunningMode {
         runningModeRangeElements.add(line);
     }
 
-    public static class RunningModeRangeElement {
-
-        // Defines the range of the line
-        private final double lowerBound;
-        private final double upperBound;
-
-        // Charge speed x / seconds
-        private final double xs;
+    public static class RunningModeRangeElement extends RangeElement {
 
         // Commodity consumed or produced
         // TODO
@@ -40,15 +33,13 @@ public class RunningMode {
         // Optional: Running costs for this runningmode expressed per second
         private final Double runningCostsPerSecond;
 
-        public RunningModeRangeElement(double rangeLow,
-                                       double rangeUp,
+        public RunningModeRangeElement(double lowerBound,
+                                       double upperBound,
                                        double xs,
-                                       List<Measurable<?>> commodities,
+                                       List<Measurable<?>> commoditiesPerSecond,
                                        Double runningCostsPerSecond) {
-            upperBound = rangeLow;
-            lowerBound = rangeUp;
-            this.xs = xs;
-            commoditiesPerSecond = commodities;
+            super(lowerBound, upperBound, xs);
+            this.commoditiesPerSecond = commoditiesPerSecond;
             this.runningCostsPerSecond = runningCostsPerSecond;
         }
     }

@@ -45,22 +45,22 @@ public class BufferStateUpdate extends BufferUpdate {
         public Date finishedAt;
     }
 
-    private final double xValue;
+    private final double currentFillLevel;
     private final Set<ActuatorUpdate> currentRunningMode;
 
     public BufferStateUpdate(String resourceId,
                              Date timestamp,
                              Date validFrom,
                              Measurable<Duration> allocationDelay,
-                             double xValue,
+                             double currentFillLevel,
                              Set<ActuatorUpdate> currentRunningMode) {
         super(resourceId, timestamp, validFrom, allocationDelay);
-        this.xValue = xValue;
+        this.currentFillLevel = currentFillLevel;
         this.currentRunningMode = currentRunningMode;
     }
 
     public double getxValue() {
-        return xValue;
+        return currentFillLevel;
     }
 
     public Set<ActuatorUpdate> getCurrentRunningMode() {
