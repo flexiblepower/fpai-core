@@ -18,14 +18,14 @@ public class BufferSystemDescription extends BufferUpdate {
 
     // TODO Is Leakage a running mode? Or should we have a new term for
     // RunningMode...
-    private final LeakageProfile bufferLeakage;
+    private final LeakageFunction bufferLeakage;
 
     public BufferSystemDescription(String resourceId,
                                    Date timestamp,
                                    Date validFrom,
                                    Measurable<Duration> allocationDelay,
                                    List<Actuator> actuators,
-                                   LeakageProfile bufferLeakage) {
+                                   LeakageFunction bufferLeakage) {
         super(resourceId, timestamp, validFrom, allocationDelay);
         this.actuators = actuators;
         this.bufferLeakage = bufferLeakage;
@@ -35,7 +35,7 @@ public class BufferSystemDescription extends BufferUpdate {
         return actuators;
     }
 
-    public LeakageProfile getBufferLeakage() {
+    public LeakageFunction getBufferLeakage() {
         return bufferLeakage;
     }
 
