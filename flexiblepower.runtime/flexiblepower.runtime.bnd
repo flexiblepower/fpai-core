@@ -1,6 +1,7 @@
 Bundle-Version: 1.0.1.${qualifier}
 
 Private-Package: \
+	org.flexiblepower.runtime.messaging,\
 	org.flexiblepower.runtime.scheduling,\
 	org.flexiblepower.runtime.wiring
 Service-Component: *
