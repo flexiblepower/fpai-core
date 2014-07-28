@@ -3,10 +3,10 @@ package org.flexiblepower.runtime.messaging;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
 
-final class PortMatchImpl implements MatchingPorts {
+final class MatchingPortsImpl implements MatchingPorts {
     private final EndpointPortImpl left, right;
 
-    public PortMatchImpl(EndpointPortImpl left, EndpointPortImpl right) {
+    public MatchingPortsImpl(EndpointPortImpl left, EndpointPortImpl right) {
         this.left = left;
         this.right = right;
     }

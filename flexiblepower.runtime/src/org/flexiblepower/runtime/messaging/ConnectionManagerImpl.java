@@ -53,13 +53,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
         while (it.hasNext()) {
             EndpointPortImpl endpointStore = it.next();
             if (endpointStore.getEndpoint() == endpoint) {
-                for (PortMatchImpl connection : endpointStore.getMatchingPorts()) {
+                for (MatchingPortsImpl connection : endpointStore.getMatchingPorts()) {
                     if (connection.isConnected()) {
                         connection.disconnect();
                     }
-    
-                    connection.getEitherEnd().removeConnection(connection);
-                    connection.getOtherEnd(connection.getEitherEnd()).removeConnection(connection);
+
+                    connection.getEitherEnd().removeMatch(connection);
+                    connection.getOtherEnd(connection.getEitherEnd()).removeMatch(connection);
                 }
                 it.remove();
             }
@@ -70,10 +70,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
         for (EndpointPortImpl right : endpointPorts) {
             if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
                                                                                         left.getPort().accepts())) {
-                PortMatchImpl connection = new PortMatchImpl(left, right);
-                log.info("Possible connection found: {} <--> {}", left, right);
-                left.addConnection(connection);
-                right.addConnection(connection);
+                MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
+                log.info("Found matching ports: {} <--> {}", left, right);
+                left.addMatch(connection);
+                right.addMatch(connection);
             }
         }
     }

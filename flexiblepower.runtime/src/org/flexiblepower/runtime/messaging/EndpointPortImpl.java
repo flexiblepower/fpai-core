@@ -4,21 +4,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.flexiblepower.messaging.Cardinality;
+import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
-import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 
 final class EndpointPortImpl implements EndpointPort {
     private final Endpoint endpoint;
     private final Port port;
 
-    private final Set<PortMatchImpl> possibleConnections;
+    private final Set<MatchingPortsImpl> matchingPorts;
 
     public EndpointPortImpl(Endpoint endpoint, Port port) {
         this.endpoint = endpoint;
         this.port = port;
 
-        possibleConnections = new HashSet<PortMatchImpl>();
+        matchingPorts = new HashSet<MatchingPortsImpl>();
     }
 
     @Override
@@ -40,21 +40,21 @@ final class EndpointPortImpl implements EndpointPort {
         return port;
     }
 
-    void addConnection(PortMatchImpl connection) {
-        possibleConnections.add(connection);
+    void addMatch(MatchingPortsImpl match) {
+        matchingPorts.add(match);
     }
 
-    void removeConnection(PortMatchImpl connection) {
-        possibleConnections.remove(connection);
+    void removeMatch(MatchingPortsImpl match) {
+        matchingPorts.remove(match);
     }
 
     @Override
-    public Set<PortMatchImpl> getMatchingPorts() {
-        return possibleConnections;
+    public Set<MatchingPortsImpl> getMatchingPorts() {
+        return matchingPorts;
     }
 
     @Override
     public String toString() {
-        return "EndpointPort [" + endpoint.getClass().getSimpleName() + ":" + port.name() + "]";
+        return "EndpointPort(" + endpoint.getClass().getSimpleName() + ":" + port.name() + ")";
     }
 }
