@@ -31,4 +31,8 @@ public abstract class Allocation extends ResourceMessage {
         return controlSpaceUpdateId;
     }
 
+    public boolean isEmergencyAllocation() {
+        return isEmergencyAllocation;
+    }
+
 }

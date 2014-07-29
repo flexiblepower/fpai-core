@@ -7,6 +7,7 @@ import org.flexiblepower.efi.buffer.BufferUpdate;
 import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceMessageSubmitter;
 import org.flexiblepower.rai.comm.AllocationStatusUpdate;
+import org.flexiblepower.rai.comm.ControlSpaceRevoke;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,11 @@ public class TestBufferResourceController extends IdentifyableObject implements
     @Override
     public void handleAllocationStatusUpdate(AllocationStatusUpdate allocationStatusUpdate) {
         logger.trace("handleAllocationStatusUpdate({})", allocationStatusUpdate);
+    }
+
+    @Override
+    public void handleControlSpaceRevoke(ControlSpaceRevoke controlSpaceRevoke) {
+        logger.trace("handleControlSpaceRevoke({})", controlSpaceRevoke);
     }
 
 }

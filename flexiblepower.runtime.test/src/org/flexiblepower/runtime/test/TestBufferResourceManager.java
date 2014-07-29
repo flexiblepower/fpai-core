@@ -16,6 +16,7 @@ import org.flexiblepower.observation.Observation;
 import org.flexiblepower.observation.ObservationProvider;
 import org.flexiblepower.rai.ResourceMessageSubmitter;
 import org.flexiblepower.rai.ResourceType;
+import org.flexiblepower.rai.comm.AllocationRevoke;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
@@ -92,6 +93,11 @@ public class TestBufferResourceManager extends IdentifyableObject implements
     public void handleAllocation(BufferAllocation allocation) {
         logger.trace("handleAllocation({})", allocation);
 
+    }
+
+    @Override
+    public void handleAllocationRevoke(AllocationRevoke allocationRevoke) {
+        logger.trace("handleAllocationRevoke({})", allocationRevoke);
     }
 
     @Override
