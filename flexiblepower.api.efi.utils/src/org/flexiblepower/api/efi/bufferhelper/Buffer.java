@@ -12,6 +12,7 @@ import org.flexiblepower.efi.buffer.Actuator;
 import org.flexiblepower.efi.buffer.BufferRegistration;
 import org.flexiblepower.efi.buffer.BufferRegistration.ActuatorCapabilities;
 import org.flexiblepower.efi.buffer.BufferSystemDescription;
+import org.flexiblepower.efi.buffer.LeakageFunction;
 
 public class Buffer {
 
@@ -20,6 +21,7 @@ public class Buffer {
     private final Unit<?> fillLevelUnit;
     private final Measurable<Duration> allocationDelay;
     private final Map<Integer, BufferActuator> actuators;
+    private LeakageFunction leakageFunction;
 
     private Buffer(String resourceId,
                    String getxLabel,
@@ -38,17 +40,28 @@ public class Buffer {
 
     /** A Buffer may only be constructed from a complete BufferRegistration message. */
     public Buffer(BufferRegistration br) {
-        this(br.getResourceId(), br.getxLabel(), br.getxUnit(), br.getAllocationDelay(), br.getActuatorCapabilities());
+        this(br.getResourceId(),
+             br.getFillLevelLabel(),
+             br.getFillLevelUnit(),
+             br.getAllocationDelay(),
+             br.getActuatorCapabilities());
     }
 
     public void ProcessSystemDescription(BufferSystemDescription bsd) {
+        setLeakageFunction(bsd.getBufferLeakage());
+
         for (Actuator actuatorDescription : bsd.getActuators()) {
             if (actuators.containsKey(actuatorDescription.getId())) {
                 actuators.get(actuatorDescription.getId()).setAllRunningModes(actuatorDescription.getRunningModes());
+                actuators.get(actuatorDescription.getId()).setTimerList(actuatorDescription.getTimerList());
             } else {
                 throw new IllegalArgumentException("The ActuatorId in the BufferSystemDescription is not known.");
             }
         }
+    }
+
+    private void setLeakageFunction(LeakageFunction bufferLeakage) {
+        leakageFunction = bufferLeakage;
     }
 
 }
