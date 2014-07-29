@@ -3,6 +3,7 @@ package org.flexiblepower.efi.buffer;
 import java.util.List;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Money;
 
 import org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement;
 
@@ -27,13 +28,13 @@ public class RunningMode extends FillLevelFunction<RunningModeRangeElement> {
         private final List<Measurable<?>> commoditiesPerSecond;
 
         // Optional: Running costs for this runningmode expressed per second
-        private final Double runningCostsPerSecond;
+        private final Measurable<Money> runningCostsPerSecond;
 
         public RunningModeRangeElement(double lowerBound,
                                        double upperBound,
                                        double xs,
                                        List<Measurable<?>> commoditiesPerSecond,
-                                       Double runningCostsPerSecond) {
+                                       Measurable<Money> runningCostsPerSecond) {
             super(lowerBound, upperBound, xs);
             this.commoditiesPerSecond = commoditiesPerSecond;
             this.runningCostsPerSecond = runningCostsPerSecond;

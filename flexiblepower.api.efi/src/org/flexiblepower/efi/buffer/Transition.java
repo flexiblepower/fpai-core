@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
+import javax.measure.quantity.Money;
 
 import org.flexiblepower.efi.util.Timer;
 
@@ -17,7 +18,7 @@ public class Transition {
     private final Set<Timer> blockingTimers;
 
     // Optional: The costs of a transition
-    private final Double transitionCosts;
+    private final Measurable<Money> transitionCosts;
 
     /** The time duration it takes for a transition */
     private Measurable<Duration> transitionTime;
@@ -25,7 +26,7 @@ public class Transition {
     public Transition(RunningMode toRunningMode,
                       Set<Timer> startTimers,
                       Set<Timer> blockingTimers,
-                      Double transitionCosts) {
+                      Measurable<Money> transitionCosts) {
         super();
         this.toRunningMode = toRunningMode;
         this.startTimers = startTimers;

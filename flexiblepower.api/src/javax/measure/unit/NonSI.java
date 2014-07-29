@@ -58,6 +58,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.MagneticFlux;
 import javax.measure.quantity.MagneticFluxDensity;
 import javax.measure.quantity.Mass;
+import javax.measure.quantity.Money;
 import javax.measure.quantity.Power;
 import javax.measure.quantity.Pressure;
 import javax.measure.quantity.RadiationDoseAbsorbed;
@@ -699,6 +700,14 @@ public final class NonSI extends SystemOfUnits {
     @SuppressWarnings("unchecked")
     public static final Unit<KinematicViscosity> STOKE = nonSI((Unit<KinematicViscosity>) CENTI(METRE).pow(2)
                                                                                                       .divide(SECOND));
+
+    // /////////
+    // Money //
+    // /////////
+
+    public static final Unit<Money> EUR = nonSI(new BaseUnit<Money>("EUR"));
+
+    public static final Unit<Money> EUROCENT = nonSI(CENTI(EUR));
 
     // //////////
     // Others //
