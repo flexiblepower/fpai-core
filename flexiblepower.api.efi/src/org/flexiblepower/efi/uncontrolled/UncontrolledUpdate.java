@@ -7,7 +7,7 @@ import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
-public class UncontrolledUpdate extends ControlSpaceUpdate {
+public abstract class UncontrolledUpdate extends ControlSpaceUpdate {
 
     private static final long serialVersionUID = 9154440319073601863L;
 
