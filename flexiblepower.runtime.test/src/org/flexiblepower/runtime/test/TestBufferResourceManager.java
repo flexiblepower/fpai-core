@@ -3,6 +3,7 @@ package org.flexiblepower.runtime.test;
 import java.util.Date;
 import java.util.HashSet;
 
+import javax.measure.Measure;
 import javax.measure.unit.SI;
 
 import junit.framework.Assert;
@@ -79,6 +80,7 @@ public class TestBufferResourceManager extends IdentifyableObject implements
         actuatorCapabilitiesSet.add(actuatorCapabilities);
         BufferRegistration br = new BufferRegistration(resourceId,
                                                        new Date(),
+                                                       Measure.valueOf(0, SI.SECOND),
                                                        "temp",
                                                        SI.CELSIUS,
                                                        actuatorCapabilitiesSet);

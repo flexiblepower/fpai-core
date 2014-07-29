@@ -16,8 +16,6 @@ public class BufferSystemDescription extends BufferUpdate {
      */
     private List<Actuator> actuators = new ArrayList<Actuator>();
 
-    // TODO Is Leakage a running mode? Or should we have a new term for
-    // RunningMode...
     private final LeakageFunction bufferLeakage;
 
     public BufferSystemDescription(String resourceId,

@@ -22,16 +22,6 @@ public class BufferRegistration extends ControlSpaceRegistration {
      */
     private final Unit<?> fillLevelUnit;
 
-    /**
-     * The duration of the delay in communications channel from the moment of sending to the moment the command is
-     * executed up by the device.
-     */
-    private Measurable<Duration> allocationDelay;
-
-    public Measurable<Duration> getAllocationDelay() {
-        return allocationDelay;
-    }
-
     public Set<ActuatorCapabilities> getActuatorCapabilities() {
         return actuatorCapabilities;
     }
@@ -60,18 +50,23 @@ public class BufferRegistration extends ControlSpaceRegistration {
             return commodities;
         }
 
+        public boolean supportsCommodity(Commodity commodity) {
+            return commodities.contains(commodity);
+        }
+
     }
 
     private final Set<ActuatorCapabilities> actuatorCapabilities;
 
     public BufferRegistration(String resourceId,
                               Date timestamp,
-                              String label,
-                              Unit<?> unit,
+                              Measurable<Duration> allocationDelay,
+                              String fillLevelLabel,
+                              Unit<?> fillLevelUnit,
                               Set<ActuatorCapabilities> actuatorCapabilities) {
-        super(resourceId, timestamp);
-        fillLevelLabel = label;
-        fillLevelUnit = unit;
+        super(resourceId, timestamp, allocationDelay);
+        this.fillLevelLabel = fillLevelLabel;
+        this.fillLevelUnit = fillLevelUnit;
         this.actuatorCapabilities = actuatorCapabilities;
     }
 
