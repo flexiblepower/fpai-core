@@ -69,7 +69,7 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
         }
     }
 
-    public Measurable<Q> getMean() {
+    public Measure<Double, Q> getMean() {
         return Measure.valueOf(this.mean, this.unit);
     }
 
@@ -82,15 +82,15 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
      * 
      * @return Standard deviation of this probability distribution
      */
-    public Measurable<Q> getStandardDeviation() {
+    public Measure<Double, Q> getStandardDeviation() {
         return Measure.valueOf(this.mean - this.the68PPRLowerBound, this.unit);
     }
 
-    public Measurable<Q> get68PPRLowerBound() {
+    public Measure<Double, Q> get68PPRLowerBound() {
         return Measure.valueOf(this.the68PPRLowerBound, this.unit);
     }
 
-    public Measurable<Q> get68PPRUpperBound() {
+    public Measure<Double, Q> get68PPRUpperBound() {
         return Measure.valueOf(this.the68PPRUpperBound, this.unit);
     }
 
@@ -99,11 +99,11 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
         return (v >= the68PPRLowerBound && v <= the68PPRUpperBound);
     }
 
-    public Measurable<Q> get95PPRLowerBound() {
+    public Measure<Double, Q> get95PPRLowerBound() {
         return Measure.valueOf(this.the95PPRLowerBound, this.unit);
     }
 
-    public Measurable<Q> get95PPRUpperBound() {
+    public Measure<Double, Q> get95PPRUpperBound() {
         return Measure.valueOf(this.the95PPRUpperBound, this.unit);
     }
 

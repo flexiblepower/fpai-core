@@ -1,6 +1,11 @@
 package org.flexiblepower.rai.values;
 
+import javax.measure.Measurable;
+import javax.measure.Measure;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Quantity;
+
+import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 
 /**
  * Class for representing an commodity consumption / production forecast over time. This class is similar to
@@ -13,6 +18,57 @@ import javax.measure.quantity.Quantity;
  */
 public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
                                                                          Profile<CommodityForecastElement<BQ, FQ>> {
+
+    public static class CommodityForecastElement<BQ extends Quantity, FQ extends Quantity> implements
+                                                                                           ProfileElement<CommodityForecastElement<BQ, FQ>> {
+
+        private final Commodity<BQ, FQ> commodity;
+        private final UncertainMeasure<Duration> duration;
+        private final UncertainMeasure<BQ> amount;
+
+        public CommodityForecastElement(Commodity<BQ, FQ> commodity,
+                                        UncertainMeasure<Duration> duration,
+                                        UncertainMeasure<BQ> amount) {
+            super();
+            this.commodity = commodity;
+            this.duration = duration;
+            this.amount = amount;
+        }
+
+        @Override
+        public Measurable<Duration> getDuration() {
+            return duration.getMean();
+        }
+
+        @Override
+        public CommodityForecastElement<BQ, FQ> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+            // TODO implement
+            throw new UnsupportedOperationException();
+        }
+
+        public Commodity<BQ, FQ> getCommodity() {
+            return commodity;
+        }
+
+        public UncertainMeasure<BQ> getAmount() {
+            return amount;
+        }
+
+        public Measure<Double, BQ> getExpectedAmount() {
+            return amount.getMean();
+        }
+
+        public Measure<Double, FQ> getExpectedAverage() {
+            double expected = commodity.average(getExpectedAmount(), getDuration())
+                                       .doubleValue(commodity.getFlowUnit());
+            return Measure.valueOf(expected, commodity.getFlowUnit());
+        }
+
+        public UncertainMeasure<Duration> getUncertainDuration() {
+            return duration;
+        }
+
+    }
 
     public CommodityForecast(CommodityForecastElement<BQ, FQ>[] elements) {
         super(elements);

@@ -8,10 +8,32 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
 public class BufferAllocation extends Allocation {
 
+    private static final long serialVersionUID = -1885176370564725847L;
+
     public static class ActuatorAllocation {
-        private int actuatorId;
-        private int runningModeId;
-        private Date startTime;
+        private final int actuatorId;
+        private final int runningModeId;
+        private final Date startTime;
+
+        public ActuatorAllocation(int actuatorId, int runningModeId, Date startTime) {
+            super();
+            this.actuatorId = actuatorId;
+            this.runningModeId = runningModeId;
+            this.startTime = startTime;
+        }
+
+        public int getActuatorId() {
+            return actuatorId;
+        }
+
+        public int getRunningModeId() {
+            return runningModeId;
+        }
+
+        public Date getStartTime() {
+            return startTime;
+        }
+
     }
 
     private final Set<ActuatorAllocation> actuatorAllocations;

@@ -29,22 +29,54 @@ public class BufferSystemDescription extends BufferUpdate {
         this.bufferLeakage = bufferLeakage;
     }
 
+    /**
+     * Lists all the actuators that can influence the buffer
+     * 
+     * @return List of all the actuators that can influence the buffer
+     */
     public List<Actuator> getActuators() {
         return actuators;
     }
 
+    /**
+     * Returns the leakage function of the buffer.
+     * 
+     * @return The buffer leakage function
+     */
     public LeakageFunction getBufferLeakage() {
         return bufferLeakage;
     }
 
+    /**
+     * Determines the minimum fill level for which there is an actuator that can operate.
+     * 
+     * @return The minimum fill level for which there is an actuator that can operate
+     */
     public double getMinimumFillLevel() {
-        // TODO: implement
-        return 0;
+        double min = Double.MAX_VALUE;
+        for (Actuator a : actuators) {
+            double minFillLevel = a.minFillLevel();
+            if (min > minFillLevel) {
+                min = minFillLevel;
+            }
+        }
+        return min;
     }
 
+    /**
+     * Determines the maximum fill level for which there is an actuator that can operate.
+     * 
+     * @return The maximum fill level for which there is an actuator that can operate
+     */
     public double getMaximumFillLevel() {
-        // TODO: implement
-        return 0;
+        double max = Double.MIN_VALUE;
+        for (Actuator a : actuators) {
+            double maxFillLevel = a.maxFillLevel();
+            if (max < maxFillLevel) {
+                max = maxFillLevel;
+            }
+        }
+        return max;
     }
 
 }

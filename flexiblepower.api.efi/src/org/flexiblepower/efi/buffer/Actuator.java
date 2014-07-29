@@ -36,4 +36,36 @@ public class Actuator implements Serializable {
         return runningModes;
     }
 
+    /**
+     * Determines the minimum fill level for which this actuator can operate.
+     * 
+     * @return The minimum fill level for which this actuator can operate
+     */
+    public double minFillLevel() {
+        double min = Double.MAX_VALUE;
+        for (RunningMode rm : runningModes) {
+            double rmLowerBound = rm.getLowerBound();
+            if (min > rmLowerBound) {
+                min = rmLowerBound;
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Determines the maximum fill level for which this actuator can operate.
+     * 
+     * @return The maximum fill level for which this actuator can operate
+     */
+    public double maxFillLevel() {
+        double max = Double.MIN_VALUE;
+        for (RunningMode rm : runningModes) {
+            double rmUpperBound = rm.getUpperBound();
+            if (max < rmUpperBound) {
+                max = rmUpperBound;
+            }
+        }
+        return max;
+    }
+
 }
