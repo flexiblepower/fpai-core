@@ -1,42 +1,36 @@
 package org.flexiblepower.efi.uncontrolled;
 
 import java.util.Date;
-
-import javax.measure.Measurable;
-import javax.measure.quantity.Duration;
+import java.util.Map;
 
 import org.flexiblepower.rai.comm.Allocation;
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.values.Commodity;
 
 public class UncontrolledAllocation extends Allocation {
 
     private static final long serialVersionUID = -6113496967677840815L;
 
     private final Date startTime;
-    private final Element[] profile;
+    private final Map<Commodity, CurtailmentProfile> curtailmentProfiles;
 
     public UncontrolledAllocation(String resourceId,
-                                  ControlSpaceUpdate resourceUpdate,
+                                  ControlSpaceUpdate controlSpaceUpdate,
                                   Date timestamp,
                                   boolean isEmergencyAllocation,
-                                  Date startTime) {
-        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
-
+                                  Date startTime,
+                                  Map<Commodity, CurtailmentProfile> curtailmentProfiles) {
+        super(resourceId, controlSpaceUpdate, timestamp, isEmergencyAllocation);
         this.startTime = startTime;
-        profile = null;
-        // TODO
+        this.curtailmentProfiles = curtailmentProfiles;
     }
 
-    public static class Element {
-        private final Measurable<Duration> duration = null;
-        private final double maxConsumption;
-        private final double maxProduction;
-
-        public Element(double maxConsumption, double maxProduction) {
-            super();
-            this.maxConsumption = maxConsumption;
-            this.maxProduction = maxProduction;
-        }
-
+    public Date getStartTime() {
+        return startTime;
     }
+
+    public Map<Commodity, CurtailmentProfile> getCurtailmentProfiles() {
+        return curtailmentProfiles;
+    }
+
 }
