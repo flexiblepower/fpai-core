@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.measure.Measurable;
+import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 
-// TODO Moeten alle actuator-states worden opgestuurd en het fill level, of mag je ook een incomplete toestand opsturen.
 public class BufferStateUpdate extends BufferUpdate {
 
     private static final long serialVersionUID = 899987142667364534L;
 
-    /**
+    /*
      * May be sent only after a {@link BufferSystemDescription} has taken place.
      */
     public static class ActuatorUpdate {
@@ -45,22 +45,26 @@ public class BufferStateUpdate extends BufferUpdate {
         public Date finishedAt;
     }
 
-    private final double currentFillLevel;
+    private final Measure<Double, ?> currentFillLevel;
     private final Set<ActuatorUpdate> currentRunningMode;
 
     public BufferStateUpdate(String resourceId,
                              Date timestamp,
                              Date validFrom,
                              Measurable<Duration> allocationDelay,
-                             double currentFillLevel,
+                             Measure<Double, ?> currentFillLevel,
                              Set<ActuatorUpdate> currentRunningMode) {
         super(resourceId, timestamp, validFrom, allocationDelay);
         this.currentFillLevel = currentFillLevel;
         this.currentRunningMode = currentRunningMode;
     }
 
-    public double getxValue() {
+    public Measure<Double, ?> getCurrentFillLevel() {
         return currentFillLevel;
+    }
+
+    public double getCurrentFillLevelAsDouble() {
+        return currentFillLevel.getValue();
     }
 
     public Set<ActuatorUpdate> getCurrentRunningMode() {

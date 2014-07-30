@@ -72,7 +72,7 @@ public class TestBufferResourceManager extends IdentifyableObject implements
     }
 
     public BufferRegistration sendBufferRegistration() {
-        HashSet<Commodity> commodities = new HashSet<Commodity>();
+        HashSet<Commodity<?, ?>> commodities = new HashSet<Commodity<?, ?>>();
         commodities.add(Commodity.ELECTRICITY);
         ActuatorCapabilities actuatorCapabilities = new BufferRegistration.ActuatorCapabilities(0,
                                                                                                 "actuator1",

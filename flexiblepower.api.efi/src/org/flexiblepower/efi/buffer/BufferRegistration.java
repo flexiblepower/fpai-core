@@ -12,6 +12,8 @@ import org.flexiblepower.rai.values.Commodity;
 
 public class BufferRegistration extends ControlSpaceRegistration {
 
+    private static final long serialVersionUID = -327039316450587840L;
+
     /**
      * The label of fill level for display purposes in the UI
      */
@@ -29,13 +31,13 @@ public class BufferRegistration extends ControlSpaceRegistration {
     public static class ActuatorCapabilities {
         private final int actuatorId;
         private final String actuatorLabel;
-        private final Set<Commodity> commodities;
+        private final Set<Commodity<?, ?>> supportedCommodities;
 
-        public ActuatorCapabilities(int actuatorId, String actuatorLabel, Set<Commodity> commodities) {
+        public ActuatorCapabilities(int actuatorId, String actuatorLabel, Set<Commodity<?, ?>> commodities) {
             super();
             this.actuatorId = actuatorId;
             this.actuatorLabel = actuatorLabel;
-            this.commodities = commodities;
+            supportedCommodities = commodities;
         }
 
         public int getActuatorId() {
@@ -46,12 +48,12 @@ public class BufferRegistration extends ControlSpaceRegistration {
             return actuatorLabel;
         }
 
-        public Set<Commodity> getCommodities() {
-            return commodities;
+        public Set<Commodity<?, ?>> getCommodities() {
+            return supportedCommodities;
         }
 
-        public boolean supportsCommodity(Commodity commodity) {
-            return commodities.contains(commodity);
+        public boolean supportsCommodity(Commodity<?, ?> commodity) {
+            return supportedCommodities.contains(commodity);
         }
 
     }
@@ -70,11 +72,11 @@ public class BufferRegistration extends ControlSpaceRegistration {
         this.actuatorCapabilities = actuatorCapabilities;
     }
 
-    public String getxLabel() {
+    public String getFillLevelLabel() {
         return fillLevelLabel;
     }
 
-    public Unit<?> getxUnit() {
+    public Unit<?> getFillLevelUnit() {
         return fillLevelUnit;
     }
 }

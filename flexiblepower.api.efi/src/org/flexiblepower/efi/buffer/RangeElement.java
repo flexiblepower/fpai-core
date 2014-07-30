@@ -24,7 +24,7 @@ public class RangeElement {
         return upperBound;
     }
 
-    public double getXs() {
+    public double getFillingSpeed() {
         return fillingSpeed;
     }
 

@@ -43,4 +43,13 @@ public abstract class FillLevelFunction<E extends RangeElement> extends Abstract
         return this.elements[elements.length - 1].getUpperBound();
     }
 
+    public double getFillingSpeedForFillLevel(double fillLevel) {
+        for (RangeElement re : elements) {
+            if (re.getLowerBound() <= fillLevel && re.getUpperBound() >= fillLevel) {
+                return re.getFillingSpeed();
+            }
+        }
+        throw new IllegalArgumentException("FillLevel is not in range of the leakageFunction");
+    }
+
 }
