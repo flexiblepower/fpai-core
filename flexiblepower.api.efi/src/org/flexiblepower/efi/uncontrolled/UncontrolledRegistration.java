@@ -10,10 +10,24 @@ import org.flexiblepower.rai.comm.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.ConstraintList;
 
+/**
+ * The UncontrolledRegistration object registers the uncontrolled resource manager to the energy app, the message is
+ * describes the commodities that are consumed or produced by the uncontrolled appliance with the Commodity attribute.
+ * Furthermore if the modelled appliance has features that allow curtailing the consumption or production of the device,
+ * the curtail options can be expressed in a ConstraintList for every commodity.
+ * 
+ * @author TNO
+ * 
+ */
 public final class UncontrolledRegistration extends ControlSpaceRegistration {
 
     private static final long serialVersionUID = 5264443341456636488L;
 
+    /**
+     * A map of every applicable Commodity for the appliance as key and a ConstriantList representing the list of
+     * possible curtail steps as an value. The ConstraintList in the map is optional and will only be provided if the
+     * appliance support curtailing, otherwise it must be null.
+     */
     private final Map<Commodity<?, ?>, ConstraintList<?>> supportedCommodityCurtailments;
 
     public UncontrolledRegistration(String resourceId,

@@ -6,8 +6,8 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
 /**
- * The control space registration class is a parent class for the BufferRegistration, TimeShifterRegistration,
- * UncontrolledRegistration and UnconstrainedRegstration class.
+ * The control space registration class is a parent class for the {@link BufferRegistration},
+ * {@link TimeShifterRegistration}, {@link UncontrolledRegistration} and {@link UnconstrainedRegstration} class.
  * 
  * @author TNO
  * 
@@ -28,6 +28,11 @@ public abstract class ControlSpaceRegistration extends ResourceMessage {
         this.allocationDelay = allocationDelay;
     }
 
+    /**
+     * 
+     * @return returns the allocation delay of an appliance (i.e. Processing of the allocation can require a certain
+     *         period of time. It is this period that is indicated by the allocationDelay attribute.)
+     */
     public Measurable<Duration> getAllocationDelay() {
         return allocationDelay;
     }

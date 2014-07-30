@@ -14,6 +14,17 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+/**
+ * This abstract class contains information about the units that are used for a particular commodity. There are
+ * currently implementations for the commodities ELECTRICITY and GAS.
+ * 
+ * @author TNO
+ * 
+ * @param <BQ>
+ *            Quantity of the Billable Unit
+ * @param <FQ>
+ *            Quantity of the Flow Unit
+ */
 public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implements Serializable {
 
     public static final Commodity<Volume, VolumetricFlowRate> GAS = new Commodity<Volume, VolumetricFlowRate>(SI.CUBIC_METRE,
@@ -72,10 +83,21 @@ public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implem
         this.flowUnit = flowUnit;
     }
 
+    /**
+     * The unit that is used for billing purposes. E.g. for electricity this is kWh, for gas m3 is used.
+     * 
+     * @return Billalbe Unit of the commodit
+     */
     public Unit<BQ> getBillableUnit() {
         return billableUnit;
     }
 
+    /**
+     * The unit that indicates the rate at which a commodity is being consumed or produced. E.g. for electricity this
+     * would be power expressed in the watt unit (W), for gas m3/s is used.
+     * 
+     * @return Flow Unit of the commodity
+     */
     public Unit<FQ> getFlowUnit() {
         return flowUnit;
     }

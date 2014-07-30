@@ -7,6 +7,12 @@ import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
+/**
+ * A marker class for uncontrolled updates. Partent of {@link UncontrolledMeasurement} and {@link UncontrolledForecast}
+ * 
+ * @author TNO
+ * 
+ */
 public abstract class UncontrolledUpdate extends ControlSpaceUpdate {
 
     private static final long serialVersionUID = 9154440319073601863L;
