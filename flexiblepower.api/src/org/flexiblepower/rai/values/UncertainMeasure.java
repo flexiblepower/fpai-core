@@ -7,6 +7,18 @@ import javax.measure.Measure;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
+/**
+ * This class is being used to express uncertainty about a value. It does not prescribe a particular distribution, such
+ * as a normal distribution. Instead UncertainMeasure provides the mean value as well as the ranges in which 68 and 95
+ * percent of the values fall. For both ranges a lower and upper bound is given. This flexible solution also allows the
+ * expression of asymmetric distributions.
+ * 
+ * @author TNO
+ * 
+ * @param <Q>
+ *            Quantity of measurement, see {@link Commodity}
+ */
+
 public class UncertainMeasure<Q extends Quantity> implements Serializable, Measurable<Q> {
 
     private static final long serialVersionUID = -6483611366956749285L;
