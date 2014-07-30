@@ -9,8 +9,22 @@ import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.Profile;
 import org.flexiblepower.rai.values.ProfileElement;
 
+/**
+ * A CurtailmentProfile is a profile that describes the maximum consumption or production of an appliance for a certain
+ * commodity over a certain amount of time. A CurtailmentProfile is build out of one or more CurtailmentProfileElements
+ * which can have dissimilar durations.
+ * 
+ * @author TNO
+ * 
+ * @param <FQ>
+ *            Quantity of the profile, see {@link Commodity}
+ */
+
 public class CurtailmentProfile<FQ extends Quantity> extends Profile<CurtailmentProfileElement<FQ>> {
 
+    /**
+     * The commodity for which the CurtailmentProfile is valid.
+     */
     private final Commodity<?, FQ> commodity;
 
     public CurtailmentProfile(Commodity<?, FQ> commodity, CurtailmentProfileElement<FQ>[] elements) {
@@ -22,6 +36,10 @@ public class CurtailmentProfile<FQ extends Quantity> extends Profile<Curtailment
         return commodity;
     }
 
+    /**
+     * The CurtailmentProfileElement describes the maximum consumption or production of an appliance for a certain
+     * duration.
+     */
     public static class CurtailmentProfileElement<FQ extends Quantity> implements
                                                                        ProfileElement<CurtailmentProfileElement<FQ>> {
 

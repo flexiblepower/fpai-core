@@ -6,12 +6,27 @@ import java.util.List;
 import org.flexiblepower.rai.comm.Allocation;
 import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 
+/**
+ * When an energy app allocates the energy flexibility of a time shifter it sends a time shifter allocation to the
+ * appliance driver.
+ * 
+ * @author TNO
+ * 
+ */
 public class TimeShifterAllocation extends Allocation {
 
     private static final long serialVersionUID = -1435692490364313263L;
 
     public class SequentialProfileAllocation {
+
+        /**
+         * The unique id of the sequential profile that is allocated.
+         */
         private final int sequentialProfileId;
+
+        /**
+         * The desired start time of allocation.
+         */
         private final Date startTime;
 
         public SequentialProfileAllocation(int sequentialProfileId, Date startTime) {
@@ -30,7 +45,9 @@ public class TimeShifterAllocation extends Allocation {
 
     }
 
-    // Can be complete list or can be one at a time and everything in between
+    /**
+     * Can be complete list or can be one at a time and everything in between
+     */
     private final List<SequentialProfileAllocation> sequentialProfileAllocation;
 
     public TimeShifterAllocation(String resourceId,
