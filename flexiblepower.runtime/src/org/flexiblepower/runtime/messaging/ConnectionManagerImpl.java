@@ -1,14 +1,12 @@
 package org.flexiblepower.runtime.messaging;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
-import org.flexiblepower.messaging.Port;
-import org.flexiblepower.messaging.Ports;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,61 +17,34 @@ import aQute.bnd.annotation.component.Reference;
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
-    private final Set<EndpointPortImpl> endpointPorts;
+    private final Map<Long, EndpointWrapper> endpointWrappers;
 
     public ConnectionManagerImpl() {
-        endpointPorts = new HashSet<EndpointPortImpl>();
+        endpointWrappers = new HashMap<Long, EndpointWrapper>();
     }
 
     @Reference(dynamic = true, multiple = true, optional = true)
     public synchronized void addEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        Port[] ports = null;
-
-        Ports portsAnnotation = endpoint.getClass().getAnnotation(Ports.class);
-        if (portsAnnotation != null) {
-            ports = portsAnnotation.value();
-        } else {
-            Port portAnnotation = endpoint.getClass().getAnnotation(Port.class);
-            if (portAnnotation != null) {
-                ports = new Port[] { portAnnotation };
-            } else {
-                log.warn("Found an Endpoint with no Port definition (pid={})", properties.get("service.pid"));
-            }
-        }
-
-        for (Port port : ports) {
-            EndpointPortImpl endpointPort = new EndpointPortImpl(endpoint, port);
-            detectPossibleConnections(endpointPort);
-            endpointPorts.add(endpointPort);
-        }
+        Long serviceId = (Long) properties.get(Constants.SERVICE_ID);
+        endpointWrappers.put(serviceId, new EndpointWrapper(endpoint, this));
     }
 
     public synchronized void removeEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        Iterator<EndpointPortImpl> it = endpointPorts.iterator();
-        while (it.hasNext()) {
-            EndpointPortImpl endpointStore = it.next();
-            if (endpointStore.getEndpoint() == endpoint) {
-                for (MatchingPortsImpl connection : endpointStore.getMatchingPorts()) {
-                    if (connection.isConnected()) {
-                        connection.disconnect();
-                    }
-
-                    connection.getEitherEnd().removeMatch(connection);
-                    connection.getOtherEnd(connection.getEitherEnd()).removeMatch(connection);
-                }
-                it.remove();
-            }
-        }
+        Long serviceId = (Long) properties.get(Constants.SERVICE_ID);
+        EndpointWrapper endpointWrapper = endpointWrappers.remove(serviceId);
+        endpointWrapper.close();
     }
 
-    private void detectPossibleConnections(EndpointPortImpl left) {
-        for (EndpointPortImpl right : endpointPorts) {
-            if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
-                                                                                        left.getPort().accepts())) {
-                MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
-                log.info("Found matching ports: {} <--> {}", left, right);
-                left.addMatch(connection);
-                right.addMatch(connection);
+    void detectPossibleConnections(EndpointPortImpl left) {
+        for (EndpointWrapper wrapper : endpointWrappers.values()) {
+            for (EndpointPortImpl right : wrapper) {
+                if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
+                                                                                            left.getPort().accepts())) {
+                    MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
+                    log.info("Found matching ports: {} <--> {}", left, right);
+                    left.addMatch(connection);
+                    right.addMatch(connection);
+                }
             }
         }
     }
@@ -96,7 +67,48 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Override
-    public Set<? extends EndpointPort> getEndpointPorts() {
-        return endpointPorts;
+    public Iterator<EndpointPort> iterator() {
+        final Iterator<EndpointWrapper> wrapperIterator = endpointWrappers.values().iterator();
+        return new Iterator<EndpointPort>() {
+            private boolean loaded = false;
+            private EndpointPort current = null;
+            private Iterator<EndpointPortImpl> it = null;
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            private void load() {
+                if (!loaded) {
+                    if ((it == null || !it.hasNext()) && wrapperIterator.hasNext()) {
+                        it = wrapperIterator.next().iterator();
+                    }
+                    if (it.hasNext()) {
+                        current = it.next();
+                    } else {
+                        current = null;
+                    }
+
+                    loaded = true;
+                }
+            }
+
+            @Override
+            public EndpointPort next() {
+                try {
+                    load();
+                    return current;
+                } finally {
+                    loaded = false;
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                load();
+                return current != null;
+            }
+        };
     }
 }

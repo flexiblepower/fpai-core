@@ -1,5 +1,7 @@
 package org.flexiblepower.runtime.messaging;
 
+import java.io.IOException;
+
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
 
@@ -22,18 +24,19 @@ final class MatchingPortsImpl implements MatchingPorts {
     }
 
     @Override
-    public void connect() {
-        // TODO Auto-generated method stub
+    public void connect() throws IOException {
+        left.connectTo(this);
+        right.connectTo(this);
     }
 
     @Override
     public void disconnect() {
-        // TODO Auto-generated method stub
+        left.disconnect();
+        right.disconnect();
     }
 
     @Override
     public boolean isConnected() {
-        // TODO Auto-generated method stub
-        return false;
+        return left.isConnected() && right.isConnected();
     }
 }

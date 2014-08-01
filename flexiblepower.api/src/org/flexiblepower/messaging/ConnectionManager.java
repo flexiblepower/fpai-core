@@ -1,8 +1,11 @@
 package org.flexiblepower.messaging;
 
+import java.io.IOException;
 import java.util.Set;
 
-public interface ConnectionManager {
+import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
+
+public interface ConnectionManager extends Iterable<EndpointPort> {
     public interface EndpointPort {
         Endpoint getEndpoint();
 
@@ -20,10 +23,8 @@ public interface ConnectionManager {
 
         boolean isConnected();
 
-        void connect();
+        void connect() throws IOException;
 
         void disconnect();
     }
-
-    Set<? extends EndpointPort> getEndpointPorts();
 }
