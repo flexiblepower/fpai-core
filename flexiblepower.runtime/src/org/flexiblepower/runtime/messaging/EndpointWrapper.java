@@ -73,22 +73,22 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     @Override
     public void run() {
         while (running.get()) {
-            synchronized (this) {
-                for (EndpointPortImpl port : ports) {
-                    for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
-                        if (matchingPort.isConnected()) {
-                            try {
-                                matchingPort.handleMessages(port);
-                            } catch (Exception ex) {
-                                log.error("Uncaught exception while handling message on port " + port
-                                                  + ": "
-                                                  + ex.getMessage(),
-                                          ex);
-                                log.warn("Closing the port because of the previous exception");
-                                matchingPort.disconnect();
-                            }
+            for (EndpointPortImpl port : ports) {
+                for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
+                    if (matchingPort.isConnected()) {
+                        try {
+                            matchingPort.handleMessages(port);
+                        } catch (Exception ex) {
+                            log.error("Uncaught exception while handling message on port " + port
+                                              + ": "
+                                              + ex.getMessage(),
+                                      ex);
+                            log.warn("Closing the port because of the previous exception");
+                            matchingPort.disconnect();
                         }
                     }
+                }
+                synchronized (this) {
                     try {
                         wait(10000);
                     } catch (InterruptedException e) {
