@@ -75,7 +75,14 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         while (running.get()) {
             synchronized (thread) {
                 for (EndpointPortImpl port : ports) {
-                    port.handleMessage();
+                    try {
+                        port.handleMessage();
+                    } catch (Exception ex) {
+                        log.error("Uncaught exception while handling message on port " + port + ": " + ex.getMessage(),
+                                  ex);
+                        log.warn("Closing the port because of the previous exception");
+                        port.disconnect();
+                    }
                 }
                 try {
                     thread.wait(1000);
