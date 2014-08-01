@@ -12,7 +12,7 @@
   </class>  
   <interface id="2" language="java" name="org.flexiblepower.rai.values.ProfileElement" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/values/ProfileElement.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="401" y="165"/>    
+    <position height="-1" width="-1" x="414" y="167"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -29,17 +29,7 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="org.flexiblepower.rai.values.CommodityForecastElement" project="flexiblepower.api" 
-    file="/flexiblepower.api/src/org/flexiblepower/rai/values/CommodityForecastElement.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="399" y="280"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="false" package="false" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="org.flexiblepower.rai.values.UncertainMeasure" project="flexiblepower.api" 
+  <class id="4" language="java" name="org.flexiblepower.rai.values.UncertainMeasure" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/values/UncertainMeasure.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="688" y="281"/>    
@@ -49,12 +39,22 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
+  <class id="5" language="java" name="org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement" 
+    project="flexiblepower.api" file="/flexiblepower.api/src/org/flexiblepower/rai/values/CommodityForecast.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="419" y="259"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
   <association id="6">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="7" name="elements"/>      
-      <multiplicity id="8" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="7" name="amount"/>      
+      <multiplicity id="8" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <generalization id="9">    
@@ -62,27 +62,29 @@
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <association id="10">    
-    <bendpoint x="560" y="321"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
+    <end type="SOURCE" refId="5" navigable="false">      
       <attribute id="11" name="duration"/>      
       <multiplicity id="12" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="13">    
-    <end type="SOURCE" refId="4"/>    
+  <association id="13">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="14" name="elements"/>      
+      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="16">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <realization id="17">    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="2"/>  
   </realization>  
-  <association id="14">    
-    <bendpoint x="558" y="247"/>    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="15" name="amount"/>      
-      <multiplicity id="16" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
