@@ -13,19 +13,21 @@ import org.flexiblepower.messaging.Port;
 
 final class MatchingPortsImpl implements MatchingPorts {
     private static final class HalfConnection implements Connection {
-        private final Queue<Object> sendingQueue;
-        private final EndpointPortImpl endpointPort;
+        private final Queue<Object> queue;
+        private final Port port;
+        private final EndpointPortImpl receivingEndpoint;
 
-        public HalfConnection(Queue<Object> sendingQueue, EndpointPortImpl endpointPort) {
-            this.sendingQueue = sendingQueue;
-            this.endpointPort = endpointPort;
+        public HalfConnection(Queue<Object> sendingQueue, Port port, EndpointPortImpl receivingEndpoint) {
+            queue = sendingQueue;
+            this.port = port;
+            this.receivingEndpoint = receivingEndpoint;
         }
 
         @Override
         public void sendMessage(Object message) {
-            sendingQueue.add(message);
+            queue.add(message);
 
-            EndpointWrapper wrapper = endpointPort.getEndpointWrapper();
+            EndpointWrapper wrapper = receivingEndpoint.getEndpointWrapper();
             synchronized (wrapper) {
                 wrapper.notifyAll();
             }
@@ -33,7 +35,7 @@ final class MatchingPortsImpl implements MatchingPorts {
 
         @Override
         public Port getPort() {
-            return endpointPort.getPort();
+            return port;
         }
     }
 
@@ -72,8 +74,8 @@ final class MatchingPortsImpl implements MatchingPorts {
                                             + "] is already connected and doesn't support multiple connections");
         }
 
-        leftMessageHandler = left.getEndpoint().onConnect(new HalfConnection(rightQueue, left));
-        rightMessageHandler = right.getEndpoint().onConnect(new HalfConnection(leftQueue, right));
+        leftMessageHandler = left.getEndpoint().onConnect(new HalfConnection(rightQueue, left.getPort(), right));
+        rightMessageHandler = right.getEndpoint().onConnect(new HalfConnection(leftQueue, right.getPort(), left));
     }
 
     @Override
