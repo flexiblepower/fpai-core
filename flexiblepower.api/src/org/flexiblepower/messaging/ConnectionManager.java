@@ -27,4 +27,8 @@ public interface ConnectionManager extends Iterable<EndpointPort> {
 
         void disconnect();
     }
+
+    Set<EndpointPort> getEndpointPorts();
+
+    Set<EndpointPort> getEndpointPortsOf(Endpoint endpoint);
 }

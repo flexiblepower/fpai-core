@@ -8,12 +8,12 @@ import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 
-public abstract class AbstractEndpointPort implements EndpointPort {
+public class EndpointPortImpl implements EndpointPort {
     private final EndpointWrapper endpoint;
     private final Port port;
     private final Set<MatchingPortsImpl> matchingPorts;
 
-    public AbstractEndpointPort(EndpointWrapper endpoint, Port port) {
+    public EndpointPortImpl(EndpointWrapper endpoint, Port port) {
         this.endpoint = endpoint;
         this.port = port;
 
@@ -61,13 +61,12 @@ public abstract class AbstractEndpointPort implements EndpointPort {
         return endpoint.getEndpoint().getClass().getSimpleName() + ":" + port.name();
     }
 
-    protected abstract void connectTo(MatchingPortsImpl matchingPort);
-
-    protected abstract void disconnect();
-
-    protected abstract boolean isConnected();
-
-    protected abstract void addMessage(Object message);
-
-    protected abstract void handleMessage();
+    public boolean isConnected() {
+        for (MatchingPortsImpl match : matchingPorts) {
+            if (match.isConnected()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

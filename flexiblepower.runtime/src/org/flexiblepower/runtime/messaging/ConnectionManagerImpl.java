@@ -1,8 +1,10 @@
 package org.flexiblepower.runtime.messaging;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
@@ -35,9 +37,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
         endpointWrapper.close();
     }
 
-    void detectPossibleConnections(AbstractEndpointPort left) {
+    void detectPossibleConnections(EndpointPortImpl left) {
         for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            for (AbstractEndpointPort right : wrapper) {
+            for (EndpointPortImpl right : wrapper) {
                 if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
                                                                                             left.getPort().accepts())) {
                     MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
@@ -67,12 +69,36 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Override
+    public Set<EndpointPort> getEndpointPorts() {
+        Set<EndpointPort> result = new HashSet<ConnectionManager.EndpointPort>();
+        for (EndpointWrapper wrapper : endpointWrappers.values()) {
+            for (EndpointPortImpl port : wrapper) {
+                result.add(port);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Set<EndpointPort> getEndpointPortsOf(Endpoint endpoint) {
+        Set<EndpointPort> result = new HashSet<ConnectionManager.EndpointPort>();
+        for (EndpointWrapper wrapper : endpointWrappers.values()) {
+            if (wrapper.getEndpoint() == endpoint) {
+                for (EndpointPortImpl port : wrapper) {
+                    result.add(port);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     public Iterator<EndpointPort> iterator() {
         final Iterator<EndpointWrapper> wrapperIterator = endpointWrappers.values().iterator();
         return new Iterator<EndpointPort>() {
             private boolean loaded = false;
             private EndpointPort current = null;
-            private Iterator<AbstractEndpointPort> it = null;
+            private Iterator<EndpointPortImpl> it = null;
 
             @Override
             public void remove() {
