@@ -6,20 +6,20 @@ import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
 
 final class MatchingPortsImpl implements MatchingPorts {
-    private final EndpointPortImpl left, right;
+    private final AbstractEndpointPort left, right;
 
-    public MatchingPortsImpl(EndpointPortImpl left, EndpointPortImpl right) {
+    public MatchingPortsImpl(AbstractEndpointPort left, AbstractEndpointPort right) {
         this.left = left;
         this.right = right;
     }
 
     @Override
-    public EndpointPortImpl getEitherEnd() {
+    public AbstractEndpointPort getEitherEnd() {
         return left;
     }
 
     @Override
-    public EndpointPortImpl getOtherEnd(EndpointPort either) {
+    public AbstractEndpointPort getOtherEnd(EndpointPort either) {
         return either == left ? right : left;
     }
 

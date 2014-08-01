@@ -35,9 +35,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
         endpointWrapper.close();
     }
 
-    void detectPossibleConnections(EndpointPortImpl left) {
+    void detectPossibleConnections(AbstractEndpointPort left) {
         for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            for (EndpointPortImpl right : wrapper) {
+            for (AbstractEndpointPort right : wrapper) {
                 if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
                                                                                             left.getPort().accepts())) {
                     MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
@@ -72,7 +72,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
         return new Iterator<EndpointPort>() {
             private boolean loaded = false;
             private EndpointPort current = null;
-            private Iterator<EndpointPortImpl> it = null;
+            private Iterator<AbstractEndpointPort> it = null;
 
             @Override
             public void remove() {

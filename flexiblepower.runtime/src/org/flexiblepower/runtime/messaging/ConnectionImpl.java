@@ -7,11 +7,11 @@ import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.Port;
 
 public class ConnectionImpl {
-    private final EndpointPortImpl left, right;
+    private final AbstractEndpointPort left, right;
 
     private final Queue<Object> leftQueue, rightQueue;
 
-    public ConnectionImpl(EndpointPortImpl left, EndpointPortImpl right) {
+    public ConnectionImpl(AbstractEndpointPort left, AbstractEndpointPort right) {
         this.left = left;
         this.right = right;
 

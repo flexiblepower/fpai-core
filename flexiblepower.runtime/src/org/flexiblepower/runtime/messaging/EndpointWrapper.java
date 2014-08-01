@@ -7,13 +7,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Closeable {
+public class EndpointWrapper implements Runnable, Iterable<AbstractEndpointPort>, Closeable {
     private static final Logger log = LoggerFactory.getLogger(EndpointWrapper.class);
 
     private final Endpoint endpoint;
@@ -22,7 +23,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     private final Thread thread;
     private final AtomicBoolean running;
 
-    private final Set<EndpointPortImpl> ports;
+    private final Set<AbstractEndpointPort> ports;
 
     public EndpointWrapper(Endpoint endpoint, ConnectionManagerImpl connectionManager) {
         this.endpoint = endpoint;
@@ -36,7 +37,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         thread.start();
     }
 
-    private Set<EndpointPortImpl> parsePorts() {
+    private Set<AbstractEndpointPort> parsePorts() {
         Port[] ports = null;
 
         Ports portsAnnotation = endpoint.getClass().getAnnotation(Ports.class);
@@ -52,9 +53,12 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
             }
         }
 
-        Set<EndpointPortImpl> result = new HashSet<EndpointPortImpl>();
+        Set<AbstractEndpointPort> result = new HashSet<AbstractEndpointPort>();
         for (Port port : ports) {
-            EndpointPortImpl endpointPort = new EndpointPortImpl(this, port);
+            AbstractEndpointPort endpointPort = port.cardinality() == Cardinality.SINGLE ? new SingleEndpointPort(this,
+                                                                                                                  port)
+                                                                                        : new MultipleEndpointPort(this,
+                                                                                                                   port);
             connectionManager.detectPossibleConnections(endpointPort);
             result.add(endpointPort);
         }
@@ -66,7 +70,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     }
 
     @Override
-    public Iterator<EndpointPortImpl> iterator() {
+    public Iterator<AbstractEndpointPort> iterator() {
         return ports.iterator();
     }
 
@@ -74,7 +78,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     public void run() {
         while (running.get()) {
             synchronized (thread) {
-                for (EndpointPortImpl port : ports) {
+                for (AbstractEndpointPort port : ports) {
                     try {
                         port.handleMessage();
                     } catch (Exception ex) {
@@ -103,7 +107,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         } catch (InterruptedException e) {
         }
 
-        for (EndpointPortImpl port : ports) {
+        for (AbstractEndpointPort port : ports) {
             port.disconnect();
             for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
                 port.removeMatch(matchingPort);
