@@ -20,6 +20,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class EndpointTester extends TestCase {
+    private static final int SLEEP_TIME = 500;
+
     private final List<ServiceRegistration<Endpoint>> registrations = new ArrayList<ServiceRegistration<Endpoint>>();
     private ServiceTracker<ConnectionManager, ConnectionManager> connectionManagerTracker;
 
@@ -136,21 +138,14 @@ public class EndpointTester extends TestCase {
     }
 
     public void testConnected() throws Exception {
-        EndpointA endpointA = new EndpointA();
-        EndpointB endpointB = new EndpointB();
-        ConnectionManager connectionManager = setupEndpoints(endpointA,
-                                                             endpointB,
-                                                             new EndpointC(),
-                                                             new EndpointD(),
-                                                             new EndpointE());
+        EndpointA a = new EndpointA();
+        EndpointB b = new EndpointB();
+        EndpointC c = new EndpointC();
+        EndpointD d = new EndpointD();
+        EndpointE e = new EndpointE();
+        ConnectionManager connectionManager = setupEndpoints(a, b, c, d, e);
 
-        EndpointPort portA = null;
-        for (EndpointPort port : connectionManager) {
-            if (port.getEndpoint() == endpointA) {
-                portA = port;
-            }
-        }
-
+        EndpointPort portA = connectionManager.getEndpointPortsOf(a).iterator().next();
         assertNotNull(portA);
         assertEquals(4, portA.getMatchingPorts().size());
 
@@ -158,7 +153,7 @@ public class EndpointTester extends TestCase {
         MatchingPorts connAB = null;
         for (MatchingPorts match : portA.getMatchingPorts()) {
             EndpointPort otherPort = match.getOtherEnd(portA);
-            if (otherPort.getEndpoint() == endpointB) {
+            if (otherPort.getEndpoint() == b) {
                 portB = otherPort;
                 connAB = match;
             }
@@ -170,16 +165,16 @@ public class EndpointTester extends TestCase {
 
         connAB.connect();
         assertTrue(connAB.isConnected());
-        endpointA.assertConnected();
-        endpointB.assertConnected();
+        a.assertConnected();
+        b.assertConnected();
 
-        Thread.sleep(1000);
+        Thread.sleep(SLEEP_TIME);
 
         connAB.disconnect();
 
         assertFalse(connAB.isConnected());
-        endpointA.assertNotConnected();
-        endpointB.assertNotConnected();
+        a.assertNotConnected();
+        b.assertNotConnected();
     }
 
     @Port(name = "TextService",
@@ -294,7 +289,7 @@ public class EndpointTester extends TestCase {
         assertTrue(matches[0].isConnected());
         assertTrue(matches[1].isConnected());
 
-        Thread.sleep(500);
+        Thread.sleep(SLEEP_TIME);
 
         matches[0].disconnect();
         matches[1].disconnect();
