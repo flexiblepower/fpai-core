@@ -14,6 +14,7 @@ import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
+import org.flexiblepower.messaging.Ports;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
@@ -129,12 +130,15 @@ public class EndpointTester extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        connectionManagerTracker.close();
-
         for (ServiceRegistration<Endpoint> reg : registrations) {
             reg.unregister();
         }
         registrations.clear();
+
+        ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
+        assertEquals(0, connectionManager.getEndpointPorts().size());
+
+        connectionManagerTracker.close();
     }
 
     public void testConnected() throws Exception {
@@ -145,7 +149,7 @@ public class EndpointTester extends TestCase {
         EndpointE e = new EndpointE();
         ConnectionManager connectionManager = setupEndpoints(a, b, c, d, e);
 
-        EndpointPort portA = connectionManager.getEndpointPortsOf(a).iterator().next();
+        EndpointPort portA = getOnly(connectionManager.getEndpointPortsOf(a));
         assertNotNull(portA);
         assertEquals(4, portA.getMatchingPorts().size());
 
@@ -267,9 +271,7 @@ public class EndpointTester extends TestCase {
         WorldEndpoint worldEndpoint = new WorldEndpoint();
         SquaringEndpoint squaringEndpoint = new SquaringEndpoint();
         ConnectionManager connectionManager = setupEndpoints(serverEndpoint, worldEndpoint, squaringEndpoint);
-        Set<EndpointPort> ports = connectionManager.getEndpointPortsOf(serverEndpoint);
-        assertEquals(1, ports.size());
-        EndpointPort serverPort = ports.iterator().next();
+        EndpointPort serverPort = getOnly(connectionManager.getEndpointPortsOf(serverEndpoint));
 
         Set<? extends MatchingPorts> matchingPorts = serverPort.getMatchingPorts();
         assertEquals(2, matchingPorts.size());
@@ -295,5 +297,168 @@ public class EndpointTester extends TestCase {
         matches[1].disconnect();
         assertFalse(matches[0].isConnected());
         assertFalse(matches[1].isConnected());
+    }
+
+    static class StringMessage {
+        private final String message;
+
+        StringMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
+
+    static class DecodedStringMessage extends StringMessage {
+        DecodedStringMessage(String message) {
+            super(message);
+        }
+    }
+
+    static class EncodedStringMessage extends StringMessage {
+        EncodedStringMessage(String message) {
+            super(message);
+        }
+    }
+
+    @Ports({ @Port(name = "private", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class),
+        @Port(name = "public", sends = EncodedStringMessage.class, accepts = EncodedStringMessage.class) })
+    static class CodecEndpoint implements Endpoint {
+        private Connection privateConnection, publicConnection;
+
+        @Override
+        public MessageHandler onConnect(Connection connection) {
+            if (connection.getPort().name().equals("private")) {
+                privateConnection = connection;
+
+                return new MessageHandler() {
+                    @Override
+                    public void handleMessage(Object message) {
+                        DecodedStringMessage msg = (DecodedStringMessage) message;
+                        char[] data = msg.toString().toCharArray();
+                        for (int ix = 0; ix < data.length; ix++) {
+                            data[ix]++;
+                        }
+
+                        if (publicConnection != null) {
+                            publicConnection.sendMessage(new EncodedStringMessage(new String(data)));
+                        }
+                    }
+
+                    @Override
+                    public void disconnected() {
+                        privateConnection = null;
+                    }
+                };
+            } else if (connection.getPort().name().equals("public")) {
+                publicConnection = connection;
+
+                return new MessageHandler() {
+                    @Override
+                    public void handleMessage(Object message) {
+                        EncodedStringMessage msg = (EncodedStringMessage) message;
+                        char[] data = msg.toString().toCharArray();
+                        for (int ix = 0; ix < data.length; ix++) {
+                            data[ix]--;
+                        }
+
+                        if (privateConnection != null) {
+                            privateConnection.sendMessage(new DecodedStringMessage(new String(data)));
+                        }
+                    }
+
+                    @Override
+                    public void disconnected() {
+                        publicConnection = null;
+                    }
+                };
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @Port(name = "any", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
+    static class EchoEndpoint implements Endpoint {
+        @Override
+        public MessageHandler onConnect(final Connection connection) {
+            return new MessageHandler() {
+                @Override
+                public void handleMessage(Object message) {
+                    connection.sendMessage(message);
+                }
+
+                @Override
+                public void disconnected() {
+                }
+            };
+        }
+    }
+
+    @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
+    static class SendDataEndpoint implements Endpoint {
+        @Override
+        public MessageHandler onConnect(final Connection connection) {
+            connection.sendMessage(new DecodedStringMessage("Ab"));
+            return new MessageHandler() {
+                @Override
+                public void handleMessage(Object message) {
+                    System.out.println("Received " + message);
+
+                    if (message.toString().length() < 1024) {
+                        connection.sendMessage(new DecodedStringMessage(message.toString() + message));
+                    }
+                }
+
+                @Override
+                public void disconnected() {
+                }
+            };
+        }
+    }
+
+    public void testChainOfEndpoints() throws Exception {
+        EchoEndpoint echo = new EchoEndpoint();
+        CodecEndpoint echoCodec = new CodecEndpoint();
+        CodecEndpoint dataCodec = new CodecEndpoint();
+        SendDataEndpoint data = new SendDataEndpoint();
+
+        ConnectionManager connectionManager = setupEndpoints(echo, echoCodec, dataCodec, data);
+        EndpointPort[] ports = connectionManager.getEndpointPortsOf(echoCodec).toArray(new EndpointPort[0]);
+        assertEquals(2, ports.length);
+        EndpointPort publicPort = ports[0].getName().equals("public") ? ports[0] : ports[1];
+        MatchingPorts publicConn = getOnly(publicPort.getMatchingPorts());
+
+        publicConn.connect();
+
+        EndpointPort echoPort = getOnly(connectionManager.getEndpointPortsOf(echo));
+        Set<? extends MatchingPorts> echoConns = echoPort.getMatchingPorts();
+        for (MatchingPorts conn : echoConns) {
+            if (conn.getOtherEnd(echoPort).getEndpoint() == echoCodec) {
+                conn.connect();
+                break;
+            }
+        }
+
+        EndpointPort dataPort = getOnly(connectionManager.getEndpointPortsOf(data));
+        Set<? extends MatchingPorts> dataConns = dataPort.getMatchingPorts();
+        for (MatchingPorts conn : dataConns) {
+            if (conn.getOtherEnd(dataPort).getEndpoint() == dataCodec) {
+                conn.connect();
+                break;
+            }
+        }
+    }
+
+    private <T> T getOnly(Set<T> set) {
+        assertEquals(1, set.size());
+        return set.iterator().next();
     }
 }
