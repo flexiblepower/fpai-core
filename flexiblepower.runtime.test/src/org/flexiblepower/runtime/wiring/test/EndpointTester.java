@@ -119,8 +119,8 @@ public class EndpointTester extends TestCase {
         }
 
         connectionManagerTracker = new ServiceTracker<ConnectionManager, ConnectionManager>(context,
-                ConnectionManager.class,
-                null);
+                                                                                            ConnectionManager.class,
+                                                                                            null);
         connectionManagerTracker.open();
 
         ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
@@ -182,9 +182,9 @@ public class EndpointTester extends TestCase {
     }
 
     @Port(name = "TextService",
-            accepts = { String.class, Integer.class },
-            sends = String.class,
-            cardinality = Cardinality.MULTIPLE)
+          accepts = { String.class, Integer.class },
+          sends = String.class,
+          cardinality = Cardinality.MULTIPLE)
     static class ServerEndpoint implements Endpoint {
         @Override
         public MessageHandler onConnect(final Connection connection) {
@@ -329,7 +329,7 @@ public class EndpointTester extends TestCase {
     }
 
     @Ports({ @Port(name = "private", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class),
-        @Port(name = "public", sends = EncodedStringMessage.class, accepts = EncodedStringMessage.class) })
+            @Port(name = "public", sends = EncodedStringMessage.class, accepts = EncodedStringMessage.class) })
     static class CodecEndpoint implements Endpoint {
         private Connection privateConnection, publicConnection;
 
@@ -387,45 +387,66 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "any", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     static class EchoEndpoint implements Endpoint {
+        private final int expectedMessagesHandled;
+        private int messagesHandled;
+
+        public EchoEndpoint(int expectedMessagesHandled) {
+            this.expectedMessagesHandled = expectedMessagesHandled;
+            messagesHandled = 0;
+        }
+
+        public void reset() {
+            messagesHandled = 0;
+        }
+
         @Override
         public MessageHandler onConnect(final Connection connection) {
             return new MessageHandler() {
                 @Override
                 public void handleMessage(Object message) {
                     connection.sendMessage(message);
+                    messagesHandled++;
                 }
 
                 @Override
                 public void disconnected() {
+                    assertEquals(expectedMessagesHandled, messagesHandled);
                 }
             };
         }
     }
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
-    static class SendDataEndpoint implements Endpoint {
+    class SendDataEndpoint implements Endpoint {
         @Override
         public MessageHandler onConnect(final Connection connection) {
             connection.sendMessage(new DecodedStringMessage("Ab"));
             return new MessageHandler() {
                 @Override
                 public void handleMessage(Object message) {
-                    System.out.println("Received " + message);
+                    // System.out.println("Received " + message);
 
                     if (message.toString().length() < 1024) {
                         connection.sendMessage(new DecodedStringMessage(message.toString() + message));
+                    } else {
+                        synchronized (EndpointTester.this) {
+                            EndpointTester.this.notifyAll();
+                        }
                     }
                 }
 
                 @Override
                 public void disconnected() {
+                    synchronized (EndpointTester.this) {
+                        EndpointTester.this.notifyAll();
+                    }
                 }
             };
         }
     }
 
-    public void testChainOfEndpoints() throws Exception {
-        EchoEndpoint echo = new EchoEndpoint();
+    public synchronized void testChainOfEndpoints() throws Exception {
+        EchoEndpoint echo = new EchoEndpoint(10);
         CodecEndpoint echoCodec = new CodecEndpoint();
         CodecEndpoint dataCodec = new CodecEndpoint();
         SendDataEndpoint data = new SendDataEndpoint();
@@ -436,24 +457,40 @@ public class EndpointTester extends TestCase {
         EndpointPort publicPort = ports[0].getName().equals("public") ? ports[0] : ports[1];
         MatchingPorts publicConn = getOnly(publicPort.getMatchingPorts());
 
-        publicConn.connect();
-
         EndpointPort echoPort = getOnly(connectionManager.getEndpointPortsOf(echo));
-        Set<? extends MatchingPorts> echoConns = echoPort.getMatchingPorts();
-        for (MatchingPorts conn : echoConns) {
+        MatchingPorts echoConn = null;
+        for (MatchingPorts conn : echoPort.getMatchingPorts()) {
             if (conn.getOtherEnd(echoPort).getEndpoint() == echoCodec) {
-                conn.connect();
+                echoConn = conn;
                 break;
             }
         }
+        assertNotNull(echoConn);
 
         EndpointPort dataPort = getOnly(connectionManager.getEndpointPortsOf(data));
-        Set<? extends MatchingPorts> dataConns = dataPort.getMatchingPorts();
-        for (MatchingPorts conn : dataConns) {
+        MatchingPorts dataConn = null;
+        for (MatchingPorts conn : dataPort.getMatchingPorts()) {
             if (conn.getOtherEnd(dataPort).getEndpoint() == dataCodec) {
-                conn.connect();
+                dataConn = conn;
                 break;
             }
+        }
+        assertNotNull(dataConn);
+
+        for (int i = 0; i < 100; i++) {
+            echo.reset();
+
+            publicConn.connect();
+            echoConn.connect();
+            dataConn.connect();
+
+            wait(1000);
+
+            dataConn.disconnect();
+            echoConn.disconnect();
+            publicConn.disconnect();
+
+            wait(100);
         }
     }
 
