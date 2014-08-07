@@ -29,6 +29,7 @@ final class MatchingPortsImpl implements MatchingPorts {
 
             EndpointWrapper wrapper = receivingEndpoint.getEndpointWrapper();
             synchronized (wrapper) {
+                wrapper.newMessage();
                 wrapper.notifyAll();
             }
         }

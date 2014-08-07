@@ -70,10 +70,13 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         return ports.iterator();
     }
 
+    private volatile boolean newMessages;
+
     @Override
     public void run() {
         while (running.get()) {
             for (EndpointPortImpl port : ports) {
+                newMessages = false;
                 for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
                     if (matchingPort.isConnected()) {
                         try {
@@ -90,12 +93,18 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
                 }
                 synchronized (this) {
                     try {
-                        wait(10000);
+                        if (!newMessages) {
+                            wait(10000);
+                        }
                     } catch (InterruptedException e) {
                     }
                 }
             }
         }
+    }
+
+    void newMessage() {
+        newMessages = true;
     }
 
     @Override
