@@ -437,15 +437,12 @@ public class EndpointTester extends TestCase {
 
                 @Override
                 public void disconnected() {
-                    synchronized (EndpointTester.this) {
-                        EndpointTester.this.notifyAll();
-                    }
                 }
             };
         }
     }
 
-    public synchronized void testChainOfEndpoints() throws Exception {
+    public void testChainOfEndpoints() throws Exception {
         EchoEndpoint echo = new EchoEndpoint(10);
         CodecEndpoint echoCodec = new CodecEndpoint();
         CodecEndpoint dataCodec = new CodecEndpoint();
@@ -484,13 +481,13 @@ public class EndpointTester extends TestCase {
             echoConn.connect();
             dataConn.connect();
 
-            wait(1000);
+            synchronized (this) {
+                wait(1000);
+            }
 
             dataConn.disconnect();
             echoConn.disconnect();
             publicConn.disconnect();
-
-            wait(100);
         }
     }
 
