@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.flexiblepower.messaging.Endpoint;
@@ -21,6 +23,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
 
     private final Thread thread;
     private final AtomicBoolean running;
+    private final BlockingQueue<Command> commandQueue;
 
     private final Set<EndpointPortImpl> ports;
 
@@ -32,6 +35,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
 
         thread = new Thread(this, "Message handler thread for " + endpoint.getClass().getSimpleName());
         running = new AtomicBoolean(true);
+        commandQueue = new LinkedBlockingQueue<Command>();
 
         thread.start();
     }
@@ -70,41 +74,19 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         return ports.iterator();
     }
 
-    private volatile boolean newMessages;
-
     @Override
     public void run() {
         while (running.get()) {
-            for (EndpointPortImpl port : ports) {
-                newMessages = false;
-                for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
-                    if (matchingPort.isConnected()) {
-                        try {
-                            matchingPort.handleMessages(port);
-                        } catch (Exception ex) {
-                            log.error("Uncaught exception while handling message on port " + port
-                                              + ": "
-                                              + ex.getMessage(),
-                                      ex);
-                            log.warn("Closing the port because of the previous exception");
-                            matchingPort.disconnect();
-                        }
-                    }
-                }
-                synchronized (this) {
-                    try {
-                        if (!newMessages) {
-                            wait(10000);
-                        }
-                    } catch (InterruptedException e) {
-                    }
-                }
+            try {
+                commandQueue.take().execute();
+            } catch (InterruptedException ex) {
+                // Is expected, the thread is probably closing down
             }
         }
     }
 
-    void newMessage() {
-        newMessages = true;
+    void addCommand(Command command) {
+        commandQueue.add(command);
     }
 
     @Override

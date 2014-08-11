@@ -1,8 +1,7 @@
 package org.flexiblepower.runtime.messaging;
 
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Connection;
@@ -12,27 +11,24 @@ import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
 
 final class MatchingPortsImpl implements MatchingPorts {
-    private static final class HalfConnection implements Connection {
-        private final Queue<Object> queue;
+    private static abstract class HalfConnection implements Connection {
         private final Port port;
-        private final EndpointPortImpl receivingEndpoint;
+        private final EndpointWrapper receivingEndpoint;
 
-        public HalfConnection(Queue<Object> sendingQueue, Port port, EndpointPortImpl receivingEndpoint) {
-            queue = sendingQueue;
+        public HalfConnection(Port port, EndpointWrapper receivingEndpoint) {
             this.port = port;
             this.receivingEndpoint = receivingEndpoint;
         }
 
         @Override
         public void sendMessage(Object message) {
-            queue.add(message);
-
-            EndpointWrapper wrapper = receivingEndpoint.getEndpointWrapper();
-            synchronized (wrapper) {
-                wrapper.newMessage();
-                wrapper.notifyAll();
+            MessageHandler handler = getMessageHandler();
+            if (handler != null) {
+                receivingEndpoint.addCommand(new Command.HandleMessage(message, handler));
             }
         }
+
+        public abstract MessageHandler getMessageHandler();
 
         @Override
         public Port getPort() {
@@ -40,17 +36,38 @@ final class MatchingPortsImpl implements MatchingPorts {
         }
     }
 
-    private final EndpointPortImpl left, right;
+    private abstract class TempMessageHandler implements MessageHandler {
+        @Override
+        public void handleMessage(Object message) {
+            getRealMessageHandler().handleMessage(message);
+        }
 
-    private final Queue<Object> leftQueue, rightQueue;
-    private MessageHandler leftMessageHandler, rightMessageHandler;
+        @Override
+        public void disconnected() {
+            getRealMessageHandler().disconnected();
+        }
+
+        private MessageHandler getRealMessageHandler() {
+            synchronized (MatchingPortsImpl.this) {
+                while (getMessageHandler() == this) {
+                    try {
+                        MatchingPortsImpl.this.wait(100);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            return getMessageHandler();
+        }
+
+        public abstract MessageHandler getMessageHandler();
+    }
+
+    private final EndpointPortImpl left, right;
+    private volatile MessageHandler leftMessageHandler, rightMessageHandler;
 
     public MatchingPortsImpl(EndpointPortImpl left, EndpointPortImpl right) {
         this.left = left;
         this.right = right;
-
-        leftQueue = new ConcurrentLinkedQueue<Object>();
-        rightQueue = new ConcurrentLinkedQueue<Object>();
     }
 
     @Override
@@ -75,44 +92,54 @@ final class MatchingPortsImpl implements MatchingPorts {
                                             + "] is already connected and doesn't support multiple connections");
         }
 
-        leftMessageHandler = left.getEndpoint().onConnect(new HalfConnection(rightQueue, left.getPort(), right));
-        rightMessageHandler = right.getEndpoint().onConnect(new HalfConnection(leftQueue, right.getPort(), left));
+        leftMessageHandler = new TempMessageHandler() {
+            @Override
+            public MessageHandler getMessageHandler() {
+                return leftMessageHandler;
+            }
+        };
+        rightMessageHandler = new TempMessageHandler() {
+            @Override
+            public MessageHandler getMessageHandler() {
+                return rightMessageHandler;
+            }
+        };
+
+        HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpointWrapper()) {
+            @Override
+            public MessageHandler getMessageHandler() {
+                return rightMessageHandler;
+            }
+        };
+
+        HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpointWrapper()) {
+            @Override
+            public MessageHandler getMessageHandler() {
+                return leftMessageHandler;
+            }
+        };
+
+        leftMessageHandler = left.getEndpoint().onConnect(leftHalfConnection);
+        rightMessageHandler = right.getEndpoint().onConnect(rightHalfConnection);
+        notifyAll();
     }
 
     @Override
-    public synchronized void disconnect() {
-        // TODO Should we wait for the queue being emptied?
+    public void disconnect() {
+        try {
+            CountDownLatch latch = new CountDownLatch(2);
+            left.getEndpointWrapper().addCommand(new Command.Disconnect(leftMessageHandler, latch));
+            right.getEndpointWrapper().addCommand(new Command.Disconnect(rightMessageHandler, latch));
+            latch.await();
+        } catch (InterruptedException e) {
+        }
 
-        leftMessageHandler.disconnected();
-        rightMessageHandler.disconnected();
         leftMessageHandler = null;
         rightMessageHandler = null;
-
-        // Just to be sure, empty the queue
-        leftQueue.clear();
-        rightQueue.clear();
     }
 
     @Override
     public synchronized boolean isConnected() {
         return leftMessageHandler != null && rightMessageHandler != null;
-    }
-
-    void handleMessages(EndpointPortImpl port) {
-        if (port == left) {
-            assert Thread.currentThread().getName().contains(left.getEndpoint().getClass().getSimpleName());
-
-            while (!leftQueue.isEmpty()) {
-                leftMessageHandler.handleMessage(leftQueue.remove());
-            }
-        } else if (port == right) {
-            assert Thread.currentThread().getName().contains(right.getEndpoint().getClass().getSimpleName());
-
-            while (!rightQueue.isEmpty()) {
-                rightMessageHandler.handleMessage(rightQueue.remove());
-            }
-        } else {
-            throw new IllegalArgumentException("Don't know that endpoint");
-        }
     }
 }
