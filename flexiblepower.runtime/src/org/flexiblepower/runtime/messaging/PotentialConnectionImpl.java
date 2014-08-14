@@ -1,6 +1,5 @@
 package org.flexiblepower.runtime.messaging;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 import org.flexiblepower.messaging.Cardinality;
@@ -9,8 +8,12 @@ import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class PotentialConnectionImpl implements PotentialConnection {
+    private static final Logger log = LoggerFactory.getLogger(PotentialConnectionImpl.class);
+
     private static abstract class HalfConnection implements Connection {
         private final Port port;
         private final EndpointWrapper receivingEndpoint;
@@ -81,61 +84,66 @@ final class PotentialConnectionImpl implements PotentialConnection {
     }
 
     @Override
-    public synchronized void connect() throws IOException {
-        if (isConnected()) {
-            throw new IllegalStateException("Already connected");
-        } else if (left.getCardinality() == Cardinality.SINGLE && left.isConnected()) {
-            throw new IllegalStateException("The port [" + left
-                                            + "] is already connected and doesn't support multiple connections");
-        } else if (right.getCardinality() == Cardinality.SINGLE && right.isConnected()) {
-            throw new IllegalStateException("The port [" + right
-                                            + "] is already connected and doesn't support multiple connections");
+    public synchronized void connect() {
+        if (!isConnected()) {
+            if (left.getCardinality() == Cardinality.SINGLE && left.isConnected()) {
+                throw new IllegalStateException("The port [" + left
+                                                + "] is already connected and doesn't support multiple connections");
+            } else if (right.getCardinality() == Cardinality.SINGLE && right.isConnected()) {
+                throw new IllegalStateException("The port [" + right
+                                                + "] is already connected and doesn't support multiple connections");
+            }
+
+            log.debug("Connecting port [{}] to port [{}]", left, right);
+
+            leftMessageHandler = new TempMessageHandler() {
+                @Override
+                public MessageHandler getMessageHandler() {
+                    return leftMessageHandler;
+                }
+            };
+            rightMessageHandler = new TempMessageHandler() {
+                @Override
+                public MessageHandler getMessageHandler() {
+                    return rightMessageHandler;
+                }
+            };
+
+            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpointWrapper()) {
+                @Override
+                public MessageHandler getMessageHandler() {
+                    return rightMessageHandler;
+                }
+            };
+
+            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpointWrapper()) {
+                @Override
+                public MessageHandler getMessageHandler() {
+                    return leftMessageHandler;
+                }
+            };
+
+            leftMessageHandler = left.getEndpoint().onConnect(leftHalfConnection);
+            rightMessageHandler = right.getEndpoint().onConnect(rightHalfConnection);
+            notifyAll();
         }
-
-        leftMessageHandler = new TempMessageHandler() {
-            @Override
-            public MessageHandler getMessageHandler() {
-                return leftMessageHandler;
-            }
-        };
-        rightMessageHandler = new TempMessageHandler() {
-            @Override
-            public MessageHandler getMessageHandler() {
-                return rightMessageHandler;
-            }
-        };
-
-        HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpointWrapper()) {
-            @Override
-            public MessageHandler getMessageHandler() {
-                return rightMessageHandler;
-            }
-        };
-
-        HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpointWrapper()) {
-            @Override
-            public MessageHandler getMessageHandler() {
-                return leftMessageHandler;
-            }
-        };
-
-        leftMessageHandler = left.getEndpoint().onConnect(leftHalfConnection);
-        rightMessageHandler = right.getEndpoint().onConnect(rightHalfConnection);
-        notifyAll();
     }
 
     @Override
-    public void disconnect() {
-        try {
-            CountDownLatch latch = new CountDownLatch(2);
-            left.getEndpointWrapper().addCommand(new Command.Disconnect(leftMessageHandler, latch));
-            right.getEndpointWrapper().addCommand(new Command.Disconnect(rightMessageHandler, latch));
-            latch.await();
-        } catch (InterruptedException e) {
-        }
+    public synchronized void disconnect() {
+        if (isConnected()) {
+            log.debug("Disconnecting port [{}] to port [{}]", left, right);
+            try {
+                CountDownLatch latch = new CountDownLatch(2);
+                left.getEndpointWrapper().addCommand(new Command.Disconnect(leftMessageHandler, latch));
+                right.getEndpointWrapper().addCommand(new Command.Disconnect(rightMessageHandler, latch));
+                latch.await();
+            } catch (InterruptedException e) {
+            }
 
-        leftMessageHandler = null;
-        rightMessageHandler = null;
+            leftMessageHandler = null;
+            rightMessageHandler = null;
+        }
     }
 
     @Override

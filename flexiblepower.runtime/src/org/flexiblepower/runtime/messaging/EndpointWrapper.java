@@ -31,8 +31,8 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         this.pid = pid;
         this.endpoint = endpoint;
         this.connectionManager = connectionManager;
-
-        ports = parsePorts();
+        ports = new TreeMap<String, EndpointPortImpl>();
+        parsePorts(endpoint.getClass());
 
         thread = new Thread(this, "Message handler thread for " + endpoint.getClass().getSimpleName());
         running = new AtomicBoolean(true);
@@ -41,29 +41,40 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         thread.start();
     }
 
-    private SortedMap<String, EndpointPortImpl> parsePorts() {
+    private void parsePorts(Class<?> clazz) {
+        log.debug("Start detection of ports on {}", clazz.getName());
         Port[] ports = null;
 
-        Ports portsAnnotation = endpoint.getClass().getAnnotation(Ports.class);
+        Ports portsAnnotation = clazz.getAnnotation(Ports.class);
         if (portsAnnotation != null) {
             ports = portsAnnotation.value();
         } else {
-            Port portAnnotation = endpoint.getClass().getAnnotation(Port.class);
+            Port portAnnotation = clazz.getAnnotation(Port.class);
             if (portAnnotation != null) {
                 ports = new Port[] { portAnnotation };
             } else {
-                log.warn("Found an Endpoint with no Port definition: {}", endpoint.getClass().getSimpleName());
-                return new TreeMap<String, EndpointPortImpl>();
+                ports = new Port[0];
             }
         }
 
-        SortedMap<String, EndpointPortImpl> result = new TreeMap<String, EndpointPortImpl>();
         for (Port port : ports) {
             EndpointPortImpl endpointPort = new EndpointPortImpl(this, port);
             connectionManager.detectPossibleConnections(endpointPort);
-            result.put(port.name(), endpointPort);
+            if (!this.ports.containsKey(port.name())) {
+                log.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
+                this.ports.put(port.name(), endpointPort);
+            }
         }
-        return result;
+
+        Class<?> superclass = clazz.getSuperclass();
+        if (superclass != null && superclass != Object.class) {
+            parsePorts(superclass);
+        }
+        for (Class<?> interfaceClass : clazz.getInterfaces()) {
+            if (interfaceClass != Endpoint.class) {
+                parsePorts(interfaceClass);
+            }
+        }
     }
 
     public Endpoint getEndpoint() {

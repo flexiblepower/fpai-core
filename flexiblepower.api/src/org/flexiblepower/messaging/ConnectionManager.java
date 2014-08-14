@@ -39,4 +39,6 @@ public interface ConnectionManager {
     ManagedEndpoint getEndpoint(String pid);
 
     SortedMap<String, ? extends ManagedEndpoint> getEndpoints();
+
+    void autoConnect();
 }

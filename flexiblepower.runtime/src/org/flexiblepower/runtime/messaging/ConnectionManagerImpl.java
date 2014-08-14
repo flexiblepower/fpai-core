@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
 import org.osgi.framework.Constants;
@@ -28,6 +29,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
     public synchronized void addEndpoint(Endpoint endpoint, Map<String, ?> properties) {
         String key = getKey(endpoint, properties);
         if (key != null) {
+            log.debug("Added endpoint on key [" + key + "]");
             endpointWrappers.put(key, new EndpointWrapper(key, endpoint, this));
         }
     }
@@ -38,6 +40,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
             EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
             if (endpointWrapper != null) {
                 endpointWrapper.close();
+                log.debug("Removed endpoint on key [" + key + "]");
             }
         }
     }
@@ -107,5 +110,34 @@ public class ConnectionManagerImpl implements ConnectionManager {
     @Override
     public String toString() {
         return endpointWrappers.toString();
+    }
+
+    @Override
+    public void autoConnect() {
+        for (EndpointWrapper ew : endpointWrappers.values()) {
+            for (EndpointPortImpl port : ew.getPorts().values()) {
+                // Try each port detected in the system. We can only auto-connect ports that have single cardinality
+                if (port.getCardinality() == Cardinality.SINGLE) {
+                    SortedMap<String, PotentialConnectionImpl> potentialConnections = port.getPotentialConnections();
+                    // If there is only 1 potential connection to be made, it can be connected
+                    if (potentialConnections.size() == 1) {
+                        PotentialConnectionImpl connection = potentialConnections.get(potentialConnections.firstKey());
+                        synchronized (connection) {
+                            // But only if it not connected already
+                            if (!connection.isConnected()) {
+                                EndpointPortImpl otherEnd = connection.getOtherEnd(port);
+                                // Or if the other is has a single cardinality and has other potential connections that
+                                // it can make
+                                if ((otherEnd.getCardinality() == Cardinality.SINGLE && otherEnd.getPotentialConnections()
+                                                                                                .size() == 1) || otherEnd.getCardinality() == Cardinality.MULTIPLE) {
+                                    connection.connect();
+                                    log.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

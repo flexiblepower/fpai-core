@@ -76,7 +76,7 @@ public class EndpointTester extends TestCase {
         }
     }
 
-    @Port(name = "A-anyIn", sends = String.class, accepts = Object.class)
+    @Port(name = "A-anyIn", sends = String.class, accepts = Object.class, cardinality = Cardinality.MULTIPLE)
     public class EndpointA extends TestEndpoint {
         public EndpointA() {
             super("A-anyIn", "Hello World", 5L);
@@ -159,7 +159,6 @@ public class EndpointTester extends TestCase {
 
         EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
         PotentialConnection connAB = portA.getPotentialConnection(portB);
-
         assertNotNull(portB);
         assertNotNull(connAB);
         assertFalse(connAB.isConnected());
@@ -176,6 +175,9 @@ public class EndpointTester extends TestCase {
         assertFalse(connAB.isConnected());
         a.assertNotConnected();
         b.assertNotConnected();
+
+        connectionManager.autoConnect();
+        assertTrue(connAB.isConnected());
     }
 
     @Port(name = "TextService",
