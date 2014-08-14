@@ -1,22 +1,30 @@
 package org.flexiblepower.messaging;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.SortedMap;
 
-import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
+public interface ConnectionManager {
+    public interface ManagedEndpoint {
+        String getPid();
 
-public interface ConnectionManager extends Iterable<EndpointPort> {
+        EndpointPort getPort(String name);
+
+        SortedMap<String, ? extends EndpointPort> getPorts();
+    }
+
     public interface EndpointPort {
-        Endpoint getEndpoint();
-
         String getName();
 
         Cardinality getCardinality();
 
-        Set<? extends MatchingPorts> getMatchingPorts();
+        PotentialConnection getPotentialConnection(String id);
+
+        PotentialConnection getPotentialConnection(EndpointPort other);
+
+        SortedMap<String, ? extends PotentialConnection> getPotentialConnections();
     }
 
-    public interface MatchingPorts {
+    public interface PotentialConnection {
         EndpointPort getEitherEnd();
 
         EndpointPort getOtherEnd(EndpointPort either);
@@ -28,7 +36,7 @@ public interface ConnectionManager extends Iterable<EndpointPort> {
         void disconnect();
     }
 
-    Set<EndpointPort> getEndpointPorts();
+    ManagedEndpoint getEndpoint(String pid);
 
-    Set<EndpointPort> getEndpointPortsOf(Endpoint endpoint);
+    SortedMap<String, ? extends ManagedEndpoint> getEndpoints();
 }

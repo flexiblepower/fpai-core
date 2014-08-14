@@ -1,8 +1,9 @@
 package org.flexiblepower.runtime.wiring.test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedMap;
 
 import junit.framework.TestCase;
 
@@ -10,7 +11,8 @@ import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
-import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
+import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
+import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
@@ -136,7 +138,7 @@ public class EndpointTester extends TestCase {
         registrations.clear();
 
         ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
-        assertEquals(0, connectionManager.getEndpointPorts().size());
+        assertEquals(0, connectionManager.getEndpoints().size());
 
         connectionManagerTracker.close();
     }
@@ -149,19 +151,14 @@ public class EndpointTester extends TestCase {
         EndpointE e = new EndpointE();
         ConnectionManager connectionManager = setupEndpoints(a, b, c, d, e);
 
-        EndpointPort portA = getOnly(connectionManager.getEndpointPortsOf(a));
-        assertNotNull(portA);
-        assertEquals(4, portA.getMatchingPorts().size());
+        System.out.println(connectionManager.getEndpoints());
 
-        EndpointPort portB = null;
-        MatchingPorts connAB = null;
-        for (MatchingPorts match : portA.getMatchingPorts()) {
-            EndpointPort otherPort = match.getOtherEnd(portA);
-            if (otherPort.getEndpoint() == b) {
-                portB = otherPort;
-                connAB = match;
-            }
-        }
+        EndpointPort portA = connectionManager.getEndpoint(EndpointA.class.getName()).getPort("A-anyIn");
+        assertNotNull(portA);
+        assertEquals(4, portA.getPotentialConnections().size());
+
+        EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
+        PotentialConnection connAB = portA.getPotentialConnection(portB);
 
         assertNotNull(portB);
         assertNotNull(connAB);
@@ -271,32 +268,30 @@ public class EndpointTester extends TestCase {
         WorldEndpoint worldEndpoint = new WorldEndpoint();
         SquaringEndpoint squaringEndpoint = new SquaringEndpoint();
         ConnectionManager connectionManager = setupEndpoints(serverEndpoint, worldEndpoint, squaringEndpoint);
-        EndpointPort serverPort = getOnly(connectionManager.getEndpointPortsOf(serverEndpoint));
 
-        Set<? extends MatchingPorts> matchingPorts = serverPort.getMatchingPorts();
+        EndpointPort serverPort = connectionManager.getEndpoint(ServerEndpoint.class.getName()).getPort("TextService");
+
+        SortedMap<String, ? extends PotentialConnection> matchingPorts = serverPort.getPotentialConnections();
         assertEquals(2, matchingPorts.size());
+        assertTrue(matchingPorts.firstKey().startsWith(SquaringEndpoint.class.getName()));
+        assertTrue(matchingPorts.lastKey().startsWith(WorldEndpoint.class.getName()));
 
-        MatchingPorts[] matches = matchingPorts.toArray(new MatchingPorts[2]);
+        PotentialConnection connToSquaring = matchingPorts.get(matchingPorts.firstKey());
+        PotentialConnection connToWorld = matchingPorts.get(matchingPorts.lastKey());
+        assertFalse(connToSquaring.isConnected());
+        assertFalse(connToWorld.isConnected());
 
-        EndpointPort otherEnd = matches[0].getOtherEnd(serverPort);
-        assertTrue(otherEnd.getEndpoint() == worldEndpoint ^ otherEnd.getEndpoint() == squaringEndpoint);
-        otherEnd = matches[1].getOtherEnd(serverPort);
-        assertTrue(otherEnd.getEndpoint() == worldEndpoint ^ otherEnd.getEndpoint() == squaringEndpoint);
-
-        assertFalse(matches[0].isConnected());
-        assertFalse(matches[1].isConnected());
-
-        matches[0].connect();
-        matches[1].connect();
-        assertTrue(matches[0].isConnected());
-        assertTrue(matches[1].isConnected());
+        connToSquaring.connect();
+        connToWorld.connect();
+        assertTrue(connToSquaring.isConnected());
+        assertTrue(connToWorld.isConnected());
 
         Thread.sleep(SLEEP_TIME);
 
-        matches[0].disconnect();
-        matches[1].disconnect();
-        assertFalse(matches[0].isConnected());
-        assertFalse(matches[1].isConnected());
+        connToSquaring.disconnect();
+        connToWorld.disconnect();
+        assertFalse(connToSquaring.isConnected());
+        assertFalse(connToWorld.isConnected());
     }
 
     static class StringMessage {
@@ -449,50 +444,104 @@ public class EndpointTester extends TestCase {
         SendDataEndpoint data = new SendDataEndpoint();
 
         ConnectionManager connectionManager = setupEndpoints(echo, echoCodec, dataCodec, data);
-        EndpointPort[] ports = connectionManager.getEndpointPortsOf(echoCodec).toArray(new EndpointPort[0]);
-        assertEquals(2, ports.length);
-        EndpointPort publicPort = ports[0].getName().equals("public") ? ports[0] : ports[1];
-        MatchingPorts publicConn = getOnly(publicPort.getMatchingPorts());
 
-        EndpointPort echoPort = getOnly(connectionManager.getEndpointPortsOf(echo));
-        MatchingPorts echoConn = null;
-        for (MatchingPorts conn : echoPort.getMatchingPorts()) {
-            if (conn.getOtherEnd(echoPort).getEndpoint() == echoCodec) {
-                echoConn = conn;
-                break;
-            }
-        }
-        assertNotNull(echoConn);
+        SortedMap<String, ? extends ManagedEndpoint> endpoints = connectionManager.getEndpoints();
+        assertEquals(4, endpoints.size());
 
-        EndpointPort dataPort = getOnly(connectionManager.getEndpointPortsOf(data));
-        MatchingPorts dataConn = null;
-        for (MatchingPorts conn : dataPort.getMatchingPorts()) {
-            if (conn.getOtherEnd(dataPort).getEndpoint() == dataCodec) {
-                dataConn = conn;
-                break;
-            }
+        Iterator<? extends ManagedEndpoint> iterator = endpoints.values().iterator();
+        ManagedEndpoint meCodec1 = iterator.next();
+        ManagedEndpoint meCodec2 = iterator.next();
+        ManagedEndpoint meEcho = iterator.next();
+        ManagedEndpoint meData = iterator.next();
+
+        assertTrue(meCodec1.getPid().contains(CodecEndpoint.class.getName()));
+        assertTrue(meCodec2.getPid().contains(CodecEndpoint.class.getName()));
+        assertTrue(meEcho.getPid().contains(EchoEndpoint.class.getName()));
+        assertTrue(meData.getPid().contains(SendDataEndpoint.class.getName()));
+
+        for (ManagedEndpoint ep : new ManagedEndpoint[] { meCodec1, meCodec2 }) {
+            SortedMap<String, ? extends EndpointPort> ports = ep.getPorts();
+            assertEquals(2, ports.size());
+            assertEquals("private", ports.firstKey());
+            assertEquals("public", ports.lastKey());
         }
-        assertNotNull(dataConn);
+
+        EndpointPort portEcho = checkNotNull("\"any\" port of the EchoEndpoint", meEcho.getPort("any"));
+        EndpointPort portPrivate1 = checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
+        EndpointPort portPrivate2 = checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
+        EndpointPort portPublic1 = checkNotNull("\"public\" port of the CodecEndpoint 1", meCodec1.getPort("public"));
+        EndpointPort portPublic2 = checkNotNull("\"public\" port of the CodecEndpoint 2", meCodec2.getPort("public"));
+        EndpointPort portData = checkNotNull("\"something\" port of SendDataEndpoint", meData.getPort("something"));
+
+        PotentialConnection connEcho = portEcho.getPotentialConnection(portPrivate1);
+        PotentialConnection connPublic = portPublic1.getPotentialConnection(portPublic2);
+        PotentialConnection connData = portData.getPotentialConnection(portPrivate2);
 
         for (int i = 0; i < 100; i++) {
             echo.reset();
 
-            publicConn.connect();
-            echoConn.connect();
-            dataConn.connect();
+            connPublic.connect();
+            connEcho.connect();
+            connData.connect();
 
             synchronized (this) {
                 wait(1000);
             }
 
-            dataConn.disconnect();
-            echoConn.disconnect();
-            publicConn.disconnect();
+            connData.disconnect();
+            connEcho.disconnect();
+            connPublic.disconnect();
         }
     }
 
-    private <T> T getOnly(Set<T> set) {
-        assertEquals(1, set.size());
-        return set.iterator().next();
+    private static <T> T checkNotNull(String description, T object) {
+        assertNotNull("Object is null: " + description, object);
+        return object;
+    }
+
+    @Port(name = "test", sends = String.class, accepts = String.class)
+    public abstract static class BaseEndpoint implements Endpoint {
+        @Override
+        public MessageHandler onConnect(Connection connection) {
+            System.out.println(BaseEndpoint.this.getClass().getSimpleName() + " connected port " + connection.getPort());
+            return new MessageHandler() {
+                @Override
+                public void handleMessage(Object message) {
+                    System.out.println(BaseEndpoint.this.getClass().getSimpleName() + " received " + message);
+                }
+
+                @Override
+                public void disconnected() {
+                }
+            };
+        }
+    }
+
+    @Port(name = "added", sends = String.class, accepts = String.class)
+    public static class AddingEndpoint extends BaseEndpoint {
+    }
+
+    @Port(name = "test", sends = Integer.class, accepts = String.class)
+    public static class ReplacingEndpoint extends BaseEndpoint {
+    }
+
+    public void testInheritance() throws Exception {
+        AddingEndpoint addingEndpoint = new AddingEndpoint();
+        ReplacingEndpoint replacingEndpoint = new ReplacingEndpoint();
+        ConnectionManager cm = setupEndpoints(addingEndpoint, replacingEndpoint);
+
+        SortedMap<String, ? extends ManagedEndpoint> endpoints = cm.getEndpoints();
+        assertEquals(2, endpoints.size());
+
+        ManagedEndpoint meAdding = endpoints.get(endpoints.firstKey());
+        ManagedEndpoint meReplacing = endpoints.get(endpoints.lastKey());
+
+        SortedMap<String, ? extends EndpointPort> portsAdding = meAdding.getPorts();
+        assertEquals(2, portsAdding.size());
+        assertEquals("added", portsAdding.firstKey());
+        assertEquals("test", portsAdding.lastKey());
+
+        assertEquals(1, meReplacing.getPorts().size());
+        assertEquals("test", meReplacing.getPorts().firstKey());
     }
 }

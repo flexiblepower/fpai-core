@@ -1,10 +1,9 @@
 package org.flexiblepower.runtime.messaging;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
@@ -19,30 +18,47 @@ import aQute.bnd.annotation.component.Reference;
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
-    private final Map<Long, EndpointWrapper> endpointWrappers;
+    private final SortedMap<String, EndpointWrapper> endpointWrappers;
 
     public ConnectionManagerImpl() {
-        endpointWrappers = new HashMap<Long, EndpointWrapper>();
+        endpointWrappers = new TreeMap<String, EndpointWrapper>();
     }
 
-    @Reference(dynamic = true, multiple = true, optional = true)
+    @Reference(dynamic = true, multiple = true, optional = true, service = Endpoint.class, name = "endpoint")
     public synchronized void addEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        Long serviceId = (Long) properties.get(Constants.SERVICE_ID);
-        endpointWrappers.put(serviceId, new EndpointWrapper(endpoint, this));
+        String key = getKey(endpoint, properties);
+        if (key != null) {
+            endpointWrappers.put(key, new EndpointWrapper(key, endpoint, this));
+        }
     }
 
     public synchronized void removeEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        Long serviceId = (Long) properties.get(Constants.SERVICE_ID);
-        EndpointWrapper endpointWrapper = endpointWrappers.remove(serviceId);
-        endpointWrapper.close();
+        String key = getKey(endpoint, properties);
+        if (key != null) {
+            EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
+            if (endpointWrapper != null) {
+                endpointWrapper.close();
+            }
+        }
+    }
+
+    private String getKey(Endpoint endpoint, Map<String, ?> properties) {
+        String key = (String) properties.get(Constants.SERVICE_PID);
+        if (key == null) {
+            Long id = (Long) properties.get(Constants.SERVICE_ID);
+            if (id != null) {
+                key = endpoint.getClass().getName() + "-" + id;
+            }
+        }
+        return key;
     }
 
     void detectPossibleConnections(EndpointPortImpl left) {
         for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            for (EndpointPortImpl right : wrapper) {
+            for (EndpointPortImpl right : wrapper.getPorts().values()) {
                 if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
                                                                                             left.getPort().accepts())) {
-                    MatchingPortsImpl connection = new MatchingPortsImpl(left, right);
+                    PotentialConnectionImpl connection = new PotentialConnectionImpl(left, right);
                     log.info("Found matching ports: {} <--> {}", left, right);
                     left.addMatch(connection);
                     right.addMatch(connection);
@@ -69,72 +85,27 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Override
-    public Set<EndpointPort> getEndpointPorts() {
-        Set<EndpointPort> result = new HashSet<ConnectionManager.EndpointPort>();
-        for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            for (EndpointPortImpl port : wrapper) {
-                result.add(port);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Set<EndpointPort> getEndpointPortsOf(Endpoint endpoint) {
-        Set<EndpointPort> result = new HashSet<ConnectionManager.EndpointPort>();
-        for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            if (wrapper.getEndpoint() == endpoint) {
-                for (EndpointPortImpl port : wrapper) {
-                    result.add(port);
+    public ManagedEndpoint getEndpoint(String pid) {
+        EndpointWrapper wrapper = endpointWrappers.get(pid);
+        if (wrapper == null) {
+            SortedMap<String, EndpointWrapper> tailMap = endpointWrappers.tailMap(pid);
+            if (!tailMap.isEmpty()) {
+                wrapper = tailMap.get(tailMap.firstKey());
+                if (!wrapper.getPid().startsWith(pid)) {
+                    wrapper = null;
                 }
             }
         }
-        return result;
+        return wrapper;
     }
 
     @Override
-    public Iterator<EndpointPort> iterator() {
-        final Iterator<EndpointWrapper> wrapperIterator = endpointWrappers.values().iterator();
-        return new Iterator<EndpointPort>() {
-            private boolean loaded = false;
-            private EndpointPort current = null;
-            private Iterator<EndpointPortImpl> it = null;
+    public SortedMap<String, EndpointWrapper> getEndpoints() {
+        return Collections.unmodifiableSortedMap(endpointWrappers);
+    }
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            private void load() {
-                if (!loaded) {
-                    if ((it == null || !it.hasNext()) && wrapperIterator.hasNext()) {
-                        it = wrapperIterator.next().iterator();
-                    }
-                    if (it.hasNext()) {
-                        current = it.next();
-                    } else {
-                        current = null;
-                    }
-
-                    loaded = true;
-                }
-            }
-
-            @Override
-            public EndpointPort next() {
-                try {
-                    load();
-                    return current;
-                } finally {
-                    loaded = false;
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-                load();
-                return current != null;
-            }
-        };
+    @Override
+    public String toString() {
+        return endpointWrappers.toString();
     }
 }

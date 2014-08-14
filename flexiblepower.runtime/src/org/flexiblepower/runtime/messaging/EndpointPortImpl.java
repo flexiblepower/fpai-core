@@ -1,32 +1,33 @@
 package org.flexiblepower.runtime.messaging;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
+import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 
 public class EndpointPortImpl implements EndpointPort {
     private final EndpointWrapper endpoint;
     private final Port port;
-    private final Set<MatchingPortsImpl> matchingPorts;
+    private final SortedMap<String, PotentialConnectionImpl> potentialConnections;
 
     public EndpointPortImpl(EndpointWrapper endpoint, Port port) {
         this.endpoint = endpoint;
         this.port = port;
 
-        matchingPorts = new HashSet<MatchingPortsImpl>();
+        potentialConnections = new TreeMap<String, PotentialConnectionImpl>();
+    }
+
+    public Endpoint getEndpoint() {
+        return endpoint.getEndpoint();
     }
 
     public EndpointWrapper getEndpointWrapper() {
         return endpoint;
-    }
-
-    @Override
-    public Endpoint getEndpoint() {
-        return endpoint.getEndpoint();
     }
 
     @Override
@@ -44,25 +45,39 @@ public class EndpointPortImpl implements EndpointPort {
     }
 
     @Override
-    public Set<MatchingPortsImpl> getMatchingPorts() {
-        return matchingPorts;
+    public PotentialConnection getPotentialConnection(String id) {
+        return potentialConnections.get(id);
     }
 
-    protected void addMatch(MatchingPortsImpl match) {
-        matchingPorts.add(match);
+    @Override
+    public PotentialConnection getPotentialConnection(EndpointPort other) {
+        return potentialConnections.get(other.toString());
     }
 
-    protected void removeMatch(MatchingPortsImpl match) {
-        matchingPorts.remove(match);
+    @Override
+    public SortedMap<String, PotentialConnectionImpl> getPotentialConnections() {
+        return Collections.unmodifiableSortedMap(potentialConnections);
+    }
+
+    protected void addMatch(PotentialConnectionImpl match) {
+        potentialConnections.put(getKey(match), match);
+    }
+
+    protected void removeMatch(PotentialConnectionImpl match) {
+        potentialConnections.remove(getKey(match));
+    }
+
+    private String getKey(PotentialConnectionImpl match) {
+        return match.getOtherEnd(this).toString();
     }
 
     @Override
     public String toString() {
-        return endpoint.getEndpoint().getClass().getSimpleName() + ":" + port.name();
+        return endpoint.getPid() + ":" + port.name();
     }
 
     public boolean isConnected() {
-        for (MatchingPortsImpl match : matchingPorts) {
+        for (PotentialConnectionImpl match : potentialConnections.values()) {
             if (match.isConnected()) {
                 return true;
             }

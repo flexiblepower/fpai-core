@@ -6,11 +6,11 @@ import java.util.concurrent.CountDownLatch;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
-import org.flexiblepower.messaging.ConnectionManager.MatchingPorts;
+import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
 
-final class MatchingPortsImpl implements MatchingPorts {
+final class PotentialConnectionImpl implements PotentialConnection {
     private static abstract class HalfConnection implements Connection {
         private final Port port;
         private final EndpointWrapper receivingEndpoint;
@@ -48,10 +48,10 @@ final class MatchingPortsImpl implements MatchingPorts {
         }
 
         private MessageHandler getRealMessageHandler() {
-            synchronized (MatchingPortsImpl.this) {
+            synchronized (PotentialConnectionImpl.this) {
                 while (getMessageHandler() == this) {
                     try {
-                        MatchingPortsImpl.this.wait(100);
+                        PotentialConnectionImpl.this.wait(100);
                     } catch (InterruptedException e) {
                     }
                 }
@@ -65,7 +65,7 @@ final class MatchingPortsImpl implements MatchingPorts {
     private final EndpointPortImpl left, right;
     private volatile MessageHandler leftMessageHandler, rightMessageHandler;
 
-    public MatchingPortsImpl(EndpointPortImpl left, EndpointPortImpl right) {
+    public PotentialConnectionImpl(EndpointPortImpl left, EndpointPortImpl right) {
         this.left = left;
         this.right = right;
     }

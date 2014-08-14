@@ -1,23 +1,23 @@
 package org.flexiblepower.runtime.messaging;
 
 import java.io.Closeable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Closeable {
+public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
     private static final Logger log = LoggerFactory.getLogger(EndpointWrapper.class);
 
+    private final String pid;
     private final Endpoint endpoint;
     private final ConnectionManagerImpl connectionManager;
 
@@ -25,9 +25,10 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     private final AtomicBoolean running;
     private final BlockingQueue<Command> commandQueue;
 
-    private final Set<EndpointPortImpl> ports;
+    private final SortedMap<String, EndpointPortImpl> ports;
 
-    public EndpointWrapper(Endpoint endpoint, ConnectionManagerImpl connectionManager) {
+    public EndpointWrapper(String pid, Endpoint endpoint, ConnectionManagerImpl connectionManager) {
+        this.pid = pid;
         this.endpoint = endpoint;
         this.connectionManager = connectionManager;
 
@@ -40,7 +41,7 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         thread.start();
     }
 
-    private Set<EndpointPortImpl> parsePorts() {
+    private SortedMap<String, EndpointPortImpl> parsePorts() {
         Port[] ports = null;
 
         Ports portsAnnotation = endpoint.getClass().getAnnotation(Ports.class);
@@ -52,15 +53,15 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
                 ports = new Port[] { portAnnotation };
             } else {
                 log.warn("Found an Endpoint with no Port definition: {}", endpoint.getClass().getSimpleName());
-                return Collections.emptySet();
+                return new TreeMap<String, EndpointPortImpl>();
             }
         }
 
-        Set<EndpointPortImpl> result = new HashSet<EndpointPortImpl>();
+        SortedMap<String, EndpointPortImpl> result = new TreeMap<String, EndpointPortImpl>();
         for (Port port : ports) {
             EndpointPortImpl endpointPort = new EndpointPortImpl(this, port);
             connectionManager.detectPossibleConnections(endpointPort);
-            result.add(endpointPort);
+            result.put(port.name(), endpointPort);
         }
         return result;
     }
@@ -70,8 +71,18 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
     }
 
     @Override
-    public Iterator<EndpointPortImpl> iterator() {
-        return ports.iterator();
+    public String getPid() {
+        return pid;
+    }
+
+    @Override
+    public EndpointPortImpl getPort(String name) {
+        return ports.get(name);
+    }
+
+    @Override
+    public SortedMap<String, EndpointPortImpl> getPorts() {
+        return ports;
     }
 
     @Override
@@ -100,8 +111,8 @@ public class EndpointWrapper implements Runnable, Iterable<EndpointPortImpl>, Cl
         } catch (InterruptedException e) {
         }
 
-        for (EndpointPortImpl port : ports) {
-            for (MatchingPortsImpl matchingPort : port.getMatchingPorts()) {
+        for (EndpointPortImpl port : ports.values()) {
+            for (PotentialConnectionImpl matchingPort : port.getPotentialConnections().values()) {
                 if (matchingPort.isConnected()) {
                     matchingPort.disconnect();
                 }
