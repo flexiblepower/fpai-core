@@ -54,12 +54,11 @@ public class ResourceImageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getPathInfo() != null && req.getPathInfo().endsWith(".png")) {
             try {
-                @SuppressWarnings("rawtypes")
                 Collection<ServiceReference<ResourceDriver>> references;
                 String id = req.getPathInfo().substring(0, req.getPathInfo().length() - 4);
                 references = context.getServiceReferences(ResourceDriver.class, "(applianceid=" + id + ")");
                 if (!references.isEmpty()) {
-                    ResourceDriver<?, ?> resourceDriver = context.getService(references.iterator().next());
+                    ResourceDriver resourceDriver = context.getService(references.iterator().next());
 
                     URL image = findImage(resourceDriver.getClass());
                     if (image == null) {
