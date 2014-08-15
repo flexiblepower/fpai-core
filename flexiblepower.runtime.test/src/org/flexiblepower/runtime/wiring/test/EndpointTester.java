@@ -546,4 +546,36 @@ public class EndpointTester extends TestCase {
         assertEquals(1, meReplacing.getPorts().size());
         assertEquals("test", meReplacing.getPorts().firstKey());
     }
+
+    @Port(name = "shouldBeImplemented")
+    public interface InterfaceEndpoint extends Endpoint {
+    }
+
+    @Port(name = "shouldBeImplemented", accepts = String.class, sends = String.class)
+    public class ImplementingEndpoint implements InterfaceEndpoint {
+        @Override
+        public MessageHandler onConnect(Connection connection) {
+            return null;
+        }
+    }
+
+    @Port(name = "shouldNotBeImplemented", accepts = String.class, sends = String.class)
+    public class MissingEndpoint implements InterfaceEndpoint {
+        @Override
+        public MessageHandler onConnect(Connection connection) {
+            return null;
+        }
+    }
+
+    public void testMissingImplementation() throws Exception {
+        ImplementingEndpoint e1 = new ImplementingEndpoint();
+        MissingEndpoint e2 = new MissingEndpoint();
+        ConnectionManager cm = setupEndpoints(e1, e2);
+
+        SortedMap<String, ? extends ManagedEndpoint> endpoints = cm.getEndpoints();
+        assertEquals(1, endpoints.size());
+
+        ManagedEndpoint meImplementing = endpoints.get(endpoints.firstKey());
+        assertNotNull(meImplementing.getPort("shouldBeImplemented"));
+    }
 }
