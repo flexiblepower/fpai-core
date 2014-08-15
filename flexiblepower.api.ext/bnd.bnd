@@ -4,9 +4,10 @@
 	biz.aQute.bnd.annotation,\
 	slf4j.api;version='[1.7,2)',\
 	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
 	org.mockito.mockito-all;verion='[1.9,2)'
 
-Bundle-Version: 1.1.0.${qualifier}
+Bundle-Version: 1.2.0.${qualifier}
 Export-Package:  \
 	org.flexiblepower.observation.ext,\
 	org.flexiblepower.ral.ext,\
