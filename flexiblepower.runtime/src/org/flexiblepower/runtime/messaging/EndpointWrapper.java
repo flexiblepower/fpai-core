@@ -33,6 +33,7 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         this.connectionManager = connectionManager;
         ports = new TreeMap<String, EndpointPortImpl>();
         parsePorts(endpoint.getClass());
+        checkPorts();
 
         thread = new Thread(this, "Message handler thread for " + endpoint.getClass().getSimpleName());
         running = new AtomicBoolean(true);
@@ -73,6 +74,15 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         for (Class<?> interfaceClass : clazz.getInterfaces()) {
             if (interfaceClass != Endpoint.class) {
                 parsePorts(interfaceClass);
+            }
+        }
+    }
+
+    private void checkPorts() {
+        for (EndpointPortImpl ep : ports.values()) {
+            Port port = ep.getPort();
+            if (port.sends().length == 0 && port.accepts().length == 0) {
+                throw new IllegalArgumentException("The port [" + ep + "] is missing a definition");
             }
         }
     }

@@ -27,10 +27,14 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
     @Reference(dynamic = true, multiple = true, optional = true, service = Endpoint.class, name = "endpoint")
     public synchronized void addEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        String key = getKey(endpoint, properties);
-        if (key != null) {
-            log.debug("Added endpoint on key [" + key + "]");
-            endpointWrappers.put(key, new EndpointWrapper(key, endpoint, this));
+        try {
+            String key = getKey(endpoint, properties);
+            if (key != null) {
+                endpointWrappers.put(key, new EndpointWrapper(key, endpoint, this));
+                log.debug("Added endpoint on key [[]]", key);
+            }
+        } catch (IllegalArgumentException ex) {
+            log.warn("Could not add endpoint: {}", ex.getMessage());
         }
     }
 
@@ -70,7 +74,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
         }
     }
 
-    private boolean isSubset(Class<?>[] sends, Class<?>[] accepts) {
+    private static boolean isSubset(Class<?>[] sends, Class<?>[] accepts) {
         boolean correct = true;
         for (Class<?> send : sends) {
             correct = false;
