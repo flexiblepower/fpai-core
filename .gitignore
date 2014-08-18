@@ -10,6 +10,7 @@ generated
 cobertura.ser
 instrumented
 coverage.xml
+RemoteSystemsTempFiles
 
 # Keep the projects list
 .metadata/*
