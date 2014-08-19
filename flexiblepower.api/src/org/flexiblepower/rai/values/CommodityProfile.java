@@ -1,5 +1,8 @@
 package org.flexiblepower.rai.values;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
@@ -10,6 +13,56 @@ import org.flexiblepower.rai.values.CommodityProfile.CommodityProfileElement;
 
 public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
                                                                         Profile<CommodityProfileElement<BQ, FQ>> {
+
+    public static class Builder<BQ extends Quantity, FQ extends Quantity> {
+        private final Commodity<BQ, FQ> commodity;
+
+        private final List<CommodityProfileElement<BQ, FQ>> elements;
+        private Measurable<Duration> duration;
+        private Unit<BQ> unit;
+
+        public Builder(Commodity<BQ, FQ> commodity) {
+            this.commodity = commodity;
+            this.elements = new ArrayList<CommodityProfileElement<BQ, FQ>>();
+        }
+
+        public void set(Measurable<Duration> duration) {
+            this.duration = duration;
+        }
+
+        public void setUnit(Unit<BQ> unit) {
+            this.unit = unit;
+        }
+
+        public void add(Measurable<Duration> duration, Measurable<BQ> amount) {
+            elements.add(new CommodityProfileElement<BQ, FQ>(commodity, duration, amount));
+        }
+
+        public void add(Measurable<BQ> amount) {
+            if (duration == null) {
+                throw new IllegalStateException("duration not set");
+            }
+            elements.add(new CommodityProfileElement<BQ, FQ>(commodity, duration, amount));
+        }
+
+        public void add(double amount) {
+            if (duration == null) {
+                throw new IllegalStateException("duration not set");
+            } else if (unit == null) {
+                throw new IllegalStateException("unit not set");
+            }
+            elements.add(new CommodityProfileElement<BQ, FQ>(commodity, duration, Measure.valueOf(amount, unit)));
+        }
+
+        @SuppressWarnings("unchecked")
+        public CommodityProfile<BQ, FQ> build() {
+            return new CommodityProfile<BQ, FQ>(elements.toArray(new CommodityProfileElement[0]));
+        }
+    }
+
+    public static <BQ extends Quantity, FQ extends Quantity> Builder<BQ, FQ> create(Commodity<BQ, FQ> commodity) {
+        return new Builder<BQ, FQ>(commodity);
+    }
 
     public static class CommodityProfileElement<BQ extends Quantity, FQ extends Quantity> implements
                                                                                           ProfileElement<CommodityProfileElement<BQ, FQ>> {
