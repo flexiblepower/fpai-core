@@ -108,8 +108,9 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
             if (simulationClock.isRunning() || simulationClock.isStopping()) {
                 long waitTime = getNextJobTime() - getCurrentTimeMillis();
                 if (waitTime <= 0) {
-                    Job<?> job = jobs.remove();
+                    Job<?> job = jobs.peek();
                     job.run();
+                    jobs.remove();
                     if (!job.isDone()) {
                         jobs.add(job);
                     }
