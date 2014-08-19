@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *            The type of {@link ResourceControlParameters}
  */
 public abstract class AbstractResourceDriver<RS extends ResourceState, RCP extends ResourceControlParameters> implements
-                                                                                                              ResourceDriver {
+ResourceDriver {
     /**
      * The logger that should by any subclass.
      */
@@ -38,7 +38,7 @@ public abstract class AbstractResourceDriver<RS extends ResourceState, RCP exten
 
     @Override
     public MessageHandler onConnect(Connection connection) {
-        if (this.driverConnection != null && "manager".equals(connection.getPort().name())) {
+        if (this.driverConnection == null && "manager".equals(connection.getPort().name())) {
             this.driverConnection = connection;
             return new MessageHandler() {
                 @SuppressWarnings("unchecked")
