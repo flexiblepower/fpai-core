@@ -22,7 +22,7 @@
   <class id="3" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation.ActuatorAllocation" 
     project="flexiblepower.api.efi" file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferAllocation.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="591" y="272"/>    
+    <position height="-1" width="-1" x="592" y="289"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -32,7 +32,7 @@
   <class id="4" language="java" name="org.flexiblepower.efi.buffer.BufferAllocation" project="flexiblepower.api.efi" 
     file="/flexiblepower.api.efi/src/org/flexiblepower/efi/buffer/BufferAllocation.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="346" y="270"/>    
+    <position height="-1" width="-1" x="347" y="287"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -43,23 +43,23 @@
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <nesting id="6">    
-    <bendpoint x="483" y="227"/>    
+  <generalization id="6">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <nesting id="7">    
+    <bendpoint x="484" y="244"/>    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
-  <association id="7">    
+  <association id="8">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="8" name="actuatorAllocations"/>      
-      <multiplicity id="9" minimum="0" maximum="2147483647"/>    
+      <attribute id="9" name="actuatorAllocations"/>      
+      <multiplicity id="10" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="10">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
