@@ -61,9 +61,30 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         for (Port port : ports) {
             EndpointPortImpl endpointPort = new EndpointPortImpl(this, port);
             connectionManager.detectPossibleConnections(endpointPort);
-            if (!this.ports.containsKey(port.name())) {
+
+            EndpointPortImpl storedPort = this.ports.get(port.name());
+            if (storedPort == null) {
                 log.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
                 this.ports.put(port.name(), endpointPort);
+            } else if (storedPort.getPort().sends().length == 0 && storedPort.getPort().accepts().length == 0) {
+                if (storedPort.getPort().cardinality() != port.cardinality()) {
+                    log.warn("Defined cardinality {} on port {} is different from the implementation port {}",
+                             storedPort.getCardinality(),
+                             port.name(),
+                             port.cardinality());
+                }
+                log.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
+                this.ports.put(port.name(), endpointPort);
+            } else if (port.sends().length == 0 && port.accepts().length == 0) {
+                if (storedPort.getPort().cardinality() != port.cardinality()) {
+                    log.warn("Defined cardinality {} on port {} is different from the implementation port {}",
+                             storedPort.getCardinality(),
+                             port.name(),
+                             port.cardinality());
+                }
+            } else {
+                log.error("Implementation of port {} is defined multiple times! Possibly undefined behavior can be expected.",
+                          port.name());
             }
         }
 
