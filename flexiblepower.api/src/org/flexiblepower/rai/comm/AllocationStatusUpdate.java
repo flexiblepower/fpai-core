@@ -8,7 +8,7 @@ public final class AllocationStatusUpdate extends ResourceMessage {
     private static final long serialVersionUID = 9119759551623204007L;
 
     public enum AllocationStatus {
-        ACCEPTED, REJECTED, PROCESSING, STARTED, INTERRUPTED, FINISHED
+        ACCEPTED, REJECTED, PROCESSING, STARTED, FINISHED
     };
 
     private final UUID allocationId;
