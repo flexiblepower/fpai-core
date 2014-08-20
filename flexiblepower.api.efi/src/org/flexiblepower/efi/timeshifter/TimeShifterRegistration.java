@@ -23,12 +23,12 @@ public class TimeShifterRegistration extends ControlSpaceRegistration {
     /**
      * The set of all commodities that can be produced or consumed by the appliance.
      */
-    private final Set<Commodity> supportedCommodities;
+    private final Set<Commodity<?, ?>> supportedCommodities;
 
     public TimeShifterRegistration(String resourceId,
                                    Date timestamp,
                                    Measurable<Duration> allocationDelay,
-                                   Set<Commodity> supportedCommodities) {
+                                   Set<Commodity<?, ?>> supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
         this.supportedCommodities = supportedCommodities;
     }

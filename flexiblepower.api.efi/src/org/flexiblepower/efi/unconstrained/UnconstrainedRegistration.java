@@ -11,17 +11,17 @@ import org.flexiblepower.rai.values.Commodity;
 
 public class UnconstrainedRegistration extends ControlSpaceRegistration {
 
-    private final Set<Commodity> supportedCommodities;
+    private final Set<Commodity<?, ?>> supportedCommodities;
 
     public UnconstrainedRegistration(String resourceId,
                                      Date timestamp,
                                      Measurable<Duration> allocationDelay,
-                                     Set<Commodity> supportedCommodities) {
+                                     Set<Commodity<?, ?>> supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
         this.supportedCommodities = supportedCommodities;
     }
 
-    public Set<Commodity> getSupportedCommodities() {
+    public Set<Commodity<?, ?>> getSupportedCommodities() {
         return supportedCommodities;
     }
 
