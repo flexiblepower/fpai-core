@@ -15,7 +15,7 @@ public class RunningMode {
 
     private final Double runningCostsPerSecond;
 
-    private List<Transition> possibleTransition;
+    private List<Transition> possibleTransitions;
 
     public RunningMode(int id, String name, List<Measurable<?>> commodities, Double runningCostsPerSecond) {
         this.id = id;
