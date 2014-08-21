@@ -1,11 +1,6 @@
 package org.flexiblepower.efi.timeshifter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
@@ -26,24 +21,17 @@ public class TimeShifterRegistration extends ControlSpaceRegistration {
     /**
      * The set of all commodities that can be produced or consumed by the appliance.
      */
-    private final Set<Commodity<?, ?>> supportedCommodities;
+    private final Commodity.Set supportedCommodities;
 
     public TimeShifterRegistration(String resourceId,
                                    Date timestamp,
                                    Measurable<Duration> allocationDelay,
-                                   Collection<Commodity<?, ?>> supportedCommodities) {
+                                   Commodity.Set supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
-        this.supportedCommodities = Collections.unmodifiableSet(new HashSet<Commodity<?, ?>>(supportedCommodities));
+        this.supportedCommodities = supportedCommodities;
     }
 
-    public TimeShifterRegistration(String resourceId,
-                                   Date timestamp,
-                                   Measurable<Duration> allocationDelay,
-                                   Commodity<?, ?>... supportedCommodities) {
-        this(resourceId, timestamp, allocationDelay, Arrays.asList(supportedCommodities));
-    }
-
-    public Set<Commodity<?, ?>> getSupportedCommodities() {
+    public Commodity.Set getSupportedCommodities() {
         return supportedCommodities;
     }
 }

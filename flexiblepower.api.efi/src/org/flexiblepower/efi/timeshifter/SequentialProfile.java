@@ -1,11 +1,8 @@
 package org.flexiblepower.efi.timeshifter;
 
-import java.util.Map;
-
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.CommodityForecast;
 
 /**
@@ -32,12 +29,9 @@ public class SequentialProfile {
      * The forecast profile is used because there can be an uncertainty in the declared profiles. (e.g. the program a
      * tumble dryer controlled by a sensor does not have a fixed duration and therefore some uncertainty)
      */
-    private final Map<Commodity<?, ?>, CommodityForecast<?, ?>> commodityProfiles;
+    private final CommodityForecast.Map commodityProfiles;
 
-    public SequentialProfile(int id,
-                             Measurable<Duration> maxIntervalBefore,
-                             Map<Commodity<?, ?>, CommodityForecast<?, ?>> commodityProfiles) {
-        super();
+    public SequentialProfile(int id, Measurable<Duration> maxIntervalBefore, CommodityForecast.Map commodityProfiles) {
         this.id = id;
         this.maxIntervalBefore = maxIntervalBefore;
         this.commodityProfiles = commodityProfiles;
@@ -51,8 +45,7 @@ public class SequentialProfile {
         return maxIntervalBefore;
     }
 
-    public Map<Commodity<?, ?>, CommodityForecast<?, ?>> getCommodityProfiles() {
+    public CommodityForecast.Map getCommodityProfiles() {
         return commodityProfiles;
     }
-
 }

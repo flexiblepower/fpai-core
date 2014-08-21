@@ -3,14 +3,18 @@ package org.flexiblepower.rai.values;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
+import javax.measure.quantity.Volume;
+import javax.measure.quantity.VolumetricFlowRate;
 
 import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 
 /**
  * Class for representing an commodity consumption / production forecast over time. This class is similar to
  * {@link ProfileElement}, with the addition of uncertainty (see {@link UncertainMeasure}) in both amount and time.
- * 
+ *
  * @param <BQ>
  *            Billable Quantity, see {@link Commodity}
  * @param <FQ>
@@ -18,6 +22,17 @@ import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
  */
 public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
                                                                          Profile<CommodityForecastElement<BQ, FQ>> {
+    public static class Map extends Commodity.Map<CommodityForecast<?, ?>> {
+
+        public Map(CommodityForecast<Energy, Power> electricityValue,
+                   CommodityForecast<Volume, VolumetricFlowRate> gasValue) {
+            super(electricityValue, gasValue);
+        }
+
+        public <BQ extends Quantity, FQ extends Quantity> CommodityForecast<BQ, FQ> get(Commodity<BQ, FQ> key) {
+            return get(key);
+        }
+    }
 
     public static class CommodityForecastElement<BQ extends Quantity, FQ extends Quantity> implements
                                                                                            ProfileElement<CommodityForecastElement<BQ, FQ>> {

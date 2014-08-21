@@ -1,5 +1,8 @@
 package org.flexiblepower.efi.timeshifter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +12,9 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 /**
  * When an energy app allocates the energy flexibility of a time shifter it sends a time shifter allocation to the
  * appliance driver.
- * 
+ *
  * @author TNO
- * 
+ *
  */
 public class TimeShifterAllocation extends Allocation {
 
@@ -56,12 +59,19 @@ public class TimeShifterAllocation extends Allocation {
                                  boolean isEmergencyAllocation,
                                  List<SequentialProfileAllocation> sequentialProfileAllocation) {
         super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
-        this.sequentialProfileAllocation = sequentialProfileAllocation;
+        this.sequentialProfileAllocation = Collections.unmodifiableList(new ArrayList<SequentialProfileAllocation>(sequentialProfileAllocation));
+    }
+
+    public TimeShifterAllocation(String resourceId,
+                                 ControlSpaceUpdate resourceUpdate,
+                                 Date timestamp,
+                                 boolean isEmergencyAllocation,
+                                 SequentialProfileAllocation... sequentialProfileAllocation) {
+        this(resourceId, resourceUpdate, timestamp, isEmergencyAllocation, Arrays.asList(sequentialProfileAllocation));
     }
 
     public List<SequentialProfileAllocation> getSequentialProfileAllocation() {
         return sequentialProfileAllocation;
 
     }
-
 }
