@@ -32,11 +32,11 @@ public class SequentialProfile {
      * The forecast profile is used because there can be an uncertainty in the declared profiles. (e.g. the program a
      * tumble dryer controlled by a sensor does not have a fixed duration and therefore some uncertainty)
      */
-    private final Map<Commodity, CommodityForecast> commodityProfiles;
+    private final Map<Commodity<?, ?>, CommodityForecast<?, ?>> commodityProfiles;
 
     public SequentialProfile(int id,
                              Measurable<Duration> maxIntervalBefore,
-                             Map<Commodity, CommodityForecast> commodityProfiles) {
+                             Map<Commodity<?, ?>, CommodityForecast<?, ?>> commodityProfiles) {
         super();
         this.id = id;
         this.maxIntervalBefore = maxIntervalBefore;
@@ -51,7 +51,7 @@ public class SequentialProfile {
         return maxIntervalBefore;
     }
 
-    public Map<Commodity, CommodityForecast> getCommodityProfiles() {
+    public Map<Commodity<?, ?>, CommodityForecast<?, ?>> getCommodityProfiles() {
         return commodityProfiles;
     }
 

@@ -12,7 +12,7 @@ import javax.measure.unit.Unit;
 import org.flexiblepower.rai.values.CommodityProfile.CommodityProfileElement;
 
 public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
-Profile<CommodityProfileElement<BQ, FQ>> {
+                                                                        Profile<CommodityProfileElement<BQ, FQ>> {
 
     public static class Builder<BQ extends Quantity, FQ extends Quantity> {
         private final Commodity<BQ, FQ> commodity;
@@ -70,7 +70,7 @@ Profile<CommodityProfileElement<BQ, FQ>> {
     }
 
     public static class CommodityProfileElement<BQ extends Quantity, FQ extends Quantity> implements
-    ProfileElement<CommodityProfileElement<BQ, FQ>> {
+                                                                                          ProfileElement<CommodityProfileElement<BQ, FQ>> {
 
         private final Commodity<BQ, FQ> commodity;
         private final Measurable<Duration> duration;
