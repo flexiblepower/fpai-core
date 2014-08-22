@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TestBufferResourceManager extends IdentifyableObject implements
-                                                                 ResourceManager<BufferAllocation, ResourceState, ResourceControlParameters> {
+ResourceManager<BufferAllocation, ResourceState, ResourceControlParameters> {
 
     private static final Logger logger = LoggerFactory.getLogger(TestBufferResourceManager.class);
 
@@ -72,11 +72,9 @@ public class TestBufferResourceManager extends IdentifyableObject implements
     }
 
     public BufferRegistration sendBufferRegistration() {
-        HashSet<Commodity<?, ?>> commodities = new HashSet<Commodity<?, ?>>();
-        commodities.add(Commodity.ELECTRICITY);
         ActuatorCapabilities actuatorCapabilities = new BufferRegistration.ActuatorCapabilities(0,
                                                                                                 "actuator1",
-                                                                                                commodities);
+                                                                                                Commodity.Set.onlyElectricity);
         HashSet<ActuatorCapabilities> actuatorCapabilitiesSet = new HashSet<BufferRegistration.ActuatorCapabilities>();
         actuatorCapabilitiesSet.add(actuatorCapabilities);
         BufferRegistration br = new BufferRegistration(resourceId,
