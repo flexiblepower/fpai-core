@@ -200,7 +200,7 @@ public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implem
         }
 
         @Override
-        public java.util.Set<Commodity<?, ?>> keySet() {
+        public Set keySet() {
             return new Set(electricityValue != null, gasValue != null);
         }
 
@@ -214,6 +214,17 @@ public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implem
                 result.add(gasValue);
             }
             return result;
+        }
+    }
+
+    public static final class Measurements extends Map<Measurable<?>> {
+        public Measurements(Measurable<Power> electricityValue, Measurable<VolumetricFlowRate> gasValue) {
+            super(electricityValue, gasValue);
+        }
+
+        @SuppressWarnings("unchecked")
+        public <FQ extends Quantity> Measurable<FQ> get(Commodity<?, FQ> commodity) {
+            return (Measurable<FQ>) super.get(commodity);
         }
     }
 

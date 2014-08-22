@@ -2,7 +2,9 @@ package org.flexiblepower.efi.uncontrolled;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
+import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
+import javax.measure.quantity.VolumetricFlowRate;
 
 import org.flexiblepower.efi.uncontrolled.CurtailmentProfile.CurtailmentProfileElement;
 import org.flexiblepower.rai.values.Commodity;
@@ -13,14 +15,24 @@ import org.flexiblepower.rai.values.ProfileElement;
  * A CurtailmentProfile is a profile that describes the maximum consumption or production of an appliance for a certain
  * commodity over a certain amount of time. A CurtailmentProfile is build out of one or more CurtailmentProfileElements
  * which can have dissimilar durations.
- * 
+ *
  * @author TNO
- * 
+ *
  * @param <FQ>
  *            Quantity of the profile, see {@link Commodity}
  */
 
 public class CurtailmentProfile<FQ extends Quantity> extends Profile<CurtailmentProfileElement<FQ>> {
+    public static final class Map extends Commodity.Map<CurtailmentProfile<?>> {
+        public Map(CurtailmentProfile<Power> electricityValue, CurtailmentProfile<VolumetricFlowRate> gasValue) {
+            super(electricityValue, gasValue);
+        }
+
+        @SuppressWarnings("unchecked")
+        public <FQ extends Quantity> CurtailmentProfile<FQ> get(Commodity<?, FQ> commodity) {
+            return (CurtailmentProfile<FQ>) super.get(commodity);
+        }
+    }
 
     /**
      * The commodity for which the CurtailmentProfile is valid.
