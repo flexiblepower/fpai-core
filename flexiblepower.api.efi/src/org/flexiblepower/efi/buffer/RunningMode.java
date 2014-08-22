@@ -1,6 +1,5 @@
 package org.flexiblepower.efi.buffer;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.measure.Measurable;
@@ -37,7 +36,7 @@ public class RunningMode extends FillLevelFunction<RunningModeRangeElement> {
     public static class RunningModeRangeElement extends RangeElement {
 
         /** Commodity consumed or produced */
-        private final Map<Commodity<?, ?>, Measurable<?>> commodityConsumption;
+        private final Commodity.Measurements commodityConsumption;
 
         /** Optional: Running costs for this runningmode expressed per second */
         private final Measurable<Money> runningCostsPerSecond;
@@ -45,14 +44,14 @@ public class RunningMode extends FillLevelFunction<RunningModeRangeElement> {
         public RunningModeRangeElement(double lowerBound,
                                        double upperBound,
                                        double fillingSpeed,
-                                       Map<Commodity<?, ?>, Measurable<?>> commodityConsumption,
+                                       Commodity.Measurements commodityConsumption,
                                        Measurable<Money> runningCostsPerSecond) {
             super(lowerBound, upperBound, fillingSpeed);
             this.commodityConsumption = commodityConsumption;
             this.runningCostsPerSecond = runningCostsPerSecond;
         }
 
-        public Map<Commodity<?, ?>, Measurable<?>> getCommodityConsumption() {
+        public Commodity.Measurements getCommodityConsumption() {
             return commodityConsumption;
         }
 
