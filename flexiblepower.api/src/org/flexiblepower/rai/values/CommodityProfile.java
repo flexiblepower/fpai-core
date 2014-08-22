@@ -6,13 +6,27 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
+import javax.measure.quantity.Volume;
+import javax.measure.quantity.VolumetricFlowRate;
 import javax.measure.unit.Unit;
 
 import org.flexiblepower.rai.values.CommodityProfile.CommodityProfileElement;
 
 public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
                                                                         Profile<CommodityProfileElement<BQ, FQ>> {
+    public static class Map extends Commodity.Map<CommodityProfile<?, ?>> {
+        public Map(CommodityProfile<Energy, Power> electricityProfile,
+                   CommodityProfile<Volume, VolumetricFlowRate> gasProfile) {
+            super(electricityProfile, gasProfile);
+        }
+
+        public <BQ extends Quantity, FQ extends Quantity> CommodityProfile<BQ, FQ> get(Commodity<BQ, FQ> commodity) {
+            return get(commodity);
+        }
+    }
 
     public static class Builder<BQ extends Quantity, FQ extends Quantity> {
         private final Commodity<BQ, FQ> commodity;
