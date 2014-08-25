@@ -12,9 +12,9 @@ import javax.measure.unit.Unit;
  * as a normal distribution. Instead UncertainMeasure provides the mean value as well as the ranges in which 68 and 95
  * percent of the values fall. For both ranges a lower and upper bound is given. This flexible solution also allows the
  * expression of asymmetric distributions.
- * 
+ *
  * @author TNO
- * 
+ *
  * @param <Q>
  *            Quantity of measurement, see {@link Commodity}
  */
@@ -30,55 +30,44 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
     private final double the95PPRUpperBound;
     private final Unit<Q> unit;
 
+    public UncertainMeasure(double value, Unit<Q> unit) {
+        this(value, value, value, value, value, unit);
+    }
+
+    public UncertainMeasure(double mean, double standardDeviation, Unit<Q> unit) {
+        this(mean - 2 * standardDeviation,
+             mean - standardDeviation,
+             mean,
+             mean + standardDeviation,
+             mean + 2 * standardDeviation,
+             unit);
+    }
+
     public UncertainMeasure(double the95pprLowerBound,
                             double the68pprLowerBound,
                             double mean,
                             double the68pprUpperBound,
                             double the95pprUpperBound,
                             Unit<Q> unit) {
-        super();
+        if (the95pprLowerBound > the68pprLowerBound) {
+            throw new IllegalArgumentException("68PPRLowerBound must be smaller than 95PPRLowerBound");
+        }
+        if (the68pprLowerBound > mean) {
+            throw new IllegalArgumentException("mean must be smaller than the68PPRLowerBound");
+        }
+        if (mean > the68pprUpperBound) {
+            throw new IllegalArgumentException("the68PPRUpperBound must be smaller than mean");
+        }
+        if (the68pprUpperBound > the95pprUpperBound) {
+            throw new IllegalArgumentException("the95PPRUpperBound must be smaller than the68PPRUpperBound");
+        }
+
         the95PPRLowerBound = the95pprLowerBound;
         the68PPRLowerBound = the68pprLowerBound;
         this.mean = mean;
         the68PPRUpperBound = the68pprUpperBound;
         the95PPRUpperBound = the95pprUpperBound;
         this.unit = unit;
-        validate();
-    }
-
-    public UncertainMeasure(double mean, double standardDeviation, Unit<Q> unit) {
-        this.the95PPRLowerBound = mean - 2 * standardDeviation;
-        this.the68PPRLowerBound = mean - standardDeviation;
-        this.mean = mean;
-        this.the68PPRUpperBound = mean + standardDeviation;
-        this.the95PPRUpperBound = mean + 2 * standardDeviation;
-        this.unit = unit;
-        validate();
-    }
-
-    public UncertainMeasure(double value, Unit<Q> unit) {
-        this.the95PPRLowerBound = value;
-        this.the68PPRLowerBound = value;
-        this.mean = value;
-        this.the68PPRUpperBound = value;
-        this.the95PPRUpperBound = value;
-        this.unit = unit;
-        validate();
-    }
-
-    private void validate() {
-        if (the95PPRLowerBound > the68PPRLowerBound) {
-            throw new IllegalArgumentException("68PPRLowerBound must be smaller than 95PPRLowerBound");
-        }
-        if (the68PPRLowerBound > mean) {
-            throw new IllegalArgumentException("mean must be smaller than the68PPRLowerBound");
-        }
-        if (mean > the68PPRUpperBound) {
-            throw new IllegalArgumentException("the68PPRUpperBound must be smaller than mean");
-        }
-        if (the68PPRUpperBound > the95PPRUpperBound) {
-            throw new IllegalArgumentException("the95PPRUpperBound must be smaller than the68PPRUpperBound");
-        }
     }
 
     public Measure<Double, Q> getMean() {
@@ -91,7 +80,7 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
 
     /**
      * Gets the standard deviaton. WARNING: ASSUMES NORMAL DISTRIBUTION
-     * 
+     *
      * @return Standard deviation of this probability distribution
      */
     public Measure<Double, Q> getStandardDeviation() {
