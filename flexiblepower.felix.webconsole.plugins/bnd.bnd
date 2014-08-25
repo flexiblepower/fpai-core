@@ -1,8 +1,9 @@
 -buildpath: ${default-buildpath},\
 	org.apache.felix.http.servlet-api,\
+	org.apache.commons.io,\
 	flexiblepower.runtime;version=project,\
 	junit.osgi;version='[3.8,4)'
 
-Bundle-Version: 1.0.0.${qualifier}
+Bundle-Version: 1.1.0.${qualifier}
 Private-Package: org.flexiblepower.felix.webconsole.plugins
 Service-Component: org.flexiblepower.felix.webconsole.plugins.*

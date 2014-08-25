@@ -1,0 +1,34 @@
+<div id="cy" style="height:500px"></div>
+<script type="text/javascript" src="cytoscape.min.js"></script>
+
+<script type="text/javascript">
+cy = cytoscape({
+  container: document.getElementById('cy'),
+
+  minZoom: 1,
+  maxZoom: 1,
+  
+  style: [
+          {
+            selector: 'node',
+            css: {
+              'content': 'data(name)'
+            }
+          }
+        ],
+ 
+  ready: function(){
+	console.log("hi");
+   
+  }
+} );
+
+$.get("/system/console/fpai-connection-manager/getGraph.json", function(json){
+	console.log(json);
+	cy.load(json);
+}).fail(function(jqXHR, textStatus, errorThrown){
+	console.log("error: " + textStatus + " " + errorThrown);
+});
+</script>
+
+<button type="button" id="autoconnect">Autoconnect</button>

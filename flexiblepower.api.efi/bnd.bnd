@@ -5,7 +5,7 @@
 	biz.aQute.bnd.annotation,\
 	flexiblepower.api;version=latest
 
-Bundle-Version: 1.1.0.${qualifier}
+Bundle-Version: 1.0.0.${qualifier}
 
 
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
