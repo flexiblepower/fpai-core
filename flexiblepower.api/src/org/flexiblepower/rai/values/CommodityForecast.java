@@ -1,5 +1,8 @@
 package org.flexiblepower.rai.values;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
@@ -8,6 +11,7 @@ import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Volume;
 import javax.measure.quantity.VolumetricFlowRate;
+import javax.measure.unit.Unit;
 
 import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 
@@ -23,7 +27,6 @@ import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
                                                                          Profile<CommodityForecastElement<BQ, FQ>> {
     public static class Map extends Commodity.Map<CommodityForecast<?, ?>> {
-
         public Map(CommodityForecast<Energy, Power> electricityValue,
                    CommodityForecast<Volume, VolumetricFlowRate> gasValue) {
             super(electricityValue, gasValue);
@@ -32,6 +35,63 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
         public <BQ extends Quantity, FQ extends Quantity> CommodityForecast<BQ, FQ> get(Commodity<BQ, FQ> key) {
             return get(key);
         }
+    }
+
+    public static class Builder<BQ extends Quantity, FQ extends Quantity> {
+        private final Commodity<BQ, FQ> commodity;
+
+        private final List<CommodityForecastElement<BQ, FQ>> elements;
+        private UncertainMeasure<Duration> duration;
+        private Unit<BQ> unit;
+
+        public Builder(Commodity<BQ, FQ> commodity) {
+            this.commodity = commodity;
+            this.elements = new ArrayList<CommodityForecastElement<BQ, FQ>>();
+        }
+
+        public Builder<BQ, FQ> set(UncertainMeasure<Duration> duration) {
+            this.duration = duration;
+            return this;
+        }
+
+        public Builder<BQ, FQ> setUnit(Unit<BQ> unit) {
+            this.unit = unit;
+            return this;
+        }
+
+        public Builder<BQ, FQ> add(UncertainMeasure<Duration> duration, UncertainMeasure<BQ> amount) {
+            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, amount));
+            return this;
+        }
+
+        public Builder<BQ, FQ> add(UncertainMeasure<BQ> amount) {
+            if (duration == null) {
+                throw new IllegalStateException("duration not set");
+            }
+            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, amount));
+            return this;
+        }
+
+        public Builder<BQ, FQ> add(double mean, double standardDeviation) {
+            if (duration == null) {
+                throw new IllegalStateException("duration not set");
+            } else if (unit == null) {
+                throw new IllegalStateException("unit not set");
+            }
+            elements.add(new CommodityForecastElement<BQ, FQ>(commodity,
+                                                              duration,
+                                                              new UncertainMeasure<BQ>(mean, standardDeviation, unit)));
+            return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public CommodityForecast<BQ, FQ> build() {
+            return new CommodityForecast<BQ, FQ>(elements.toArray(new CommodityForecastElement[0]));
+        }
+    }
+
+    public static <BQ extends Quantity, FQ extends Quantity> Builder<BQ, FQ> create(Commodity<BQ, FQ> commodity) {
+        return new Builder<BQ, FQ>(commodity);
     }
 
     public static class CommodityForecastElement<BQ extends Quantity, FQ extends Quantity> implements
