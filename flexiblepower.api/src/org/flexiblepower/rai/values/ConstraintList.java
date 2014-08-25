@@ -6,23 +6,36 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
+import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
+import javax.measure.quantity.VolumetricFlowRate;
 import javax.measure.unit.Unit;
 
 /**
  * The {@link ConstraintList} is used as a method to describe several modes. It is most commonly used for representing
  * different possible charge speeds in the {@link BufferControlSpace}. This is a list of several values or ranges of
  * values.
- * 
+ *
  * @author TNO
- * 
+ *
  * @param <Q>
  *            The quantity of the values that are stored here.
  */
 public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<Q>> {
+    public static final class Map extends Commodity.Map<ConstraintList<?>> {
+        public Map(ConstraintList<Power> electricityValue, ConstraintList<VolumetricFlowRate> gasValue) {
+            super(electricityValue, gasValue);
+        }
+
+        @SuppressWarnings("unchecked")
+        public <FQ extends Quantity> ConstraintList<FQ> get(Commodity<?, FQ> commodity) {
+            return (ConstraintList<FQ>) super.get(commodity);
+        }
+    }
+
     /**
      * Starts a new builder for constructing a {@link ConstraintList} using a default unit value.
-     * 
+     *
      * @param unit
      *            The default unit value that will be used in the {@link Builder#addSingle(double)} and
      *            {@link Builder#addRange(double, double)} methods.
@@ -34,9 +47,9 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
     /**
      * The {@link Builder} is a convenience class to easily construct new immutable {@link ConstraintList}s.
-     * 
+     *
      * @author TNO
-     * 
+     *
      * @param <Q>
      *            The quantity of the values that are stored here
      */
@@ -51,7 +64,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
         /**
          * Adds a single value to the list.
-         * 
+         *
          * @param value
          *            The value to be added
          * @return this
@@ -63,7 +76,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
         /**
          * Adds a single value to the list using the default unit.
-         * 
+         *
          * @param value
          *            The value to be added
          * @return this
@@ -75,7 +88,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
         /**
          * Adds a ranged value to the list.
-         * 
+         *
          * @param lowerBound
          *            The lower bound of the range
          * @param upperBound
@@ -89,7 +102,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
 
         /**
          * Adds a ranged value to the list using the default unit.
-         * 
+         *
          * @param lowerBound
          *            The lower bound of the range
          * @param upperBound
@@ -98,7 +111,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          */
         public Builder<Q> addRange(double lowerBound, double upperBound) {
             commodityConstraints.add(new Constraint<Q>(Measure.valueOf(lowerBound, defaultUnit),
-                                                   Measure.valueOf(upperBound, defaultUnit)));
+                    Measure.valueOf(upperBound, defaultUnit)));
             return this;
         }
 

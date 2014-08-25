@@ -13,7 +13,7 @@
   <class id="2" language="java" name="org.flexiblepower.rai.comm.ControlSpaceRegistration" project="flexiblepower.api" 
     file="/flexiblepower.api/src/org/flexiblepower/rai/comm/ControlSpaceRegistration.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="396" y="184"/>    
+    <position height="-1" width="-1" x="395" y="191"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -40,34 +40,34 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <generalization id="5">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <association id="6">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="7" name="ELECTRICITY"/>      
-      <multiplicity id="8" minimum="0" maximum="1"/>    
+  <association id="5">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="6" name="supportedCommodities"/>      
+      <multiplicity id="7" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <generalization id="8">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
   <association id="9">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="10" name="GAS"/>      
+      <attribute id="10" name="ELECTRICITY"/>      
       <multiplicity id="11" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <generalization id="12">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
   </generalization>  
   <association id="13">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="14" name="supportedCommodities"/>      
-      <multiplicity id="15" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="14" name="GAS"/>      
+      <multiplicity id="15" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  

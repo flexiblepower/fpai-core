@@ -1,7 +1,6 @@
 package org.flexiblepower.efi.timeshifter;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
@@ -11,9 +10,8 @@ import org.flexiblepower.rai.values.Commodity;
 
 /**
  * To register an time shifter appliance driver to an energy service the time shifter registration class is used.
- * 
+ *
  * @author TNO
- * 
  */
 
 public class TimeShifterRegistration extends ControlSpaceRegistration {
@@ -23,14 +21,17 @@ public class TimeShifterRegistration extends ControlSpaceRegistration {
     /**
      * The set of all commodities that can be produced or consumed by the appliance.
      */
-    private final Set<Commodity> supportedCommodities;
+    private final Commodity.Set supportedCommodities;
 
     public TimeShifterRegistration(String resourceId,
                                    Date timestamp,
                                    Measurable<Duration> allocationDelay,
-                                   Set<Commodity> supportedCommodities) {
+                                   Commodity.Set supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
         this.supportedCommodities = supportedCommodities;
     }
 
+    public Commodity.Set getSupportedCommodities() {
+        return supportedCommodities;
+    }
 }

@@ -1,5 +1,8 @@
 package org.flexiblepower.efi.timeshifter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +14,9 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 /**
  * If a new program is scheduled by time shifter appliance the resource manager sends a time shifter control space
  * update towards the energy app.
- * 
+ *
  * @author TNO
- * 
+ *
  */
 public class TimeShifterUpdate extends ControlSpaceUpdate {
 
@@ -38,12 +41,19 @@ public class TimeShifterUpdate extends ControlSpaceUpdate {
                              List<SequentialProfile> timeshifterProfiles) {
         super(resourceId, timestamp, validFrom, allocationDelay);
         this.endBefore = endBefore;
-        this.timeshifterProfiles = timeshifterProfiles;
+        this.timeshifterProfiles = Collections.unmodifiableList(new ArrayList<SequentialProfile>(timeshifterProfiles));
+    }
+
+    public TimeShifterUpdate(String resourceId,
+                             Date timestamp,
+                             Date validFrom,
+                             Measurable<Duration> allocationDelay,
+                             Date endBefore,
+                             SequentialProfile... timeshifterProfiles) {
+        this(resourceId, timestamp, validFrom, allocationDelay, endBefore, Arrays.asList(timeshifterProfiles));
     }
 
     public List<SequentialProfile> getTimeShifterProfiles() {
         return timeshifterProfiles;
-
     }
-
 }
