@@ -31,7 +31,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
             String key = getKey(endpoint, properties);
             if (key != null) {
                 endpointWrappers.put(key, new EndpointWrapper(key, endpoint, this));
-                log.debug("Added endpoint on key [[]]", key);
+                log.debug("Added endpoint on key [{}]", key);
             }
         } catch (IllegalArgumentException ex) {
             log.warn("Could not add endpoint: {}", ex.getMessage());
