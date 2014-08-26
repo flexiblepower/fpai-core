@@ -18,7 +18,7 @@ import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 /**
  * Class for representing an commodity consumption / production forecast over time. This class is similar to
  * {@link ProfileElement}, with the addition of uncertainty (see {@link UncertainMeasure}) in both amount and time.
- *
+ * 
  * @param <BQ>
  *            Billable Quantity, see {@link Commodity}
  * @param <FQ>
@@ -147,6 +147,39 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
 
     public CommodityForecast(CommodityForecastElement<BQ, FQ>[] elements) {
         super(elements);
+        validate();
     }
 
+    private void validate() {
+        // Check if profile is empty
+        if (elements.length == 0) {
+            throw new IllegalArgumentException("A CommodityForecast cannot be empty");
+        }
+        // Check if all the commodities are the same
+        final Commodity<BQ, FQ> commodity = elements[0].getCommodity();
+        for (int i = 1; i < elements.length; i++) {
+            if (elements[i].getCommodity() != commodity) {
+                throw new IllegalArgumentException("A CommodityForceast can only consist of commodites of the same type");
+            }
+        }
+    }
+
+    public Commodity<BQ, FQ> getCommodity() {
+        // Validate makes sure there is at least one element
+        return elements[0].getCommodity();
+    }
+
+    public CommodityForecast<BQ, FQ> concat(CommodityForecast<BQ, FQ> that) {
+        if (this.getCommodity() != that.getCommodity()) {
+            throw new IllegalArgumentException("Cannot concatenate CommodityForecasts of different types");
+        }
+        Builder<BQ, FQ> builder = CommodityForecast.create(this.getCommodity());
+        for (CommodityForecastElement<BQ, FQ> e : elements) {
+            builder.add(e.getUncertainDuration(), e.getAmount());
+        }
+        for (CommodityForecastElement<BQ, FQ> e : that.elements) {
+            builder.add(e.getUncertainDuration(), e.getAmount());
+        }
+        return builder.build();
+    }
 }
