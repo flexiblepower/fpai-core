@@ -14,11 +14,13 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 /**
  * If a new program is scheduled by time shifter appliance the resource manager sends a time shifter control space
  * update towards the energy app.
- *
+ * 
  * @author TNO
- *
+ * 
  */
 public class TimeShifterUpdate extends ControlSpaceUpdate {
+
+    private static final long serialVersionUID = -7622975550358211856L;
 
     /**
      * The moment in time where every sequential profile in the timeShifterProfiles list must be finished.
@@ -55,5 +57,9 @@ public class TimeShifterUpdate extends ControlSpaceUpdate {
 
     public List<SequentialProfile> getTimeShifterProfiles() {
         return timeshifterProfiles;
+    }
+
+    public Date getEndBefore() {
+        return endBefore;
     }
 }
