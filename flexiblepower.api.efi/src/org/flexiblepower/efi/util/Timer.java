@@ -16,7 +16,6 @@ public class Timer {
     private final Date finishedAt;
 
     public Timer(int id, String label, Measurable<Duration> duration, Date finishedAt) {
-        super();
         this.id = id;
         this.label = label;
         this.duration = duration;

@@ -1,7 +1,12 @@
 package org.flexiblepower.efi.buffer;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.flexiblepower.efi.util.Timer;
 
@@ -9,31 +14,76 @@ public class Actuator implements Serializable {
 
     private static final long serialVersionUID = -7888970166563077855L;
 
+    public static Builder create(int id) {
+        return new Builder(id);
+    }
+
+    public static class Builder {
+        private final int id;
+        private final Set<Timer> timers;
+        private final Set<RunningMode> runningModes;
+
+        Builder(int id) {
+            this.id = id;
+            timers = new HashSet<Timer>();
+            runningModes = new HashSet<RunningMode>();
+        }
+
+        Builder add(Timer timer) {
+            timers.add(timer);
+            return this;
+        }
+
+        Builder add(RunningMode runningMode) {
+            runningModes.add(runningMode);
+            return this;
+        }
+
+        Actuator build() {
+            return new Actuator(id, timers, runningModes);
+        }
+    }
+
     private final int id;
 
     // Timers associated with this actuator
-    private final List<Timer> timerList;
+    private final Map<Integer, Timer> timers;
 
     // List of all the possible running modes of this actuator.
-    private final List<RunningMode> runningModes;
+    private final Map<Integer, RunningMode> runningModes;
 
-    public Actuator(int id, List<Timer> timerList, List<RunningMode> runningModes) {
-        super();
+    public Actuator(int id,
+                    Collection<Timer> timers,
+                    Collection<RunningMode> runningModes) {
         this.id = id;
-        this.timerList = timerList;
-        this.runningModes = runningModes;
+
+        TreeMap<Integer, Timer> tempTimers = new TreeMap<Integer, Timer>();
+        for (Timer timer : timers) {
+            tempTimers.put(timer.getId(), timer);
+        }
+        this.timers = Collections.unmodifiableMap(tempTimers);
+
+        TreeMap<Integer, RunningMode> tempRunningModes = new TreeMap<Integer, RunningMode>();
+        for (RunningMode runningMode : runningModes) {
+            tempRunningModes.put(runningMode.getId(), runningMode);
+        }
+        this.runningModes = Collections.unmodifiableMap(tempRunningModes);
     }
 
     public int getId() {
         return id;
     }
 
-    public List<Timer> getTimerList() {
-        return timerList;
+    public Collection<Timer> getTimerList() {
+        return timers.values();
     }
 
-    public List<RunningMode> getRunningModes() {
-        return runningModes;
+    public Collection<RunningMode> getRunningModes() {
+        return runningModes.values();
+    }
+
+    public RunningMode getRunningMode(int id) {
+        return runningModes.get(id);
     }
 
     /**
@@ -43,7 +93,7 @@ public class Actuator implements Serializable {
      */
     public double minFillLevel() {
         double min = Double.MAX_VALUE;
-        for (RunningMode rm : runningModes) {
+        for (RunningMode rm : runningModes.values()) {
             double rmLowerBound = rm.getLowerBound();
             if (min > rmLowerBound) {
                 min = rmLowerBound;
@@ -59,7 +109,7 @@ public class Actuator implements Serializable {
      */
     public double maxFillLevel() {
         double max = Double.MIN_VALUE;
-        for (RunningMode rm : runningModes) {
+        for (RunningMode rm : runningModes.values()) {
             double rmUpperBound = rm.getUpperBound();
             if (max < rmUpperBound) {
                 max = rmUpperBound;
@@ -67,5 +117,4 @@ public class Actuator implements Serializable {
         }
         return max;
     }
-
 }
