@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
-import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 
 public class EndpointPortImpl implements EndpointPort {
@@ -22,11 +21,8 @@ public class EndpointPortImpl implements EndpointPort {
         potentialConnections = new TreeMap<String, PotentialConnectionImpl>();
     }
 
-    public Endpoint getEndpoint() {
-        return endpoint.getEndpoint();
-    }
-
-    public EndpointWrapper getEndpointWrapper() {
+    @Override
+    public EndpointWrapper getEndpoint() {
         return endpoint;
     }
 

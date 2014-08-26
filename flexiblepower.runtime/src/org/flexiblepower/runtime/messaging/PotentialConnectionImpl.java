@@ -109,22 +109,22 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 }
             };
 
-            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpointWrapper()) {
+            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpoint()) {
                 @Override
                 public MessageHandler getMessageHandler() {
                     return rightMessageHandler;
                 }
             };
 
-            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpointWrapper()) {
+            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpoint()) {
                 @Override
                 public MessageHandler getMessageHandler() {
                     return leftMessageHandler;
                 }
             };
 
-            leftMessageHandler = left.getEndpoint().onConnect(leftHalfConnection);
-            rightMessageHandler = right.getEndpoint().onConnect(rightHalfConnection);
+            leftMessageHandler = left.getEndpoint().getEndpoint().onConnect(leftHalfConnection);
+            rightMessageHandler = right.getEndpoint().getEndpoint().onConnect(rightHalfConnection);
             notifyAll();
         }
     }
@@ -135,8 +135,8 @@ final class PotentialConnectionImpl implements PotentialConnection {
             log.debug("Disconnecting port [{}] to port [{}]", left, right);
             try {
                 CountDownLatch latch = new CountDownLatch(2);
-                left.getEndpointWrapper().addCommand(new Command.Disconnect(leftMessageHandler, latch));
-                right.getEndpointWrapper().addCommand(new Command.Disconnect(rightMessageHandler, latch));
+                left.getEndpoint().addCommand(new Command.Disconnect(leftMessageHandler, latch));
+                right.getEndpoint().addCommand(new Command.Disconnect(rightMessageHandler, latch));
                 latch.await();
             } catch (InterruptedException e) {
             }
