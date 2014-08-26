@@ -11,6 +11,7 @@ import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Volume;
 import javax.measure.quantity.VolumetricFlowRate;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
@@ -181,5 +182,31 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
             builder.add(e.getUncertainDuration(), e.getAmount());
         }
         return builder.build();
+    }
+
+    public UncertainMeasure<BQ> getAmountAtOffset(Measurable<Duration> offset) {
+        long targetOffset = offset.longValue(SI.MILLI(SI.SECOND));
+        long currentOffset = 0;
+        for (CommodityForecastElement<BQ, FQ> e : elements) {
+            long elementLength = e.getDuration().longValue(SI.MILLI(SI.SECOND));
+            if (targetOffset >= currentOffset && targetOffset < targetOffset + elementLength) {
+                return e.getAmount();
+            }
+            currentOffset += elementLength;
+        }
+        return null;
+    }
+
+    public Measurable<FQ> getExpectedAverageAtOffset(Measurable<Duration> offset) {
+        long targetOffset = offset.longValue(SI.MILLI(SI.SECOND));
+        long currentOffset = 0;
+        for (CommodityForecastElement<BQ, FQ> e : elements) {
+            long elementLength = e.getDuration().longValue(SI.MILLI(SI.SECOND));
+            if (targetOffset >= currentOffset && targetOffset < targetOffset + elementLength) {
+                return e.getExpectedAverage();
+            }
+            currentOffset += elementLength;
+        }
+        return null;
     }
 }
