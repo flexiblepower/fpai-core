@@ -84,4 +84,14 @@ public class EndpointPortImpl implements EndpointPort {
         }
         return false;
     }
+
+    public void close() {
+        for (PotentialConnectionImpl matchingPort : getPotentialConnections().values()) {
+            if (matchingPort.isConnected()) {
+                matchingPort.disconnect();
+            }
+            removeMatch(matchingPort);
+            matchingPort.getOtherEnd(this).removeMatch(matchingPort);
+        }
+    }
 }

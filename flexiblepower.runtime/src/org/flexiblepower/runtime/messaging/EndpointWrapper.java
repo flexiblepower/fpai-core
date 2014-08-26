@@ -60,11 +60,11 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
 
         for (Port port : ports) {
             EndpointPortImpl endpointPort = new EndpointPortImpl(this, port);
-            connectionManager.detectPossibleConnections(endpointPort);
-
             EndpointPortImpl storedPort = this.ports.get(port.name());
+
             if (storedPort == null) {
                 log.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
+                connectionManager.detectPossibleConnections(endpointPort);
                 this.ports.put(port.name(), endpointPort);
             } else if (storedPort.getPort().sends().length == 0 && storedPort.getPort().accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
@@ -74,7 +74,9 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
                              port.cardinality());
                 }
                 log.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
+                connectionManager.detectPossibleConnections(endpointPort);
                 this.ports.put(port.name(), endpointPort);
+                storedPort.close();
             } else if (port.sends().length == 0 && port.accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
                     log.warn("Defined cardinality {} on port {} is different from the implementation port {}",
@@ -154,13 +156,7 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         }
 
         for (EndpointPortImpl port : ports.values()) {
-            for (PotentialConnectionImpl matchingPort : port.getPotentialConnections().values()) {
-                if (matchingPort.isConnected()) {
-                    matchingPort.disconnect();
-                }
-                port.removeMatch(matchingPort);
-                matchingPort.getOtherEnd(port).removeMatch(matchingPort);
-            }
+            port.close();
         }
     }
 }
