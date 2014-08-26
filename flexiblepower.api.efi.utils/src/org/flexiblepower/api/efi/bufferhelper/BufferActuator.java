@@ -1,8 +1,12 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.flexiblepower.efi.buffer.BufferRegistration.ActuatorCapabilities;
 import org.flexiblepower.efi.buffer.RunningMode;
@@ -15,22 +19,25 @@ public class BufferActuator {
     private final int actuatorId;
     private final String actuatorLabel;
     private final Set<Commodity<?, ?>> commodities;
-    private List<RunningMode> allRunningModes;
+    private Map<Integer, RunningMode> allRunningModes;
     private List<Timer> timerList;
     private int currentRunningModeId;
 
-    public List<RunningMode> getAllRunningModes() {
+    public Map<Integer, RunningMode> getAllRunningModes() {
         return allRunningModes;
     }
 
-    public void setAllRunningModes(List<RunningMode> allRunningModes) {
-        this.allRunningModes = allRunningModes;
+    public void setAllRunningModes(Collection<RunningMode> allRunningModes) {
+        this.allRunningModes = new TreeMap<Integer, RunningMode>();
+        for (RunningMode mode : allRunningModes) {
+            this.allRunningModes.put(mode.getId(), mode);
+        }
     }
 
     public Set<RunningMode> getPossibleRunningModes() {
         Set<RunningMode> targets = new HashSet<RunningMode>();
-        for (Transition i : allRunningModes.get(currentRunningModeId).getPossibleTransitions()) {
-            targets.add(i.getToRunningMode());
+        for (Transition i : allRunningModes.get(currentRunningModeId).getTransitions()) {
+            targets.add(allRunningModes.get(i.getToRunningMode()));
         }
         return targets;
     }
@@ -49,8 +56,8 @@ public class BufferActuator {
         return timerList;
     }
 
-    public void setTimerList(List<Timer> timerList) {
-        this.timerList = timerList;
+    public void setTimerList(Collection<Timer> timerList) {
+        this.timerList = new ArrayList<Timer>(timerList);
     }
 
 }
