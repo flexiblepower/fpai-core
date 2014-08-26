@@ -12,16 +12,19 @@ public class RunningMode {
 
     // Commodity consumed or produced
     // TODO
-    private final List<Measurable<?>> commoditiesPerSecond;
+    private final List<Measurable<?>> commodityFlowAmounts;
 
     private final Measurable<Money> runningCostsPerSecond;
 
     private List<Transition> possibleTransitions;
 
-    public RunningMode(int id, String name, List<Measurable<?>> commodities, Measurable<Money> runningCostsPerSecond) {
+    public RunningMode(int id,
+                       String name,
+                       List<Measurable<?>> commodityFlowAmounts,
+                       Measurable<Money> runningCostsPerSecond) {
         this.id = id;
         this.name = name;
-        commoditiesPerSecond = commodities;
+        this.commodityFlowAmounts = commodityFlowAmounts;
         this.runningCostsPerSecond = runningCostsPerSecond;
     }
 }
