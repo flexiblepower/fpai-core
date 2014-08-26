@@ -55,13 +55,21 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
         return jobs.isEmpty() ? Long.MAX_VALUE : jobs.peek().getTimeOfNextRun();
     }
 
+    private volatile boolean isWaiting = false;
+    private volatile long currentTime = 0;
+
     @Override
     public long getCurrentTimeMillis() {
-        long simulationTime = simulationClock.getCurrentTimeMillis(); // also checks if simulation is finished
         if (simulationClock.isStopped()) {
             return System.currentTimeMillis();
         } else {
-            return Math.min(simulationTime, getNextJobTime());
+            if (isWaiting) {
+                long clockTime = simulationClock.getCurrentTimeMillis();
+                if (clockTime > currentTime && clockTime < getNextJobTime()) {
+                    currentTime = clockTime;
+                }
+            }
+            return currentTime;
         }
     }
 
@@ -109,8 +117,9 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                 long waitTime = getNextJobTime() - getCurrentTimeMillis();
                 if (waitTime <= 0) {
                     Job<?> job = jobs.peek();
+                    currentTime = Math.max(currentTime, job.getTimeOfNextRun());
                     job.run();
-                    jobs.remove();
+                    jobs.remove(job);
                     if (!job.isDone()) {
                         jobs.add(job);
                     }
@@ -121,17 +130,20 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                     try {
                         synchronized (this) {
                             if (sleepTime > 0) {
+                                isWaiting = true;
                                 wait(sleepTime);
                             }
                         }
                     } catch (final InterruptedException ex) {
                     }
+                    isWaiting = false;
                 }
             } else {
                 // Wait for simulation start
                 try {
                     synchronized (this) {
                         wait();
+                        currentTime = simulationClock.getSimulationStartTime();
                     }
                 } catch (InterruptedException e) {
                 }

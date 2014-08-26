@@ -105,10 +105,10 @@ public class SimulationClock {
 
     /**
      * Calculate the current simulated time based on the wall clock
-     * 
+     *
      * This method has the side effect that it checks if the simulation is finished. If the simulation is stopped or
      * finished, the method will return 0.
-     * 
+     *
      * @return the current simulated time
      */
     public synchronized long getCurrentTimeMillis() {
@@ -132,4 +132,15 @@ public class SimulationClock {
         }
     }
 
+    public long getSimulationStartTime() {
+        return simulationStartTime;
+    }
+
+    public long getSimulationStopTime() {
+        return simulationStopTime;
+    }
+
+    public long getWallStartTime() {
+        return wallStartTime;
+    }
 }
