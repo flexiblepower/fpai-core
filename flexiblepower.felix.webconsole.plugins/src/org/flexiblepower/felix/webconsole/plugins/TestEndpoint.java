@@ -1,21 +1,31 @@
 package org.flexiblepower.felix.webconsole.plugins;
 
+import org.flexiblepower.felix.webconsole.plugins.TestEndpoint.Config;
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
+import org.flexiblepower.messaging.Ports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.metatype.Meta;
 
-@Component(immediate = true)
-@Port(name = "test", sends = String.class, accepts = String.class)
+@Component(immediate = true, designateFactory = Config.class)
+@Ports({ @Port(name = "foo", sends = String.class, accepts = String.class),
+        @Port(name = "bar", sends = String.class, accepts = String.class),
+        @Port(name = "baz", sends = String.class, accepts = String.class) })
 public class TestEndpoint implements Endpoint {
-	private static final Logger log = LoggerFactory
-			.getLogger(TestEndpoint.class);
+    public interface Config {
+        @Meta.AD
+        String message();
+    }
 
-	@Override
+    private static final Logger log = LoggerFactory
+                                                   .getLogger(TestEndpoint.class);
+
+    @Override
     public MessageHandler onConnect(Connection connection) {
         connection.sendMessage("Test");
         return new MessageHandler() {
@@ -27,7 +37,7 @@ public class TestEndpoint implements Endpoint {
 
             @Override
             public void disconnected() {
-				log.trace("Disconnected TestEndpoint");
+                log.trace("Disconnected TestEndpoint");
             }
         };
     }

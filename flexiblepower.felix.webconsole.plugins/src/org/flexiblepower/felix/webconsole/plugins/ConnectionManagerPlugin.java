@@ -16,33 +16,37 @@ import org.apache.commons.io.IOUtils;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
+import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 @Component(provide = Servlet.class, properties = {
-		"felix.webconsole.title=FPAI: ConnectionManager",
-		"felix.webconsole.label=fpai-connection-manager" })
+                                                  "felix.webconsole.title=FPAI: ConnectionManager",
+                                                  "felix.webconsole.label=fpai-connection-manager" })
 public class ConnectionManagerPlugin extends HttpServlet {
-	private static final long serialVersionUID = 7146852312931261310L;
-	private static final Logger log = LoggerFactory
-			.getLogger(ConnectionManagerPlugin.class);
+    private static final long serialVersionUID = 7146852312931261310L;
+    private static final Logger log = LoggerFactory
+                                                   .getLogger(ConnectionManagerPlugin.class);
 
-	private static final String[] servedFiles = new String[] {
-			"cytoscape.min.js", "index.html" };
+    private static final String[] servedFiles = new String[] {
+                                                              "cytoscape.min.js", "index.html" };
 
-	private ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
-	@Reference
-	public void setConnectionManager(ConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
-	}
+    @Reference
+    public void setConnectionManager(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
-	@Override
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+                                                                          throws ServletException, IOException {
         String path = req.getPathInfo();
         if (path.startsWith("/fpai-connection-manager")) {
             path = path.substring(24);
@@ -59,7 +63,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
             }
 
             InputStream input = getClass().getClassLoader()
-                    .getResourceAsStream(path);
+                                          .getResourceAsStream(path);
             if (input == null) {
                 log.debug("Could not find file {}", path);
                 resp.sendError(404);
@@ -70,42 +74,76 @@ public class ConnectionManagerPlugin extends HttpServlet {
         } else if (path.equals("")) {
             resp.sendRedirect("fpai-connection-manager/index.html");
         } else if (path.equals("getGraph.json")) {
-
-            resp.setContentType("application/json");
             Collection<? extends ManagedEndpoint> values = connectionManager
-                    .getEndpoints().values();
+                                                                            .getEndpoints().values();
+            String graphJson = createGraphJson(values);
+            sendJson(resp, graphJson);
 
-            log.debug("Sending {} nodes and edges as JSON", values.size());
-            PrintWriter w = resp.getWriter();
-            w.println("[");
-            for (ManagedEndpoint me : values) {
-
-                w.println("\t\t{");
-                w.println("\t\t\t\"group\": \"nodes\",");
-                String pid = me.getPid();
-                String[] split = pid.split("\\.");
-                log.debug("length " + split.length);
-                String name = split[split.length - 1];
-                w.println("\t\t\t\"data\": { " + "\"id\": \"" + pid
-                          + "\", \"name\": \"" + name + "\"}");
-                w.print("\t\t}");
-
-                for (EndpointPort ep : me.getPorts().values()) {
-                    w.println(",\n\t\t{");
-                    w.println("\t\t\t\"group\": \"nodes\",");
-                    w.println("\t\t\t\"data\": { \"id\": \"" + me.getPid()
-                              + ":" + ep.getName() + "\"," + " \"name\": \""
-                              + ep.getName() + "\"" + ", \"parent\": \""
-                              + me.getPid() + "\" }");
-                    w.print("\t\t}");
-                }
-            }
-            w.println("\n]");
         } else {
             PrintWriter w = resp.getWriter();
-            // TODO: implement a way to show the complete graph. Maybe using
-            // http://cytoscape.github.io/cytoscape.js/ ?
             resp.getWriter().write("Not yet implemented: " + path);
         }
+    }
+
+    private void sendJson(HttpServletResponse resp, String graphJson) {
+        log.debug("Sending nodes and edges as JSON");
+        resp.setContentType("application/json");
+        try {
+            PrintWriter w = resp.getWriter();
+            w.print(graphJson);
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String createGraphJson(Collection<? extends ManagedEndpoint> values) {
+        JsonArray elements = new JsonArray();
+
+        for (ManagedEndpoint me : values) {
+            JsonObject endpoint = new JsonObject();
+            endpoint.addProperty("group", "nodes");
+
+            String pid = me.getPid();
+            String[] split = pid.split("\\.");
+            log.trace("length " + split.length);
+            String name = split[split.length - 1];
+
+            log.debug("Adding {} {}", pid, name);
+
+            JsonObject endpointdata = new JsonObject();
+            endpointdata.addProperty("id", pid);
+            endpointdata.addProperty("name", name);
+            endpoint.add("data", endpointdata);
+
+            elements.add(endpoint);
+
+            for (EndpointPort ep : me.getPorts().values()) {
+                // add endpoint port
+                JsonObject endpointport = new JsonObject();
+                endpointport.addProperty("group", "nodes");
+                JsonObject data = new JsonObject();
+                data.addProperty("id", me.getPid() + ":" + ep.getName());
+                data.addProperty("name", ep.getName());
+                data.addProperty("parent", me.getPid());
+                endpointport.add("data", data);
+                elements.add(endpointport);
+
+                for (PotentialConnection pc : ep.getPotentialConnections().values()) {
+                    JsonObject connection = new JsonObject();
+                    connection.addProperty("group", "edges");
+                    EndpointPort either = pc.getEitherEnd();
+                    EndpointPort other = pc.getOtherEnd(either);
+                    // String eitherend = either.getManagedEndpointName() + ":" + either.getName();
+                    // String otherend = other.getManagedEndpointName() + ":" + other.getName();
+                    // connection.addProperty("eitherend", eitherend);
+                    // connection.addProperty("otherend", otherend);
+                    connection.addProperty("isconnected", pc.isConnected());
+                }
+
+            }
+        }
+        return elements.toString();
+
     }
 }
