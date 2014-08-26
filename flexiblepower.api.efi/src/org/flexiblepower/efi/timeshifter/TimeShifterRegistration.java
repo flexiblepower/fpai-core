@@ -10,7 +10,7 @@ import org.flexiblepower.rai.values.Commodity;
 
 /**
  * To register an time shifter appliance driver to an energy service the time shifter registration class is used.
- *
+ * 
  * @author TNO
  */
 
@@ -34,4 +34,9 @@ public class TimeShifterRegistration extends ControlSpaceRegistration {
     public Commodity.Set getSupportedCommodities() {
         return supportedCommodities;
     }
+
+    public boolean supportsCommodity(Commodity<?, ?> commodity) {
+        return supportedCommodities.contains(commodity);
+    }
+
 }
