@@ -29,17 +29,17 @@ public class Actuator implements Serializable {
             runningModes = new HashSet<RunningMode>();
         }
 
-        Builder add(Timer timer) {
+        public Builder add(Timer timer) {
             timers.add(timer);
             return this;
         }
 
-        Builder add(RunningMode runningMode) {
+        public Builder add(RunningMode runningMode) {
             runningModes.add(runningMode);
             return this;
         }
 
-        Actuator build() {
+        public Actuator build() {
             return new Actuator(id, timers, runningModes);
         }
     }
