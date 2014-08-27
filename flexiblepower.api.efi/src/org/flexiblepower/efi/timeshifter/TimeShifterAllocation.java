@@ -12,15 +12,15 @@ import org.flexiblepower.rai.comm.ControlSpaceUpdate;
 /**
  * When an energy app allocates the energy flexibility of a time shifter it sends a time shifter allocation to the
  * appliance driver.
- *
+ * 
  * @author TNO
- *
+ * 
  */
-public class TimeShifterAllocation extends Allocation {
+public final class TimeShifterAllocation extends Allocation {
 
     private static final long serialVersionUID = -1435692490364313263L;
 
-    public class SequentialProfileAllocation {
+    public static final class SequentialProfileAllocation {
 
         /**
          * The unique id of the sequential profile that is allocated.
