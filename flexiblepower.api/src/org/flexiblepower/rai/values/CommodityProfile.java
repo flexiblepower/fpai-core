@@ -33,7 +33,7 @@ public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
 
         private final List<CommodityProfileElement<BQ, FQ>> elements;
         private Measurable<Duration> duration;
-        private Unit<BQ> unit;
+        private Unit<FQ> unit;
 
         public Builder(Commodity<BQ, FQ> commodity) {
             this.commodity = commodity;
@@ -45,17 +45,17 @@ public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
             return this;
         }
 
-        public Builder<BQ, FQ> setUnit(Unit<BQ> unit) {
+        public Builder<BQ, FQ> setUnit(Unit<FQ> unit) {
             this.unit = unit;
             return this;
         }
 
-        public Builder<BQ, FQ> add(Measurable<Duration> duration, Measurable<BQ> amount) {
+        public Builder<BQ, FQ> add(Measurable<Duration> duration, Measurable<FQ> amount) {
             elements.add(new CommodityProfileElement<BQ, FQ>(commodity, duration, amount));
             return this;
         }
 
-        public Builder<BQ, FQ> add(Measurable<BQ> amount) {
+        public Builder<BQ, FQ> add(Measurable<FQ> amount) {
             if (duration == null) {
                 throw new IllegalStateException("duration not set");
             }
@@ -88,13 +88,13 @@ public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
 
         private final Commodity<BQ, FQ> commodity;
         private final Measurable<Duration> duration;
-        private final Measurable<BQ> amount;
+        private final Measurable<FQ> value;
 
-        public CommodityProfileElement(Commodity<BQ, FQ> commodity, Measurable<Duration> duration, Measurable<BQ> amount) {
+        public CommodityProfileElement(Commodity<BQ, FQ> commodity, Measurable<Duration> duration, Measurable<FQ> value) {
             super();
             this.commodity = commodity;
             this.duration = duration;
-            this.amount = amount;
+            this.value = value;
         }
 
         @Override
@@ -106,18 +106,14 @@ public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
         public CommodityProfileElement<BQ, FQ> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
             final double oldDurationDouble = this.duration.doubleValue(Duration.UNIT);
             final double newDurationDouble = duration.doubleValue(Duration.UNIT);
-            final double amountDouble = amount.doubleValue(commodity.getBillableUnit());
+            final double amountDouble = value.doubleValue(commodity.getFlowUnit());
             final double newAmountDouble = amountDouble / oldDurationDouble * newDurationDouble;
-            final Measure<Double, BQ> newAmount = Measure.valueOf(newAmountDouble, commodity.getBillableUnit());
+            final Measure<Double, FQ> newAmount = Measure.valueOf(newAmountDouble, commodity.getFlowUnit());
             return new CommodityProfileElement<BQ, FQ>(commodity, duration, newAmount);
         }
 
-        public Measurable<BQ> getAmount() {
-            return amount;
-        }
-
-        public Measurable<FQ> getAverage() {
-            return commodity.average(amount, duration);
+        public Measurable<FQ> getValue() {
+            return value;
         }
 
         public Commodity<BQ, FQ> getCommodity() {
@@ -148,19 +144,6 @@ public class CommodityProfile<BQ extends Quantity, FQ extends Quantity> extends
     public Commodity<BQ, FQ> getCommodity() {
         // Validate makes sure there is at least one element
         return elements[0].getCommodity();
-    }
-
-    public Measurable<BQ> getTotalAmount() {
-        double amount = 0;
-        final Unit<BQ> billableUnit = getCommodity().getBillableUnit();
-        for (final CommodityProfileElement<BQ, FQ> e : elements) {
-            amount += e.getAmount().doubleValue(billableUnit);
-        }
-        return Measure.valueOf(amount, billableUnit);
-    }
-
-    public Measurable<FQ> getAverage() {
-        return getCommodity().average(getTotalAmount(), getTotalDuration());
     }
 
 }
