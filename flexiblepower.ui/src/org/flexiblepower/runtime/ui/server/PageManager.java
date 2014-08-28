@@ -55,14 +55,14 @@ public class PageManager extends AbstractWidgetManager {
 
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put("alias", "/");
-        properties.put("contextId", "dashboard");
+        properties.put("contextId", "fps");
         context.registerService(Servlet.class, new HttpServlet() {
             private static final long serialVersionUID = 87503498577L;
             private final Logger logger = LoggerFactory.getLogger(getClass());
 
             @Override
             protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-                                                                                    IOException {
+            IOException {
                 if (req.getPathInfo() == null || req.getPathInfo().isEmpty() || "/".equals(req.getPathInfo())) {
                     resp.sendRedirect("/dashboard");
                 } else {
@@ -123,9 +123,9 @@ public class PageManager extends AbstractWidgetManager {
 
     @Override
     @Reference(dynamic = true, multiple = true, optional = true, target = "(" + WidgetRegistry.KEY_TYPE
-                                                                          + "="
-                                                                          + WidgetRegistry.VALUE_TYPE_FULL
-                                                                          + ")")
+    + "="
+    + WidgetRegistry.VALUE_TYPE_FULL
+    + ")")
     public void addWidget(Widget widget, Map<String, Object> properties) {
         super.addWidget(widget, properties);
     }
