@@ -1,5 +1,6 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ public class BufferActuator {
         return allRunningModes;
     }
 
-    public void setAllRunningModes(List<RunningMode> runningModeList) {
+    public void setAllRunningModes(Collection<RunningMode> runningModeList) {
         allRunningModes = new HashMap<Integer, RunningMode>();
         for (RunningMode r : runningModeList) {
             allRunningModes.put(r.getId(), r);
@@ -45,10 +46,10 @@ public class BufferActuator {
 
     public Map<Integer, RunningMode> getReachableRunningModes(Date now) {
         Map<Integer, RunningMode> targets = new HashMap<Integer, RunningMode>();
-        for (Transition i : allRunningModes.get(currentRunningModeId).getPossibleTransitions()) {
+        for (Transition i : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
             if (!i.isBlockedOn(now)) {
-                targets.put(i.getToRunningMode().getId(), i.getToRunningMode());
+                targets.put(i.getToRunningMode(), getAllRunningModes().get(i.getToRunningMode()));
             }
         }
         return targets;
@@ -72,7 +73,7 @@ public class BufferActuator {
     public Map<Integer, Timer> getAllTimers() {
         Map<Integer, Timer> timerList = new HashMap<Integer, Timer>();
         for (RunningMode r : allRunningModes.values()) {
-            for (Transition tran : r.getPossibleTransitions()) {
+            for (Transition tran : r.getTransitions()) {
                 // TODO: check that start timers and blocking timers do not overlap, or that it goes well when they do.
                 for (Timer blockingTimer : tran.getBlockingTimers()) {
                     timerList.put(blockingTimer.getId(), blockingTimer);
