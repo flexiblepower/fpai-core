@@ -9,7 +9,7 @@ import javax.measure.quantity.Money;
 import org.flexiblepower.efi.util.Timer;
 
 public class Transition {
-    private final RunningMode toRunningMode;
+    private final int toRunningMode;
 
     /** Timers to be (re)started when this transition is made */
     private final Set<Timer> startTimers;
@@ -23,16 +23,35 @@ public class Transition {
     /** The time duration it takes for a transition */
     private final Measurable<Duration> transitionTime;
 
-    public Transition(RunningMode toRunningMode,
+    public Transition(int toRunningMode,
                       Set<Timer> startTimers,
                       Set<Timer> blockingTimers,
                       Measurable<Money> transitionCosts,
                       Measurable<Duration> transitionTime) {
-        super();
         this.toRunningMode = toRunningMode;
         this.startTimers = startTimers;
         this.blockingTimers = blockingTimers;
         this.transitionCosts = transitionCosts;
         this.transitionTime = transitionTime;
+    }
+
+    public int getToRunningMode() {
+        return toRunningMode;
+    }
+
+    public Set<Timer> getStartTimers() {
+        return startTimers;
+    }
+
+    public Set<Timer> getBlockingTimers() {
+        return blockingTimers;
+    }
+
+    public Measurable<Money> getTransitionCosts() {
+        return transitionCosts;
+    }
+
+    public Measurable<Duration> getTransitionTime() {
+        return transitionTime;
     }
 }

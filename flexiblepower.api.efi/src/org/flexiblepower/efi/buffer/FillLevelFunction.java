@@ -6,8 +6,7 @@ public abstract class FillLevelFunction<E extends RangeElement> extends Abstract
 
     protected final E[] elements;
 
-    public FillLevelFunction(E[] elements) {
-        super();
+    public FillLevelFunction(E... elements) {
         this.elements = elements;
         validate();
     }

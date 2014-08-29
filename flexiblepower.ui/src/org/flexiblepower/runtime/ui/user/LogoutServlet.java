@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 
-@Component(provide = Servlet.class, properties = { "alias=/logout.html", "contextId=users" })
+@Component(provide = Servlet.class, properties = { "alias=/logout.html,contextId=fps" })
 public class LogoutServlet extends HttpServlet {
 
     private static final long serialVersionUID = 5622570409132973468L;

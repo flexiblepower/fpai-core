@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.measure.Measurable;
-import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
@@ -43,7 +42,7 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
 
         private final List<CommodityForecastElement<BQ, FQ>> elements;
         private UncertainMeasure<Duration> duration;
-        private Unit<BQ> unit;
+        private Unit<FQ> unit;
 
         public Builder(Commodity<BQ, FQ> commodity) {
             this.commodity = commodity;
@@ -55,21 +54,21 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
             return this;
         }
 
-        public Builder<BQ, FQ> setUnit(Unit<BQ> unit) {
+        public Builder<BQ, FQ> setUnit(Unit<FQ> unit) {
             this.unit = unit;
             return this;
         }
 
-        public Builder<BQ, FQ> add(UncertainMeasure<Duration> duration, UncertainMeasure<BQ> amount) {
-            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, amount));
+        public Builder<BQ, FQ> add(UncertainMeasure<Duration> duration, UncertainMeasure<FQ> value) {
+            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, value));
             return this;
         }
 
-        public Builder<BQ, FQ> add(UncertainMeasure<BQ> amount) {
+        public Builder<BQ, FQ> add(UncertainMeasure<FQ> value) {
             if (duration == null) {
                 throw new IllegalStateException("duration not set");
             }
-            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, amount));
+            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, value));
             return this;
         }
 
@@ -81,7 +80,7 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
             }
             elements.add(new CommodityForecastElement<BQ, FQ>(commodity,
                                                               duration,
-                                                              new UncertainMeasure<BQ>(mean, standardDeviation, unit)));
+                                                              new UncertainMeasure<FQ>(mean, standardDeviation, unit)));
             return this;
         }
 
@@ -100,15 +99,15 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
 
         private final Commodity<BQ, FQ> commodity;
         private final UncertainMeasure<Duration> duration;
-        private final UncertainMeasure<BQ> amount;
+        private final UncertainMeasure<FQ> value;
 
         public CommodityForecastElement(Commodity<BQ, FQ> commodity,
                                         UncertainMeasure<Duration> duration,
-                                        UncertainMeasure<BQ> amount) {
+                                        UncertainMeasure<FQ> value) {
             super();
             this.commodity = commodity;
             this.duration = duration;
-            this.amount = amount;
+            this.value = value;
         }
 
         @Override
@@ -126,18 +125,8 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
             return commodity;
         }
 
-        public UncertainMeasure<BQ> getAmount() {
-            return amount;
-        }
-
-        public Measure<Double, BQ> getExpectedAmount() {
-            return amount.getMean();
-        }
-
-        public Measure<Double, FQ> getExpectedAverage() {
-            double expected = commodity.average(getExpectedAmount(), getDuration())
-                                       .doubleValue(commodity.getFlowUnit());
-            return Measure.valueOf(expected, commodity.getFlowUnit());
+        public UncertainMeasure<FQ> getValue() {
+            return value;
         }
 
         public UncertainMeasure<Duration> getUncertainDuration() {
@@ -176,34 +165,21 @@ public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
         }
         Builder<BQ, FQ> builder = CommodityForecast.create(this.getCommodity());
         for (CommodityForecastElement<BQ, FQ> e : elements) {
-            builder.add(e.getUncertainDuration(), e.getAmount());
+            builder.add(e.getUncertainDuration(), e.getValue());
         }
         for (CommodityForecastElement<BQ, FQ> e : that.elements) {
-            builder.add(e.getUncertainDuration(), e.getAmount());
+            builder.add(e.getUncertainDuration(), e.getValue());
         }
         return builder.build();
     }
 
-    public UncertainMeasure<BQ> getAmountAtOffset(Measurable<Duration> offset) {
+    public UncertainMeasure<FQ> getValueAtOffset(Measurable<Duration> offset) {
         long targetOffset = offset.longValue(SI.MILLI(SI.SECOND));
         long currentOffset = 0;
         for (CommodityForecastElement<BQ, FQ> e : elements) {
             long elementLength = e.getDuration().longValue(SI.MILLI(SI.SECOND));
             if (targetOffset >= currentOffset && targetOffset < targetOffset + elementLength) {
-                return e.getAmount();
-            }
-            currentOffset += elementLength;
-        }
-        return null;
-    }
-
-    public Measurable<FQ> getExpectedAverageAtOffset(Measurable<Duration> offset) {
-        long targetOffset = offset.longValue(SI.MILLI(SI.SECOND));
-        long currentOffset = 0;
-        for (CommodityForecastElement<BQ, FQ> e : elements) {
-            long elementLength = e.getDuration().longValue(SI.MILLI(SI.SECOND));
-            if (targetOffset >= currentOffset && targetOffset < targetOffset + elementLength) {
-                return e.getExpectedAverage();
+                return e.getValue();
             }
             currentOffset += elementLength;
         }
