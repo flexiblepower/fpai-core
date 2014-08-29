@@ -117,10 +117,8 @@ public class Buffer {
     }
 
     public double getCurrentFillFraction() {
-        // TODO: Check that the unit is right.
-        if (currentFillLevel.) {
-            return currentFillLevel.getValue() / (getMaximumFillLevel() - getMinimumFillLevel());
-        }
+        // TODO: Check that the unit of the current fill level is right.
+        return currentFillLevel.getValue() / (getMaximumFillLevel() - getMinimumFillLevel());
     }
 
     private double getMinimumFillLevel() {
