@@ -1,5 +1,6 @@
 package org.flexiblepower.efi.buffer;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.measure.Measurable;
@@ -57,4 +58,14 @@ public class Transition {
         return transitionTime;
     }
 
+    public boolean isBlockedOn(Date moment) {
+        boolean isBlocked = false;
+        for (Timer t : blockingTimers)
+        {
+            if (t.getFinishedAt().after(moment)) {
+                isBlocked = true;
+            }
+        }
+        return isBlocked;
+    }
 }
