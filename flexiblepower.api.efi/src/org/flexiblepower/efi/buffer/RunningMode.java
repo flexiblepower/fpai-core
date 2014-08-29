@@ -91,6 +91,7 @@ public class RunningMode extends FillLevelFunction<RunningModeRangeElement> {
     private final Map<Integer, Transition> transitions;
 
     public RunningMode(int id, String name, Set<Transition> transitions, RunningModeRangeElement... elements) {
+        // TODO: Check for empty elements?.
         super(elements);
         this.id = id;
         this.name = name;

@@ -1,5 +1,6 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.flexiblepower.efi.buffer.BufferStateUpdate.ActuatorUpdate;
 import org.flexiblepower.efi.buffer.BufferStateUpdate.TimerUpdate;
 import org.flexiblepower.efi.buffer.BufferSystemDescription;
 import org.flexiblepower.efi.buffer.LeakageFunction;
+import org.flexiblepower.efi.buffer.RunningMode;
 import org.flexiblepower.rai.values.Commodity;
 
 /**
@@ -76,6 +78,10 @@ public class Buffer {
 
     public void processStateUpdate(BufferStateUpdate bsu)
     {
+        // Check compatibility of fill level with type.
+        if (!bsu.getCurrentFillLevel().getUnit().isCompatible(fillLevelUnit)) {
+            throw new InvalidParameterException("The unit of fill level is not compatible with this buffer.");
+        }
         currentFillLevel = bsu.getCurrentFillLevel();
 
         for (ActuatorUpdate actUpdate : bsu.getCurrentRunningMode()) {
@@ -108,6 +114,35 @@ public class Buffer {
             }
         }
         return result;
+    }
+
+    public double getCurrentFillFraction() {
+        // TODO: Check that the unit is right.
+        if (currentFillLevel.) {
+            return currentFillLevel.getValue() / (getMaximumFillLevel() - getMinimumFillLevel());
+        }
+    }
+
+    private double getMinimumFillLevel() {
+        double lowestBound = Double.MAX_VALUE;
+        for (BufferActuator a : actuators.values()) {
+            for (RunningMode mode : a.getAllRunningModes().values())
+            {
+                lowestBound = Math.min(lowestBound, mode.getLowerBound());
+            }
+        }
+        return lowestBound;
+    }
+
+    private double getMaximumFillLevel() {
+        double highestBound = Double.MIN_VALUE;
+        for (BufferActuator a : actuators.values()) {
+            for (RunningMode mode : a.getAllRunningModes().values())
+            {
+                highestBound = Math.min(highestBound, mode.getUpperBound());
+            }
+        }
+        return highestBound;
     }
 
     // TODO: Give fill level tussen 0 en 1 (temperatuur). (koelkast laag/ koelkast hoog)
