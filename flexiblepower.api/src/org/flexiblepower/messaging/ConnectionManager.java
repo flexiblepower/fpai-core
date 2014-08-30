@@ -13,6 +13,8 @@ public interface ConnectionManager {
     }
 
     public interface EndpointPort {
+        ManagedEndpoint getEndpoint();
+
         String getName();
 
         Cardinality getCardinality();
