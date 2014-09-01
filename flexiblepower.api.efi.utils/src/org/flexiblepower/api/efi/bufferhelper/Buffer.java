@@ -93,11 +93,11 @@ public class Buffer {
 
                 // Update the timers of the actuators.
                 for (TimerUpdate t : actUpdate.getTimerUpdates()) {
-                    if (!theActuator.getAllTimers().containsKey(t.timerId))
+                    if (!theActuator.getAllTimers().containsKey(t.getTimerId()))
                     {
                         throw new IllegalArgumentException("The TimerId in the BufferStateUpdate is not known.");
                     }
-                    theActuator.updateTimer(t.timerId, t.finishedAt);
+                    theActuator.updateTimer(t.getTimerId(), t.getFinishedAt());
                 }
             } else {
                 throw new IllegalArgumentException("The ActuatorId in the BufferStateUpdate is not known.");

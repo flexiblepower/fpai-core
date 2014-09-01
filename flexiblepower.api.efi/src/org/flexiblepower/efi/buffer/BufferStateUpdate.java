@@ -41,8 +41,21 @@ public class BufferStateUpdate extends BufferUpdate {
     }
 
     public static class TimerUpdate {
-        public int timerId;
-        public Date finishedAt;
+        private final int timerId;
+        private final Date finishedAt;
+
+        public TimerUpdate(int timerId, Date finishedAt) {
+            this.timerId = timerId;
+            this.finishedAt = finishedAt;
+        }
+
+        public int getTimerId() {
+            return timerId;
+        }
+
+        public Date getFinishedAt() {
+            return finishedAt;
+        }
     }
 
     private final Measure<Double, ?> currentFillLevel;
