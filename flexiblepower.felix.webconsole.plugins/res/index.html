@@ -4,9 +4,20 @@
 <script type="text/javascript">
 cy = cytoscape({
   container: document.getElementById('cy'),
-
-  minZoom: 1,
-  maxZoom: 1,
+  selectionType: 'additive', // (isTouchDevice ? 'additive' : 'single'),
+  layout: { name: 'grid', fit: true },
+  zoom: 1,
+  minZoom: 0,
+  maxZoom: 100,
+  zoomingEnabled: true,
+  userZoomingEnabled: true,
+  pan: { x: 0, y: 0 },
+  panningEnabled: true,
+  userPanningEnabled: true,
+  autoungrabifyNodes: false,
+  hideEdgesOnViewport: false,
+  hideLabelsOnViewport: false,
+  textureOnViewport: false,
   
   style: [
           {
@@ -18,8 +29,6 @@ cy = cytoscape({
         ],
  
   ready: function(){
-	console.log("hi");
-   
   }
 } );
 
@@ -27,7 +36,7 @@ $.get("/system/console/fpai-connection-manager/getGraph.json", function(json){
 	console.log(json);
 	cy.load(json);
 }).fail(function(jqXHR, textStatus, errorThrown){
-	console.log("error: " + textStatus + " " + errorThrown);
+	console.log("error: " + textStatus + ": " + errorThrown);
 });
 </script>
 
