@@ -6,8 +6,7 @@ public abstract class FillLevelFunction<E extends RangeElement> extends Abstract
 
     protected final E[] elements;
 
-    public FillLevelFunction(E[] elements) {
-        super();
+    public FillLevelFunction(E... elements) {
         this.elements = elements;
         validate();
     }
@@ -44,12 +43,15 @@ public abstract class FillLevelFunction<E extends RangeElement> extends Abstract
     }
 
     public double getFillingSpeedForFillLevel(double fillLevel) {
-        for (RangeElement re : elements) {
-            if (re.getLowerBound() <= fillLevel && re.getUpperBound() >= fillLevel) {
-                return re.getFillingSpeed();
-            }
-        }
-        throw new IllegalArgumentException("FillLevel is not in range of the leakageFunction");
+        return getRangeElementForFillLevel(fillLevel).getFillingSpeed();
     }
 
+    public RangeElement getRangeElementForFillLevel(double fillLevel) {
+        for (RangeElement re : elements) {
+            if (re.getLowerBound() <= fillLevel && re.getUpperBound() >= fillLevel) {
+                return re;
+            }
+        }
+        throw new IllegalArgumentException("FillLevel is not in range of the fill level function");
+    }
 }

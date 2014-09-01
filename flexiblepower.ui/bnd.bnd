@@ -8,4 +8,4 @@ Private-Package: org.flexiblepower.runtime.ui.server,\
 	org.flexiblepower.runtime.ui.server.widgets,\
 	org.flexiblepower.runtime.ui.user
 	
-Service-Component: org.flexiblepower.runtime.ui.server.*
+Service-Component: *
