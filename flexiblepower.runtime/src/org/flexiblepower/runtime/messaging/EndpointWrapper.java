@@ -146,15 +146,15 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
 
     @Override
     public void close() {
+        for (EndpointPortImpl port : ports.values()) {
+            port.close();
+        }
+
         try {
             running.set(false);
             thread.interrupt();
             thread.join();
         } catch (InterruptedException e) {
-        }
-
-        for (EndpointPortImpl port : ports.values()) {
-            port.close();
         }
     }
 }
