@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 /**
@@ -22,14 +23,14 @@ public final class TimeUtil {
     /**
      * Represents a duration with no length.
      */
-    public static final Measurable<Duration> ZERO = Measure.zero();
+    public static final Measurable<Duration> ZERO = Measure.zero(SI.SECOND);
 
     private TimeUtil() {
     }
 
     /**
      * Adds a duration to a date to get another {@link Date} object.
-     * 
+     *
      * @param startDate
      *            The starting time
      * @param duration
@@ -46,7 +47,7 @@ public final class TimeUtil {
 
     /**
      * Subtracts a duration from a date to get another {@link Date} object.
-     * 
+     *
      * @param startDate
      *            The starting time
      * @param duration
@@ -63,7 +64,7 @@ public final class TimeUtil {
 
     /**
      * Calculates the difference between 2 dates.
-     * 
+     *
      * @param startDate
      *            The starting date
      * @param endDate
