@@ -80,8 +80,30 @@ public class ConnectionManagerPlugin extends HttpServlet {
             sendJson(resp, graphJson);
 
         } else {
+            resp.getWriter().print("GET Not yet implemented: " + path);
+            resp.getWriter().close();
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        if (path.startsWith("/fpai-connection-manager")) {
+            path = path.substring(24);
+            if (!path.isEmpty() && path.charAt(0) == '/') {
+                path = path.substring(1);
+            }
+        }
+        log.debug("path: " + path);
+        if (path.equals("autoconnect.json")) {
+            log.debug("autoconnect called");
+            connectionManager.autoConnect();
+            resp.getWriter().print("{\"autoconnected\": true}");
+            resp.getWriter().close();
+        } else {
             PrintWriter w = resp.getWriter();
-            resp.getWriter().write("Not yet implemented: " + path);
+            resp.getWriter().print("POST Not yet implemented: " + path);
+            resp.getWriter().close();
         }
     }
 
@@ -100,6 +122,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
     private String createGraphJson(Collection<? extends ManagedEndpoint> values) {
         JsonArray elements = new JsonArray();
 
+        // add nodes
         for (ManagedEndpoint me : values) {
             JsonObject endpoint = new JsonObject();
             endpoint.addProperty("group", "nodes");
@@ -128,19 +151,29 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 data.addProperty("parent", me.getPid());
                 endpointport.add("data", data);
                 elements.add(endpointport);
+            }
+        }
 
+        // add edges
+        for (ManagedEndpoint me : values) {
+            for (EndpointPort ep : me.getPorts().values()) {
                 for (PotentialConnection pc : ep.getPotentialConnections().values()) {
                     JsonObject connection = new JsonObject();
                     connection.addProperty("group", "edges");
                     EndpointPort either = pc.getEitherEnd();
-                    EndpointPort other = pc.getOtherEnd(either);
-                    // String eitherend = either.getManagedEndpointName() + ":" + either.getName();
-                    // String otherend = other.getManagedEndpointName() + ":" + other.getName();
-                    // connection.addProperty("eitherend", eitherend);
-                    // connection.addProperty("otherend", otherend);
-                    connection.addProperty("isconnected", pc.isConnected());
-                }
+                    if (either == ep) {
+                        EndpointPort other = pc.getOtherEnd(either);
+                        String eitherend = either.getEndpoint().getPid() + ":" + either.getName();
+                        String otherend = other.getEndpoint().getPid() + ":" + other.getName();
 
+                        JsonObject connectiondata = new JsonObject();
+                        connectiondata.addProperty("source", eitherend);
+                        connectiondata.addProperty("target", otherend);
+                        connectiondata.addProperty("isconnected", true); // pc.isConnected());
+                        connection.add("data", connectiondata);
+                        elements.add(connection);
+                    }
+                }
             }
         }
         return elements.toString();
