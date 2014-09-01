@@ -146,11 +146,9 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
 
     @Override
     public void close() {
-        synchronized (thread) {
-            running.set(false);
-            notifyAll();
-        }
         try {
+            running.set(false);
+            thread.interrupt();
             thread.join();
         } catch (InterruptedException e) {
         }
