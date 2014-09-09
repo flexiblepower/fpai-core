@@ -161,4 +161,69 @@ public class CommodityMap<V> implements Map<Commodity<?, ?>, V> {
         }
         return result;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((electricityValue == null) ? 0 : electricityValue.hashCode());
+        result = prime * result + ((gasValue == null) ? 0 : gasValue.hashCode());
+        result = prime * result + ((heatValue == null) ? 0 : heatValue.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        CommodityMap<?> other = (CommodityMap<?>) obj;
+        if (electricityValue == null) {
+            if (other.electricityValue != null) {
+                return false;
+            }
+        } else if (!electricityValue.equals(other.electricityValue)) {
+            return false;
+        }
+        if (gasValue == null) {
+            if (other.gasValue != null) {
+                return false;
+            }
+        } else if (!gasValue.equals(other.gasValue)) {
+            return false;
+        }
+        if (heatValue == null) {
+            if (other.heatValue != null) {
+                return false;
+            }
+        } else if (!heatValue.equals(other.heatValue)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName()).append(" [");
+        if (gasValue != null) {
+            sb.append("gas=").append(gasValue).append(", ");
+        }
+        if (electricityValue != null) {
+            sb.append("electricity=").append(electricityValue).append(", ");
+        }
+        if (heatValue != null) {
+            sb.append("heat=").append(heatValue).append(", ");
+        }
+        sb.setLength(sb.length() - 2);
+        sb.append("]");
+        return sb.toString();
+    }
 }
