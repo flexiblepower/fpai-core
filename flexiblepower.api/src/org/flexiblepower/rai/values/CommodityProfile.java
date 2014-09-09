@@ -13,18 +13,18 @@ import javax.measure.quantity.VolumetricFlowRate;
  * quantity (FQ) it can be validated whether all commodity profile elements are of the same commodity. CommodityProfile
  * does not have any additional attributes.
  */
-public final class CommodityProfile extends Profile<CommodityMeasurable> {
+public final class CommodityProfile extends Profile<CommodityMeasurables> {
     /**
      * The Builder object that will be used to easily create {@link CommodityProfile}s.
      */
     public static final class Builder {
-        private final List<Element<CommodityMeasurable>> elements;
+        private final List<Element<CommodityMeasurables>> elements;
         private Measurable<Duration> duration;
         private Measurable<Power> electricityValue, heatValue;
         private Measurable<VolumetricFlowRate> gasValue;
 
         Builder() {
-            elements = new ArrayList<Element<CommodityMeasurable>>();
+            elements = new ArrayList<Element<CommodityMeasurables>>();
         }
 
         /**
@@ -92,8 +92,8 @@ public final class CommodityProfile extends Profile<CommodityMeasurable> {
             if (duration == null) {
                 throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new CommodityProfile.Element<CommodityMeasurable>(duration,
-                                                                           new CommodityMeasurable(electricityValue,
+            elements.add(new CommodityProfile.Element<CommodityMeasurables>(duration,
+                                                                           new CommodityMeasurables(electricityValue,
                                                                                                    gasValue,
                                                                                                    heatValue)));
             return this;
@@ -104,24 +104,24 @@ public final class CommodityProfile extends Profile<CommodityMeasurable> {
          *            The element that needs to be added.
          * @return This builder
          */
-        public Builder add(Element<CommodityMeasurable> element) {
+        public Builder add(Element<CommodityMeasurables> element) {
             elements.add(element);
             return this;
         }
 
         /**
          * @param commodityMeasurable
-         *            The {@link CommodityMeasurable} that will be used (together with the set duration) to add a new
+         *            The {@link CommodityMeasurables} that will be used (together with the set duration) to add a new
          *            element.
          * @return This builder
          * @throws IllegalArgumentException
          *             when the duration has not been set using {@link #duration(Measurable)}
          */
-        public Builder add(CommodityMeasurable commodityMeasurable) {
+        public Builder add(CommodityMeasurables commodityMeasurable) {
             if (duration == null) {
                 throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new Element<CommodityMeasurable>(duration, commodityMeasurable));
+            elements.add(new Element<CommodityMeasurables>(duration, commodityMeasurable));
             return this;
         }
 
@@ -145,7 +145,7 @@ public final class CommodityProfile extends Profile<CommodityMeasurable> {
      * @param elements
      *            The elements that are stored in this profile
      */
-    public CommodityProfile(Element<CommodityMeasurable>... elements) {
+    public CommodityProfile(Element<CommodityMeasurables>... elements) {
         super(elements);
 
         // Check if profile is empty
@@ -169,7 +169,7 @@ public final class CommodityProfile extends Profile<CommodityMeasurable> {
     }
 
     @Override
-    public Profile<CommodityMeasurable> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+    public Profile<CommodityMeasurables> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
         // TODO Needs to be implemented
         throw new UnsupportedOperationException();
     }

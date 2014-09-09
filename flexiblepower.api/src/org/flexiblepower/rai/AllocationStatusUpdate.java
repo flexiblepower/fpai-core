@@ -123,6 +123,7 @@ public final class AllocationStatusUpdate extends ResourceMessage {
 
     @Override
     protected void toString(StringBuilder sb) {
+        super.toString(sb);
         sb.append("allocationId=").append(allocationId).append(", ");
         sb.append("status=").append(status).append(", ");
         sb.append("additionalInfo=").append(additionalInfo).append(", ");

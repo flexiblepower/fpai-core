@@ -117,4 +117,11 @@ public abstract class Allocation extends ResourceMessage {
         }
         return true;
     }
+
+    @Override
+    protected void toString(StringBuilder sb) {
+        super.toString(sb);
+        sb.append("controlSpaceUpdatedId=").append(controlSpaceUpdateId).append(", ");
+        sb.append("isEmergencyAllocation=").append(isEmergencyAllocation).append(", ");
+    }
 }

@@ -69,4 +69,10 @@ public abstract class ControlSpaceRegistration extends ResourceMessage {
         }
         return true;
     }
+
+    @Override
+    protected void toString(StringBuilder sb) {
+        super.toString(sb);
+        sb.append("allocationDelay=").append(allocationDelay).append(", ");
+    }
 }

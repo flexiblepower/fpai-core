@@ -14,8 +14,6 @@ import javax.measure.unit.Unit;
  * different possible charge speeds in the {@link BufferControlSpace}. This is a list of several values or ranges of
  * values.
  *
- * @author TNO
- *
  * @param <Q>
  *            The quantity of the values that are stored here.
  */

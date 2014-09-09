@@ -111,7 +111,7 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
 
         /**
          * @param commodityMeasurable
-         *            The {@link CommodityMeasurable} that will be used (together with the set duration) to add a new
+         *            The {@link CommodityMeasurables} that will be used (together with the set duration) to add a new
          *            element.
          * @return This builder
          * @throws IllegalArgumentException

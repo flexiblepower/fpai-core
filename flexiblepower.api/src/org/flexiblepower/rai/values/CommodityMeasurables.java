@@ -8,11 +8,11 @@ import javax.measure.quantity.VolumetricFlowRate;
 /**
  * The CommodityMeasurable is used to store a {@link Measurable} for each {@link Commodity}.
  */
-public final class CommodityMeasurable extends CommodityMap<Measurable<?>> {
+public final class CommodityMeasurables extends CommodityMap<Measurable<?>> {
     /**
      * <p>
-     * This helper class makes it easy to create an instance of the {@link CommodityMeasurable}. To create an instance
-     * of this class, use {@link CommodityMeasurable#create()}.
+     * This helper class makes it easy to create an instance of the {@link CommodityMeasurables}. To create an instance
+     * of this class, use {@link CommodityMeasurables#create()}.
      * </p>
      *
      * <p>
@@ -45,13 +45,13 @@ public final class CommodityMeasurable extends CommodityMap<Measurable<?>> {
             return this;
         }
 
-        public CommodityMeasurable build() {
-            return new CommodityMeasurable(electricityValue, gasValue, heatValue);
+        public CommodityMeasurables build() {
+            return new CommodityMeasurables(electricityValue, gasValue, heatValue);
         }
     }
 
     /**
-     * @return A new {@link Builder} object that can be used to create the {@link CommodityMeasurable} more easily.
+     * @return A new {@link Builder} object that can be used to create the {@link CommodityMeasurables} more easily.
      */
     public static Builder create() {
         return new Builder();
@@ -60,31 +60,31 @@ public final class CommodityMeasurable extends CommodityMap<Measurable<?>> {
     /**
      * @param electricityValue
      *            The measurable value of the electricity
-     * @return A {@link CommodityMeasurable} which only contains a value for {@link Commodity#ELECTRICITY}
+     * @return A {@link CommodityMeasurables} which only contains a value for {@link Commodity#ELECTRICITY}
      */
-    public static CommodityMeasurable electricity(Measurable<Power> electricityValue) {
-        return new CommodityMeasurable(electricityValue, null, null);
+    public static CommodityMeasurables electricity(Measurable<Power> electricityValue) {
+        return new CommodityMeasurables(electricityValue, null, null);
     }
 
     /**
      * @param gasValue
      *            The measurable value of the gas
-     * @return A {@link CommodityMeasurable} which only contains a value for {@link Commodity#GAS}
+     * @return A {@link CommodityMeasurables} which only contains a value for {@link Commodity#GAS}
      */
-    public static CommodityMeasurable gas(Measurable<VolumetricFlowRate> gasValue) {
-        return new CommodityMeasurable(null, gasValue, null);
+    public static CommodityMeasurables gas(Measurable<VolumetricFlowRate> gasValue) {
+        return new CommodityMeasurables(null, gasValue, null);
     }
 
     /**
      * @param heatValue
      *            The measurable value of the heat
-     * @return A {@link CommodityMeasurable} which only contains a value for {@link Commodity#HEAT}
+     * @return A {@link CommodityMeasurables} which only contains a value for {@link Commodity#HEAT}
      */
-    public static CommodityMeasurable heat(Measurable<Power> heatValue) {
-        return new CommodityMeasurable(null, null, heatValue);
+    public static CommodityMeasurables heat(Measurable<Power> heatValue) {
+        return new CommodityMeasurables(null, null, heatValue);
     }
 
-    protected CommodityMeasurable(Measurable<Power> electricityValue,
+    protected CommodityMeasurables(Measurable<Power> electricityValue,
                                   Measurable<VolumetricFlowRate> gasValue,
                                   Measurable<Power> heatValue) {
         super(electricityValue, gasValue, heatValue);
