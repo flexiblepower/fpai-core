@@ -3,7 +3,6 @@ package org.flexiblepower.efi.uncontrolled;
 import java.util.Date;
 
 import org.flexiblepower.rai.Allocation;
-import org.flexiblepower.rai.ControlSpaceUpdate;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.ConstraintProfileMap;
 
@@ -25,7 +24,7 @@ public final class UncontrolledAllocation extends Allocation {
     private final ConstraintProfileMap curtailmentProfiles;
 
     public UncontrolledAllocation(String resourceId,
-                                  ControlSpaceUpdate controlSpaceUpdate,
+                                  UncontrolledUpdate controlSpaceUpdate,
                                   Date timestamp,
                                   boolean isEmergencyAllocation,
                                   Date startTime,
