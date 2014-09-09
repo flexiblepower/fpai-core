@@ -5,9 +5,9 @@ import org.flexiblepower.efi.timeshifter.TimeShifterRegistration;
 import org.flexiblepower.efi.timeshifter.TimeShifterUpdate;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Port;
-import org.flexiblepower.rai.comm.AllocationRevoke;
-import org.flexiblepower.rai.comm.AllocationStatusUpdate;
-import org.flexiblepower.rai.comm.ControlSpaceRevoke;
+import org.flexiblepower.rai.AllocationRevoke;
+import org.flexiblepower.rai.AllocationStatusUpdate;
+import org.flexiblepower.rai.ControlSpaceRevoke;
 import org.flexiblepower.ral.ResourceManager;
 
 @Port(name = "controller",

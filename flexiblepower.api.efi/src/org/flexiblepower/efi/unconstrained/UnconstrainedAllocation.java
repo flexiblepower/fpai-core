@@ -3,8 +3,8 @@ package org.flexiblepower.efi.unconstrained;
 import java.util.Date;
 import java.util.Set;
 
-import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.Allocation;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
 public class UnconstrainedAllocation extends Allocation {
 

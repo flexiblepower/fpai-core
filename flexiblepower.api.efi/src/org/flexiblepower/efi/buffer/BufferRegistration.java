@@ -7,7 +7,7 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 import javax.measure.unit.Unit;
 
-import org.flexiblepower.rai.comm.ControlSpaceRegistration;
+import org.flexiblepower.rai.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 
 public class BufferRegistration extends ControlSpaceRegistration {

@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
 public abstract class BufferUpdate extends ControlSpaceUpdate {
 

@@ -6,7 +6,7 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Quantity;
 
-import org.flexiblepower.rai.comm.ControlSpaceRegistration;
+import org.flexiblepower.rai.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.ConstraintList;
 

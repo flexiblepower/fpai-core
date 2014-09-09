@@ -2,8 +2,8 @@ package org.flexiblepower.efi.uncontrolled;
 
 import java.util.Date;
 
-import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.Allocation;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 import org.flexiblepower.rai.values.Commodity;
 
 /**

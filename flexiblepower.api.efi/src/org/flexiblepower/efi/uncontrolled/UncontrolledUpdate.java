@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
 /**
  * A marker class for uncontrolled updates. Partent of {@link UncontrolledMeasurement} and {@link UncontrolledForecast}

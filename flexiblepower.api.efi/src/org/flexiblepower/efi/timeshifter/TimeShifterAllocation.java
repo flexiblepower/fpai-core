@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.Allocation;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
 /**
  * When an energy app allocates the energy flexibility of a time shifter it sends a time shifter allocation to the

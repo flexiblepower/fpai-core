@@ -9,7 +9,7 @@ import java.util.List;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
 /**
  * If a new program is scheduled by time shifter appliance the resource manager sends a time shifter control space
