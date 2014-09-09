@@ -31,9 +31,9 @@ public class BufferRegistration extends ControlSpaceRegistration {
     public static class ActuatorCapabilities {
         private final int actuatorId;
         private final String actuatorLabel;
-        private final Commodity.Set supportedCommodities;
+        private final Set supportedCommodities;
 
-        public ActuatorCapabilities(int actuatorId, String actuatorLabel, Commodity.Set commodities) {
+        public ActuatorCapabilities(int actuatorId, String actuatorLabel, Set commodities) {
             super();
             this.actuatorId = actuatorId;
             this.actuatorLabel = actuatorLabel;
@@ -48,7 +48,7 @@ public class BufferRegistration extends ControlSpaceRegistration {
             return actuatorLabel;
         }
 
-        public Commodity.Set getCommodities() {
+        public Set getCommodities() {
             return supportedCommodities;
         }
 

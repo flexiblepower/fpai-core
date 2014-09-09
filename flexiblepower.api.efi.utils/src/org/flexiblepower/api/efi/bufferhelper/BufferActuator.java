@@ -15,12 +15,13 @@ import org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement;
 import org.flexiblepower.efi.buffer.Transition;
 import org.flexiblepower.efi.util.Timer;
 import org.flexiblepower.rai.values.Commodity;
+import org.flexiblepower.rai.values.CommoditySet;
 
 public class BufferActuator {
 
     private final int actuatorId;
     private final String actuatorLabel;
-    private final Commodity.Set commodities;
+    private final CommoditySet commodities;
 
     private Map<Integer, RunningMode> allRunningModes;
     private int currentRunningModeId;
@@ -55,7 +56,7 @@ public class BufferActuator {
         return targets;
     }
 
-    private BufferActuator(int actuatorId, String actuatorLabel, Commodity.Set commodities) {
+    private BufferActuator(int actuatorId, String actuatorLabel, CommoditySet commodities) {
         this.actuatorId = actuatorId;
         this.actuatorLabel = actuatorLabel;
         this.commodities = commodities;
@@ -86,7 +87,7 @@ public class BufferActuator {
         return timerList;
     }
 
-    public Commodity.Set getCommodities() {
+    public CommoditySet getCommodities() {
         return commodities;
     }
 

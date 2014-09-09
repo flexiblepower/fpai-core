@@ -8,6 +8,7 @@ import javax.measure.quantity.VolumetricFlowRate;
 
 import org.flexiblepower.efi.uncontrolled.CurtailmentProfile.CurtailmentProfileElement;
 import org.flexiblepower.rai.values.Commodity;
+import org.flexiblepower.rai.values.CommodityMap;
 import org.flexiblepower.rai.values.Profile;
 import org.flexiblepower.rai.values.ProfileElement;
 
@@ -23,7 +24,7 @@ import org.flexiblepower.rai.values.ProfileElement;
  */
 
 public class CurtailmentProfile<FQ extends Quantity> extends Profile<CurtailmentProfileElement<FQ>> {
-    public static final class Map extends Commodity.Map<CurtailmentProfile<?>> {
+    public static final class Map extends Map<CurtailmentProfile<?>> {
         public Map(CurtailmentProfile<Power> electricityValue, CurtailmentProfile<VolumetricFlowRate> gasValue) {
             super(electricityValue, gasValue);
         }

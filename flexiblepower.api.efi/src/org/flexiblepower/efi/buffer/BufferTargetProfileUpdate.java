@@ -5,21 +5,21 @@ import java.util.Date;
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.rai.values.TargetProfile;
+import org.flexiblepower.rai.values.ConstraintProfile;
 
 public class BufferTargetProfileUpdate extends BufferUpdate {
 
     private static final long serialVersionUID = 8241650405419768302L;
 
     private final Date startTime;
-    private final TargetProfile targetProfile;
+    private final ConstraintProfile targetProfile;
 
     public BufferTargetProfileUpdate(String resourceId,
                                      Date timestamp,
                                      Date validFrom,
                                      Measurable<Duration> allocationDelay,
                                      Date startTime,
-                                     TargetProfile targetProfile) {
+                                     ConstraintProfile targetProfile) {
         super(resourceId, timestamp, validFrom, allocationDelay);
         this.startTime = startTime;
         this.targetProfile = targetProfile;
@@ -33,7 +33,7 @@ public class BufferTargetProfileUpdate extends BufferUpdate {
         return startTime;
     }
 
-    public TargetProfile getTargetProfile() {
+    public ConstraintProfile getTargetProfile() {
         return targetProfile;
     }
 

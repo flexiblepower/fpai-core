@@ -9,6 +9,7 @@ import javax.measure.quantity.Quantity;
 import org.flexiblepower.rai.ControlSpaceRegistration;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.ConstraintList;
+import org.flexiblepower.rai.values.CommoditySet;
 
 /**
  * The UncontrolledRegistration object registers the uncontrolled resource manager to the energy app, the message is
@@ -42,7 +43,7 @@ public final class UncontrolledRegistration extends ControlSpaceRegistration {
         return supportedCommodityCurtailments.get(commodity);
     }
 
-    public Commodity.Set getSupportedCommodities() {
+    public CommoditySet getSupportedCommodities() {
         return supportedCommodityCurtailments.keySet();
     }
 

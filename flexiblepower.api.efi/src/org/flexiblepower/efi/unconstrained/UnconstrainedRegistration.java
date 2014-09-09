@@ -6,21 +6,21 @@ import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
 import org.flexiblepower.rai.ControlSpaceRegistration;
-import org.flexiblepower.rai.values.Commodity;
+import org.flexiblepower.rai.values.CommoditySet;
 
 public class UnconstrainedRegistration extends ControlSpaceRegistration {
 
-    private final Commodity.Set supportedCommodities;
+    private final CommoditySet supportedCommodities;
 
     public UnconstrainedRegistration(String resourceId,
                                      Date timestamp,
                                      Measurable<Duration> allocationDelay,
-                                     Commodity.Set supportedCommodities) {
+                                     CommoditySet supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
         this.supportedCommodities = supportedCommodities;
     }
 
-    public Commodity.Set getSupportedCommodities() {
+    public CommoditySet getSupportedCommodities() {
         return supportedCommodities;
     }
 
