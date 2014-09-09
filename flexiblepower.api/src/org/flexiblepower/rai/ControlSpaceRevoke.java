@@ -23,14 +23,4 @@ public class ControlSpaceRevoke extends ResourceMessage {
     public ControlSpaceRevoke(String resourceId, Date timestamp) {
         super(resourceId, timestamp);
     }
-
-    @Override
-    public String toString() {
-        return "ControlSpaceRevoke [resourceMessageId=" + getResourceMessageId()
-               + ", resourceId="
-               + getResourceId()
-               + ", timestamp="
-               + getTimestamp()
-               + "]";
-    }
 }

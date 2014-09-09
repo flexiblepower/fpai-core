@@ -23,14 +23,4 @@ public final class AllocationRevoke extends ResourceMessage {
     public AllocationRevoke(String resourceId, Date timestamp) {
         super(resourceId, timestamp);
     }
-
-    @Override
-    public String toString() {
-        return "AllocationRevoke [resourceMessageId=" + getResourceMessageId()
-               + ", resourceId="
-               + getResourceId()
-               + ", timestamp="
-               + getTimestamp()
-               + "]";
-    }
 }

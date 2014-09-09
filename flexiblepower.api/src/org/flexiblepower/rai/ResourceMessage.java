@@ -105,5 +105,19 @@ public abstract class ResourceMessage implements Serializable {
     }
 
     @Override
-    public abstract String toString();
+    public final String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName()).append('[');
+        toString(sb);
+        if (sb.charAt(sb.length() - 1) == ' ' && sb.charAt(sb.length() - 2) == ',') {
+            sb.setLength(sb.length() - 2);
+        }
+        return sb.append(']').toString();
+    }
+
+    protected void toString(StringBuilder sb) {
+        sb.append("resourceMessageId=").append(resourceMessageId).append(", ");
+        sb.append("resourceId=").append(resourceId).append(", ");
+        sb.append("timestamp=").append(timestamp).append(", ");
+    }
 }

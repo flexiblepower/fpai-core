@@ -20,7 +20,7 @@ public final class AllocationStatusUpdate extends ResourceMessage {
     /**
      * @param timestamp
      *            The moment when this constructor is called (should be {@link TimeService#getTime()}
-     * 
+     *
      * @param allocation
      *            the {@link Allocation} to which this update is the response
      * @param status
@@ -122,12 +122,9 @@ public final class AllocationStatusUpdate extends ResourceMessage {
     }
 
     @Override
-    public String toString() {
-        return "AllocationStatusUpdate [allocationId=" + allocationId
-               + ", status="
-               + status
-               + ", additionalInfo="
-               + additionalInfo
-               + "]";
+    protected void toString(StringBuilder sb) {
+        sb.append("allocationId=").append(allocationId).append(", ");
+        sb.append("status=").append(status).append(", ");
+        sb.append("additionalInfo=").append(additionalInfo).append(", ");
     }
 }
