@@ -14,8 +14,6 @@ import org.flexiblepower.time.TimeService;
  * update towards the energy app.
  */
 public class TimeShifterUpdate extends ControlSpaceUpdate {
-    private static final long serialVersionUID = -7622975550358211856L;
-
     private final Date endBefore;
     private final List<SequentialProfile> timeshifterProfiles;
 

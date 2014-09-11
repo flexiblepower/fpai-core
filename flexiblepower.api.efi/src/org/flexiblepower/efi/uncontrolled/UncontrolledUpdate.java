@@ -9,8 +9,6 @@ import org.flexiblepower.time.TimeService;
  * A marker class for uncontrolled updates. Parent of {@link UncontrolledMeasurement} and {@link UncontrolledForecast}.
  */
 public abstract class UncontrolledUpdate extends ControlSpaceUpdate {
-    private static final long serialVersionUID = 9154440319073601863L;
-
     /**
      * Constructs a new {@link UncontrolledUpdate} message with the specific validFrom
      *

@@ -20,9 +20,6 @@ import org.flexiblepower.time.TimeService;
  * the curtail options can be expressed in a ConstraintList for every commodity.
  */
 public final class UncontrolledRegistration extends ControlSpaceRegistration {
-
-    private static final long serialVersionUID = 5264443341456636488L;
-
     /**
      * A map of every applicable Commodity for the appliance as key and a ConstriantList representing the list of
      * possible curtail steps as an value. The ConstraintList in the map is optional and will only be provided if the
@@ -48,7 +45,8 @@ public final class UncontrolledRegistration extends ControlSpaceRegistration {
                                     Measurable<Duration> allocationDelay,
                                     ConstraintListMap supportedCommodityCurtailments) {
         super(resourceId, timestamp, allocationDelay);
-        this.supportedCommodityCurtailments = supportedCommodityCurtailments;
+        this.supportedCommodityCurtailments = supportedCommodityCurtailments == null ? ConstraintListMap.EMPTY
+                                                                                    : supportedCommodityCurtailments;
     }
 
     /**
@@ -76,11 +74,7 @@ public final class UncontrolledRegistration extends ControlSpaceRegistration {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                 + ((supportedCommodityCurtailments == null) ? 0 : supportedCommodityCurtailments.hashCode());
-        return result;
+        return 31 * super.hashCode() + supportedCommodityCurtailments.hashCode();
     }
 
     @Override
@@ -90,14 +84,7 @@ public final class UncontrolledRegistration extends ControlSpaceRegistration {
         }
 
         UncontrolledRegistration other = (UncontrolledRegistration) obj;
-        if (supportedCommodityCurtailments == null) {
-            if (other.supportedCommodityCurtailments != null) {
-                return false;
-            }
-        } else if (!supportedCommodityCurtailments.equals(other.supportedCommodityCurtailments)) {
-            return false;
-        }
-        return true;
+        return other.supportedCommodityCurtailments.equals(supportedCommodityCurtailments);
     }
 
     @Override

@@ -15,8 +15,6 @@ import org.flexiblepower.time.TimeService;
  * appliance driver.
  */
 public final class TimeShifterAllocation extends Allocation {
-    private static final long serialVersionUID = -1435692490364313263L;
-
     private final List<SequentialProfileAllocation> sequentialProfileAllocation;
 
     /**

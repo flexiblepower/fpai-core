@@ -10,8 +10,6 @@ import org.flexiblepower.rai.values.ConstraintProfileMap;
  * An allocation will can be sent to appliances which support curtailing production/consumption.
  */
 public final class UncontrolledAllocation extends Allocation {
-    private static final long serialVersionUID = -6113496967677840815L;
-
     /**
      * The time at which the commodity profile should start.
      */
@@ -30,6 +28,11 @@ public final class UncontrolledAllocation extends Allocation {
                                   Date startTime,
                                   ConstraintProfileMap curtailmentProfiles) {
         super(timestamp, controlSpaceUpdate, isEmergencyAllocation);
+        if (startTime == null) {
+            throw new NullPointerException("startTime");
+        } else if (curtailmentProfiles == null) {
+            throw new NullPointerException("curtailmentProfiles");
+        }
         this.startTime = startTime;
         this.curtailmentProfiles = curtailmentProfiles;
     }
@@ -52,10 +55,7 @@ public final class UncontrolledAllocation extends Allocation {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-        return result;
+        return 31 * (31 * super.hashCode() + startTime.hashCode()) + curtailmentProfiles.hashCode();
     }
 
     @Override
@@ -65,14 +65,7 @@ public final class UncontrolledAllocation extends Allocation {
         }
 
         UncontrolledAllocation other = (UncontrolledAllocation) obj;
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        return true;
+        return other.startTime.equals(startTime) && other.curtailmentProfiles.equals(curtailmentProfiles);
     }
 
     @Override

@@ -13,8 +13,6 @@ import org.flexiblepower.rai.values.CommodityMeasurables;
  * must send a new measurement update message to the energy app whenever the value of the measurement is updated.
  */
 public final class UncontrolledMeasurement extends UncontrolledUpdate {
-    private static final long serialVersionUID = -2685007932788218012L;
-
     private final CommodityMeasurables measurable;
 
     public UncontrolledMeasurement(String resourceId,
@@ -22,6 +20,9 @@ public final class UncontrolledMeasurement extends UncontrolledUpdate {
                                    Date validFrom,
                                    CommodityMeasurables measurable) {
         super(resourceId, timestamp, validFrom);
+        if (measurable == null) {
+            throw new NullPointerException("measurable");
+        }
         this.measurable = measurable;
     }
 
@@ -35,10 +36,7 @@ public final class UncontrolledMeasurement extends UncontrolledUpdate {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((measurable == null) ? 0 : measurable.hashCode());
-        return result;
+        return 31 * super.hashCode() + measurable.hashCode();
     }
 
     @Override
@@ -48,14 +46,7 @@ public final class UncontrolledMeasurement extends UncontrolledUpdate {
         }
 
         UncontrolledMeasurement other = (UncontrolledMeasurement) obj;
-        if (measurable == null) {
-            if (other.measurable != null) {
-                return false;
-            }
-        } else if (!measurable.equals(other.measurable)) {
-            return false;
-        }
-        return true;
+        return other.measurable.equals(measurable);
     }
 
     @Override

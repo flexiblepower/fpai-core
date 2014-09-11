@@ -14,8 +14,6 @@ import org.flexiblepower.time.TimeService;
  * The {@link TimeShifterRegistration} contains information about the commodities supported by the appliance.
  */
 public class TimeShifterRegistration extends ControlSpaceRegistration {
-    private static final long serialVersionUID = 2453887214286161182L;
-
     private final CommoditySet supportedCommodities;
 
     /**
@@ -35,7 +33,7 @@ public class TimeShifterRegistration extends ControlSpaceRegistration {
                                    CommoditySet supportedCommodities) {
         super(resourceId, timestamp, allocationDelay);
         if (supportedCommodities == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("supportedCommodities");
         }
 
         this.supportedCommodities = supportedCommodities;
