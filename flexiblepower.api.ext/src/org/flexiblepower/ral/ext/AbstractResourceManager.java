@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.MessageHandler;
-import org.flexiblepower.rai.ResourceController;
 import org.flexiblepower.rai.ResourceMessage;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * state information.
  */
 public abstract class AbstractResourceManager<RS extends ResourceState, RCP extends ResourceControlParameters> implements
-ResourceManager {
+                                                                                                               ResourceManager {
     /**
      * The logger that should be used by any subclass.
      */
