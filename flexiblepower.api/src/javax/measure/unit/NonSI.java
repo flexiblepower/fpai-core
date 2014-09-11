@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -59,6 +59,7 @@ import javax.measure.quantity.MagneticFlux;
 import javax.measure.quantity.MagneticFluxDensity;
 import javax.measure.quantity.Mass;
 import javax.measure.quantity.Money;
+import javax.measure.quantity.MoneyFlow;
 import javax.measure.quantity.Power;
 import javax.measure.quantity.Pressure;
 import javax.measure.quantity.RadiationDoseAbsorbed;
@@ -75,7 +76,7 @@ import javax.measure.quantity.VolumetricFlowRate;
  * This class contains units that are not part of the International System of Units, that is, they are outside the SI,
  * but are important and widely used.
  * </p>
- * 
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.2, August 26, 2007
  */
@@ -122,7 +123,7 @@ public final class NonSI extends SystemOfUnits {
 
     /**
      * Returns the unique instance of this class.
-     * 
+     *
      * @return the NonSI instance.
      */
     public static NonSI getInstance() {
@@ -218,7 +219,7 @@ public final class NonSI extends SystemOfUnits {
 
     /**
      * A unit of length equal to <code>0.013837 {@link #INCH}</code> exactly (standard name <code>pt</code>).
-     * 
+     *
      * @see #PIXEL
      */
     public static final Unit<Length> POINT = nonSI(INCH.times(13837).divide(1000000));
@@ -226,7 +227,7 @@ public final class NonSI extends SystemOfUnits {
     /**
      * A unit of length equal to <code>1/72 {@link #INCH}</code> (standard name <code>pixel</code>). It is the American
      * point rounded to an even 1/72 inch.
-     * 
+     *
      * @see #POINT
      */
     public static final Unit<Length> PIXEL = nonSI(INCH.divide(72));
@@ -360,7 +361,7 @@ public final class NonSI extends SystemOfUnits {
 
     /**
      * A unit of temperature equal to degree Rankine minus <code>459.67 °R</code> (standard name <code>°F</code>).
-     * 
+     *
      * @see #RANKINE
      */
     public static final Unit<Temperature> FAHRENHEIT = nonSI(RANKINE.plus(459.67));
@@ -370,7 +371,7 @@ public final class NonSI extends SystemOfUnits {
     // /////////
 
     /**
-     * A unit of angle equal to a full circle or <code>2<i>&pi;</i> 
+     * A unit of angle equal to a full circle or <code>2<i>&pi;</i>
      * {@link SI#RADIAN}</code> (standard name <code>rev</code>).
      */
     public static final Unit<Angle> REVOLUTION = nonSI(RADIAN.times(2.0 * Math.PI));
@@ -705,9 +706,15 @@ public final class NonSI extends SystemOfUnits {
     // Money //
     // /////////
 
-    public static final Unit<Money> EUR = nonSI(new BaseUnit<Money>("EUR"));
+    public static final Unit<Money> EUR = nonSI(new BaseUnit<Money>("€"));
 
-    public static final Unit<Money> EUROCENT = nonSI(CENTI(EUR));
+    public static final Unit<Money> EUROCENT = nonSI(new AlternateUnit<Money>("¢", CENTI(EUR)));
+
+    @SuppressWarnings("unchecked")
+    public static final Unit<MoneyFlow> EUR_PER_HOUR = (Unit<MoneyFlow>) nonSI(EUR.divide(HOUR));
+
+    @SuppressWarnings("unchecked")
+    public static final Unit<MoneyFlow> EURCENT_PER_SEC = (Unit<MoneyFlow>) nonSI(EUROCENT.divide(SECOND));
 
     // //////////
     // Others //
@@ -724,7 +731,7 @@ public final class NonSI extends SystemOfUnits {
 
     /**
      * Returns a read only view over the units defined in this class.
-     * 
+     *
      * @return the collection of NonSI units.
      */
     @Override
@@ -734,7 +741,7 @@ public final class NonSI extends SystemOfUnits {
 
     /**
      * Adds a new unit to the collection.
-     * 
+     *
      * @param unit
      *            the unit being added.
      * @return <code>unit</code>.
