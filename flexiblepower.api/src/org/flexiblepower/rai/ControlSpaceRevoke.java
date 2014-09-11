@@ -10,8 +10,6 @@ import org.flexiblepower.time.TimeService;
  * removed by the energy app, only the registration message is valid afterwards.
  */
 public class ControlSpaceRevoke extends ResourceMessage {
-    private static final long serialVersionUID = -7711292648789098417L;
-
     /**
      * Creates a new {@link ControlSpaceRevoke} message for a specific resource.
      *

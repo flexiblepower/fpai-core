@@ -10,8 +10,6 @@ import org.flexiblepower.time.TimeService;
  * driver should sent a new {@link ControlSpaceUpdate} message to get an {@link Allocation} to work with.
  */
 public final class AllocationRevoke extends ResourceMessage {
-    private static final long serialVersionUID = -5032317862969564414L;
-
     /**
      * Creates a new {@link AllocationRevoke} message for a specific resource.
      *

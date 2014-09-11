@@ -10,8 +10,6 @@ import org.flexiblepower.time.TimeService;
  * classes that are derived from this {@link ControlSpaceUpdate} message.
  */
 public abstract class ControlSpaceUpdate extends ResourceMessage {
-    private static final long serialVersionUID = -242149664875591012L;
-
     private final Date validFrom;
 
     /**
@@ -26,6 +24,10 @@ public abstract class ControlSpaceUpdate extends ResourceMessage {
      */
     public ControlSpaceUpdate(String resourceId, Date timestamp, Date validFrom) {
         super(resourceId, timestamp);
+        if (validFrom == null) {
+            throw new NullPointerException("validFrom");
+        }
+
         this.validFrom = validFrom;
     }
 
@@ -38,10 +40,7 @@ public abstract class ControlSpaceUpdate extends ResourceMessage {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((validFrom == null) ? 0 : validFrom.hashCode());
-        return result;
+        return 31 * super.hashCode() + validFrom.hashCode();
     }
 
     @Override
@@ -51,14 +50,7 @@ public abstract class ControlSpaceUpdate extends ResourceMessage {
         }
 
         ControlSpaceUpdate other = (ControlSpaceUpdate) obj;
-        if (validFrom == null) {
-            if (other.validFrom != null) {
-                return false;
-            }
-        } else if (!validFrom.equals(other.validFrom)) {
-            return false;
-        }
-        return true;
+        return other.validFrom.equals(validFrom);
     }
 
     @Override

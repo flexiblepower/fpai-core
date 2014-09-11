@@ -3,6 +3,7 @@ package org.flexiblepower.rai;
 import java.util.Date;
 
 import javax.measure.Measurable;
+import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 
 import org.flexiblepower.ral.ControllerManager;
@@ -16,8 +17,6 @@ import org.flexiblepower.time.TimeService;
  * added in the implementation classes.
  */
 public abstract class ControlSpaceRegistration extends ResourceMessage {
-    private static final long serialVersionUID = 8841022716486854027L;
-
     private final Measurable<Duration> allocationDelay;
 
     /**
@@ -33,7 +32,7 @@ public abstract class ControlSpaceRegistration extends ResourceMessage {
      */
     public ControlSpaceRegistration(String resourceId, Date timestamp, Measurable<Duration> allocationDelay) {
         super(resourceId, timestamp);
-        this.allocationDelay = allocationDelay;
+        this.allocationDelay = allocationDelay == null ? Measure.zero(Duration.UNIT) : allocationDelay;
     }
 
     /**

@@ -11,8 +11,6 @@ import org.flexiblepower.time.TimeService;
  * {@link AllocationStatusUpdate} message; there are no specific derivations in use.
  */
 public final class AllocationStatusUpdate extends ResourceMessage {
-    private static final long serialVersionUID = 9119759551623204007L;
-
     private final UUID allocationId;
     private final AllocationStatus status;
     private final String additionalInfo;
@@ -55,9 +53,15 @@ public final class AllocationStatusUpdate extends ResourceMessage {
                                   AllocationStatus status,
                                   String additionalInfo) {
         super(resourceId, timestamp);
+        if (allocationId == null) {
+            throw new NullPointerException("allocationId");
+        } else if (status == null) {
+            throw new NullPointerException("status");
+        }
+
         this.allocationId = allocationId;
         this.status = status;
-        this.additionalInfo = additionalInfo;
+        this.additionalInfo = additionalInfo == null ? "No additional information" : additionalInfo;
     }
 
     /**
@@ -88,9 +92,9 @@ public final class AllocationStatusUpdate extends ResourceMessage {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((additionalInfo == null) ? 0 : additionalInfo.hashCode());
-        result = prime * result + ((allocationId == null) ? 0 : allocationId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + allocationId.hashCode();
+        result = prime * result + status.hashCode();
+        result = prime * result + additionalInfo.hashCode();
         return result;
     }
 
@@ -101,21 +105,11 @@ public final class AllocationStatusUpdate extends ResourceMessage {
         }
 
         AllocationStatusUpdate other = (AllocationStatusUpdate) obj;
-        if (additionalInfo == null) {
-            if (other.additionalInfo != null) {
-                return false;
-            }
-        } else if (!additionalInfo.equals(other.additionalInfo)) {
+        if (!additionalInfo.equals(other.additionalInfo)) {
             return false;
-        }
-        if (allocationId == null) {
-            if (other.allocationId != null) {
-                return false;
-            }
         } else if (!allocationId.equals(other.allocationId)) {
             return false;
-        }
-        if (status != other.status) {
+        } else if (status != other.status) {
             return false;
         }
         return true;

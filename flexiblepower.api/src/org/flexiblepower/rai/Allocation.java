@@ -12,8 +12,6 @@ import org.flexiblepower.time.TimeService;
  * Each ControlSpace category has its own {@link Allocation} message that is derived from this one.
  */
 public abstract class Allocation extends ResourceMessage {
-    private static final long serialVersionUID = 706199511692067676L;
-
     private final UUID controlSpaceUpdateId;
     private final boolean isEmergencyAllocation;
 
@@ -69,6 +67,10 @@ public abstract class Allocation extends ResourceMessage {
      */
     public Allocation(String resourceId, Date timestamp, UUID controlSpaceUpdateId, boolean isEmergencyAllocation) {
         super(resourceId, timestamp);
+        if (controlSpaceUpdateId == null) {
+            throw new NullPointerException("controlSpaceUpdateId");
+        }
+
         this.controlSpaceUpdateId = controlSpaceUpdateId;
         this.isEmergencyAllocation = isEmergencyAllocation;
     }
@@ -93,7 +95,7 @@ public abstract class Allocation extends ResourceMessage {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((controlSpaceUpdateId == null) ? 0 : controlSpaceUpdateId.hashCode());
+        result = prime * result + controlSpaceUpdateId.hashCode();
         result = prime * result + (isEmergencyAllocation ? 1231 : 1237);
         return result;
     }
@@ -105,17 +107,7 @@ public abstract class Allocation extends ResourceMessage {
         }
 
         Allocation other = (Allocation) obj;
-        if (controlSpaceUpdateId == null) {
-            if (other.controlSpaceUpdateId != null) {
-                return false;
-            }
-        } else if (!controlSpaceUpdateId.equals(other.controlSpaceUpdateId)) {
-            return false;
-        }
-        if (isEmergencyAllocation != other.isEmergencyAllocation) {
-            return false;
-        }
-        return true;
+        return controlSpaceUpdateId.equals(other.controlSpaceUpdateId) && isEmergencyAllocation == other.isEmergencyAllocation;
     }
 
     @Override
