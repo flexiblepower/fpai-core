@@ -49,6 +49,8 @@ public final class ConstraintListMap extends CommodityMap<ConstraintList<?>> {
         }
     }
 
+    public static final ConstraintListMap EMPTY = create().build();
+
     /**
      * @return A new {@link Builder} object that can be used to create the {@link ConstraintListMap} more easily.
      */
