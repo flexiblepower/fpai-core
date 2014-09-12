@@ -1,48 +1,77 @@
 package org.flexiblepower.efi.util;
 
-import java.util.Date;
-
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
 
-import org.flexiblepower.time.TimeService;
-
 public class Timer {
-
     private final int id;
     private final String label;
-    /** Total duration of this timer. It includes the transition period. */
     private final Measurable<Duration> duration;
-    private Date finishedAt;
 
-    public Timer(int id, String label, Measurable<Duration> duration, Date finishedAt) {
+    public Timer(int id, String label, Measurable<Duration> duration) {
+        if (label == null) {
+            throw new NullPointerException("label");
+        } else if (duration == null) {
+            throw new NullPointerException("duration");
+        }
+
         this.id = id;
         this.label = label;
         this.duration = duration;
-        this.finishedAt = finishedAt;
     }
 
+    /**
+     * @return An unique identifiers for this timer within the context of a device.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @return A human readable label for this timer. E.g. “on” timer.
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * @return The (minimal) period of time that has to be respected before this timer is finished.
+     */
     public Measurable<Duration> getDuration() {
         return duration;
     }
 
-    public Date getFinishedAt() {
-        return finishedAt;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + duration.hashCode();
+        result = prime * result + id;
+        result = prime * result + label.hashCode();
+        return result;
     }
 
-    public boolean timerIsFinished(TimeService timeService) {
-        return finishedAt.getTime() <= timeService.getCurrentTimeMillis();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Timer other = (Timer) obj;
+        if (!duration.equals(other.duration)) {
+            return false;
+        } else if (id != other.id) {
+            return false;
+        } else if (!label.equals(other.label)) {
+            return false;
+        }
+        return true;
     }
 
-    public void updateFinishedAt(Date finishedAt2) {
-        finishedAt = finishedAt2;
+    @Override
+    public String toString() {
+        return "Timer [id=" + id + ", label=" + label + ", duration=" + duration + "]";
     }
 }
