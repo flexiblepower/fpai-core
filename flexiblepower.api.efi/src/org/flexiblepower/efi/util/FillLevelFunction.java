@@ -2,6 +2,7 @@ package org.flexiblepower.efi.util;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.flexiblepower.efi.util.FillLevelFunction.RangeElement;
@@ -146,6 +147,11 @@ public class FillLevelFunction<T> extends AbstractList<RangeElement<T>> {
             }
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "RangeElement (" + lowerBound + "-" + upperBound + ") -> " + value;
+        }
     }
 
     protected final RangeElement<T>[] elements;
@@ -215,5 +221,27 @@ public class FillLevelFunction<T> extends AbstractList<RangeElement<T>> {
             }
         }
         throw new IllegalArgumentException("FillLevel is not in range of the fill level function");
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + Arrays.hashCode(elements);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        @SuppressWarnings("rawtypes")
+        FillLevelFunction other = (FillLevelFunction) obj;
+        return Arrays.equals(elements, other.elements);
+    }
+
+    @Override
+    public String toString() {
+        return "FillLevelFunction [elements=" + Arrays.toString(elements) + "]";
     }
 }

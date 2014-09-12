@@ -1,120 +1,106 @@
 package org.flexiblepower.efi.buffer;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import org.flexiblepower.rai.values.Commodity;
+import org.flexiblepower.rai.values.CommoditySet;
 
-import org.flexiblepower.efi.util.Timer;
+/**
+ * This class describes the capabilities of an actuator within an appliance of the buffer category.
+ */
+public class Actuator {
+    private final int actuatorId;
+    private final String actuatorLabel;
+    private final CommoditySet supportedCommodities;
 
-public class Actuator implements Serializable {
-
-    private static final long serialVersionUID = -7888970166563077855L;
-
-    public static Builder create(int id) {
-        return new Builder(id);
-    }
-
-    public static class Builder {
-        private final int id;
-        private final Set<Timer> timers;
-        private final Set<RunningMode> runningModes;
-
-        Builder(int id) {
-            this.id = id;
-            timers = new HashSet<Timer>();
-            runningModes = new HashSet<RunningMode>();
+    /**
+     * @param actuatorId
+     *            A unique identifier for this actuator. The identifier only has to be unique within the context of the
+     *            appliance, therefore a simple integer suffices.
+     * @param actuatorLabel
+     *            A human readable label for this actuator. E.g. Stirling engine.
+     * @param commodities
+     *            A set of zero or more commodities that are being consumed and/or produced by this actuator.
+     */
+    public Actuator(int actuatorId, String actuatorLabel, CommoditySet commodities) {
+        if (actuatorLabel == null) {
+            throw new NullPointerException("actuatorLabel");
+        } else if (commodities == null) {
+            throw new NullPointerException("commodities");
+        } else if (commodities.isEmpty()) {
+            throw new IllegalArgumentException("commodities is empty");
         }
 
-        public Builder add(Timer timer) {
-            timers.add(timer);
-            return this;
-        }
-
-        public Builder add(RunningMode runningMode) {
-            runningModes.add(runningMode);
-            return this;
-        }
-
-        public Actuator build() {
-            return new Actuator(id, timers, runningModes);
-        }
-    }
-
-    private final int id;
-
-    // Timers associated with this actuator
-    private final Map<Integer, Timer> timers;
-
-    // List of all the possible running modes of this actuator.
-    private final Map<Integer, RunningMode> runningModes;
-
-    public Actuator(int id,
-                    Collection<Timer> timers,
-                    Collection<RunningMode> runningModes) {
-        this.id = id;
-
-        TreeMap<Integer, Timer> tempTimers = new TreeMap<Integer, Timer>();
-        for (Timer timer : timers) {
-            tempTimers.put(timer.getId(), timer);
-        }
-        this.timers = Collections.unmodifiableMap(tempTimers);
-
-        TreeMap<Integer, RunningMode> tempRunningModes = new TreeMap<Integer, RunningMode>();
-        for (RunningMode runningMode : runningModes) {
-            tempRunningModes.put(runningMode.getId(), runningMode);
-        }
-        this.runningModes = Collections.unmodifiableMap(tempRunningModes);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Collection<Timer> getTimerList() {
-        return timers.values();
-    }
-
-    public Collection<RunningMode> getRunningModes() {
-        return runningModes.values();
-    }
-
-    public RunningMode getRunningMode(int id) {
-        return runningModes.get(id);
+        this.actuatorId = actuatorId;
+        this.actuatorLabel = actuatorLabel;
+        supportedCommodities = commodities;
     }
 
     /**
-     * Determines the minimum fill level for which this actuator can operate.
-     *
-     * @return The minimum fill level for which this actuator can operate
+     * @return A unique identifier for this actuator. The identifier only has to be unique within the context of the
+     *         appliance, therefore a simple integer suffices.
      */
-    public double minFillLevel() {
-        double min = Double.MAX_VALUE;
-        for (RunningMode rm : runningModes.values()) {
-            double rmLowerBound = rm.getLowerBound();
-            if (min > rmLowerBound) {
-                min = rmLowerBound;
-            }
-        }
-        return min;
+    public int getActuatorId() {
+        return actuatorId;
     }
 
     /**
-     * Determines the maximum fill level for which this actuator can operate.
-     *
-     * @return The maximum fill level for which this actuator can operate
+     * @return A human readable label for this actuator. E.g. Stirling engine.
      */
-    public double maxFillLevel() {
-        double max = Double.MIN_VALUE;
-        for (RunningMode rm : runningModes.values()) {
-            double rmUpperBound = rm.getUpperBound();
-            if (max < rmUpperBound) {
-                max = rmUpperBound;
-            }
+    public String getActuatorLabel() {
+        return actuatorLabel;
+    }
+
+    /**
+     * @return A set of zero or more commodities that are being consumed and/or produced by this actuator.
+     */
+    public CommoditySet getCommodities() {
+        return supportedCommodities;
+    }
+
+    /**
+     * @param commodity
+     *            The commodity to check
+     * @return <code>true</code> if the given commodity is in the commodities set (see {@link #getCommodities()}.
+     */
+    public boolean supportsCommodity(Commodity<?, ?> commodity) {
+        return supportedCommodities.contains(commodity);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + actuatorId;
+        result = prime * result + actuatorLabel.hashCode();
+        result = prime * result + supportedCommodities.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            return false;
         }
-        return max;
+
+        Actuator other = (Actuator) obj;
+        if (actuatorId != other.actuatorId) {
+            return false;
+        } else if (!actuatorLabel.equals(other.actuatorLabel)) {
+            return false;
+        } else if (!supportedCommodities.equals(other.supportedCommodities)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Actuator [actuatorId=" + actuatorId
+               + ", actuatorLabel="
+               + actuatorLabel
+               + ", supportedCommodities="
+               + supportedCommodities
+               + "]";
     }
 }

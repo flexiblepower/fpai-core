@@ -5,13 +5,13 @@ import javax.measure.quantity.Quantity;
 import javax.measure.quantity.VolumetricFlowRate;
 
 /**
- * The {@link CommodityUncertainMeasure} is used to store a {@link UncertainMeasure} for each {@link Commodity}.
+ * The {@link CommodityUncertainMeasurables} is used to store a {@link UncertainMeasure} for each {@link Commodity}.
  */
-public final class CommodityUncertainMeasure extends CommodityMap<UncertainMeasure<?>> {
+public final class CommodityUncertainMeasurables extends CommodityMap<UncertainMeasure<?>> {
     /**
      * <p>
-     * This helper class makes it easy to create an instance of the {@link CommodityUncertainMeasure}. To create an
-     * instance of this class, use {@link CommodityUncertainMeasure#create()}.
+     * This helper class makes it easy to create an instance of the {@link CommodityUncertainMeasurables}. To create an
+     * instance of this class, use {@link CommodityUncertainMeasurables#create()}.
      * </p>
      *
      * <p>
@@ -44,13 +44,13 @@ public final class CommodityUncertainMeasure extends CommodityMap<UncertainMeasu
             return this;
         }
 
-        public CommodityUncertainMeasure build() {
-            return new CommodityUncertainMeasure(electricityValue, gasValue, heatValue);
+        public CommodityUncertainMeasurables build() {
+            return new CommodityUncertainMeasurables(electricityValue, gasValue, heatValue);
         }
     }
 
     /**
-     * @return A new {@link Builder} object that can be used to create the {@link CommodityUncertainMeasure} more
+     * @return A new {@link Builder} object that can be used to create the {@link CommodityUncertainMeasurables} more
      *         easily.
      */
     public static Builder create() {
@@ -60,31 +60,31 @@ public final class CommodityUncertainMeasure extends CommodityMap<UncertainMeasu
     /**
      * @param electricityValue
      *            The measurable value of the electricity
-     * @return A {@link CommodityUncertainMeasure} which only contains a value for {@link Commodity#ELECTRICITY}
+     * @return A {@link CommodityUncertainMeasurables} which only contains a value for {@link Commodity#ELECTRICITY}
      */
-    public static CommodityUncertainMeasure electricity(UncertainMeasure<Power> electricityValue) {
-        return new CommodityUncertainMeasure(electricityValue, null, null);
+    public static CommodityUncertainMeasurables electricity(UncertainMeasure<Power> electricityValue) {
+        return new CommodityUncertainMeasurables(electricityValue, null, null);
     }
 
     /**
      * @param gasValue
      *            The measurable value of the gas
-     * @return A {@link CommodityUncertainMeasure} which only contains a value for {@link Commodity#GAS}
+     * @return A {@link CommodityUncertainMeasurables} which only contains a value for {@link Commodity#GAS}
      */
-    public static CommodityUncertainMeasure gas(UncertainMeasure<VolumetricFlowRate> gasValue) {
-        return new CommodityUncertainMeasure(null, gasValue, null);
+    public static CommodityUncertainMeasurables gas(UncertainMeasure<VolumetricFlowRate> gasValue) {
+        return new CommodityUncertainMeasurables(null, gasValue, null);
     }
 
     /**
      * @param heatValue
      *            The measurable value of the heat
-     * @return A {@link CommodityUncertainMeasure} which only contains a value for {@link Commodity#HEAT}
+     * @return A {@link CommodityUncertainMeasurables} which only contains a value for {@link Commodity#HEAT}
      */
-    public static CommodityUncertainMeasure heat(UncertainMeasure<Power> heatValue) {
-        return new CommodityUncertainMeasure(null, null, heatValue);
+    public static CommodityUncertainMeasurables heat(UncertainMeasure<Power> heatValue) {
+        return new CommodityUncertainMeasurables(null, null, heatValue);
     }
 
-    CommodityUncertainMeasure(UncertainMeasure<Power> electricityValue,
+    CommodityUncertainMeasurables(UncertainMeasure<Power> electricityValue,
                               UncertainMeasure<VolumetricFlowRate> gasValue,
                               UncertainMeasure<Power> heatValue) {
         super(electricityValue, gasValue, heatValue);

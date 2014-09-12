@@ -13,18 +13,18 @@ import javax.measure.quantity.VolumetricFlowRate;
  * quantity (FQ) it can be validated whether all commodity profile elements are of the same commodity. CommodityProfile
  * does not have any additional attributes.
  */
-public final class CommodityForecast extends Profile<CommodityUncertainMeasure> {
+public final class CommodityForecast extends Profile<CommodityUncertainMeasurables> {
     /**
      * The Builder object that will be used to easily create {@link CommodityForecast}s.
      */
     public static final class Builder {
-        private final List<Element<CommodityUncertainMeasure>> elements;
+        private final List<Element<CommodityUncertainMeasurables>> elements;
         private Measurable<Duration> duration;
         private UncertainMeasure<Power> electricityValue, heatValue;
         private UncertainMeasure<VolumetricFlowRate> gasValue;
 
         Builder() {
-            elements = new ArrayList<Element<CommodityUncertainMeasure>>();
+            elements = new ArrayList<Element<CommodityUncertainMeasurables>>();
         }
 
         /**
@@ -92,8 +92,8 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
             if (duration == null) {
                 throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new CommodityForecast.Element<CommodityUncertainMeasure>(duration,
-                                                                                  new CommodityUncertainMeasure(electricityValue,
+            elements.add(new CommodityForecast.Element<CommodityUncertainMeasurables>(duration,
+                                                                                  new CommodityUncertainMeasurables(electricityValue,
                                                                                                                 gasValue,
                                                                                                                 heatValue)));
             return this;
@@ -104,7 +104,7 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
          *            The element that needs to be added.
          * @return This builder
          */
-        public Builder add(Element<CommodityUncertainMeasure> element) {
+        public Builder add(Element<CommodityUncertainMeasurables> element) {
             elements.add(element);
             return this;
         }
@@ -117,11 +117,11 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
          * @throws IllegalArgumentException
          *             when the duration has not been set using {@link #duration(Measurable)}
          */
-        public Builder add(CommodityUncertainMeasure commodityMeasurable) {
+        public Builder add(CommodityUncertainMeasurables commodityMeasurable) {
             if (duration == null) {
                 throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new Element<CommodityUncertainMeasure>(duration, commodityMeasurable));
+            elements.add(new Element<CommodityUncertainMeasurables>(duration, commodityMeasurable));
             return this;
         }
 
@@ -145,7 +145,7 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
      * @param elements
      *            The elements that are stored in this profile
      */
-    public CommodityForecast(Element<CommodityUncertainMeasure>... elements) {
+    public CommodityForecast(Element<CommodityUncertainMeasurables>... elements) {
         super(elements);
 
         // Check if profile is empty
@@ -169,7 +169,7 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasure> 
     }
 
     @Override
-    public Profile<CommodityUncertainMeasure> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+    public Profile<CommodityUncertainMeasurables> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
         // TODO Needs to be implemented
         throw new UnsupportedOperationException();
     }
