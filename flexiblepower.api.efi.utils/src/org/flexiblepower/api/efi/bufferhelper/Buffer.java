@@ -1,26 +1,27 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
-import java.security.InvalidParameterException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.measure.Measurable;
-import javax.measure.Measure;
 import javax.measure.quantity.Duration;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
 
 import org.flexiblepower.efi.buffer.Actuator;
+import org.flexiblepower.efi.buffer.ActuatorBehaviour;
+import org.flexiblepower.efi.buffer.ActuatorUpdate;
 import org.flexiblepower.efi.buffer.BufferRegistration;
-import org.flexiblepower.efi.buffer.BufferRegistration.ActuatorCapabilities;
 import org.flexiblepower.efi.buffer.BufferStateUpdate;
-import org.flexiblepower.efi.buffer.BufferStateUpdate.ActuatorUpdate;
-import org.flexiblepower.efi.buffer.BufferStateUpdate.TimerUpdate;
 import org.flexiblepower.efi.buffer.BufferSystemDescription;
-import org.flexiblepower.efi.buffer.LeakageFunction;
-import org.flexiblepower.efi.buffer.RunningMode;
+import org.flexiblepower.efi.buffer.LeakageRate;
+import org.flexiblepower.efi.buffer.RunningModeBehaviour;
+import org.flexiblepower.efi.util.FillLevelFunction;
+import org.flexiblepower.efi.util.RunningMode;
+import org.flexiblepower.efi.util.TimerUpdate;
 import org.flexiblepower.rai.values.Commodity;
 
 /**
@@ -29,36 +30,36 @@ import org.flexiblepower.rai.values.Commodity;
  * @author wijbengajp
  *
  */
-public class Buffer {
+public class Buffer<Q extends Quantity> {
 
     private final String resourceId;
     private final String fillLevelLabel;
-    private final Unit<?> fillLevelUnit;
+    private final Unit<Q> fillLevelUnit;
     private final Measurable<Duration> allocationDelay;
     private final Map<Integer, BufferActuator> actuators;
-    private LeakageFunction leakageFunction;
-    private Measure<Double, ?> currentFillLevel;
+    private FillLevelFunction<LeakageRate> leakageFunction;
+    private Measurable<Q> currentFillLevel;
 
     /** A Buffer may only be constructed from a complete BufferRegistration message. */
-    public Buffer(BufferRegistration br) {
+    public Buffer(BufferRegistration<Q> br) {
         this(br.getResourceId(),
              br.getFillLevelLabel(),
              br.getFillLevelUnit(),
              br.getAllocationDelay(),
-             br.getActuatorCapabilities());
+             br.getActuators());
     }
 
     private Buffer(String resourceId,
                    String getxLabel,
-                   Unit<?> getxUnit,
+                   Unit<Q> getxUnit,
                    Measurable<Duration> allocationDelay,
-                   Set<ActuatorCapabilities> actuatorCapabilities) {
+                   Collection<Actuator> actuatorCapabilities) {
         this.resourceId = resourceId;
         fillLevelLabel = getxLabel;
         fillLevelUnit = getxUnit;
         this.allocationDelay = allocationDelay;
         actuators = new HashMap<Integer, BufferActuator>();
-        for (ActuatorCapabilities ac : actuatorCapabilities) {
+        for (Actuator ac : actuatorCapabilities) {
             actuators.put(ac.getActuatorId(), new BufferActuator(ac));
         }
     }
@@ -66,7 +67,7 @@ public class Buffer {
     public void processSystemDescription(BufferSystemDescription bsd) {
         setLeakageFunction(bsd.getBufferLeakage());
 
-        for (Actuator actuatorDescription : bsd.getActuators()) {
+        for (ActuatorBehaviour actuatorDescription : bsd.getActuators()) {
             if (actuators.containsKey(actuatorDescription.getId())) {
                 actuators.get(actuatorDescription.getId()).setAllRunningModes(actuatorDescription.getRunningModes());
                 // TODO: timerList is not used! Remove timerList eventually.
@@ -76,12 +77,8 @@ public class Buffer {
         }
     }
 
-    public void processStateUpdate(BufferStateUpdate bsu)
+    public void processStateUpdate(BufferStateUpdate<Q> bsu)
     {
-        // Check compatibility of fill level with type.
-        if (!bsu.getCurrentFillLevel().getUnit().isCompatible(fillLevelUnit)) {
-            throw new InvalidParameterException("The unit of fill level is not compatible with this buffer.");
-        }
         currentFillLevel = bsu.getCurrentFillLevel();
 
         for (ActuatorUpdate actUpdate : bsu.getCurrentRunningMode()) {
@@ -118,15 +115,15 @@ public class Buffer {
 
     public double getCurrentFillFraction() {
         // TODO: Check that the unit of the current fill level is right.
-        return currentFillLevel.getValue() / (getMaximumFillLevel() - getMinimumFillLevel());
+        return currentFillLevel.doubleValue(fillLevelUnit) / (getMaximumFillLevel() - getMinimumFillLevel());
     }
 
     private double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
         for (BufferActuator a : actuators.values()) {
-            for (RunningMode mode : a.getAllRunningModes().values())
+            for (RunningMode<FillLevelFunction<RunningModeBehaviour>> mode : a.getAllRunningModes().values())
             {
-                lowestBound = Math.min(lowestBound, mode.getLowerBound());
+                lowestBound = Math.min(lowestBound, mode.getValue().getLowerBound());
             }
         }
         return lowestBound;
@@ -135,9 +132,9 @@ public class Buffer {
     private double getMaximumFillLevel() {
         double highestBound = Double.MIN_VALUE;
         for (BufferActuator a : actuators.values()) {
-            for (RunningMode mode : a.getAllRunningModes().values())
+            for (RunningMode<FillLevelFunction<RunningModeBehaviour>> mode : a.getAllRunningModes().values())
             {
-                highestBound = Math.min(highestBound, mode.getUpperBound());
+                highestBound = Math.min(highestBound, mode.getValue().getUpperBound());
             }
         }
         return highestBound;
@@ -145,7 +142,7 @@ public class Buffer {
 
     // TODO: Give fill level tussen 0 en 1 (temperatuur). (koelkast laag/ koelkast hoog)
 
-    private void setLeakageFunction(LeakageFunction bufferLeakage) {
+    private void setLeakageFunction(FillLevelFunction<LeakageRate> bufferLeakage) {
         leakageFunction = bufferLeakage;
     }
 

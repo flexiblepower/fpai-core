@@ -9,22 +9,23 @@ import java.util.Map;
 
 import javax.measure.Measurable;
 
-import org.flexiblepower.efi.buffer.BufferRegistration.ActuatorCapabilities;
-import org.flexiblepower.efi.buffer.RunningMode;
-import org.flexiblepower.efi.buffer.RunningMode.RunningModeRangeElement;
-import org.flexiblepower.efi.buffer.Transition;
-import org.flexiblepower.efi.util.Timer;
+import org.flexiblepower.efi.buffer.Actuator;
+import org.flexiblepower.efi.buffer.RunningModeBehaviour;
+import org.flexiblepower.efi.util.FillLevelFunction;
+import org.flexiblepower.efi.util.FillLevelFunction.RangeElement;
+import org.flexiblepower.efi.util.RunningMode;
+import org.flexiblepower.efi.util.Transition;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.CommoditySet;
 
 public class BufferActuator {
-
     private final int actuatorId;
     private final String actuatorLabel;
     private final CommoditySet commodities;
 
-    private Map<Integer, RunningMode> allRunningModes;
     private int currentRunningModeId;
+    private Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+    private final Map<Integer, Timer> timers = new HashMap<Integer, Timer>();
 
     public int getCurrentRunningModeId() {
         return currentRunningModeId;
@@ -34,26 +35,49 @@ public class BufferActuator {
         this.currentRunningModeId = currentRunningModeId;
     }
 
-    public Map<Integer, RunningMode> getAllRunningModes() {
+    public Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> getAllRunningModes() {
         return allRunningModes;
     }
 
-    public void setAllRunningModes(Collection<RunningMode> runningModeList) {
-        allRunningModes = new HashMap<Integer, RunningMode>();
-        for (RunningMode r : runningModeList) {
+    public void setAllRunningModes(Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModes) {
+        allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : runningModes) {
             allRunningModes.put(r.getId(), r);
+        }
+
+        // TODO: don't recreate the timers anew every time
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
+            for (Transition tran : r.getTransitions()) {
+                // TODO: check that start timers and blocking timers do not overlap, or that it goes well when they do.
+                for (org.flexiblepower.efi.util.Timer blockingTimer : tran.getBlockingTimers()) {
+                    timers.put(blockingTimer.getId(), new Timer(blockingTimer));
+                }
+                for (org.flexiblepower.efi.util.Timer startTimer : tran.getStartTimers()) {
+                    timers.put(startTimer.getId(), new Timer(startTimer));
+                }
+            }
         }
     }
 
-    public Map<Integer, RunningMode> getReachableRunningModes(Date now) {
-        Map<Integer, RunningMode> targets = new HashMap<Integer, RunningMode>();
-        for (Transition i : allRunningModes.get(currentRunningModeId).getTransitions()) {
+    public Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
+        Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
-            if (!i.isBlockedOn(now)) {
-                targets.put(i.getToRunningMode(), getAllRunningModes().get(i.getToRunningMode()));
+            if (!isBlockedOn(transition, now)) {
+                targets.put(transition.getToRunningMode(), getAllRunningModes().get(transition.getToRunningMode()));
             }
         }
         return targets;
+    }
+
+    private boolean isBlockedOn(Transition transition, Date moment) {
+        boolean isBlocked = false;
+        for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
+            if (timers.get(t.getId()).getFinishedAt().after(moment)) {
+                isBlocked = true;
+            }
+        }
+        return isBlocked;
     }
 
     private BufferActuator(int actuatorId, String actuatorLabel, CommoditySet commodities) {
@@ -62,7 +86,7 @@ public class BufferActuator {
         this.commodities = commodities;
     }
 
-    public BufferActuator(ActuatorCapabilities ac) {
+    public BufferActuator(Actuator ac) {
         this(ac.getActuatorId(), ac.getActuatorLabel(), ac.getCommodities());
     }
 
@@ -72,19 +96,7 @@ public class BufferActuator {
      * @return
      */
     public Map<Integer, Timer> getAllTimers() {
-        Map<Integer, Timer> timerList = new HashMap<Integer, Timer>();
-        for (RunningMode r : allRunningModes.values()) {
-            for (Transition tran : r.getTransitions()) {
-                // TODO: check that start timers and blocking timers do not overlap, or that it goes well when they do.
-                for (Timer blockingTimer : tran.getBlockingTimers()) {
-                    timerList.put(blockingTimer.getId(), blockingTimer);
-                }
-                for (Timer startTimer : tran.getStartTimers()) {
-                    timerList.put(startTimer.getId(), startTimer);
-                }
-            }
-        }
-        return timerList;
+        return timers;
     }
 
     public CommoditySet getCommodities() {
@@ -100,10 +112,9 @@ public class BufferActuator {
 
     public List<Measurable<?>> getPossibleDemands(Date now, double fillLevel) {
         List<Measurable<?>> resultMap = new LinkedList<Measurable<?>>();
-        for (RunningMode rm : getReachableRunningModes(now).values()) {
-            // TODO: Check cast
-            RunningModeRangeElement rmre = (RunningModeRangeElement) (rm.getRangeElementForFillLevel(fillLevel));
-            resultMap.add(rmre.getCommodityConsumption().get(Commodity.ELECTRICITY));
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(now).values()) {
+            RangeElement<RunningModeBehaviour> element = rm.getValue().getRangeElementForFillLevel(fillLevel);
+            resultMap.add(element.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
         }
         return resultMap;
     }
