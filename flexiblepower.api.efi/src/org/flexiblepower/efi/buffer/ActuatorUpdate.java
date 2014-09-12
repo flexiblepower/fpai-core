@@ -3,6 +3,8 @@ package org.flexiblepower.efi.buffer;
 import java.util.Collections;
 import java.util.Set;
 
+import org.flexiblepower.efi.util.TimerUpdate;
+
 /**
  * This class contains up to date information about the state of an actuator.
  */

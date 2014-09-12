@@ -1,4 +1,4 @@
-package org.flexiblepower.efi.buffer;
+package org.flexiblepower.efi.util;
 
 import java.util.Date;
 
