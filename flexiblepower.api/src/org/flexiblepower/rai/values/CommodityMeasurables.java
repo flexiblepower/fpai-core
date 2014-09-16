@@ -85,12 +85,13 @@ public final class CommodityMeasurables extends CommodityMap<Measurable<?>> {
     }
 
     protected CommodityMeasurables(Measurable<Power> electricityValue,
-                                  Measurable<VolumetricFlowRate> gasValue,
-                                  Measurable<Power> heatValue) {
+                                   Measurable<VolumetricFlowRate> gasValue,
+                                   Measurable<Power> heatValue) {
         super(electricityValue, gasValue, heatValue);
     }
 
+    @SuppressWarnings("unchecked")
     public <BQ extends Quantity, FQ extends Quantity> Measurable<FQ> get(Commodity<BQ, FQ> commodity) {
-        return get(commodity);
+        return (Measurable<FQ>) super.get(commodity);
     }
 }

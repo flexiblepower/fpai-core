@@ -85,12 +85,13 @@ public final class CommodityUncertainMeasurables extends CommodityMap<UncertainM
     }
 
     CommodityUncertainMeasurables(UncertainMeasure<Power> electricityValue,
-                              UncertainMeasure<VolumetricFlowRate> gasValue,
-                              UncertainMeasure<Power> heatValue) {
+                                  UncertainMeasure<VolumetricFlowRate> gasValue,
+                                  UncertainMeasure<Power> heatValue) {
         super(electricityValue, gasValue, heatValue);
     }
 
+    @SuppressWarnings("unchecked")
     public <BQ extends Quantity, FQ extends Quantity> UncertainMeasure<FQ> get(Commodity<BQ, FQ> commodity) {
-        return get(commodity);
+        return (UncertainMeasure<FQ>) super.get(commodity);
     }
 }

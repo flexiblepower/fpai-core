@@ -84,12 +84,13 @@ public final class ConstraintProfileMap extends CommodityMap<ConstraintProfile<?
     }
 
     ConstraintProfileMap(ConstraintProfile<Power> electricityValue,
-                        ConstraintProfile<VolumetricFlowRate> gasValue,
-                        ConstraintProfile<Power> heatValue) {
+                         ConstraintProfile<VolumetricFlowRate> gasValue,
+                         ConstraintProfile<Power> heatValue) {
         super(electricityValue, gasValue, heatValue);
     }
 
+    @SuppressWarnings("unchecked")
     public <BQ extends Quantity, FQ extends Quantity> ConstraintProfile<FQ> get(Commodity<BQ, FQ> commodity) {
-        return get(commodity);
+        return (ConstraintProfile<FQ>) super.get(commodity);
     }
 }

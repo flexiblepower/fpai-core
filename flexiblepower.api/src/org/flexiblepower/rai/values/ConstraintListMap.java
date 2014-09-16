@@ -91,7 +91,8 @@ public final class ConstraintListMap extends CommodityMap<ConstraintList<?>> {
         super(electricityValue, gasValue, heatValue);
     }
 
+    @SuppressWarnings("unchecked")
     public <BQ extends Quantity, FQ extends Quantity> ConstraintList<FQ> get(Commodity<BQ, FQ> commodity) {
-        return get(commodity);
+        return (ConstraintList<FQ>) super.get(commodity);
     }
 }
