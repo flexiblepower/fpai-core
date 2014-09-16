@@ -3,7 +3,7 @@ package org.flexiblepower.runtime.messaging;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
@@ -22,7 +22,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private final SortedMap<String, EndpointWrapper> endpointWrappers;
 
     public ConnectionManagerImpl() {
-        endpointWrappers = new TreeMap<String, EndpointWrapper>();
+        endpointWrappers = new ConcurrentSkipListMap<String, EndpointWrapper>();
     }
 
     @Reference(dynamic = true, multiple = true, optional = true, service = Endpoint.class, name = "endpoint")
