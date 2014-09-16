@@ -708,7 +708,7 @@ public final class NonSI extends SystemOfUnits {
 
     public static final Unit<Money> EUR = nonSI(new BaseUnit<Money>("€"));
 
-    public static final Unit<Money> EUROCENT = nonSI(new AlternateUnit<Money>("¢", CENTI(EUR)));
+    public static final Unit<Money> EUROCENT = nonSI(CENTI(EUR));
 
     @SuppressWarnings("unchecked")
     public static final Unit<MoneyFlow> EUR_PER_HOUR = (Unit<MoneyFlow>) nonSI(EUR.divide(HOUR));
