@@ -1,22 +1,60 @@
 package org.flexiblepower.rai.values;
 
 import java.util.AbstractList;
+import java.util.Arrays;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 
-public class Profile<PE extends ProfileElement<PE>> extends AbstractList<PE> {
+/**
+ * Throughout this specification different profile types are being used. These profiles are all derived from this
+ * generic {@link Profile} class.
+ *
+ * @param <T>
+ *            The type of the values stored in the elements
+ * @param <PE>
+ *            The type of the {@link ProfileElement}
+ */
+public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
+    /**
+     * Represents each element in the profile.
+     *
+     * @param <T>
+     *            The type of the value stored
+     */
+    public final static class Element<T> {
+        private final Measurable<Duration> duration;
+        private final T value;
 
-    protected final PE[] elements;
+        public Element(Measurable<Duration> duration, T value) {
+            this.duration = duration;
+            this.value = value;
+        }
 
-    public Profile(PE[] elements) {
-        super();
-        this.elements = elements;
+        /**
+         * @return The duration of this element
+         */
+        public Measurable<Duration> getDuration() {
+            return duration;
+        }
+
+        /**
+         * @return The value corresponding to this element
+         */
+        public T getValue() {
+            return value;
+        }
+    }
+
+    protected final Element<T>[] elements;
+
+    protected Profile(Element<T>... elements) {
+        this.elements = Arrays.copyOf(elements, elements.length);
     }
 
     @Override
-    public PE get(int index) {
+    public Element<T> get(int index) {
         return elements[index];
     }
 
@@ -25,17 +63,16 @@ public class Profile<PE extends ProfileElement<PE>> extends AbstractList<PE> {
         return elements.length;
     }
 
+    /**
+     * @return The total duration of the whole profile. This sums all the durations of the elements.
+     */
     public Measurable<Duration> getTotalDuration() {
         double total = 0;
-        for (final PE e : elements) {
+        for (final Element<T> e : elements) {
             total += e.getDuration().doubleValue(Duration.UNIT);
         }
         return Measure.valueOf(total, Duration.UNIT);
     }
 
-    public Profile<PE> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
-        // TODO
-        return null;
-    }
-
+    public abstract Profile<T> subProfile(Measurable<Duration> offset, Measurable<Duration> duration);
 }

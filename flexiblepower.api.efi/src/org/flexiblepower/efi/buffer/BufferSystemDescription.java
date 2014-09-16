@@ -1,82 +1,144 @@
 package org.flexiblepower.efi.buffer;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Duration;
+import org.flexiblepower.efi.util.FillLevelFunction;
+import org.flexiblepower.time.TimeService;
 
+/**
+ * This class is derived from BufferUpdate and contains the actuators and the buffer leakage information.
+ */
 public class BufferSystemDescription extends BufferUpdate {
-
-    private static final long serialVersionUID = -581627020537487583L;
+    private final Map<Integer, ActuatorBehaviour> actuators;
+    private final FillLevelFunction<LeakageRate> bufferLeakage;
 
     /**
-     * The list of actuator that can affect the range of the buffer
+     * Constructs a new {@link BufferSystemDescription} message with the given parameters
+     *
+     * @param bufferRegistration
+     *            The original registration on which this message will be based. This will copy the resourceId from the
+     *            {@link BufferRegistration} and will check if the defined actuator behaviour is complete.
+     * @param timestamp
+     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     * @param validFrom
+     *            This timestamp indicates from which moment on this update is valid.
+     * @param actuators
+     *            This is a list of zero or more actuators that affect this buffer.
+     * @param bufferLeakage
+     *            This attribute contains all the information on the leakage of this buffer.
      */
-    private List<Actuator> actuators = new ArrayList<Actuator>();
-
-    private final LeakageFunction bufferLeakage;
-
-    public BufferSystemDescription(String resourceId,
+    public BufferSystemDescription(BufferRegistration<?> bufferRegistration,
                                    Date timestamp,
                                    Date validFrom,
-                                   Measurable<Duration> allocationDelay,
-                                   List<Actuator> actuators,
-                                   LeakageFunction bufferLeakage) {
-        super(resourceId, timestamp, validFrom, allocationDelay);
-        this.actuators = actuators;
+                                   Collection<ActuatorBehaviour> actuators,
+                                   FillLevelFunction<LeakageRate> bufferLeakage) {
+        super(bufferRegistration.getResourceId(), timestamp, validFrom);
+        if (actuators == null) {
+            throw new NullPointerException("actuators");
+        } else if (bufferLeakage == null) {
+            throw new NullPointerException("bufferLeakage");
+        }
+
+        double lowerBound = bufferLeakage.getLowerBound();
+        double upperBound = bufferLeakage.getUpperBound();
+
+        Map<Integer, ActuatorBehaviour> temp = new TreeMap<Integer, ActuatorBehaviour>();
+        for (ActuatorBehaviour actuatorBehaviour : actuators) {
+            if (actuatorBehaviour.getLowerBound() < lowerBound || actuatorBehaviour.getUpperBound() > upperBound) {
+                throw new IllegalArgumentException("The actuator(" + actuatorBehaviour.getId()
+                                                   + ") is working on a bound ("
+                                                   + actuatorBehaviour.getLowerBound()
+                                                   + " - "
+                                                   + actuatorBehaviour.getUpperBound()
+                                                   + ") outside of the bound given by the leakageFunction ("
+                                                   + lowerBound
+                                                   + " - "
+                                                   + upperBound
+                                                   + ")");
+            }
+
+            if (bufferRegistration.getActuator(actuatorBehaviour.getId()) == null) {
+                throw new IllegalArgumentException("Describing the behaviour of an actuator with an unknown id (" + actuatorBehaviour.getId()
+                                                   + ")");
+            } else if (temp.containsKey(actuatorBehaviour.getId())) {
+                throw new IllegalArgumentException("The actuator with id (" + actuatorBehaviour.getId()
+                                                   + ") is described twice");
+            }
+
+            temp.put(actuatorBehaviour.getId(), actuatorBehaviour);
+        }
+
+        HashSet<Integer> missingIds = new HashSet<Integer>(bufferRegistration.getActuatorsMap().keySet());
+        missingIds.removeAll(temp.keySet());
+        if (!missingIds.isEmpty()) {
+            throw new IllegalArgumentException("Missing the following actuator descriptions: " + missingIds);
+        }
+
+        this.actuators = Collections.unmodifiableMap(temp);
         this.bufferLeakage = bufferLeakage;
     }
 
     /**
-     * Lists all the actuators that can influence the buffer
-     * 
-     * @return List of all the actuators that can influence the buffer
+     * @return This is a list of zero or more actuators that affect this buffer.
      */
-    public List<Actuator> getActuators() {
-        return actuators;
+    public Collection<ActuatorBehaviour> getActuators() {
+        return actuators.values();
     }
 
     /**
-     * Returns the leakage function of the buffer.
-     * 
-     * @return The buffer leakage function
+     * @return This attribute contains all the information on the leakage of this buffer.
      */
-    public LeakageFunction getBufferLeakage() {
+    public FillLevelFunction<LeakageRate> getBufferLeakage() {
         return bufferLeakage;
     }
 
     /**
-     * Determines the minimum fill level for which there is an actuator that can operate.
-     * 
-     * @return The minimum fill level for which there is an actuator that can operate
+     * @return The lower bound of the buffer
      */
-    public double getMinimumFillLevel() {
-        double min = Double.MAX_VALUE;
-        for (Actuator a : actuators) {
-            double minFillLevel = a.minFillLevel();
-            if (min > minFillLevel) {
-                min = minFillLevel;
-            }
-        }
-        return min;
+    public double getLowerBound() {
+        return bufferLeakage.getLowerBound();
     }
 
     /**
-     * Determines the maximum fill level for which there is an actuator that can operate.
-     * 
-     * @return The maximum fill level for which there is an actuator that can operate
+     * @return The upper bound of the buffer
      */
-    public double getMaximumFillLevel() {
-        double max = Double.MIN_VALUE;
-        for (Actuator a : actuators) {
-            double maxFillLevel = a.maxFillLevel();
-            if (max < maxFillLevel) {
-                max = maxFillLevel;
-            }
-        }
-        return max;
+    public double getUpperBound() {
+        return bufferLeakage.getUpperBound();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + actuators.hashCode();
+        result = prime * result + bufferLeakage.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        BufferSystemDescription other = (BufferSystemDescription) obj;
+        if (!actuators.equals(other.actuators)) {
+            return false;
+        } else if (!bufferLeakage.equals(other.bufferLeakage)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void toString(StringBuilder sb) {
+        super.toString(sb);
+        sb.append("actuators=").append(actuators.values()).append(", ");
+        sb.append("bufferLeakage=").append(bufferLeakage).append(", ");
+    }
 }

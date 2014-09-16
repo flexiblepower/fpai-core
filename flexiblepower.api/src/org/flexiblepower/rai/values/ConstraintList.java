@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.Measure;
-import javax.measure.quantity.Power;
 import javax.measure.quantity.Quantity;
-import javax.measure.quantity.VolumetricFlowRate;
 import javax.measure.unit.Unit;
 
 /**
@@ -16,23 +14,10 @@ import javax.measure.unit.Unit;
  * different possible charge speeds in the {@link BufferControlSpace}. This is a list of several values or ranges of
  * values.
  *
- * @author TNO
- *
  * @param <Q>
  *            The quantity of the values that are stored here.
  */
 public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<Q>> {
-    public static final class Map extends Commodity.Map<ConstraintList<?>> {
-        public Map(ConstraintList<Power> electricityValue, ConstraintList<VolumetricFlowRate> gasValue) {
-            super(electricityValue, gasValue);
-        }
-
-        @SuppressWarnings("unchecked")
-        public <FQ extends Quantity> ConstraintList<FQ> get(Commodity<?, FQ> commodity) {
-            return (ConstraintList<FQ>) super.get(commodity);
-        }
-    }
-
     /**
      * Starts a new builder for constructing a {@link ConstraintList} using a default unit value.
      *
@@ -111,7 +96,7 @@ public class ConstraintList<Q extends Quantity> extends AbstractList<Constraint<
          */
         public Builder<Q> addRange(double lowerBound, double upperBound) {
             commodityConstraints.add(new Constraint<Q>(Measure.valueOf(lowerBound, defaultUnit),
-                    Measure.valueOf(upperBound, defaultUnit)));
+                                                       Measure.valueOf(upperBound, defaultUnit)));
             return this;
         }
 

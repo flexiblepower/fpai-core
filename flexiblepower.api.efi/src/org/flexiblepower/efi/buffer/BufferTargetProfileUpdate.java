@@ -2,39 +2,50 @@ package org.flexiblepower.efi.buffer;
 
 import java.util.Date;
 
-import javax.measure.Measurable;
-import javax.measure.quantity.Duration;
+import javax.measure.quantity.Quantity;
 
-import org.flexiblepower.rai.values.TargetProfile;
+import org.flexiblepower.rai.values.ConstraintProfile;
+import org.flexiblepower.time.TimeService;
 
-public class BufferTargetProfileUpdate extends BufferUpdate {
+/**
+ * This message is being used to communicate a target profile that has to be met by this buffer. It is important to
+ * stress that a new target profile message completely overrules a previous one.
+ *
+ * @param <Q>
+ *            The quantity that describes what is stored in the buffer
+ */
+public class BufferTargetProfileUpdate<Q extends Quantity> extends BufferUpdate {
+    private final ConstraintProfile<Q> targetProfile;
 
-    private static final long serialVersionUID = 8241650405419768302L;
-
-    private final Date startTime;
-    private final TargetProfile targetProfile;
-
-    public BufferTargetProfileUpdate(String resourceId,
+    /**
+     * Constructs a new {@link BufferTargetProfileUpdate} message with the specific validFrom
+     *
+     * @param resourceId
+     *            The resource identifier
+     * @param timestamp
+     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     * @param validFrom
+     *            This timestamp indicates from which moment on this update is valid. This also indicates the starttime
+     *            of the profile
+     * @param targetProfile
+     *            The actual target profile that should be met by this buffer.
+     */
+    public BufferTargetProfileUpdate(BufferRegistration<Q> bufferRegistration,
                                      Date timestamp,
                                      Date validFrom,
-                                     Measurable<Duration> allocationDelay,
-                                     Date startTime,
-                                     TargetProfile targetProfile) {
-        super(resourceId, timestamp, validFrom, allocationDelay);
-        this.startTime = startTime;
+                                     ConstraintProfile<Q> targetProfile) {
+        super(bufferRegistration.getResourceId(), timestamp, validFrom);
+        if (targetProfile == null) {
+            throw new NullPointerException("targetProfile");
+        }
+
         this.targetProfile = targetProfile;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public TargetProfile getTargetProfile() {
+    /**
+     * @return The actual target profile that should be met by this buffer.
+     */
+    public ConstraintProfile<Q> getTargetProfile() {
         return targetProfile;
     }
-
 }

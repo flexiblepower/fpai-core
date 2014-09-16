@@ -13,12 +13,12 @@ import org.flexiblepower.efi.uncontrolled.UncontrolledAllocation;
 import org.flexiblepower.efi.uncontrolled.UncontrolledRegistration;
 import org.flexiblepower.efi.uncontrolled.UncontrolledUpdate;
 import org.flexiblepower.messaging.Cardinality;
-import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
-import org.flexiblepower.rai.comm.AllocationRevoke;
-import org.flexiblepower.rai.comm.AllocationStatusUpdate;
-import org.flexiblepower.rai.comm.ControlSpaceRevoke;
+import org.flexiblepower.rai.AllocationRevoke;
+import org.flexiblepower.rai.AllocationStatusUpdate;
+import org.flexiblepower.rai.ControlSpaceRevoke;
+import org.flexiblepower.ral.ControllerManager;
 
 @Ports({ @Port(name = "buffer",
                accepts = { BufferRegistration.class,
@@ -48,6 +48,5 @@ import org.flexiblepower.rai.comm.ControlSpaceRevoke;
                          ControlSpaceRevoke.class },
               sends = { UncontrolledAllocation.class, AllocationRevoke.class },
               cardinality = Cardinality.MULTIPLE) })
-public interface EfiControllerManager extends Endpoint {
-
+public interface EfiControllerManager extends ControllerManager {
 }

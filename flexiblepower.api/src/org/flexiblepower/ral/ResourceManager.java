@@ -1,10 +1,9 @@
 package org.flexiblepower.ral;
 
-import org.flexiblepower.control.ControllerManager;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
-import org.flexiblepower.rai.comm.Allocation;
+import org.flexiblepower.rai.Allocation;
 
 /**
  * The {@link ResourceManager} is responsible to translating the current state of an appliance (as received from a

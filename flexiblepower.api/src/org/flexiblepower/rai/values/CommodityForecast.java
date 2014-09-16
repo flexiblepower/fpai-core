@@ -5,184 +5,172 @@ import java.util.List;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
-import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
-import javax.measure.quantity.Quantity;
-import javax.measure.quantity.Volume;
 import javax.measure.quantity.VolumetricFlowRate;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-
-import org.flexiblepower.rai.values.CommodityForecast.CommodityForecastElement;
 
 /**
- * Class for representing an commodity consumption / production forecast over time. This class is similar to
- * {@link ProfileElement}, with the addition of uncertainty (see {@link UncertainMeasure}) in both amount and time.
- * 
- * @param <BQ>
- *            Billable Quantity, see {@link Commodity}
- * @param <FQ>
- *            Flow Quantity, see {@link Commodity}
+ * This class is derived from {@link Profile}. By parameterizing this class with the billable quantity (BQ) and the flow
+ * quantity (FQ) it can be validated whether all commodity profile elements are of the same commodity. CommodityProfile
+ * does not have any additional attributes.
  */
-public class CommodityForecast<BQ extends Quantity, FQ extends Quantity> extends
-                                                                         Profile<CommodityForecastElement<BQ, FQ>> {
-    public static class Map extends Commodity.Map<CommodityForecast<?, ?>> {
-        public Map(CommodityForecast<Energy, Power> electricityValue,
-                   CommodityForecast<Volume, VolumetricFlowRate> gasValue) {
-            super(electricityValue, gasValue);
+public final class CommodityForecast extends Profile<CommodityUncertainMeasurables> {
+    /**
+     * The Builder object that will be used to easily create {@link CommodityForecast}s.
+     */
+    public static final class Builder {
+        private final List<Element<CommodityUncertainMeasurables>> elements;
+        private Measurable<Duration> duration;
+        private UncertainMeasure<Power> electricityValue, heatValue;
+        private UncertainMeasure<VolumetricFlowRate> gasValue;
+
+        Builder() {
+            elements = new ArrayList<Element<CommodityUncertainMeasurables>>();
         }
 
-        public <BQ extends Quantity, FQ extends Quantity> CommodityForecast<BQ, FQ> get(Commodity<BQ, FQ> key) {
-            return get(key);
-        }
-    }
-
-    public static class Builder<BQ extends Quantity, FQ extends Quantity> {
-        private final Commodity<BQ, FQ> commodity;
-
-        private final List<CommodityForecastElement<BQ, FQ>> elements;
-        private UncertainMeasure<Duration> duration;
-        private Unit<FQ> unit;
-
-        public Builder(Commodity<BQ, FQ> commodity) {
-            this.commodity = commodity;
-            this.elements = new ArrayList<CommodityForecastElement<BQ, FQ>>();
-        }
-
-        public Builder<BQ, FQ> set(UncertainMeasure<Duration> duration) {
+        /**
+         * Set the duration and saves it for future creation of elements.
+         *
+         * @param duration
+         *            The duration for the element
+         * @return This builder
+         * @see #next()
+         */
+        public Builder duration(Measurable<Duration> duration) {
             this.duration = duration;
             return this;
         }
 
-        public Builder<BQ, FQ> setUnit(Unit<FQ> unit) {
-            this.unit = unit;
+        /**
+         * Set the electricity value and saves it for future creation of elements.
+         *
+         * @param value
+         *            The electricity value for the element
+         * @return This builder
+         * @see #next()
+         */
+        public Builder electricity(UncertainMeasure<Power> value) {
+            electricityValue = value;
             return this;
         }
 
-        public Builder<BQ, FQ> add(UncertainMeasure<Duration> duration, UncertainMeasure<FQ> value) {
-            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, value));
+        /**
+         * Set the gas value and saves it for future creation of elements.
+         *
+         * @param value
+         *            The gas value for the element
+         * @return This builder
+         * @see #next()
+         */
+        public Builder gas(UncertainMeasure<VolumetricFlowRate> value) {
+            gasValue = value;
             return this;
         }
 
-        public Builder<BQ, FQ> add(UncertainMeasure<FQ> value) {
+        /**
+         * Set the heat value and saves it for future creation of elements.
+         *
+         * @param value
+         *            The heat value for the element
+         * @return This builder
+         * @see #next()
+         */
+        public Builder heat(UncertainMeasure<Power> value) {
+            heatValue = value;
+            return this;
+        }
+
+        /**
+         * Uses the values as set by the {@link #duration(Measurable)}, {@link #electricity(Measurable)},
+         * {@link #gas(Measurable)} and {@link #heat(Measurable)} methods to create a new element. This does not reset
+         * the values, so if you call this method again it will create a second element that is equal to the first.
+         *
+         * @return This builder
+         * @throws IllegalArgumentException
+         *             when the duration has not been set using {@link #duration(Measurable)}
+         */
+        public Builder next() {
             if (duration == null) {
-                throw new IllegalStateException("duration not set");
+                throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new CommodityForecastElement<BQ, FQ>(commodity, duration, value));
+            elements.add(new CommodityForecast.Element<CommodityUncertainMeasurables>(duration,
+                                                                                  new CommodityUncertainMeasurables(electricityValue,
+                                                                                                                gasValue,
+                                                                                                                heatValue)));
             return this;
         }
 
-        public Builder<BQ, FQ> add(double mean, double standardDeviation) {
+        /**
+         * @param element
+         *            The element that needs to be added.
+         * @return This builder
+         */
+        public Builder add(Element<CommodityUncertainMeasurables> element) {
+            elements.add(element);
+            return this;
+        }
+
+        /**
+         * @param commodityMeasurable
+         *            The {@link CommodityMeasurables} that will be used (together with the set duration) to add a new
+         *            element.
+         * @return This builder
+         * @throws IllegalArgumentException
+         *             when the duration has not been set using {@link #duration(Measurable)}
+         */
+        public Builder add(CommodityUncertainMeasurables commodityMeasurable) {
             if (duration == null) {
-                throw new IllegalStateException("duration not set");
-            } else if (unit == null) {
-                throw new IllegalStateException("unit not set");
+                throw new IllegalArgumentException("duration not set");
             }
-            elements.add(new CommodityForecastElement<BQ, FQ>(commodity,
-                                                              duration,
-                                                              new UncertainMeasure<FQ>(mean, standardDeviation, unit)));
+            elements.add(new Element<CommodityUncertainMeasurables>(duration, commodityMeasurable));
             return this;
         }
 
         @SuppressWarnings("unchecked")
-        public CommodityForecast<BQ, FQ> build() {
-            return new CommodityForecast<BQ, FQ>(elements.toArray(new CommodityForecastElement[0]));
+        public CommodityForecast build() {
+            return new CommodityForecast(elements.toArray(new Element[elements.size()]));
         }
     }
 
-    public static <BQ extends Quantity, FQ extends Quantity> Builder<BQ, FQ> create(Commodity<BQ, FQ> commodity) {
-        return new Builder<BQ, FQ>(commodity);
+    /**
+     * @return A builder object to easily create new {@link CommodityForecast}s.
+     */
+    public static Builder create() {
+        return new Builder();
     }
 
-    public static class CommodityForecastElement<BQ extends Quantity, FQ extends Quantity> implements
-                                                                                           ProfileElement<CommodityForecastElement<BQ, FQ>> {
-
-        private final Commodity<BQ, FQ> commodity;
-        private final UncertainMeasure<Duration> duration;
-        private final UncertainMeasure<FQ> value;
-
-        public CommodityForecastElement(Commodity<BQ, FQ> commodity,
-                                        UncertainMeasure<Duration> duration,
-                                        UncertainMeasure<FQ> value) {
-            super();
-            this.commodity = commodity;
-            this.duration = duration;
-            this.value = value;
-        }
-
-        @Override
-        public Measurable<Duration> getDuration() {
-            return duration.getMean();
-        }
-
-        @Override
-        public CommodityForecastElement<BQ, FQ> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
-            // TODO implement
-            throw new UnsupportedOperationException();
-        }
-
-        public Commodity<BQ, FQ> getCommodity() {
-            return commodity;
-        }
-
-        public UncertainMeasure<FQ> getValue() {
-            return value;
-        }
-
-        public UncertainMeasure<Duration> getUncertainDuration() {
-            return duration;
-        }
-
-    }
-
-    public CommodityForecast(CommodityForecastElement<BQ, FQ>[] elements) {
+    /**
+     * Constructor of the {@link CommodityForecast}, using the elements given. The elements will be copied into a new
+     * array.
+     *
+     * @param elements
+     *            The elements that are stored in this profile
+     */
+    public CommodityForecast(Element<CommodityUncertainMeasurables>... elements) {
         super(elements);
-        validate();
-    }
 
-    private void validate() {
         // Check if profile is empty
         if (elements.length == 0) {
-            throw new IllegalArgumentException("A CommodityForecast cannot be empty");
+            throw new IllegalArgumentException("A CommodityProfile cannot be empty");
         }
         // Check if all the commodities are the same
-        final Commodity<BQ, FQ> commodity = elements[0].getCommodity();
+        final CommoditySet set = elements[0].getValue().keySet();
         for (int i = 1; i < elements.length; i++) {
-            if (elements[i].getCommodity() != commodity) {
-                throw new IllegalArgumentException("A CommodityForceast can only consist of commodites of the same type");
+            if (!elements[i].getValue().keySet().equals(set)) {
+                throw new IllegalArgumentException("A CommodityProfile can only consist of commodites of the same type");
             }
         }
     }
 
-    public Commodity<BQ, FQ> getCommodity() {
-        // Validate makes sure there is at least one element
-        return elements[0].getCommodity();
+    /**
+     * @return The set of commodities that are supported in this profile
+     */
+    public CommoditySet getCommodities() {
+        return elements[0].getValue().keySet();
     }
 
-    public CommodityForecast<BQ, FQ> concat(CommodityForecast<BQ, FQ> that) {
-        if (this.getCommodity() != that.getCommodity()) {
-            throw new IllegalArgumentException("Cannot concatenate CommodityForecasts of different types");
-        }
-        Builder<BQ, FQ> builder = CommodityForecast.create(this.getCommodity());
-        for (CommodityForecastElement<BQ, FQ> e : elements) {
-            builder.add(e.getUncertainDuration(), e.getValue());
-        }
-        for (CommodityForecastElement<BQ, FQ> e : that.elements) {
-            builder.add(e.getUncertainDuration(), e.getValue());
-        }
-        return builder.build();
-    }
-
-    public UncertainMeasure<FQ> getValueAtOffset(Measurable<Duration> offset) {
-        long targetOffset = offset.longValue(SI.MILLI(SI.SECOND));
-        long currentOffset = 0;
-        for (CommodityForecastElement<BQ, FQ> e : elements) {
-            long elementLength = e.getDuration().longValue(SI.MILLI(SI.SECOND));
-            if (targetOffset >= currentOffset && targetOffset < targetOffset + elementLength) {
-                return e.getValue();
-            }
-            currentOffset += elementLength;
-        }
-        return null;
+    @Override
+    public Profile<CommodityUncertainMeasurables> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+        // TODO Needs to be implemented
+        throw new UnsupportedOperationException();
     }
 }

@@ -3,68 +3,58 @@ package org.flexiblepower.efi.buffer;
 import java.util.Date;
 import java.util.Set;
 
-import org.flexiblepower.rai.comm.Allocation;
-import org.flexiblepower.rai.comm.ControlSpaceUpdate;
+import org.flexiblepower.rai.Allocation;
+import org.flexiblepower.rai.ControlSpaceUpdate;
 
+/**
+ * This class is derived from {@link Allocation} and contains specific allocation information for a buffer appliance.
+ */
 public class BufferAllocation extends Allocation {
-
-    private static final long serialVersionUID = -1885176370564725847L;
-
-    public static class ActuatorAllocation {
-        private final int actuatorId;
-        private final int runningModeId;
-        private final Date startTime;
-
-        public ActuatorAllocation(int actuatorId, int runningModeId, Date startTime) {
-            super();
-            this.actuatorId = actuatorId;
-            this.runningModeId = runningModeId;
-            this.startTime = startTime;
-        }
-
-        public int getActuatorId() {
-            return actuatorId;
-        }
-
-        public int getRunningModeId() {
-            return runningModeId;
-        }
-
-        public Date getStartTime() {
-            return startTime;
-        }
-
-    }
-
     private final Set<ActuatorAllocation> actuatorAllocations;
 
     /**
      * A buffer allocation contains allocations for the actuators that it wishes to change. The unmentioned actuators of
      * the buffer may do as they please.
      * */
-    public BufferAllocation(String resourceId,
-                            ControlSpaceUpdate resourceUpdate,
+    public BufferAllocation(ControlSpaceUpdate resourceUpdate,
                             Date timestamp,
                             boolean isEmergencyAllocation,
                             Set<ActuatorAllocation> actuatorAllocations) {
-        super(resourceId, resourceUpdate, timestamp, isEmergencyAllocation);
+        super(timestamp, resourceUpdate, isEmergencyAllocation);
+        if (actuatorAllocations == null) {
+            throw new NullPointerException("actuatorAllocations");
+        } else if (actuatorAllocations.isEmpty()) {
+            throw new IllegalArgumentException("There must be at least one actuator allocation in this buffer allocation.");
+        }
 
         this.actuatorAllocations = actuatorAllocations;
-
-        validate();
     }
 
     /**
-     * Checks the internal consistency of this message. It does not check whether the actuator ids are really part of
-     * the buffer with this resource id.
+     * @return A set of zero or more {@link ActuatorAllocation} objects.
      */
-    private void validate() {
-        if (actuatorAllocations == null) {
-            throw new NullPointerException("Field runningModeSelectors cannot be null.");
-        }
-        if (actuatorAllocations.isEmpty()) {
-            throw new IllegalArgumentException("There must be at least one actuator allocation in this buffer allocation.");
-        }
+    public Set<ActuatorAllocation> getActuatorAllocations() {
+        return actuatorAllocations;
     }
 
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + actuatorAllocations.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+
+        BufferAllocation other = (BufferAllocation) obj;
+        return actuatorAllocations.equals(other.actuatorAllocations);
+    }
+
+    @Override
+    protected void toString(StringBuilder sb) {
+        super.toString(sb);
+        sb.append("actuatorAllocations=").append(actuatorAllocations).append(", ");
+    }
 }

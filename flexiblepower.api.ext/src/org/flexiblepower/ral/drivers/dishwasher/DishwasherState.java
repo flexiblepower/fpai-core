@@ -2,9 +2,6 @@ package org.flexiblepower.ral.drivers.dishwasher;
 
 import java.util.Date;
 
-import javax.measure.quantity.Energy;
-import javax.measure.quantity.Power;
-
 import org.flexiblepower.rai.values.CommodityProfile;
 import org.flexiblepower.ral.ResourceState;
 
@@ -43,5 +40,5 @@ public interface DishwasherState extends ResourceState {
     /**
      * @return The corresponding energy profile of the selected program.
      */
-    CommodityProfile<Energy, Power> getEnergyProfile();
+    CommodityProfile getEnergyProfile();
 }
