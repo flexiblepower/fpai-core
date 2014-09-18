@@ -10,6 +10,7 @@ import org.flexiblepower.rai.AllocationStatusUpdate;
 import org.flexiblepower.rai.ControlSpaceRevoke;
 import org.flexiblepower.ral.ResourceManager;
 
+//
 @Port(name = "controller",
       accepts = { UncontrolledAllocation.class, AllocationRevoke.class },
       sends = { UncontrolledRegistration.class,
