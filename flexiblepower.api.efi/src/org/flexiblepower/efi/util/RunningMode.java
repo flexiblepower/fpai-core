@@ -16,10 +16,11 @@ public class RunningMode<T> {
     private final T value;
     private final Map<Integer, Transition> possibleTransitions;
 
-    protected RunningMode(int id,
-                          String name,
-                          T value,
-                          Set<Transition> possibleTransitions) {
+    // TODO should this constructor be protected?
+    public RunningMode(int id,
+                       String name,
+                       T value,
+                       Set<Transition> possibleTransitions) {
         if (name == null) {
             throw new NullPointerException("name");
         } else if (value == null) {
