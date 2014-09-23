@@ -35,7 +35,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
                                                    .getLogger(ConnectionManagerPlugin.class);
 
     private static final String[] servedFiles = new String[] {
-                                                              "cytoscape.min.js", "index.html" };
+                                                              "connectionManager.js", "cytoscape.min.js", "index.html" };
 
     private ConnectionManager connectionManager;
 
@@ -177,6 +177,5 @@ public class ConnectionManagerPlugin extends HttpServlet {
             }
         }
         return elements.toString();
-
     }
 }
