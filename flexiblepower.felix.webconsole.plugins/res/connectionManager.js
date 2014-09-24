@@ -90,6 +90,8 @@ function refresh() {
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("error: " + textStatus + ": " + errorThrown);
 	});
+	$("#connect").prop("disabled",true);
+	$("#disconnect").prop("disabled",true);
 }
 refresh();
 
@@ -101,6 +103,7 @@ function autoconnect() {
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("error: " + textStatus + ": " + errorThrown);
 	});
+	
 	refresh();
 }
 
@@ -109,6 +112,9 @@ cy.on('tap', 'node', function(e) {
 	var neighborhood = node.neighborhood().add(node);
 	cy.elements().addClass('faded');
 	neighborhood.removeClass('faded');
+	
+	$("#connect").prop("disabled",true);
+	$("#disconnect").prop("disabled",true);
 
 	onNodeSelected(node.id());
 });
@@ -118,6 +124,10 @@ cy.on('tap', 'edge', function(e) {
 	var neighborhood = edge.connectedNodes().add(edge);
 	cy.elements().addClass('faded');
 	neighborhood.removeClass('faded');
+	
+	$("#connect").prop("disabled",false);
+	$("#disconnect").prop("disabled",false);
+
 
 	onEdgeSelected(edge.id());
 });
