@@ -1,9 +1,30 @@
-<div id="cy" style="height:500px"></div>
+<button type="button" id="autoconnect"
+	onclick="autoconnect(); return false;">Autoconnect</button>
+<button type="button" id="connect" onclick="connect(); return false;">Connect</button>
+<button type="button" id="disconnect"
+	onclick="disconnect(); return false;">Disconnect</button>
+<button type="button" id="refresh" onclick="refresh(); return false;">Refresh</button>
+
+<div id="cy" style="height: 500px; z-index: -1;" ></div>
+
+<table>
+	<tr>
+		<th id="1a" class="infotable"></th>
+		<td id="1b" class="infotable"></td>
+	</tr>
+	<tr>
+		<th id="2a" class="infotable"></th>
+		<td id="2b" class="infotable"></td>
+	</tr>
+	<tr>
+		<th id="3a" class="infotable"></th>
+		<td id="3b" class="infotable"></td>
+	</tr>
+	<tr>
+		<th id="4a" class="infotable"></th>
+		<td id="4b" class="infotable"></td>
+	</tr>
+</table>
+
 <script type="text/javascript" src="cytoscape.min.js"></script>
 <script type="text/javascript" src="connectionManager.js"></script>
-
-
-<button type="button" id="autoconnect" onclick="autoconnect(); return false;">Autoconnect</button>
-<button type="button" id="connect" onclick="connect(); return false;">Connect</button>
-<button type="button" id="disconnect" onclick="disconnect(); return false;">Disconnect</button>
-<button type="button" id="refresh" onclick="refresh(); return false;">Refresh</button>
