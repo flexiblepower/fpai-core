@@ -169,8 +169,11 @@ public class ConnectionManagerPlugin extends HttpServlet {
                         JsonObject connectiondata = new JsonObject();
                         connectiondata.addProperty("source", eitherend);
                         connectiondata.addProperty("target", otherend);
-                        connectiondata.addProperty("isconnected", true); // pc.isConnected());
+                        connectiondata.addProperty("isconnected", pc.isConnected()); // pc.isConnected());
                         connection.add("data", connectiondata);
+                        if (pc.isConnected()) {
+                            connection.addProperty("classes", "isconnected");
+                        }
                         elements.add(connection);
                     }
                 }

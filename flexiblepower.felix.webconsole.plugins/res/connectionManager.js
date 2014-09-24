@@ -13,14 +13,14 @@ cy = cytoscape({
 	minZoom : 0,
 	maxZoom : 100,
 	zoomingEnabled : true,
-	userZoomingEnabled : true,
+	userZoomingEnabled : false,
 	pan : {
 		x : 0,
 		y : 0
 	},
 	panningEnabled : true,
-	userPanningEnabled : true,
-	autoungrabifyNodes : false,
+	userPanningEnabled : false,
+	autoungrabifyNodes : true,
 	hideEdgesOnViewport : false,
 	hideLabelsOnViewport : false,
 	textureOnViewport : false,
@@ -41,8 +41,8 @@ cy = cytoscape({
 	}, {
 		selector : ':selected',
 		css : {
-			'background-color' : '#693',
-			'line-color' : '#693',
+			'background-color' : '#222',
+			'line-color' : '#222',
 			'text-outline-width' : 3,
 			'text-outline-color' : '#693'
 		}
@@ -63,8 +63,8 @@ cy = cytoscape({
 	}, {
 		selector : '.faded',
 		css : {
-			'opacity' : 0.95,
-			'text-opacity' : 0.95
+			'opacity' : 0.9,
+			'text-opacity' : 0.9
 		}
 	}, {
 		selector : '.isconnected',
@@ -125,8 +125,7 @@ cy.on('tap', 'edge', function(e) {
 	cy.elements().addClass('faded');
 	neighborhood.removeClass('faded');
 	
-	$("#connect").prop("disabled",false);
-	$("#disconnect").prop("disabled",false);
+	
 
 
 	onEdgeSelected(edge.id());
@@ -154,6 +153,14 @@ function onEdgeSelected(elemid) {
 	$("#3b").text(elem.data("target"));
 	$("#4a").text("Connected: ");
 	$("#4b").text(elem.data("isconnected"));
+	
+	if(elem.data("isconnected")){
+		$("#connect").prop("disabled",true);
+		$("#disconnect").prop("disabled",false);
+	} else {
+		$("#connect").prop("disabled",false);
+		$("#disconnect").prop("disabled",true);
+	}
 	
 	console.log(elem.data());
 }
