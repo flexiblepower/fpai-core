@@ -84,14 +84,28 @@ final class PotentialConnectionImpl implements PotentialConnection {
     }
 
     @Override
+    public synchronized boolean isConnectable() {
+        return (!isConnected() && getConnectableError() == null);
+    }
+
+    private String getConnectableError() {
+        if (left.getCardinality() == Cardinality.SINGLE && left.isConnected()) {
+            return "The port [" + left
+                   + "] is already connected and doesn't support multiple connections";
+        } else if (right.getCardinality() == Cardinality.SINGLE && right.isConnected()) {
+            return "The port [" + right
+                   + "] is already connected and doesn't support multiple connections";
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public synchronized void connect() {
         if (!isConnected()) {
-            if (left.getCardinality() == Cardinality.SINGLE && left.isConnected()) {
-                throw new IllegalStateException("The port [" + left
-                                                + "] is already connected and doesn't support multiple connections");
-            } else if (right.getCardinality() == Cardinality.SINGLE && right.isConnected()) {
-                throw new IllegalStateException("The port [" + right
-                                                + "] is already connected and doesn't support multiple connections");
+            String connectableError = getConnectableError();
+            if (connectableError != null) {
+                throw new IllegalStateException(connectableError);
             }
 
             log.debug("Connecting port [{}] to port [{}]", left, right);

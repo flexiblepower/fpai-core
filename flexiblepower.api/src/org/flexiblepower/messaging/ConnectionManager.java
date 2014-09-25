@@ -36,6 +36,8 @@ public interface ConnectionManager {
         void connect() throws IOException;
 
         void disconnect();
+
+        boolean isConnectable();
     }
 
     ManagedEndpoint getEndpoint(String pid);

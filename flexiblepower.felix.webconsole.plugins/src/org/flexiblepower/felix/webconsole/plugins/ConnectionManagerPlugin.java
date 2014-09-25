@@ -212,7 +212,6 @@ public class ConnectionManagerPlugin extends HttpServlet {
         for (ManagedEndpoint me : values) {
             for (EndpointPort ep : me.getPorts().values()) {
                 for (PotentialConnection pc : ep.getPotentialConnections().values()) {
-
                     JsonObject connection = new JsonObject();
                     connection.addProperty("group", "edges");
                     EndpointPort either = pc.getEitherEnd();
@@ -229,9 +228,12 @@ public class ConnectionManagerPlugin extends HttpServlet {
                         connectiondata.addProperty("source", eitherend);
                         connectiondata.addProperty("target", otherend);
                         connectiondata.addProperty("isconnected", pc.isConnected()); // pc.isConnected());
+                        connectiondata.addProperty("unconnectable", !pc.isConnectable());
                         connection.add("data", connectiondata);
                         if (pc.isConnected()) {
                             connection.addProperty("classes", "isconnected");
+                        } else if (!pc.isConnectable()) {
+                            connection.addProperty("classes", "unconnectable");
                         } else {
                             connection.addProperty("classes", "notconnected");
                         }

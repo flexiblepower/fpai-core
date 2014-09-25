@@ -9,6 +9,7 @@ cy = cytoscape({
 		name : 'cose',
 		animate : false,
 		fit : true,
+		randomize : true
 	},
 	zoom : 1,
 	minZoom : 0,
@@ -80,11 +81,19 @@ cy = cytoscape({
 		selector : '.notconnected',
 		css : {
 			'width' : 3,
-			'line-color' : '#A00',
+			'line-color' : '#AA0',
 			'line-style' : 'dashed'
 		}
+	}, {
+		selector : '.unconnectable',
+		css : {
+			'width' : 3,
+			'opacity' : 0.3,
+			'line-color' : '#A00',
+			'line-style' : 'dotted'
+		}
 	} ],
-
+	
 	ready : function() {
 		$("#cy div").css("z-index", "-1"); // fixes the menu
 	}
@@ -195,7 +204,7 @@ function onEdgeSelected(elemid) {
 	$("#5a").text("elemid: ");
 	$("#5b").text(elemid);
 
-	if (elem.data("isconnected")) {
+	if (elem.data("isconnected") || elem.data("unconnectable")) {
 		$("#connect").prop("disabled", true);
 		$("#disconnect").prop("disabled", false);
 	} else {
