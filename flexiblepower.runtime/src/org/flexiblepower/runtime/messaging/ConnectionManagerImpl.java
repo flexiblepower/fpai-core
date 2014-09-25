@@ -44,7 +44,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
             EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
             if (endpointWrapper != null) {
                 endpointWrapper.close();
-                log.debug("Removed endpoint on key [" + key + "]");
+                log.debug("Removed endpoint on key [{}]", key);
             }
         }
     }

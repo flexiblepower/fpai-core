@@ -14,55 +14,74 @@ import org.slf4j.LoggerFactory;
 final class PotentialConnectionImpl implements PotentialConnection {
     private static final Logger log = LoggerFactory.getLogger(PotentialConnectionImpl.class);
 
-    private static abstract class HalfConnection implements Connection {
+    private static final MessageHandler DUMP = new MessageHandler() {
+        @Override
+        public void handleMessage(Object message) {
+            log.debug("Dumping message {}", message);
+        }
+
+        @Override
+        public void disconnected() {
+        }
+    };
+
+    private static final class HalfConnection implements Connection {
         private final Port port;
         private final EndpointWrapper receivingEndpoint;
+        volatile MessageHandler messageHandler;
 
         public HalfConnection(Port port, EndpointWrapper receivingEndpoint) {
             this.port = port;
             this.receivingEndpoint = receivingEndpoint;
+            messageHandler = null;
+        }
+
+        synchronized void setMessageHandler(MessageHandler messageHandler) {
+            if (this.messageHandler != null) {
+                throw new IllegalStateException("The messageHandler should only be set once");
+            }
+            this.messageHandler = messageHandler;
+            notifyAll();
         }
 
         @Override
         public void sendMessage(Object message) {
-            MessageHandler handler = getMessageHandler();
-            if (handler != null) {
-                receivingEndpoint.addCommand(new Command.HandleMessage(message, handler));
+            if (message == null) {
+                log.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
+                return;
             }
-        }
 
-        public abstract MessageHandler getMessageHandler();
+            MessageHandler messageHandler = this.messageHandler;
+            if (messageHandler == null) {
+                messageHandler = new MessageHandler() {
+                    @Override
+                    public void handleMessage(Object message) {
+                        synchronized (HalfConnection.this) {
+                            while (HalfConnection.this.messageHandler == null) {
+                                try {
+                                    HalfConnection.this.wait(1000);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+
+                            HalfConnection.this.messageHandler.handleMessage(message);
+                        }
+                    }
+
+                    @Override
+                    public void disconnected() {
+                        throw new AssertionError("This method should never be called");
+                    }
+                };
+            }
+
+            receivingEndpoint.addCommand(new Command.HandleMessage(message, messageHandler));
+        }
 
         @Override
         public Port getPort() {
             return port;
         }
-    }
-
-    private abstract class TempMessageHandler implements MessageHandler {
-        @Override
-        public void handleMessage(Object message) {
-            getRealMessageHandler().handleMessage(message);
-        }
-
-        @Override
-        public void disconnected() {
-            getRealMessageHandler().disconnected();
-        }
-
-        private MessageHandler getRealMessageHandler() {
-            synchronized (PotentialConnectionImpl.this) {
-                while (getMessageHandler() == this) {
-                    try {
-                        PotentialConnectionImpl.this.wait(100);
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-            return getMessageHandler();
-        }
-
-        public abstract MessageHandler getMessageHandler();
     }
 
     private final EndpointPortImpl left, right;
@@ -96,36 +115,27 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
             log.debug("Connecting port [{}] to port [{}]", left, right);
 
-            leftMessageHandler = new TempMessageHandler() {
-                @Override
-                public MessageHandler getMessageHandler() {
-                    return leftMessageHandler;
-                }
-            };
-            rightMessageHandler = new TempMessageHandler() {
-                @Override
-                public MessageHandler getMessageHandler() {
-                    return rightMessageHandler;
-                }
-            };
-
-            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpoint()) {
-                @Override
-                public MessageHandler getMessageHandler() {
-                    return rightMessageHandler;
-                }
-            };
-
-            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpoint()) {
-                @Override
-                public MessageHandler getMessageHandler() {
-                    return leftMessageHandler;
-                }
-            };
+            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpoint());
+            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpoint());
 
             leftMessageHandler = left.getEndpoint().getEndpoint().onConnect(leftHalfConnection);
             rightMessageHandler = right.getEndpoint().getEndpoint().onConnect(rightHalfConnection);
-            notifyAll();
+
+            if (leftMessageHandler == null || rightMessageHandler == null) {
+                log.warn("Could not connect port [{}] to port [{}], because the onConnect failed (returned null)",
+                         left,
+                         right);
+
+                // When one of the connects fails, we need to dump the messages that are received
+                leftHalfConnection.setMessageHandler(DUMP);
+                rightHalfConnection.setMessageHandler(DUMP);
+                disconnect();
+            } else {
+                leftHalfConnection.setMessageHandler(rightMessageHandler);
+                rightHalfConnection.setMessageHandler(leftMessageHandler);
+
+                log.debug("Connected port [{}] to port [{}]", left, right);
+            }
         }
     }
 
@@ -135,8 +145,19 @@ final class PotentialConnectionImpl implements PotentialConnection {
             log.debug("Disconnecting port [{}] to port [{}]", left, right);
             try {
                 CountDownLatch latch = new CountDownLatch(2);
-                left.getEndpoint().addCommand(new Command.Disconnect(leftMessageHandler, latch));
-                right.getEndpoint().addCommand(new Command.Disconnect(rightMessageHandler, latch));
+
+                if (leftMessageHandler != null) {
+                    left.getEndpoint().addCommand(new Command.Disconnect(leftMessageHandler, latch));
+                } else {
+                    latch.countDown();
+                }
+
+                if (rightMessageHandler != null) {
+                    right.getEndpoint().addCommand(new Command.Disconnect(rightMessageHandler, latch));
+                } else {
+                    latch.countDown();
+                }
+
                 latch.await();
             } catch (InterruptedException e) {
             }

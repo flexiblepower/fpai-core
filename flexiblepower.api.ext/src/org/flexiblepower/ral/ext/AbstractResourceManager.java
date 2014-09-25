@@ -60,7 +60,11 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
 
                             if (messages != null) {
                                 for (ResourceMessage msg : messages) {
-                                    controllerConnection.sendMessage(msg);
+                                    if (msg == null) {
+                                        logger.warn("Trying to send a null message, this is not allowed");
+                                    } else {
+                                        controllerConnection.sendMessage(msg);
+                                    }
                                 }
                             }
                         }
@@ -78,7 +82,6 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
         } else if (controllerConnection == null && "controller".equals(connection.getPort().name())) {
             controllerConnection = connection;
             return new MessageHandler() {
-                @SuppressWarnings("unchecked")
                 @Override
                 public void handleMessage(Object message) {
                     try {
