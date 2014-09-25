@@ -7,7 +7,7 @@ cy = cytoscape({
 	// },
 	layout : {
 		name : 'cose',
-		padding : 100
+		padding : 10
 	},
 	zoom : 1,
 	minZoom : 0,
@@ -77,7 +77,7 @@ cy = cytoscape({
 	} ],
 
 	ready : function() {
-		$("#cy div").css("z-index","-1"); // fixes the menu
+		$("#cy div").css("z-index", "-1"); // fixes the menu
 	}
 });
 function refresh() {
@@ -90,8 +90,9 @@ function refresh() {
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("error: " + textStatus + ": " + errorThrown);
 	});
-	$("#connect").prop("disabled",true);
-	$("#disconnect").prop("disabled",true);
+	$("#connect").prop("disabled", true);
+	$("#disconnect").prop("disabled", true);
+	selectedEdgeId = null;
 }
 refresh();
 
@@ -99,12 +100,42 @@ function autoconnect() {
 	console.log("Autoconnecting..");
 	$.post("/system/console/fpai-connection-manager/autoconnect.json",
 			function(result) {
-				console.log(result);
+				$("#status").text(result.status);
+				$("#status").attr("class", result.class);
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("error: " + textStatus + ": " + errorThrown);
 	});
-	
+
 	refresh();
+}
+
+var selectedEdgeId;
+function connect() {
+	console.log("Connecting " + selectedEdgeId);
+	var postdata = {
+		"id" : selectedEdgeId
+	};
+	$.post("/system/console/fpai-connection-manager/connect.json", postdata,
+			function(result) {
+				$("#status").text(result.status);
+				$("#status").attr("class", result.class);
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+		console.log("error: " + textStatus + ": " + errorThrown);
+	}).always(refresh());
+}
+
+function disconnect() {
+	console.log("Disconnecting " + selectedEdgeId);
+	var postdata = {
+		"id" : selectedEdgeId
+	};
+	$.post("/system/console/fpai-connection-manager/disconnect.json", postdata,
+			function(result) {
+				$("#status").text(result.status);
+				$("#status").attr("class", result.class);
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+		console.log("error: " + textStatus + ": " + errorThrown);
+	}).always(refresh());
 }
 
 cy.on('tap', 'node', function(e) {
@@ -112,9 +143,9 @@ cy.on('tap', 'node', function(e) {
 	var neighborhood = node.neighborhood().add(node);
 	cy.elements().addClass('faded');
 	neighborhood.removeClass('faded');
-	
-	$("#connect").prop("disabled",true);
-	$("#disconnect").prop("disabled",true);
+
+	$("#connect").prop("disabled", true);
+	$("#disconnect").prop("disabled", true);
 
 	onNodeSelected(node.id());
 });
@@ -124,9 +155,6 @@ cy.on('tap', 'edge', function(e) {
 	var neighborhood = edge.connectedNodes().add(edge);
 	cy.elements().addClass('faded');
 	neighborhood.removeClass('faded');
-	
-	
-
 
 	onEdgeSelected(edge.id());
 });
@@ -139,11 +167,13 @@ cy.on('tap', function(e) {
 });
 
 function onNothingSelected() {
+	selectedEdgeId = null;
 	$(".infotable").text("");
 	$("#1a").text("Nothing selected");
 }
 
 function onEdgeSelected(elemid) {
+	selectedEdgeId = elemid;
 	var elem = cy.$('#' + elemid); // select element
 	$(".infotable").text("");
 	$("#1a").text("Possible connection");
@@ -153,19 +183,22 @@ function onEdgeSelected(elemid) {
 	$("#3b").text(elem.data("target"));
 	$("#4a").text("Connected: ");
 	$("#4b").text(elem.data("isconnected"));
-	
-	if(elem.data("isconnected")){
-		$("#connect").prop("disabled",true);
-		$("#disconnect").prop("disabled",false);
+	$("#5a").text("elemid: ");
+	$("#5b").text(elemid);
+
+	if (elem.data("isconnected")) {
+		$("#connect").prop("disabled", true);
+		$("#disconnect").prop("disabled", false);
 	} else {
-		$("#connect").prop("disabled",false);
-		$("#disconnect").prop("disabled",true);
+		$("#connect").prop("disabled", false);
+		$("#disconnect").prop("disabled", true);
 	}
-	
-	console.log(elem.data());
+
+	// console.log(elem.data());
 }
 
 function onNodeSelected(elemid) {
+	selectedEdgeId = null;
 	var elem = cy.$('#' + elemid); // select element
 	$(".infotable").text("");
 	$("#1a").text("node");
@@ -173,7 +206,5 @@ function onNodeSelected(elemid) {
 }
 
 function updateInfo(elemid) {
-	
-	
-}
 
+}
