@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.MessageHandler;
+import org.flexiblepower.rai.AllocationStatus;
+import org.flexiblepower.rai.AllocationStatusUpdate;
 import org.flexiblepower.rai.ResourceMessage;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
@@ -31,6 +33,8 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
     }
 
     private volatile boolean hasRegistered = false;
+
+    private volatile AllocationStatus allocationStatus;
 
     protected abstract List<? extends ResourceMessage> startRegistration(RS state);
 
@@ -64,6 +68,9 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
                                 }
                             }
                         }
+                        else {
+                            logger.warn("Message Received by Resource Manager but no controler connected");
+                        }
                     } catch (ClassCastException ex) {
                         logger.warn("Received unknown message type {}", message.getClass().getName());
                     }
@@ -87,6 +94,9 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
                             if (control != null) {
                                 driverConnection.sendMessage(control);
                             }
+                        }
+                        else {
+                            logger.warn("Message Received by Resource Manager but no driver connected");
                         }
                     } catch (ClassCastException ex) {
                         logger.warn("Received unknown message type {}", message.getClass().getName());
@@ -120,6 +130,21 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
      */
     protected boolean isConnectedWithResourceDriver() {
         return driverConnection != null;
+    }
+
+    /**
+     * Send status update to attached controller
+     *
+     * @param allocationStatusUpdate
+     */
+    protected void allocationStatusUpdate(AllocationStatusUpdate allocationStatusUpdate) {
+        if (controllerConnection != null) {
+            controllerConnection.sendMessage(allocationStatusUpdate);
+        }
+        else {
+            logger.warn("Allocation Status change from Resource Manager but no controller connected");
+        }
+
     }
 
 }

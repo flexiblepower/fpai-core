@@ -1,38 +1,38 @@
 package org.flexiblepower.efi.unconstrained;
 
 import javax.measure.Measurable;
-import javax.measure.quantity.Money;
+import javax.measure.quantity.MoneyFlow;
 
 import org.flexiblepower.rai.values.CommodityMeasurables;
 
 public class RunningModeBehaviour {
-    private final CommodityMeasurables commodityFlowAmounts;
+    private final CommodityMeasurables commodityConsumption;
 
-    private final Measurable<Money> runningCostsPerSecond;
+    private final Measurable<MoneyFlow> runningCosts;
 
-    public RunningModeBehaviour(CommodityMeasurables commodityFlowAmounts,
-                                Measurable<Money> runningCostsPerSecond) {
-        if (commodityFlowAmounts == null) {
+    public RunningModeBehaviour(CommodityMeasurables commodityConsumption,
+                                Measurable<MoneyFlow> runningCosts) {
+        if (commodityConsumption == null) {
             throw new NullPointerException("commodityFlowAmounts");
-        } else if (runningCostsPerSecond == null) {
-            throw new NullPointerException("runningCostsPerSecond");
+        } else if (runningCosts == null) {
+            throw new NullPointerException("runningCosts");
         }
 
-        this.commodityFlowAmounts = commodityFlowAmounts;
-        this.runningCostsPerSecond = runningCostsPerSecond;
+        this.commodityConsumption = commodityConsumption;
+        this.runningCosts = runningCosts;
     }
 
-    public CommodityMeasurables getCommodityFlowAmounts() {
-        return commodityFlowAmounts;
+    public CommodityMeasurables getCommodityConsumption() {
+        return commodityConsumption;
     }
 
-    public Measurable<Money> getRunningCostsPerSecond() {
-        return runningCostsPerSecond;
+    public Measurable<MoneyFlow> getRunningCosts() {
+        return runningCosts;
     }
 
     @Override
     public int hashCode() {
-        return 31 * commodityFlowAmounts.hashCode() + runningCostsPerSecond.hashCode();
+        return 31 * commodityConsumption.hashCode() + runningCosts.hashCode();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class RunningModeBehaviour {
         }
 
         RunningModeBehaviour other = (RunningModeBehaviour) obj;
-        if (!commodityFlowAmounts.equals(other.commodityFlowAmounts)) {
+        if (!commodityConsumption.equals(other.commodityConsumption)) {
             return false;
-        } else if (!runningCostsPerSecond.equals(other.runningCostsPerSecond)) {
+        } else if (!runningCosts.equals(other.runningCosts)) {
             return false;
         }
         return true;
@@ -54,9 +54,9 @@ public class RunningModeBehaviour {
 
     @Override
     public String toString() {
-        return "RunningModeBehaviour [commodityFlowAmounts=" + commodityFlowAmounts
-               + ", runningCostsPerSecond="
-               + runningCostsPerSecond
+        return "RunningModeBehaviour [commodityConsumption=" + commodityConsumption
+               + ", runningCosts="
+               + runningCosts
                + "]";
     }
 }
