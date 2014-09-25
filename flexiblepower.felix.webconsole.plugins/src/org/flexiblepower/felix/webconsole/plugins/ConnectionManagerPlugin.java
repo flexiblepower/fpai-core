@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -35,9 +36,10 @@ public class ConnectionManagerPlugin extends HttpServlet {
                                                    .getLogger(ConnectionManagerPlugin.class);
 
     private static final String[] servedFiles = new String[] {
-                                                              "cytoscape.min.js", "index.html" };
+                                                              "connectionManager.js", "cytoscape.min.js", "index.html" };
 
     private ConnectionManager connectionManager;
+    private HashMap<String, PotentialConnection> connectionCache;
 
     @Reference
     public void setConnectionManager(ConnectionManager connectionManager) {
@@ -87,6 +89,8 @@ public class ConnectionManagerPlugin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter w = resp.getWriter();
+
         String path = req.getPathInfo();
         if (path.startsWith("/fpai-connection-manager")) {
             path = path.substring(24);
@@ -95,16 +99,61 @@ public class ConnectionManagerPlugin extends HttpServlet {
             }
         }
         log.debug("path: " + path);
+        if (path.endsWith(".json")) {
+            resp.setContentType("application/json");
+        }
         if (path.equals("autoconnect.json")) {
             log.debug("autoconnect called");
             connectionManager.autoConnect();
-            resp.getWriter().print("{\"autoconnected\": true}");
-            resp.getWriter().close();
+            w.print("{\"autoconnected\": true, \"class\": \"\"}");
+        } else if (path.equals("connect.json")) {
+            final String id = req.getParameter("id");
+            if (connectionCache.containsKey(id)) {
+                PotentialConnection connection = connectionCache.get(id);
+                if (!connection.isConnected()) {
+                    log.debug("Calling connect for " + id);
+                    try {
+                        connection.connect();
+                        w.print("{\"status\": \"Connected " + id + "\", \"class\": \"\"}");
+                    } catch (IllegalStateException e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        w.print("{\"status\": \"Connect was called for " + id
+                                + ", but " + e.getMessage() + "\", \"class\": \"ui-state-error\"}");
+                    }
+
+                } else {
+                    log.error("Connect was called for " + id + ", but it was already connected");
+                    w.print("{\"status\": \"Connect was called for " + id
+                            + ", but it was already connected\", \"class\": \"ui-state-error\"}");
+                }
+            } else {
+                log.error("Connect was called for " + id + ", but it was not found in the cache");
+                w.print("{\"status\": \"Connect was called for " + id
+                        + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
+            }
+        } else if (path.equals("disconnect.json")) {
+            final String id = req.getParameter("id");
+            if (connectionCache.containsKey(id)) {
+                PotentialConnection connection = connectionCache.get(id);
+                if (connection.isConnected()) {
+                    log.debug("Calling disconnect for " + id);
+                    connection.disconnect();
+                    w.print("{\"status\": \"Disconnected " + id + "\", \"class\": \"\"}");
+                } else {
+                    w.print("{\"status\": \"Disconnect was called for " + id
+                            + ", but it was already disconnected\", \"class\": \"ui-state-error\"}");
+                    log.error("Disconnect was called for " + id + ", but it was already disconnected");
+                }
+            } else {
+                w.print("{\"status\": \"Disonnect was called for " + id
+                        + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
+                log.error("Disonnect was called for " + id + ", but it was not found in the cache");
+            }
         } else {
-            PrintWriter w = resp.getWriter();
-            resp.getWriter().print("POST Not yet implemented: " + path);
-            resp.getWriter().close();
+            w.print("POST Not yet implemented: " + path);
         }
+        w.close();
     }
 
     private void sendJson(HttpServletResponse resp, String graphJson) {
@@ -120,6 +169,11 @@ public class ConnectionManagerPlugin extends HttpServlet {
     }
 
     private String createGraphJson(Collection<? extends ManagedEndpoint> values) {
+        if (connectionCache == null) {
+            connectionCache = new HashMap<String, ConnectionManager.PotentialConnection>();
+        }
+        int i = 0;
+
         JsonArray elements = new JsonArray();
 
         // add nodes
@@ -130,7 +184,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
             String pid = me.getPid();
             String[] split = pid.split("\\.");
             log.trace("length " + split.length);
-            String name = split[split.length - 1];
+            String name = split[split.length - 2];
 
             log.debug("Adding {} {}", pid, name);
 
@@ -146,7 +200,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 JsonObject endpointport = new JsonObject();
                 endpointport.addProperty("group", "nodes");
                 JsonObject data = new JsonObject();
-                data.addProperty("id", me.getPid() + ":" + ep.getName());
+                data.addProperty("id", me.getPid() + "-" + ep.getName());
                 data.addProperty("name", ep.getName());
                 data.addProperty("parent", me.getPid());
                 endpointport.add("data", data);
@@ -163,20 +217,31 @@ public class ConnectionManagerPlugin extends HttpServlet {
                     EndpointPort either = pc.getEitherEnd();
                     if (either == ep) {
                         EndpointPort other = pc.getOtherEnd(either);
-                        String eitherend = either.getEndpoint().getPid() + ":" + either.getName();
-                        String otherend = other.getEndpoint().getPid() + ":" + other.getName();
+                        String eitherend = either.getEndpoint().getPid() + "-" + either.getName();
+                        String otherend = other.getEndpoint().getPid() + "-" + other.getName();
+
+                        String id = "connection-" + i++ + "-" + (eitherend + "-" + otherend).hashCode();
+                        connectionCache.put(id, pc);
 
                         JsonObject connectiondata = new JsonObject();
+                        connectiondata.addProperty("id", id);
                         connectiondata.addProperty("source", eitherend);
                         connectiondata.addProperty("target", otherend);
-                        connectiondata.addProperty("isconnected", true); // pc.isConnected());
+                        connectiondata.addProperty("isconnected", pc.isConnected()); // pc.isConnected());
+                        connectiondata.addProperty("unconnectable", !pc.isConnectable());
                         connection.add("data", connectiondata);
+                        if (pc.isConnected()) {
+                            connection.addProperty("classes", "isconnected");
+                        } else if (!pc.isConnectable()) {
+                            connection.addProperty("classes", "unconnectable");
+                        } else {
+                            connection.addProperty("classes", "notconnected");
+                        }
                         elements.add(connection);
                     }
                 }
             }
         }
         return elements.toString();
-
     }
 }

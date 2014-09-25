@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.metatype.Meta;
 
-@Component(immediate = true, designateFactory = Config.class)
+@Component(immediate = false, designateFactory = Config.class)
 @Ports({ @Port(name = "foo", sends = String.class, accepts = String.class),
         @Port(name = "bar", sends = String.class, accepts = String.class),
         @Port(name = "baz", sends = String.class, accepts = String.class) })
