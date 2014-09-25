@@ -7,7 +7,8 @@ cy = cytoscape({
 	// },
 	layout : {
 		name : 'cose',
-		padding : 10
+		animate : false,
+		fit : true,
 	},
 	zoom : 1,
 	minZoom : 0,
@@ -19,14 +20,14 @@ cy = cytoscape({
 		y : 0
 	},
 	panningEnabled : true,
-	userPanningEnabled : false,
-	autoungrabifyNodes : true,
+	userPanningEnabled : true,
+	autoungrabifyNodes : false,
 	hideEdgesOnViewport : false,
 	hideLabelsOnViewport : false,
 	textureOnViewport : false,
 
 	style : [ {
-		selector : 'node',
+		selector : ':parent',
 		css : {
 			'content' : 'data(name)',
 			'font-family' : 'helvetica',
@@ -36,19 +37,21 @@ cy = cytoscape({
 			'text-valign' : 'center',
 			'color' : '#fff',
 			'background-color' : '#0680C1',
-			'border-color' : '#000'
+			'background-color' : '#041B50',
+			'line-color' : '#000',
+			'text-outline-color' : '#000'
 		}
 	}, {
-		selector : ':selected',
+		selector : ':child',
 		css : {
-			'background-color' : '#222',
-			'line-color' : '#222',
-			'text-outline-width' : 3,
-			'text-outline-color' : '#693'
-		}
-	}, {
-		selector : ':parent',
-		css : {
+			'content' : 'data(name)',
+			'font-family' : 'helvetica',
+			'font-size' : 14,
+			'text-outline-width' : 2,
+			'text-outline-color' : '#000',
+			'text-valign' : 'center',
+			'color' : '#fff',
+			'background-color' : '#0680C1',
 			'background-color' : '#041B50',
 			'line-color' : '#000',
 			'text-outline-color' : '#000'
@@ -56,23 +59,29 @@ cy = cytoscape({
 	}, {
 		selector : 'edge',
 		css : {
-			'width' : 5,
+			'opacity' : 0.9,
 			'target-arrow-shape' : 'none'
 
 		}
 	}, {
 		selector : '.faded',
 		css : {
-			'opacity' : 0.9,
+			'opacity' : 0.85,
 			'text-opacity' : 0.9
 		}
 	}, {
 		selector : '.isconnected',
 		css : {
-			'width' : 6,
-			'line-color' : '#0F0',
-			'target-arrow-shape' : 'none'
-
+			'width' : 3,
+			'line-color' : '#3F3',
+			'line-style' : 'solid'
+		}
+	}, {
+		selector : '.notconnected',
+		css : {
+			'width' : 3,
+			'line-color' : '#A00',
+			'line-style' : 'dashed'
 		}
 	} ],
 
@@ -193,8 +202,6 @@ function onEdgeSelected(elemid) {
 		$("#connect").prop("disabled", false);
 		$("#disconnect").prop("disabled", true);
 	}
-
-	// console.log(elem.data());
 }
 
 function onNodeSelected(elemid) {

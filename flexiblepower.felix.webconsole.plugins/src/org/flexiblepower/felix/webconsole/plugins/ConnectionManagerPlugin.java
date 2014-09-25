@@ -112,8 +112,16 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 PotentialConnection connection = connectionCache.get(id);
                 if (!connection.isConnected()) {
                     log.debug("Calling connect for " + id);
-                    connection.connect();
-                    w.print("{\"status\": \"Connected " + id + "\", \"class\": \"\"}");
+                    try {
+                        connection.connect();
+                        w.print("{\"status\": \"Connected " + id + "\", \"class\": \"\"}");
+                    } catch (IllegalStateException e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                        w.print("{\"status\": \"Connect was called for " + id
+                                + ", but " + e.getMessage() + "\", \"class\": \"ui-state-error\"}");
+                    }
+
                 } else {
                     log.error("Connect was called for " + id + ", but it was already connected");
                     w.print("{\"status\": \"Connect was called for " + id
@@ -131,7 +139,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 if (connection.isConnected()) {
                     log.debug("Calling disconnect for " + id);
                     connection.disconnect();
-                    w.print("{\"Disconnected\": " + id + "}");
+                    w.print("{\"status\": \"Disconnected " + id + "\", \"class\": \"\"}");
                 } else {
                     w.print("{\"status\": \"Disconnect was called for " + id
                             + ", but it was already disconnected\", \"class\": \"ui-state-error\"}");
@@ -176,7 +184,7 @@ public class ConnectionManagerPlugin extends HttpServlet {
             String pid = me.getPid();
             String[] split = pid.split("\\.");
             log.trace("length " + split.length);
-            String name = split[split.length - 1];
+            String name = split[split.length - 2];
 
             log.debug("Adding {} {}", pid, name);
 
@@ -224,6 +232,8 @@ public class ConnectionManagerPlugin extends HttpServlet {
                         connection.add("data", connectiondata);
                         if (pc.isConnected()) {
                             connection.addProperty("classes", "isconnected");
+                        } else {
+                            connection.addProperty("classes", "notconnected");
                         }
                         elements.add(connection);
                     }
