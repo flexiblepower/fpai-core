@@ -6,13 +6,13 @@ import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
@@ -42,21 +42,24 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private static interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
                  deflt = "",
-                 description = "List of the active connections (e.g. endpoint:a-endpoint:b)",
+                 description = "List of the active connections (e.g. endpoint:a-endpoint:b). "
+                               + "Warning: any modifications during runtime won't be activated right away. "
+                               + "If you want to connect something, use the special UI for that.",
                  required = false)
-        List<String> active_connections();
+        List<String>
+                active_connections();
     }
 
     private final Map<String, Object> otherProperties;
     private final SortedMap<String, EndpointWrapper> endpointWrappers;
 
+    private final Set<String> activeConnections;
+
     public ConnectionManagerImpl() {
         endpointWrappers = new TreeMap<String, EndpointWrapper>();
         otherProperties = new HashMap<String, Object>();
-        activeConnections = new HashSet<String>();
 
-        // After construction we are in an updating state. Only after
-        isUpdatingState = true;
+        activeConnections = new TreeSet<String>();
     }
 
     private ConfigurationAdmin configurationAdmin;
@@ -66,142 +69,62 @@ public class ConnectionManagerImpl implements ConnectionManager {
         this.configurationAdmin = configurationAdmin;
     }
 
-    private final Set<String> activeConnections;
     private Configuration configuration;
 
     @Activate
-    public void activate() throws IOException {
+    public synchronized void activate() throws IOException {
         configuration = configurationAdmin.getConfiguration(getClass().getName());
 
-        // Make sure that the configuration can be updated after activation
-        isUpdatingState = false;
-        updateConnections();
+        // Storing the configuration
+        activeConnections.clear();
+        otherProperties.clear();
+
+        Dictionary<String, Object> properties = configuration.getProperties();
+        if (properties != null) {
+            for (Enumeration<String> keys = properties.keys(); keys.hasMoreElements();) {
+                String key = keys.nextElement();
+                otherProperties.put(key, properties.get(key));
+            }
+
+            Object activeConnections = properties.get(KEY_ACTIVE_CONNECTIONS);
+            if (activeConnections != null) {
+                if (activeConnections instanceof String) {
+                    this.activeConnections.add(activeConnections.toString());
+                } else if (activeConnections instanceof List) {
+                    for (Object item : (List<?>) activeConnections) {
+                        this.activeConnections.add(item.toString());
+                    }
+                } else if (activeConnections instanceof String[]) {
+                    for (String item : (String[]) activeConnections) {
+                        this.activeConnections.add(item);
+                    }
+                } else {
+                    throw new IllegalArgumentException("The active connections should be a list of strings");
+                }
+            }
+        }
+        log.debug("These connections are configured at boottime: {}", activeConnections);
+
+        for (EndpointWrapper leftWrapper : endpointWrappers.values()) {
+            for (EndpointPortImpl leftPort : leftWrapper.getPorts().values()) {
+                for (PotentialConnectionImpl connection : leftPort.getPotentialConnections().values()) {
+                    if (connection.isConnectable() && activeConnections.contains(connection.toString())) {
+                        log.info("Auto-starting connection on {}", connection);
+                        connection.connect();
+                    }
+                }
+            }
+        }
     }
 
     @Modified
     public void modified() {
-        updateConnections();
+        // All configuration modifications will be ignored! Only on boot, will everything be started
     }
 
     @Deactivate
-    public void deactivate() {
-        // Make sure that the configuration won't be updated after the deactivation
-        isUpdatingState = true;
+    public synchronized void deactivate() {
         configuration = null;
-    }
-
-    /*
-     * This boolean is used to make sure that either we are updating from the updateConnections method, or we are
-     * updating from the the (dis)connectedPort methods. This is to break the endless looping that it would create
-     * otherwise.
-     */
-    private volatile boolean isUpdatingState;
-
-    private final static class Retry {
-        private boolean shouldRetry, changedSome;
-
-        Retry() {
-            shouldRetry = true;
-            changedSome = true;
-        }
-
-        void reset() {
-            shouldRetry = false;
-            changedSome = false;
-        }
-
-        void changedSome() {
-            changedSome = true;
-        }
-
-        void retry() {
-            shouldRetry = true;
-        }
-
-        boolean shouldRetry() {
-            return shouldRetry && changedSome;
-        }
-
-        boolean shouldRetryButCant() {
-            return shouldRetry && !changedSome;
-        }
-    }
-
-    /**
-     * This method tries to disconnect and connect potential connections to try to match the configuration
-     */
-    private synchronized void updateConnections() {
-        if (!isUpdatingState) {
-            log.debug("Start updating the connections");
-
-            isUpdatingState = true;
-
-            activeConnections.clear();
-            otherProperties.clear();
-
-            Dictionary<String, Object> properties = configuration.getProperties();
-            if (properties != null) {
-                for (Enumeration<String> keys = properties.keys(); keys.hasMoreElements();) {
-                    String key = keys.nextElement();
-                    otherProperties.put(key, properties.get(key));
-                }
-
-                Object activeConnections = properties.get(KEY_ACTIVE_CONNECTIONS);
-                if (activeConnections != null) {
-                    if (activeConnections instanceof String) {
-                        this.activeConnections.add(activeConnections.toString());
-                    } else if (activeConnections instanceof List) {
-                        for (Object item : (List<?>) activeConnections) {
-                            this.activeConnections.add(item.toString());
-                        }
-                    } else if (activeConnections instanceof String[]) {
-                        for (String item : (String[]) activeConnections) {
-                            this.activeConnections.add(item);
-                        }
-                    } else {
-                        throw new IllegalArgumentException("The active connections should be a list of strings");
-                    }
-                }
-            }
-            log.debug("These connections should be active: {}", activeConnections);
-
-            Retry retry = new Retry();
-            while (retry.shouldRetry()) {
-                retry.reset();
-                for (EndpointWrapper wrapper : endpointWrappers.values()) {
-                    updateWrapper(wrapper, retry);
-                }
-            }
-
-            if (retry.shouldRetryButCant()) {
-                log.warn("Could not connect all configured connections");
-            }
-
-            log.debug("Completed updating of connections");
-
-            isUpdatingState = false;
-        }
-    }
-
-    private void updateWrapper(EndpointWrapper wrapper, Retry retry) {
-        for (EndpointPortImpl port : wrapper.getPorts().values()) {
-            for (PotentialConnectionImpl connection : port.getPotentialConnections().values()) {
-                String key = port.toString();
-                boolean contains = activeConnections.contains(key);
-                boolean connected = connection.isConnected();
-                if (contains && !connected) {
-                    if (connection.isConnectable()) {
-                        connection.connect();
-                        retry.changedSome();
-                    } else {
-                        retry.retry();
-                    }
-                } else if (!contains && connected) {
-                    connection.disconnect();
-                    retry.changedSome();
-                }
-            }
-        }
     }
 
     /**
@@ -212,10 +135,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
      *            The key of the {@link PotentialConnection} that should be added
      */
     synchronized void connectedPort(String key) {
-        if (!isUpdatingState) {
-            if (activeConnections.add(key)) {
-                storeConnections();
-            }
+        if (activeConnections.add(key)) {
+            storeConnections();
         }
     }
 
@@ -227,35 +148,37 @@ public class ConnectionManagerImpl implements ConnectionManager {
      *            The key of the {@link PotentialConnection} that should be added
      */
     synchronized void disconnectedPort(String key) {
-        if (!isUpdatingState) {
-            if (activeConnections.remove(key)) {
-                storeConnections();
-            }
+        if (activeConnections.remove(key)) {
+            storeConnections();
         }
     }
+
+    private boolean waitWithStoring = false;
 
     /**
      * Stores the active connections in the configuration of this component
      */
     private void storeConnections() {
-        isUpdatingState = true;
+        if (!waitWithStoring) {
+            // If the configuration is null, it means that the updates are done while the activate and deactivate
+            // methods
+            // are not active. This is probably due to the fact that it is booting up or is shutting down. Then we don't
+            // need to update the configuration.
+            if (configuration != null) {
+                Dictionary<String, Object> properties = new Hashtable<String, Object>(otherProperties);
+                if (!activeConnections.isEmpty()) {
+                    properties.put(KEY_ACTIVE_CONNECTIONS, new ArrayList<String>(activeConnections));
+                }
 
-        // If the configuration is null, it means that the updates are done while the activate and deactivate methods
-        // are not active. This is probably due to the fact that it is booting up or is shutting down. Then we don't
-        // need to update the configuration.
-        if (configuration != null) {
-            Dictionary<String, Object> properties = new Hashtable<String, Object>(otherProperties);
-            List<String> activeConnections = new ArrayList<String>(this.activeConnections);
-            properties.put(KEY_ACTIVE_CONNECTIONS, activeConnections);
-
-            try {
-                configuration.update(properties);
-            } catch (IOException e) {
-                log.warn("Could not store the new active connections: " + e.getMessage(), e);
+                if (!properties.isEmpty()) {
+                    try {
+                        configuration.update(properties);
+                    } catch (IOException e) {
+                        log.warn("Could not store the new active connections: " + e.getMessage(), e);
+                    }
+                }
             }
         }
-
-        isUpdatingState = false;
     }
 
     @Reference(dynamic = true, multiple = true, optional = true, service = Endpoint.class, name = "endpoint")
@@ -265,12 +188,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
             if (key != null) {
                 EndpointWrapper wrapper = new EndpointWrapper(key, endpoint, this);
                 endpointWrappers.put(key, wrapper);
+                detectPossibleConnections(wrapper);
                 log.debug("Added endpoint on key [{}]", key);
-
-                // Check the wrapper if some of its potential connections should be started directly
-                isUpdatingState = true;
-                updateWrapper(wrapper, new Retry());
-                isUpdatingState = false;
             }
         } catch (IllegalArgumentException ex) {
             log.warn("Could not add endpoint: {}", ex.getMessage());
@@ -278,42 +197,46 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     public synchronized void removeEndpoint(Endpoint endpoint, Map<String, ?> properties) {
-        // This is to make sure that any disconnects that this will cause, won't delete the configuration for that
-        // connection
-        isUpdatingState = true;
-
         String key = getKey(endpoint, properties);
         if (key != null) {
             EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
-            if (endpointWrapper != null) {
+            if (endpointWrapper != null && endpointWrapper.getEndpoint() == endpoint) {
                 endpointWrapper.close();
                 log.debug("Removed endpoint on key [{}]", key);
             }
         }
-
-        isUpdatingState = false;
     }
 
     private String getKey(Endpoint endpoint, Map<String, ?> properties) {
         String key = (String) properties.get(Constants.SERVICE_PID);
         if (key == null) {
-            Long id = (Long) properties.get(Constants.SERVICE_ID);
-            if (id != null) {
-                key = endpoint.getClass().getName() + "-" + id;
-            }
+            // TODO: what other way of persistent ID's can we have???
+            key = endpoint.getClass().getName();
         }
         return key;
     }
 
-    void detectPossibleConnections(EndpointPortImpl left) {
-        for (EndpointWrapper wrapper : endpointWrappers.values()) {
-            for (EndpointPortImpl right : wrapper.getPorts().values()) {
-                if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort().sends(),
-                                                                                            left.getPort().accepts())) {
-                    PotentialConnectionImpl connection = new PotentialConnectionImpl(left, right);
-                    log.info("Found matching ports: {} <--> {}", left, right);
-                    left.addMatch(connection);
-                    right.addMatch(connection);
+    private void detectPossibleConnections(EndpointWrapper leftWrapper) {
+        for (EndpointPortImpl left : leftWrapper.getPorts().values()) {
+            for (EndpointWrapper rightWrapper : endpointWrappers.values()) {
+                if (leftWrapper != rightWrapper) {
+                    for (EndpointPortImpl right : rightWrapper.getPorts().values()) {
+                        if (isSubset(left.getPort().sends(), right.getPort().accepts()) && isSubset(right.getPort()
+                                                                                                         .sends(),
+                                                                                                    left.getPort()
+                                                                                                        .accepts())) {
+                            PotentialConnectionImpl connection = new PotentialConnectionImpl(left, right);
+                            log.info("Found matching ports: {} <--> {}", left, right);
+                            left.addMatch(connection);
+                            right.addMatch(connection);
+
+                            String key = connection.toString();
+                            if (activeConnections.contains(key)) {
+                                log.info("Auto-starting connection on {}", connection);
+                                connection.connect();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -362,7 +285,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Override
-    public void autoConnect() {
+    public synchronized void autoConnect() {
+        waitWithStoring = true;
+
         for (EndpointWrapper ew : endpointWrappers.values()) {
             for (EndpointPortImpl port : ew.getPorts().values()) {
                 // Try each port detected in the system. We can only auto-connect ports that have single cardinality
@@ -388,5 +313,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 }
             }
         }
+
+        waitWithStoring = false;
+        storeConnections();
     }
 }

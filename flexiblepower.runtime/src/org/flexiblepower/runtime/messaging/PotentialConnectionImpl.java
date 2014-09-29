@@ -164,6 +164,11 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
     @Override
     public synchronized void disconnect() {
+        close();
+        left.getEndpoint().getConnectionManager().disconnectedPort(toString());
+    }
+
+    synchronized void close() {
         if (isConnected()) {
             log.debug("Disconnecting port [{}] to port [{}]", left, right);
             try {
@@ -187,8 +192,6 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
             leftMessageHandler = null;
             rightMessageHandler = null;
-
-            left.getEndpoint().getConnectionManager().disconnectedPort(toString());
         }
     }
 

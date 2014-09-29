@@ -30,6 +30,8 @@ public class EndpointTester extends TestCase {
 
     private ConnectionManager connectionManager;
 
+    private BundleContext context;
+
     public abstract class TestEndpoint implements Endpoint {
         private final String expectedPortName;
         private final Object sendMessage, expectedMessage;
@@ -63,7 +65,7 @@ public class EndpointTester extends TestCase {
                 @Override
                 public void disconnected() {
                     assertTrue(gotMessage);
-                    System.out.println("Connection ended on EndpointA");
+                    System.out.println("Connection ended on " + TestEndpoint.this.getClass().getSimpleName());
                     connected = false;
                 }
             };
@@ -117,7 +119,7 @@ public class EndpointTester extends TestCase {
     }
 
     protected ConnectionManager setupEndpoints(Endpoint... endpoints) throws Exception {
-        BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        context = FrameworkUtil.getBundle(getClass()).getBundleContext();
         for (Endpoint endpoint : endpoints) {
             registrations.add(context.registerService(Endpoint.class, endpoint, null));
         }
@@ -159,8 +161,9 @@ public class EndpointTester extends TestCase {
         assertEquals(4, portA.getPotentialConnections().size());
 
         EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
-        PotentialConnection connAB = portA.getPotentialConnection(portB);
         assertNotNull(portB);
+
+        PotentialConnection connAB = portA.getPotentialConnection(portB);
         assertNotNull(connAB);
         assertFalse(connAB.isConnected());
 
@@ -178,6 +181,20 @@ public class EndpointTester extends TestCase {
         b.assertNotConnected();
 
         connectionManager.autoConnect();
+        assertTrue(connAB.isConnected());
+
+        registrations.remove(0).unregister();
+        assertNull(connectionManager.getEndpoint(EndpointA.class.getName()));
+
+        registrations.add(0, context.registerService(Endpoint.class, a, null));
+        portA = connectionManager.getEndpoint(EndpointA.class.getName()).getPort("A-anyIn");
+        assertNotNull(portA);
+        assertEquals(4, portA.getPotentialConnections().size());
+
+        connAB = portA.getPotentialConnection(portB);
+        assertNotNull(connAB);
+
+        Thread.sleep(SLEEP_TIME);
         assertTrue(connAB.isConnected());
     }
 
@@ -416,6 +433,13 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     class SendDataEndpoint implements Endpoint {
+        private boolean finished = false;
+
+        public void checkIfFinishedAndReset() {
+            assertTrue("We did not receive all the messages", finished);
+            finished = false;
+        }
+
         @Override
         public MessageHandler onConnect(final Connection connection) {
             connection.sendMessage(new DecodedStringMessage("Ab"));
@@ -430,6 +454,7 @@ public class EndpointTester extends TestCase {
                         synchronized (EndpointTester.this) {
                             EndpointTester.this.notifyAll();
                         }
+                        finished = true;
                     }
                 }
 
@@ -490,6 +515,8 @@ public class EndpointTester extends TestCase {
             synchronized (this) {
                 wait(1000);
             }
+
+            data.checkIfFinishedAndReset();
 
             connData.disconnect();
             connEcho.disconnect();

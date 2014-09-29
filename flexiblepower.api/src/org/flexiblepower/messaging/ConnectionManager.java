@@ -1,6 +1,5 @@
 package org.flexiblepower.messaging;
 
-import java.io.IOException;
 import java.util.SortedMap;
 
 public interface ConnectionManager {
@@ -33,7 +32,7 @@ public interface ConnectionManager {
 
         boolean isConnected();
 
-        void connect() throws IOException;
+        void connect();
 
         void disconnect();
 
