@@ -110,6 +110,10 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         }
     }
 
+    ConnectionManagerImpl getConnectionManager() {
+        return connectionManager;
+    }
+
     public Endpoint getEndpoint() {
         return endpoint;
     }

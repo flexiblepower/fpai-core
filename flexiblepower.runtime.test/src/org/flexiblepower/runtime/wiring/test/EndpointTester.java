@@ -28,6 +28,8 @@ public class EndpointTester extends TestCase {
     private final List<ServiceRegistration<Endpoint>> registrations = new ArrayList<ServiceRegistration<Endpoint>>();
     private ServiceTracker<ConnectionManager, ConnectionManager> connectionManagerTracker;
 
+    private ConnectionManager connectionManager;
+
     public abstract class TestEndpoint implements Endpoint {
         private final String expectedPortName;
         private final Object sendMessage, expectedMessage;
@@ -125,7 +127,7 @@ public class EndpointTester extends TestCase {
                                                                                             null);
         connectionManagerTracker.open();
 
-        ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
+        connectionManager = connectionManagerTracker.waitForService(1000);
         assertNotNull(connectionManager);
         return connectionManager;
     }
@@ -137,9 +139,8 @@ public class EndpointTester extends TestCase {
         }
         registrations.clear();
 
-        ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
         assertEquals(0, connectionManager.getEndpoints().size());
-
+        connectionManager = null;
         connectionManagerTracker.close();
     }
 

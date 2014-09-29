@@ -88,8 +88,16 @@ final class PotentialConnectionImpl implements PotentialConnection {
     private volatile MessageHandler leftMessageHandler, rightMessageHandler;
 
     public PotentialConnectionImpl(EndpointPortImpl left, EndpointPortImpl right) {
-        this.left = left;
-        this.right = right;
+        if (left.equals(right)) {
+            throw new IllegalArgumentException("You can not connect an Endpoint to itself");
+        }
+        if (left.toString().compareTo(right.toString()) < 0) {
+            this.left = left;
+            this.right = right;
+        } else {
+            this.left = right;
+            this.right = left;
+        }
     }
 
     @Override
@@ -148,6 +156,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 leftHalfConnection.setMessageHandler(rightMessageHandler);
                 rightHalfConnection.setMessageHandler(leftMessageHandler);
 
+                left.getEndpoint().getConnectionManager().connectedPort(toString());
                 log.debug("Connected port [{}] to port [{}]", left, right);
             }
         }
@@ -178,11 +187,18 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
             leftMessageHandler = null;
             rightMessageHandler = null;
+
+            left.getEndpoint().getConnectionManager().disconnectedPort(toString());
         }
     }
 
     @Override
     public synchronized boolean isConnected() {
         return leftMessageHandler != null && rightMessageHandler != null;
+    }
+
+    @Override
+    public String toString() {
+        return left.toString() + "-" + right.toString();
     }
 }
