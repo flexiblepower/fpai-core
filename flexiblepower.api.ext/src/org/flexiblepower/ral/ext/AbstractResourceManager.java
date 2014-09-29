@@ -145,9 +145,23 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
             controllerConnection.sendMessage(allocationStatusUpdate);
         }
         else {
-            logger.warn("Allocation Status change from Resource Manager but no controller connected");
+            logger.warn("Allocation Status update from Resource Manager but no controller connected");
         }
 
+    }
+
+    /**
+     * Send control parameters to attached controller
+     *
+     * @param allocationStatusUpdate
+     */
+    protected void sendControlParameters(ResourceControlParameters controlParameters) {
+        if (driverConnection != null) {
+            driverConnection.sendMessage(controlParameters);
+        }
+        else {
+            logger.warn("Control Parameters update from Resource Manager but no controller connected");
+        }
     }
 
 }
