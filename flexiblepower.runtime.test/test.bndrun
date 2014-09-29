@@ -6,6 +6,7 @@
 	flexiblepower.runtime.test;version=latest,\
 	ch.qos.logback.classic;version=latest,\
 	ch.qos.logback.core;version=latest,\
+	org.apache.felix.configadmin;version=latest,\
 	org.apache.felix.scr;version=latest,\
 	biz.aQute.bnd.annotation;version=latest,\
 	slf4j.api;version=latest

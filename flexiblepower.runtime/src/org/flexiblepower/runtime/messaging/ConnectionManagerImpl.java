@@ -33,7 +33,8 @@ import aQute.bnd.annotation.metatype.Meta;
 
 @Component(immediate = true,
            designate = ConnectionManagerImpl.Config.class,
-           configurationPolicy = ConfigurationPolicy.optional)
+           configurationPolicy = ConfigurationPolicy.optional,
+           provide = ConnectionManager.class)
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final String KEY_ACTIVE_CONNECTIONS = "active.connections";
     private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
@@ -41,7 +42,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private static interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
                  deflt = "",
-                 description = "List of the active connections (e.g. endpoint:a-endpoint:b)")
+                 description = "List of the active connections (e.g. endpoint:a-endpoint:b)",
+                 required = false)
         List<String> active_connections();
     }
 
@@ -138,26 +140,30 @@ public class ConnectionManagerImpl implements ConnectionManager {
             otherProperties.clear();
 
             Dictionary<String, Object> properties = configuration.getProperties();
-            for (Enumeration<String> keys = properties.keys(); keys.hasMoreElements();) {
-                String key = keys.nextElement();
-                otherProperties.put(key, properties.get(key));
-            }
+            if (properties != null) {
+                for (Enumeration<String> keys = properties.keys(); keys.hasMoreElements();) {
+                    String key = keys.nextElement();
+                    otherProperties.put(key, properties.get(key));
+                }
 
-            Object activeConnections = properties.get(KEY_ACTIVE_CONNECTIONS);
-            if (activeConnections instanceof String) {
-                this.activeConnections.add(activeConnections.toString());
-            } else if (activeConnections instanceof List) {
-                for (Object item : (List<?>) activeConnections) {
-                    this.activeConnections.add(item.toString());
+                Object activeConnections = properties.get(KEY_ACTIVE_CONNECTIONS);
+                if (activeConnections != null) {
+                    if (activeConnections instanceof String) {
+                        this.activeConnections.add(activeConnections.toString());
+                    } else if (activeConnections instanceof List) {
+                        for (Object item : (List<?>) activeConnections) {
+                            this.activeConnections.add(item.toString());
+                        }
+                    } else if (activeConnections instanceof String[]) {
+                        for (String item : (String[]) activeConnections) {
+                            this.activeConnections.add(item);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("The active connections should be a list of strings");
+                    }
                 }
-            } else if (activeConnections instanceof String[]) {
-                for (String item : (String[]) activeConnections) {
-                    this.activeConnections.add(item);
-                }
-            } else {
-                throw new IllegalArgumentException("The active connections should be a list of strings");
             }
-            log.debug("These connections should be active: {}", this.activeConnections);
+            log.debug("These connections should be active: {}", activeConnections);
 
             Retry retry = new Retry();
             while (retry.shouldRetry()) {
