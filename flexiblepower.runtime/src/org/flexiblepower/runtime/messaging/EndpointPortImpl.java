@@ -82,12 +82,10 @@ public class EndpointPortImpl implements EndpointPort {
     }
 
     public void close() {
-        for (PotentialConnectionImpl matchingPort : getPotentialConnections().values()) {
-            if (matchingPort.isConnected()) {
-                matchingPort.disconnect();
-            }
-            removeMatch(matchingPort);
-            matchingPort.getOtherEnd(this).removeMatch(matchingPort);
+        for (PotentialConnectionImpl connection : getPotentialConnections().values()) {
+            connection.close();
+            removeMatch(connection);
+            connection.getOtherEnd(this).removeMatch(connection);
         }
     }
 }

@@ -64,7 +64,6 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
 
             if (storedPort == null) {
                 log.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
-                connectionManager.detectPossibleConnections(endpointPort);
                 this.ports.put(port.name(), endpointPort);
             } else if (storedPort.getPort().sends().length == 0 && storedPort.getPort().accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
@@ -74,7 +73,6 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
                              port.cardinality());
                 }
                 log.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
-                connectionManager.detectPossibleConnections(endpointPort);
                 this.ports.put(port.name(), endpointPort);
                 storedPort.close();
             } else if (port.sends().length == 0 && port.accepts().length == 0) {
@@ -108,6 +106,10 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
                 throw new IllegalArgumentException("The port [" + ep + "] is missing a definition");
             }
         }
+    }
+
+    ConnectionManagerImpl getConnectionManager() {
+        return connectionManager;
     }
 
     public Endpoint getEndpoint() {

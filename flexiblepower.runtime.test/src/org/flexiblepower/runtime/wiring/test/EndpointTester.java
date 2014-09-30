@@ -1,6 +1,8 @@
 package org.flexiblepower.runtime.wiring.test;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
@@ -18,6 +20,7 @@ import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
@@ -27,6 +30,10 @@ public class EndpointTester extends TestCase {
 
     private final List<ServiceRegistration<Endpoint>> registrations = new ArrayList<ServiceRegistration<Endpoint>>();
     private ServiceTracker<ConnectionManager, ConnectionManager> connectionManagerTracker;
+
+    private ConnectionManager connectionManager;
+
+    private BundleContext context;
 
     public abstract class TestEndpoint implements Endpoint {
         private final String expectedPortName;
@@ -61,7 +68,7 @@ public class EndpointTester extends TestCase {
                 @Override
                 public void disconnected() {
                     assertTrue(gotMessage);
-                    System.out.println("Connection ended on EndpointA");
+                    System.out.println("Connection ended on " + TestEndpoint.this.getClass().getSimpleName());
                     connected = false;
                 }
             };
@@ -115,9 +122,13 @@ public class EndpointTester extends TestCase {
     }
 
     protected ConnectionManager setupEndpoints(Endpoint... endpoints) throws Exception {
-        BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        int ix = 1;
         for (Endpoint endpoint : endpoints) {
-            registrations.add(context.registerService(Endpoint.class, endpoint, null));
+            Dictionary<String, Object> properties = new Hashtable<String, Object>();
+            properties.put(Constants.SERVICE_PID, endpoint.getClass().getName() + "." + ix);
+            registrations.add(context.registerService(Endpoint.class, endpoint, properties));
+            ix++;
         }
 
         connectionManagerTracker = new ServiceTracker<ConnectionManager, ConnectionManager>(context,
@@ -125,7 +136,7 @@ public class EndpointTester extends TestCase {
                                                                                             null);
         connectionManagerTracker.open();
 
-        ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
+        connectionManager = connectionManagerTracker.waitForService(1000);
         assertNotNull(connectionManager);
         return connectionManager;
     }
@@ -137,9 +148,8 @@ public class EndpointTester extends TestCase {
         }
         registrations.clear();
 
-        ConnectionManager connectionManager = connectionManagerTracker.waitForService(1000);
         assertEquals(0, connectionManager.getEndpoints().size());
-
+        connectionManager = null;
         connectionManagerTracker.close();
     }
 
@@ -158,8 +168,9 @@ public class EndpointTester extends TestCase {
         assertEquals(4, portA.getPotentialConnections().size());
 
         EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
-        PotentialConnection connAB = portA.getPotentialConnection(portB);
         assertNotNull(portB);
+
+        PotentialConnection connAB = portA.getPotentialConnection(portB);
         assertNotNull(connAB);
         assertFalse(connAB.isConnected());
 
@@ -177,6 +188,23 @@ public class EndpointTester extends TestCase {
         b.assertNotConnected();
 
         connectionManager.autoConnect();
+        assertTrue(connAB.isConnected());
+
+        registrations.remove(0).unregister();
+        assertNull(connectionManager.getEndpoint(EndpointA.class.getName()));
+
+        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        properties.put(Constants.SERVICE_PID, (EndpointA.class.getName() + ".1"));
+        registrations.add(0, context.registerService(Endpoint.class, a, properties));
+
+        portA = connectionManager.getEndpoint(EndpointA.class.getName()).getPort("A-anyIn");
+        assertNotNull(portA);
+        assertEquals(4, portA.getPotentialConnections().size());
+
+        connAB = portA.getPotentialConnection(portB);
+        assertNotNull(connAB);
+
+        Thread.sleep(SLEEP_TIME);
         assertTrue(connAB.isConnected());
     }
 
@@ -415,6 +443,13 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     class SendDataEndpoint implements Endpoint {
+        private boolean finished = false;
+
+        public void checkIfFinishedAndReset() {
+            assertTrue("We did not receive all the messages", finished);
+            finished = false;
+        }
+
         @Override
         public MessageHandler onConnect(final Connection connection) {
             connection.sendMessage(new DecodedStringMessage("Ab"));
@@ -429,6 +464,7 @@ public class EndpointTester extends TestCase {
                         synchronized (EndpointTester.this) {
                             EndpointTester.this.notifyAll();
                         }
+                        finished = true;
                     }
                 }
 
@@ -479,7 +515,7 @@ public class EndpointTester extends TestCase {
         PotentialConnection connPublic = portPublic1.getPotentialConnection(portPublic2);
         PotentialConnection connData = portData.getPotentialConnection(portPrivate2);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             echo.reset();
 
             connPublic.connect();
@@ -487,8 +523,10 @@ public class EndpointTester extends TestCase {
             connData.connect();
 
             synchronized (this) {
-                wait(1000);
+                wait(SLEEP_TIME);
             }
+
+            data.checkIfFinishedAndReset();
 
             connData.disconnect();
             connEcho.disconnect();
