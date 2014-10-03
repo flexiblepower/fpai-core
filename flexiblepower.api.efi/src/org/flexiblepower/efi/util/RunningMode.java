@@ -17,6 +17,7 @@ public class RunningMode<T> {
     private final Map<Integer, Transition> possibleTransitions;
 
     // TODO should this constructor be protected?
+    // There may be no transition to this RunningMode (itself).
     public RunningMode(int id,
                        String name,
                        T value,
@@ -63,7 +64,7 @@ public class RunningMode<T> {
 
     /**
      * @return A list of zero or more {@link Transition} objects that contain constraints for switching from this
-     *         RunningMode to another.
+     *         RunningMode to another. There may be no transition to this RunningMode (itself).
      */
     public Collection<Transition> getTransitions() {
         return possibleTransitions.values();

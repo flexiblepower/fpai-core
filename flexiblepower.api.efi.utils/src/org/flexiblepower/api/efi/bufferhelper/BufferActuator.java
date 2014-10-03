@@ -1,5 +1,6 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,8 +36,8 @@ public class BufferActuator {
         this.currentRunningModeId = currentRunningModeId;
     }
 
-    public Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> getAllRunningModes() {
-        return allRunningModes;
+    public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getAllRunningModes() {
+        return allRunningModes.values();
     }
 
     public void setAllRunningModes(Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModes) {
@@ -59,25 +60,32 @@ public class BufferActuator {
         }
     }
 
-    public Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
-        Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+    /**
+     * Returns the reachableRunning modes including the current one, if it may stay in it.
+     *
+     * @param now
+     *            The current time.
+     * @return The reachable running modes including the current one.
+     */
+    public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
+        Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new ArrayList<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
             if (!isBlockedOn(transition, now)) {
-                targets.put(transition.getToRunningMode(), getAllRunningModes().get(transition.getToRunningMode()));
+                targets.add(allRunningModes.get(transition.getToRunningMode()));
             }
         }
+        targets.add(allRunningModes.get(currentRunningModeId));
         return targets;
     }
 
     private boolean isBlockedOn(Transition transition, Date moment) {
-        boolean isBlocked = false;
         for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
             if (timers.get(t.getId()).getFinishedAt().after(moment)) {
-                isBlocked = true;
+                return true;
             }
         }
-        return isBlocked;
+        return false;
     }
 
     private BufferActuator(int actuatorId, String actuatorLabel, CommoditySet commodities) {
@@ -118,4 +126,21 @@ public class BufferActuator {
         }
         return resultMap;
     }
+
+    public double getMinimumFillLevel() {
+        double lowestBound = Double.MAX_VALUE;
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
+            lowestBound = Math.min(lowestBound, r.getValue().getLowerBound());
+        }
+        return lowestBound;
+    }
+
+    public double getMaximumFillLevel() {
+        double upperBound = Double.MIN_VALUE;
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
+            upperBound = Math.max(upperBound, r.getValue().getUpperBound());
+        }
+        return upperBound;
+    }
+
 }

@@ -1,7 +1,7 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +18,7 @@ import org.flexiblepower.efi.buffer.BufferRegistration;
 import org.flexiblepower.efi.buffer.BufferStateUpdate;
 import org.flexiblepower.efi.buffer.BufferSystemDescription;
 import org.flexiblepower.efi.buffer.LeakageRate;
-import org.flexiblepower.efi.buffer.RunningModeBehaviour;
 import org.flexiblepower.efi.util.FillLevelFunction;
-import org.flexiblepower.efi.util.RunningMode;
 import org.flexiblepower.efi.util.TimerUpdate;
 import org.flexiblepower.rai.values.Commodity;
 
@@ -102,12 +100,11 @@ public class Buffer<Q extends Quantity> {
         }
     }
 
-    public Map<BufferActuator, List<Measurable<?>>> getElectricalActuatorsWithReachableDemands(Date now,
-                                                                                               double fillLevel) {
-        Map<BufferActuator, List<Measurable<?>>> result = new HashMap<BufferActuator, List<Measurable<?>>>();
+    public List<BufferActuator> getElectricalActuators() {
+        List<BufferActuator> result = new ArrayList<BufferActuator>();
         for (BufferActuator a : actuators.values()) {
             if (a.getCommodities().contains(Commodity.ELECTRICITY)) {
-                result.put(a, a.getPossibleDemands(now, fillLevel));
+                result.add(a);
             }
         }
         return result;
@@ -118,24 +115,25 @@ public class Buffer<Q extends Quantity> {
         return currentFillLevel.doubleValue(fillLevelUnit) / (getMaximumFillLevel() - getMinimumFillLevel());
     }
 
-    private double getMinimumFillLevel() {
+    /**
+     * @return The minimum of all actuators not only the electrical.
+     */
+    public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
         for (BufferActuator a : actuators.values()) {
-            for (RunningMode<FillLevelFunction<RunningModeBehaviour>> mode : a.getAllRunningModes().values())
-            {
-                lowestBound = Math.min(lowestBound, mode.getValue().getLowerBound());
-            }
+            lowestBound = Math.min(lowestBound, a.getMinimumFillLevel());
         }
         return lowestBound;
     }
 
-    private double getMaximumFillLevel() {
+    /**
+     *
+     * @return The maximum of all actuators not only the electrical.
+     */
+    public double getMaximumFillLevel() {
         double highestBound = Double.MIN_VALUE;
         for (BufferActuator a : actuators.values()) {
-            for (RunningMode<FillLevelFunction<RunningModeBehaviour>> mode : a.getAllRunningModes().values())
-            {
-                highestBound = Math.min(highestBound, mode.getValue().getUpperBound());
-            }
+            highestBound = Math.max(highestBound, a.getMaximumFillLevel());
         }
         return highestBound;
     }
@@ -145,5 +143,7 @@ public class Buffer<Q extends Quantity> {
     private void setLeakageFunction(FillLevelFunction<LeakageRate> bufferLeakage) {
         leakageFunction = bufferLeakage;
     }
+
+    // TODO: Forecast and target update bericht interpreteren.
 
 }
