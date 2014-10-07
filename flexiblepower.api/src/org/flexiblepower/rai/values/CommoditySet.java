@@ -147,4 +147,9 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
     public int size() {
         return (hasElectricity ? 1 : 0) + (hasGas ? 1 : 0);
     }
+
+    @Override
+    public boolean isEmpty() {
+        return !(hasElectricity || hasGas || hasHeat);
+    }
 }

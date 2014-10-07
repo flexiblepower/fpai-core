@@ -176,10 +176,20 @@ public class Buffer<Q extends Quantity> {
         return currentFillLevel;
     }
 
+    /**
+     * Returns whether this Buffer has received a system description or not yet.
+     *
+     * @return Whether this buffer has received a system description yet.
+     */
     public boolean hasReceivedSystemDescription() {
         return hasReceivedSystemDescription;
     }
 
+    /**
+     * Returns whether a state update has been received.
+     * 
+     * @return Whether it has received state update.
+     */
     public boolean hasReceivedStateUpdate() {
         return hasReceivedStateUpdate;
     }

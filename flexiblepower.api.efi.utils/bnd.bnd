@@ -1,7 +1,8 @@
 -buildpath:  \
 	biz.aQute.bnd.annotation,\
 	flexiblepower.api;version=latest,\
-	flexiblepower.api.efi;version=latest
+	flexiblepower.api.efi;version=latest,\
+	junit.osgi
 
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package: org.flexiblepower.api.efi.bufferhelper
