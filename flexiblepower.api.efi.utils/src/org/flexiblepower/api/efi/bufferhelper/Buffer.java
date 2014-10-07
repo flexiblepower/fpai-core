@@ -216,7 +216,7 @@ public class Buffer<Q extends Quantity> {
      * Sets the buffer leakage function.
      *
      * @param bufferLeakage
-     *            The buffer leakage function.
+     *            The buffer leakage function
      */
     private void setLeakageFunction(FillLevelFunction<LeakageRate> bufferLeakage) {
         leakageFunction = bufferLeakage;

@@ -94,7 +94,7 @@ public class BufferActuator {
         Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new ArrayList<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
-            if (!isBlockedOn(transition, now)) {
+            if (!isBlockedAt(transition, now)) {
                 targets.add(allRunningModes.get(transition.getToRunningMode()));
             }
         }
@@ -111,9 +111,9 @@ public class BufferActuator {
      *            The moment at which the possibility is or is not blocked.
      * @return True if the transition is blocked, false if it is not.
      */
-    private boolean isBlockedOn(Transition transition, Date moment) {
+    private boolean isBlockedAt(Transition transition, Date moment) {
         for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
-            if (timers.get(t.getId()).getFinishedAt().after(moment)) {
+            if (timers.get(t.getId()).isBlockingAt(moment)) {
                 return true;
             }
         }

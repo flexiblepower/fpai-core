@@ -16,4 +16,8 @@ public class Timer extends org.flexiblepower.efi.util.Timer {
     public Date getFinishedAt() {
         return finishedAt;
     }
+
+    public boolean isBlockingAt(Date moment) {
+        return (finishedAt != null && finishedAt.after(moment));
+    }
 }
