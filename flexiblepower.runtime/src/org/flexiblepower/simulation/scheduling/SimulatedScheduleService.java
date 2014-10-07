@@ -78,24 +78,29 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
         return new Date(getCurrentTimeMillis());
     }
 
+    private synchronized void addJob(Job job) {
+        jobs.add(job);
+        notifyAll();
+    }
+
     // Adding jobs
 
     @Override
     public void execute(Runnable command) {
-        jobs.add(Job.create(command, this, getCurrentTimeMillis(), 0));
+        addJob(Job.create(command, this, getCurrentTimeMillis(), 0));
     }
 
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
         Job<?> job = Job.create(command, this, getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(delay, unit), 0);
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
         Job<V> job = Job.create(callable, this, getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(delay, unit), 0);
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
@@ -105,7 +110,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                                 this,
                                 getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(initialDelay, unit),
                                 TimeUnit.MILLISECONDS.convert(period, unit));
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
