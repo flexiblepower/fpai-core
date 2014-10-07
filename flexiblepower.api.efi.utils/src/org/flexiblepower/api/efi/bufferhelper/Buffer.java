@@ -23,13 +23,15 @@ import org.flexiblepower.efi.util.TimerUpdate;
 import org.flexiblepower.rai.values.Commodity;
 
 /**
- * Currently this class can process registration, system description and update messages.
+ * This class processes EFI messages: (buffer registration, system description and update messages). It offers helper
+ * methods for the agent to make bids.
  *
- * @author wijbengajp
+ * @author Jan Pieter Wijbenga
  *
+ * @param <Q>
+ *            The quantity that describes what is stored in the buffer (e.g. temperature or electricity)
  */
 public class Buffer<Q extends Quantity> {
-
     private final String resourceId;
     private final String fillLevelLabel;
     private final Unit<Q> fillLevelUnit;
@@ -37,16 +39,33 @@ public class Buffer<Q extends Quantity> {
     private final Map<Integer, BufferActuator> actuators;
     private FillLevelFunction<LeakageRate> leakageFunction;
     private Measurable<Q> currentFillLevel;
+    private boolean hasReceivedSystemDescription = false;
+    private boolean hasReceivedStateUpdate = false;
 
-    /** A Buffer may only be constructed from a complete BufferRegistration message. */
+    /**
+     * A Buffer may only be constructed from a complete BufferRegistration message.
+     *
+     * @param br
+     *            A complete buffer registration message. (This is enforced in the message constructor).
+     */
     public Buffer(BufferRegistration<Q> br) {
         this(br.getResourceId(),
              br.getFillLevelLabel(),
              br.getFillLevelUnit(),
              br.getAllocationDelay(),
              br.getActuators());
+        // Null check not necessary because illegal message may not be constructed.
     }
 
+    /**
+     * Private constructor for the components of buffer registration messages.
+     *
+     * @param resourceId
+     * @param getxLabel
+     * @param getxUnit
+     * @param allocationDelay
+     * @param actuatorCapabilities
+     */
     private Buffer(String resourceId,
                    String getxLabel,
                    Unit<Q> getxUnit,
@@ -62,6 +81,12 @@ public class Buffer<Q extends Quantity> {
         }
     }
 
+    /**
+     * BufferSystemDescription message's information is copied to the internal model of the buffer.
+     *
+     * @param bsd
+     *            The buffer system description message.
+     */
     public void processSystemDescription(BufferSystemDescription bsd) {
         setLeakageFunction(bsd.getBufferLeakage());
 
@@ -73,10 +98,20 @@ public class Buffer<Q extends Quantity> {
                 throw new IllegalArgumentException("The ActuatorId in the BufferSystemDescription is not known.");
             }
         }
+        hasReceivedSystemDescription = true;
     }
 
+    /**
+     * BufferStateUpdate information is added to the internal model.
+     *
+     * @param bsu
+     *            The BufferStateUpdate message.
+     */
     public void processStateUpdate(BufferStateUpdate<Q> bsu)
     {
+        if (!hasReceivedSystemDescription) {
+            return;
+        }
         currentFillLevel = bsu.getCurrentFillLevel();
 
         for (ActuatorUpdate actUpdate : bsu.getCurrentRunningMode()) {
@@ -98,25 +133,62 @@ public class Buffer<Q extends Quantity> {
                 throw new IllegalArgumentException("The ActuatorId in the BufferStateUpdate is not known.");
             }
         }
+        hasReceivedStateUpdate = true;
     }
 
+    /**
+     * Checks all the actuators for those of type electricity and returns them in an ArrayList.
+     *
+     * @return A list of all electrical BufferActuators.
+     */
     public List<BufferActuator> getElectricalActuators() {
         List<BufferActuator> result = new ArrayList<BufferActuator>();
         for (BufferActuator a : actuators.values()) {
-            if (a.getCommodities().contains(Commodity.ELECTRICITY)) {
+            if (a.getSupportedCommodities().contains(Commodity.ELECTRICITY)) {
                 result.add(a);
             }
         }
         return result;
     }
 
+    /**
+     * Gets the fill level of the buffer relative to the maximum and minimum fill level. Everything is expressed in the
+     * fill level unit that is defined in the registration message.
+     *
+     * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level.
+     */
     public double getCurrentFillFraction() {
-        // TODO: Check that the unit of the current fill level is right.
+        if (getMaximumFillLevel() == getMinimumFillLevel()) {
+            throw new IllegalArgumentException("Maximum and Minimum Fill Level may not be the same.");
+        } else if (getMaximumFillLevel() < getMinimumFillLevel()) {
+            throw new IllegalArgumentException("Maximum Fill level may not be below Minimum Fill Level.");
+        }
         return currentFillLevel.doubleValue(fillLevelUnit) / (getMaximumFillLevel() - getMinimumFillLevel());
     }
 
     /**
-     * @return The minimum of all actuators not only the electrical.
+     * Gets the current fill level of the buffer.
+     *
+     * @return A Measurable object containing the current fill level of the buffer and quantity information.
+     */
+    public Measurable<Q> getCurrentFillLevel() {
+        if (!hasReceivedStateUpdate) {
+            throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
+        }
+        return currentFillLevel;
+    }
+
+    public boolean hasReceivedSystemDescription() {
+        return hasReceivedSystemDescription;
+    }
+
+    public boolean hasReceivedStateUpdate() {
+        return hasReceivedStateUpdate;
+    }
+
+    /**
+     *
+     * @return The minimum of all actuators, not only the electrical.
      */
     public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
@@ -128,7 +200,7 @@ public class Buffer<Q extends Quantity> {
 
     /**
      *
-     * @return The maximum of all actuators not only the electrical.
+     * @return The maximum of all actuators, not only the electrical.
      */
     public double getMaximumFillLevel() {
         double highestBound = Double.MIN_VALUE;
@@ -138,12 +210,46 @@ public class Buffer<Q extends Quantity> {
         return highestBound;
     }
 
-    // TODO: Give fill level tussen 0 en 1 (temperatuur). (koelkast laag/ koelkast hoog)
+    // TODO: Give fill level between 0 and 1 (temperature). (fridge low temp / fridge high temp)
 
+    /**
+     * Sets the buffer leakage function.
+     *
+     * @param bufferLeakage
+     *            The buffer leakage function.
+     */
     private void setLeakageFunction(FillLevelFunction<LeakageRate> bufferLeakage) {
         leakageFunction = bufferLeakage;
     }
 
-    // TODO: Forecast and target update bericht interpreteren.
+    // TODO: Forecast and target update message interpretation.
+    public Measurable<Duration> getAllocationDelay() {
+        return allocationDelay;
+    }
 
+    /**
+     *
+     * @return The leakage function of the buffer.
+     */
+    public FillLevelFunction<LeakageRate> getLeakageFunction() {
+        return leakageFunction;
+    }
+
+    /**
+     * Gets the identifier of the resource.
+     *
+     * @return
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    /**
+     * Gets the label of the fill level.
+     *
+     * @return The label of the fill level.
+     */
+    public String getFillLevelLabel() {
+        return fillLevelLabel;
+    }
 }
