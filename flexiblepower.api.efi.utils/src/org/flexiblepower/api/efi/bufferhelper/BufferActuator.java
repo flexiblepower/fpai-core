@@ -120,7 +120,7 @@ public class BufferActuator {
 
     public List<Measurable<?>> getPossibleDemands(Date now, double fillLevel) {
         List<Measurable<?>> resultMap = new LinkedList<Measurable<?>>();
-        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(now).values()) {
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(now)) {
             RangeElement<RunningModeBehaviour> element = rm.getValue().getRangeElementForFillLevel(fillLevel);
             resultMap.add(element.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
         }
