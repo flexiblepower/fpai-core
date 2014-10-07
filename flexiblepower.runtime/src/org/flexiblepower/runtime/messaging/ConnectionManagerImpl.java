@@ -39,7 +39,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private static final String KEY_ACTIVE_CONNECTIONS = "active.connections";
     private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
-    private static interface Config {
+    public static interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
                  deflt = "",
                  description = "List of the active connections (e.g. endpoint:a-endpoint:b). "
