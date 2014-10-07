@@ -26,10 +26,8 @@ import org.flexiblepower.rai.values.Commodity;
  * This class processes EFI messages: (buffer registration, system description and update messages). It offers helper
  * methods for the agent to make bids.
  *
- * @author Jan Pieter Wijbenga
- *
  * @param <Q>
- *            The quantity that describes what is stored in the buffer (e.g. temperature or electricity)
+ *            The quantity that describes what is stored in the buffer (e.g. temperature or electricity).
  */
 public class Buffer<Q extends Quantity> {
     private final String resourceId;
@@ -223,11 +221,17 @@ public class Buffer<Q extends Quantity> {
     }
 
     // TODO: Forecast and target update message interpretation.
+    /**
+     * Gets the allocation delay.
+     *
+     * @return A Measurable that represents the allocation delay as a duration.
+     */
     public Measurable<Duration> getAllocationDelay() {
         return allocationDelay;
     }
 
     /**
+     * Returns the buffer leakage function.
      *
      * @return The leakage function of the buffer.
      */

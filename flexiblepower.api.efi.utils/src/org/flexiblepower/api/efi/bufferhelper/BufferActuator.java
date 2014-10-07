@@ -19,13 +19,16 @@ import org.flexiblepower.efi.util.Transition;
 import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.CommoditySet;
 
+/**
+ * The BufferActuator that handles updated EFI messages and provides additional methods. *
+ */
 public class BufferActuator {
     private final int actuatorId;
     private final String actuatorLabel;
     private final CommoditySet commodities;
     private int currentRunningModeId;
     private Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
-    private Map<Integer, Timer> timers = new HashMap<Integer, Timer>();
+    private Map<Integer, ActuatorTimer> timers = new HashMap<Integer, ActuatorTimer>();
 
     /**
      * Gets the identifier of the current running mode.
@@ -70,14 +73,14 @@ public class BufferActuator {
             allRunningModes.put(r.getId(), r);
         }
 
-        timers = new HashMap<Integer, Timer>();
+        timers = new HashMap<Integer, ActuatorTimer>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
             for (Transition tran : r.getTransitions()) {
                 for (org.flexiblepower.efi.util.Timer blockingTimer : tran.getBlockingTimers()) {
-                    timers.put(blockingTimer.getId(), new Timer(blockingTimer));
+                    timers.put(blockingTimer.getId(), new ActuatorTimer(blockingTimer));
                 }
                 for (org.flexiblepower.efi.util.Timer startTimer : tran.getStartTimers()) {
-                    timers.put(startTimer.getId(), new Timer(startTimer));
+                    timers.put(startTimer.getId(), new ActuatorTimer(startTimer));
                 }
             }
         }
@@ -152,7 +155,7 @@ public class BufferActuator {
      *
      * @return A Map of timer id and timers.
      */
-    public Map<Integer, Timer> getAllTimers() {
+    public Map<Integer, ActuatorTimer> getAllTimers() {
         return timers;
     }
 
