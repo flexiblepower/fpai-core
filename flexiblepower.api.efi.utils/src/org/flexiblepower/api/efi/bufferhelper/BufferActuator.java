@@ -95,6 +95,10 @@ public class BufferActuator {
      */
     public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
         Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new ArrayList<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        if (allRunningModes.get(currentRunningModeId) == null)
+        {
+            return targets;
+        }
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
             if (!isBlockedAt(transition, now)) {
@@ -184,7 +188,8 @@ public class BufferActuator {
     }
 
     /**
-     * Gets the possible demands of all reachable RunningModes at this moment, given this fill level of the buffer.
+     * Gets the possible electrical demands of all reachable RunningModes at this moment, given this fill level of the
+     * buffer.
      *
      * @param moment
      *            The moment of interest.

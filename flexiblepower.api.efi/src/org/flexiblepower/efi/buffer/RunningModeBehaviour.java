@@ -28,6 +28,11 @@ public class RunningModeBehaviour {
         return fillingRate;
     }
 
+    /**
+     * Gets the consumption (positive number) or production (negative value) that belongs to this RunningMode.
+     *
+     * @return The Consumption (positive) or production (negative) of the commodities for this RunningMode
+     */
     public CommodityMeasurables getCommodityConsumption() {
         return commodityConsumption;
     }

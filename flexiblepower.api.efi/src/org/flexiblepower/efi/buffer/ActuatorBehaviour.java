@@ -47,7 +47,8 @@ public class ActuatorBehaviour {
         TreeMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> tempRunningModes = new TreeMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> runningMode : runningModes) {
             if (tempRunningModes.containsKey(runningMode.getId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(String.format("Cannot add another RunningMode with the same Id {0} to this ActuatorBehaviour instance.",
+                                                                 runningMode.getId()));
             }
             tempRunningModes.put(runningMode.getId(), runningMode);
         }

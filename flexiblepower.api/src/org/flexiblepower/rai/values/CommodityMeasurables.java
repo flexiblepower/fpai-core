@@ -20,7 +20,7 @@ public final class CommodityMeasurables extends CommodityMap<Measurable<?>> {
      * </p>
      *
      * <p>
-     * <code>CommodityMeasurable measure = CommodityMeasurable.create().electricity(electricityMeasure).gas(gasMeasure).build();</code>
+     * <code>CommodityMeasurables measure = CommodityMeasurables.create().electricity(electricityMeasure).gas(gasMeasure).build();</code>
      * </p>
      */
     public static class Builder {
