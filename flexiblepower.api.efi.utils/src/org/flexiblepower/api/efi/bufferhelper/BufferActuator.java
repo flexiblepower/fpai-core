@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.measure.Measurable;
+import javax.measure.quantity.Power;
 
 import org.flexiblepower.efi.buffer.Actuator;
 import org.flexiblepower.efi.buffer.RunningModeBehaviour;
@@ -87,7 +88,8 @@ public class BufferActuator {
     }
 
     /**
-     * Returns the reachableRunning modes including the current one, if it may stay in it.
+     * Returns the reachableRunning modes including the current one, if it may stay in it. Returns the empty set if it
+     * has not yet received enough information(All EFI messages including BufferStateUpdate message)
      *
      * @param now
      *            The current time.
@@ -97,6 +99,7 @@ public class BufferActuator {
         Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new ArrayList<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         if (allRunningModes.get(currentRunningModeId) == null)
         {
+            // Device is not in a valid state. No reachable running modes.
             return targets;
         }
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
@@ -188,18 +191,19 @@ public class BufferActuator {
     }
 
     /**
-     * Gets the possible electrical demands of all reachable RunningModes at this moment, given this fill level of the
-     * buffer.
+     * Gets the possible electrical demands of all reachable RunningModes at this moment including the current one,
+     * given this fill level of the buffer.
      *
      * @param moment
      *            The moment of interest.
      * @param fillLevel
      *            The buffer's current fill level expressed as a value where 0 is the minimum and 1 is the maximum. Its
      *            unit is the agreed upon unit.
-     * @return An unordered list of the possible demands, possibly including duplicates.
+     * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
+     *         duplicates.
      */
-    public List<Measurable<?>> getPossibleDemands(Date moment, double fillLevel) {
-        List<Measurable<?>> resultMap = new LinkedList<Measurable<?>>();
+    public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) {
+        List<Measurable<Power>> resultMap = new LinkedList<Measurable<Power>>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(moment)) {
             RangeElement<RunningModeBehaviour> element = rm.getValue().getRangeElementForFillLevel(fillLevel);
             resultMap.add(element.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
