@@ -12,7 +12,7 @@ import javax.measure.unit.Unit;
 /**
  * Throughout this specification different profile types are being used. These profiles are all derived from this
  * generic {@link Profile} class.
- * 
+ *
  * @param <T>
  *            The type of the values stored in the elements
  * @param <PE>
@@ -21,7 +21,7 @@ import javax.measure.unit.Unit;
 public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
     /**
      * Represents each element in the profile.
-     * 
+     *
      * @param <T>
      *            The type of the value stored
      */
@@ -46,6 +46,11 @@ public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
          */
         public T getValue() {
             return value;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + value + " for " + duration + ")";
         }
     }
 
@@ -78,7 +83,7 @@ public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
 
     /**
      * Find the element in the {@link Profile} at a specific offset
-     * 
+     *
      * @param offset
      *            Measurable<Duration> of the offset to search for an element
      * @return The element of the profile at offset or null if the offset is bigger than the profile

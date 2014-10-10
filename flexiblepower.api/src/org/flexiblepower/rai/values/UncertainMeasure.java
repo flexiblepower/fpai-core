@@ -144,4 +144,76 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
             return other.add(this);
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(mean);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(the68PPRLowerBound);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(the68PPRUpperBound);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(the95PPRLowerBound);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(the95PPRUpperBound);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UncertainMeasure other = (UncertainMeasure) obj;
+        if (Double.doubleToLongBits(mean) != Double.doubleToLongBits(other.mean)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(the68PPRLowerBound) != Double.doubleToLongBits(other.the68PPRLowerBound)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(the68PPRUpperBound) != Double.doubleToLongBits(other.the68PPRUpperBound)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(the95PPRLowerBound) != Double.doubleToLongBits(other.the95PPRLowerBound)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(the95PPRUpperBound) != Double.doubleToLongBits(other.the95PPRUpperBound)) {
+            return false;
+        }
+        if (unit == null) {
+            if (other.unit != null) {
+                return false;
+            }
+        } else if (!unit.equals(other.unit)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(mean).append(' ').append(unit);
+        if (the68PPRLowerBound < mean) {
+            sb.append(" (95% bounds = ")
+              .append(the95PPRLowerBound)
+              .append(" - ")
+              .append(the95PPRUpperBound)
+              .append(' ')
+              .append(unit)
+              .append(')');
+        }
+        return sb.toString();
+    }
 }
