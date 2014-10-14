@@ -174,6 +174,6 @@ public class Job<V> implements ScheduledFuture<V> {
 
     @Override
     public String toString() {
-        return "Job (" + callable.toString() + ")";
+        return "Job (" + callable.toString() + ") nextRun: " + timeOfNextRun;
     }
 }

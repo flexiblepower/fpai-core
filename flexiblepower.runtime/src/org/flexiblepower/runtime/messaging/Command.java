@@ -26,6 +26,7 @@ public interface Command {
         @Override
         public void execute() {
             try {
+                log.trace("Handling messag: {}", message);
                 handler.handleMessage(message);
             } catch (RuntimeException ex) {
                 log.error("Error while handling message (" + message + "): " + ex.getMessage(), ex);
@@ -47,6 +48,7 @@ public interface Command {
         @Override
         public void execute() {
             try {
+                log.trace("Disconnecting");
                 handler.disconnected();
             } catch (RuntimeException ex) {
                 log.error("Error while disconnecting: " + ex.getMessage(), ex);
