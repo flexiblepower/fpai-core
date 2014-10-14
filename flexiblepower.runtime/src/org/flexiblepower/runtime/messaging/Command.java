@@ -26,7 +26,7 @@ public interface Command {
         @Override
         public void execute() {
             try {
-                log.trace("Handling messag: {}", message);
+                log.trace("Handling message {}", message);
                 handler.handleMessage(message);
             } catch (RuntimeException ex) {
                 log.error("Error while handling message (" + message + "): " + ex.getMessage(), ex);

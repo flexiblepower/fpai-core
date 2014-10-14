@@ -128,11 +128,11 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                 if (waitTime <= 0) {
                     Job<?> job = jobs.remove();
                     currentTime = Math.max(currentTime, job.getTimeOfNextRun());
-                    log.trace("Executing job {}", job);
+                    log.trace("Executing  {}", job);
                     job.run();
                     if (!job.isDone()) {
                         jobs.add(job);
-                        log.trace("Rescheduling job {}", job);
+                        log.trace("Rescheduling {}", job);
                     }
                 } else if (simulationClock.isStopping()) {
                     log.trace("Stopping simulation clock");
@@ -203,6 +203,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
     public synchronized void stopSimulation() {
         log.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.stop();
+        notifyAll();
     }
 
     @Override

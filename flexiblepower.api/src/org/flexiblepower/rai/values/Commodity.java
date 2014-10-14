@@ -176,4 +176,9 @@ public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implem
      * @return The billable amount that represents the total amount that has been measured
      */
     public abstract Measurable<BQ> amount(Measurable<FQ> average, Measurable<Duration> duration);
+
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
 }
