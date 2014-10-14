@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *            The type of {@link ResourceControlParameters}
  */
 public abstract class AbstractResourceDriver<RS extends ResourceState, RCP extends ResourceControlParameters> implements
-ResourceDriver {
+                                                                                                              ResourceDriver {
     /**
      * The logger that should by any subclass.
      */
@@ -63,6 +63,8 @@ ResourceDriver {
     protected final void publishState(RS state) {
         if (driverConnection != null) {
             driverConnection.sendMessage(state);
+        } else {
+            logger.warn("Trying to publish a new state without a manager connected ({})", state);
         }
     }
 
