@@ -122,34 +122,34 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
     public void run() {
         while (running) {
             if (simulationClock.isRunning() || simulationClock.isStopping()) {
-                long now = simulationClock.getCurrentTimeMillis();
-                log.trace("Simulation step {}", now);
-                long waitTime = getNextJobTime() - now;
-                if (waitTime <= 0) {
-                    Job<?> job = jobs.remove();
-                    currentTime = Math.max(currentTime, job.getTimeOfNextRun());
-                    log.trace("Executing  {}", job);
-                    job.run();
-                    if (!job.isDone()) {
-                        jobs.add(job);
-                        log.trace("Rescheduling {}", job);
-                    }
-                } else if (simulationClock.isStopping()) {
-                    log.trace("Stopping simulation clock");
-                    simulationClock.stop();
-                } else {
-                    long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
-                    log.trace("Sleeping {}ms until next job", sleepTime);
-                    try {
-                        synchronized (this) {
+                synchronized (this) {
+                    long now = simulationClock.getCurrentTimeMillis();
+                    log.trace("Simulation step {}", now);
+                    long waitTime = getNextJobTime() - now;
+                    if (waitTime <= 0) {
+                        Job<?> job = jobs.remove();
+                        currentTime = Math.max(currentTime, job.getTimeOfNextRun());
+                        log.trace("Executing  {}", job);
+                        job.run();
+                        if (!job.isDone()) {
+                            jobs.add(job);
+                            log.trace("Rescheduling {}", job);
+                        }
+                    } else if (simulationClock.isStopping()) {
+                        log.trace("Stopping simulation clock");
+                        simulationClock.stop();
+                    } else {
+                        long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
+                        log.trace("Sleeping {}ms until next job", sleepTime);
+                        try {
                             if (sleepTime > 0) {
                                 isWaiting = true;
                                 wait(sleepTime);
                             }
+                        } catch (final InterruptedException ex) {
                         }
-                    } catch (final InterruptedException ex) {
+                        isWaiting = false;
                     }
-                    isWaiting = false;
                 }
             } else {
                 // Wait for simulation start
