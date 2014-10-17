@@ -156,18 +156,16 @@ public class Buffer<Q extends Quantity> {
      * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level.
      */
     public double getCurrentFillFraction() {
-        if (!hasReceivedStateUpdate) {
-            throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
-        }
-        if (getMaximumFillLevel() == getMinimumFillLevel()) {
+        double minimumFillLevel = getMinimumFillLevel();
+        double maximumFillLevel = getMaximumFillLevel();
+
+        if (maximumFillLevel == minimumFillLevel) {
             throw new IllegalArgumentException("Maximum and Minimum Fill Level may not be the same.");
-        } else if (getMaximumFillLevel() < getMinimumFillLevel()) {
+        } else if (maximumFillLevel < minimumFillLevel) {
             throw new IllegalArgumentException("Maximum Fill level may not be below Minimum Fill Level.");
         }
-        if (currentFillLevel == null) {
-            throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
-        }
-        return currentFillLevel.doubleValue(fillLevelUnit) / (getMaximumFillLevel() - getMinimumFillLevel());
+
+        return (currentFillLevel.doubleValue(fillLevelUnit) - minimumFillLevel) / (maximumFillLevel - minimumFillLevel);
     }
 
     /**
