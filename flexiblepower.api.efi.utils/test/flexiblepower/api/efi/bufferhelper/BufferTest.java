@@ -35,7 +35,7 @@ import org.flexiblepower.rai.values.CommodityMeasurables;
 import org.flexiblepower.rai.values.CommoditySet;
 
 public class BufferTest extends TestCase {
-    private Buffer<Temperature> buf;
+    private Buffer<Temperature> fullBuffer;
     private Buffer<Temperature> incompleteBuffer;
     private BufferRegistration<Temperature> br;
     private BufferStateUpdate<Temperature> bsu;
@@ -47,7 +47,7 @@ public class BufferTest extends TestCase {
 
         br = BufferTest.constructTestElectricalBufferRegistration();
 
-        buf = new Buffer<Temperature>(br);
+        fullBuffer = new Buffer<Temperature>(br);
 
         bsd = BufferTest.constructBSD(br);
 
@@ -176,7 +176,7 @@ public class BufferTest extends TestCase {
     }
 
     public void testOneElectricalActuator() {
-        Assert.assertTrue(buf.getElectricalActuators().size() == 1);
+        Assert.assertTrue(fullBuffer.getElectricalActuators().size() == 1);
     }
 
     public void testGetReachableRunningModes() {
@@ -184,35 +184,35 @@ public class BufferTest extends TestCase {
             Assert.assertTrue(a.getReachableRunningModes(new Date()).isEmpty());
         }
 
-        buf.processSystemDescription(bsd);
-        buf.processStateUpdate(bsu);
+        fullBuffer.processSystemDescription(bsd);
+        fullBuffer.processStateUpdate(bsu);
 
-        for (BufferActuator a : buf.getElectricalActuators()) {
+        for (BufferActuator a : fullBuffer.getElectricalActuators()) {
             Assert.assertFalse(a.getReachableRunningModes(new Date()).isEmpty());
         }
     }
 
     public void testGetPossibleDemands() {
-        buf.processSystemDescription(bsd);
-        buf.processStateUpdate(bsu);
-        for (BufferActuator a : buf.getElectricalActuators()) {
+        fullBuffer.processSystemDescription(bsd);
+        fullBuffer.processStateUpdate(bsu);
+        for (BufferActuator a : fullBuffer.getElectricalActuators()) {
             List<Measurable<Power>> demandList = a.getPossibleDemands(new Date(), .2);
             Assert.assertTrue(demandList.size() == 2);
         }
     }
 
     public void testReceivedMessages() {
-        Assert.assertFalse(buf.hasReceivedSystemDescription());
-        Assert.assertFalse(buf.hasReceivedStateUpdate());
+        Assert.assertFalse(fullBuffer.hasReceivedSystemDescription());
+        Assert.assertFalse(fullBuffer.hasReceivedStateUpdate());
 
         // Ignore state update if system description is not in yet.
-        buf.processStateUpdate(bsu);
-        Assert.assertFalse(buf.hasReceivedSystemDescription());
-        Assert.assertFalse(buf.hasReceivedStateUpdate());
+        fullBuffer.processStateUpdate(bsu);
+        Assert.assertFalse(fullBuffer.hasReceivedSystemDescription());
+        Assert.assertFalse(fullBuffer.hasReceivedStateUpdate());
 
-        buf.processSystemDescription(bsd);
-        Assert.assertTrue(buf.hasReceivedSystemDescription());
-        buf.processStateUpdate(bsu);
-        Assert.assertTrue(buf.hasReceivedStateUpdate());
+        fullBuffer.processSystemDescription(bsd);
+        Assert.assertTrue(fullBuffer.hasReceivedSystemDescription());
+        fullBuffer.processStateUpdate(bsu);
+        Assert.assertTrue(fullBuffer.hasReceivedStateUpdate());
     }
 }

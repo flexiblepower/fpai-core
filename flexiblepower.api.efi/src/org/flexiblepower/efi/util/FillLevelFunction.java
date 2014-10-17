@@ -223,6 +223,36 @@ public class FillLevelFunction<T> extends AbstractList<RangeElement<T>> {
         throw new IllegalArgumentException("FillLevel is not in range of the fill level function");
     }
 
+    /**
+     *
+     * @param fillLevel
+     *            the value to check.
+     * @return Whether the fill level is outside the total range of this FillLevelFunction.
+     */
+    public boolean isOutsideOfRange(double fillLevel) {
+        return (isBelowMinimum(fillLevel) || isAboveMaximum(fillLevel));
+    }
+
+    /**
+     *
+     * @param fillLevel
+     *            the value to check.
+     * @return Whether the fill level is lower than the lower bound of this FillLevelFunction.
+     */
+    public boolean isBelowMinimum(double fillLevel) {
+        return (fillLevel < getLowerBound());
+    }
+
+    /**
+     *
+     * @param fillLevel
+     *            the value to check.
+     * @return Whether the fill level is higher than the upper bound of this FillLevelFunction.
+     */
+    public boolean isAboveMaximum(double fillLevel) {
+        return (fillLevel > getUpperBound());
+    }
+
     @Override
     public int hashCode() {
         return 31 * super.hashCode() + Arrays.hashCode(elements);

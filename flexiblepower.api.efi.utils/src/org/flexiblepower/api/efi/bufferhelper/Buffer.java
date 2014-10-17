@@ -150,16 +150,22 @@ public class Buffer<Q extends Quantity> {
     }
 
     /**
-     * Gets the fill level of the buffer relative to the maximum and minimum fill level. Everything is expressed in the
-     * fill level unit that is defined in the registration message.
+     * Gets the fill level of the buffer relative to the maximum and minimum fill level. It is expressed in the fill
+     * level unit that is defined in the registration message.
      *
      * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level.
      */
     public double getCurrentFillFraction() {
+        if (!hasReceivedStateUpdate) {
+            throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
+        }
         if (getMaximumFillLevel() == getMinimumFillLevel()) {
             throw new IllegalArgumentException("Maximum and Minimum Fill Level may not be the same.");
         } else if (getMaximumFillLevel() < getMinimumFillLevel()) {
             throw new IllegalArgumentException("Maximum Fill level may not be below Minimum Fill Level.");
+        }
+        if (currentFillLevel == null) {
+            throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
         }
         return currentFillLevel.doubleValue(fillLevelUnit) / (getMaximumFillLevel() - getMinimumFillLevel());
     }
@@ -168,6 +174,8 @@ public class Buffer<Q extends Quantity> {
      * Gets the current fill level of the buffer.
      *
      * @return A Measurable object containing the current fill level of the buffer and quantity information.
+     * @throws IllegalStateException
+     *             When no state update has been received.
      */
     public Measurable<Q> getCurrentFillLevel() {
         if (!hasReceivedStateUpdate) {
@@ -187,7 +195,7 @@ public class Buffer<Q extends Quantity> {
 
     /**
      * Returns whether a state update has been received.
-     * 
+     *
      * @return Whether it has received state update.
      */
     public boolean hasReceivedStateUpdate() {
@@ -200,6 +208,9 @@ public class Buffer<Q extends Quantity> {
      */
     public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
+        if (!hasReceivedSystemDescription) {
+            throw new IllegalStateException("Cannot give a minimum fill level when no system description has been sent yet.");
+        }
         for (BufferActuator a : actuators.values()) {
             lowestBound = Math.min(lowestBound, a.getMinimumFillLevel());
         }
@@ -212,13 +223,14 @@ public class Buffer<Q extends Quantity> {
      */
     public double getMaximumFillLevel() {
         double highestBound = Double.MIN_VALUE;
+        if (!hasReceivedSystemDescription) {
+            throw new IllegalStateException("Cannot give a maximum fill level when no system description has been sent yet.");
+        }
         for (BufferActuator a : actuators.values()) {
             highestBound = Math.max(highestBound, a.getMaximumFillLevel());
         }
         return highestBound;
     }
-
-    // TODO: Give fill level between 0 and 1 (temperature). (fridge low temp / fridge high temp)
 
     /**
      * Sets the buffer leakage function.

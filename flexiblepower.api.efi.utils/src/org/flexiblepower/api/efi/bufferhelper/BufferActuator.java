@@ -89,7 +89,7 @@ public class BufferActuator {
 
     /**
      * Returns the reachableRunning modes including the current one, if it may stay in it. Returns the empty set if it
-     * has not yet received enough information(All EFI messages including BufferStateUpdate message)
+     * has not yet received enough information(All EFI messages including BufferStateUpdate message).
      *
      * @param now
      *            The current time.
@@ -191,8 +191,8 @@ public class BufferActuator {
     }
 
     /**
-     * Gets the possible electrical demands of all reachable RunningModes at this moment including the current one,
-     * given this fill level of the buffer.
+     * Gets the electrical demands of all reachable RunningModes at this moment including the current one, given this
+     * fill level of the buffer. It returns an empty list when there has not been a state update.
      *
      * @param moment
      *            The moment of interest.
@@ -200,12 +200,34 @@ public class BufferActuator {
      *            The buffer's current fill level expressed as a value where 0 is the minimum and 1 is the maximum. Its
      *            unit is the agreed upon unit.
      * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
-     *         duplicates.
+     *         running modes with the same power demand. For fill levels outside the defined minimum and maximum range,
+     *         the minimum and maximum value is returned.
+     *
+     * @throws IllegalArgumentException
+     *             When a FillLevelFunction of a reachable state has no range elements.
      */
     public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) {
         List<Measurable<Power>> resultMap = new LinkedList<Measurable<Power>>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(moment)) {
-            RangeElement<RunningModeBehaviour> element = rm.getValue().getRangeElementForFillLevel(fillLevel);
+
+            // Check whether the Running Mode is not empty.
+            if (rm.getValue().isEmpty()) {
+                throw new IllegalArgumentException("FillLevelFunction was not expected to be empty.");
+            }
+
+            RangeElement<RunningModeBehaviour> element;
+            if (rm.getValue().isAboveMaximum(fillLevel))
+            {
+                // Buffer fill level is above the maximum defined value.
+                element = rm.getValue().get(rm.getValue().size() - 1);
+            } else if (rm.getValue().isBelowMinimum(fillLevel))
+            {
+                // Buffer fill level is below minimum defined value.
+                element = rm.getValue().get(0);
+            } else {
+                // The fill level is in good range.
+                element = rm.getValue().getRangeElementForFillLevel(fillLevel);
+            }
             resultMap.add(element.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
         }
         return resultMap;
@@ -219,7 +241,7 @@ public class BufferActuator {
     public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
         if (allRunningModes.isEmpty()) {
-
+            throw new IllegalStateException("Cannot give minimum fill level, because it is not known yet.");
         }
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
             lowestBound = Math.min(lowestBound, r.getValue().getLowerBound());
@@ -234,6 +256,9 @@ public class BufferActuator {
      */
     public double getMaximumFillLevel() {
         double upperBound = Double.MIN_VALUE;
+        if (allRunningModes.isEmpty()) {
+            throw new IllegalStateException("Cannot give minimum fill level, because it is not known yet.");
+        }
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
             upperBound = Math.max(upperBound, r.getValue().getUpperBound());
         }
