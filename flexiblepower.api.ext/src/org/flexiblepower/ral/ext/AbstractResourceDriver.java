@@ -34,17 +34,20 @@ public abstract class AbstractResourceDriver<RS extends ResourceState, RCP exten
         this.logger = LoggerFactory.getLogger(getClass());
     }
 
-    private volatile Connection driverConnection;
+    private volatile Connection managerConnection;
 
     @Override
     public MessageHandler onConnect(Connection connection) {
-        if (this.driverConnection == null && "manager".equals(connection.getPort().name())) {
-            this.driverConnection = connection;
+        logger.trace("Entering onConnect. Is managerConnection null? {}", managerConnection == null);
+        if (this.managerConnection == null && "manager".equals(connection.getPort().name())) {
+            logger.trace("Setting managerConnection to {}", connection);
+            this.managerConnection = connection;
             return new MessageHandler() {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void handleMessage(Object message) {
                     try {
+                        logger.trace("Handling control parameters {}", message);
                         handleControlParameters((RCP) message);
                     } catch (ClassCastException ex) {
                         logger.warn("Received an unknown message type [{}]", message.getClass().getName());
@@ -53,7 +56,8 @@ public abstract class AbstractResourceDriver<RS extends ResourceState, RCP exten
 
                 @Override
                 public void disconnected() {
-                    driverConnection = null;
+                    logger.trace("Removing managerConnection");
+                    managerConnection = null;
                 }
             };
         }
@@ -61,8 +65,9 @@ public abstract class AbstractResourceDriver<RS extends ResourceState, RCP exten
     }
 
     protected final void publishState(RS state) {
-        if (driverConnection != null) {
-            driverConnection.sendMessage(state);
+        if (managerConnection != null) {
+            logger.trace("Sending message {} to the manager", state);
+            managerConnection.sendMessage(state);
         } else {
             logger.warn("Trying to publish a new state without a manager connected ({})", state);
         }
