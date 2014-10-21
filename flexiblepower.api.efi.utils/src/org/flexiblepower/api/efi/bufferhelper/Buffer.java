@@ -137,13 +137,28 @@ public class Buffer<Q extends Quantity> {
     /**
      * Checks all the actuators for those of type electricity and returns them in an ArrayList.
      *
-     * @return A list of all electrical BufferActuators.
+     * @return A list of all electrical BufferActuators or an empty list if none are found.
      */
     public List<BufferActuator> getElectricalActuators() {
         List<BufferActuator> result = new ArrayList<BufferActuator>();
         for (BufferActuator a : actuators.values()) {
             if (a.getSupportedCommodities().contains(Commodity.ELECTRICITY)) {
                 result.add(a);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks all the actuators for those of type electricity and returns them in an ArrayList.
+     *
+     * @return A Map of all electrical BufferActuators or an empty list if none are found. The key is the Actuator Id.
+     */
+    public Map<Integer, BufferActuator> getElectricalActuatorMap() {
+        Map<Integer, BufferActuator> result = new HashMap<Integer, BufferActuator>();
+        for (BufferActuator a : actuators.values()) {
+            if (a.getSupportedCommodities().contains(Commodity.ELECTRICITY)) {
+                result.put(a.getActuatorId(), a);
             }
         }
         return result;
@@ -275,5 +290,39 @@ public class Buffer<Q extends Quantity> {
      */
     public String getFillLevelLabel() {
         return fillLevelLabel;
+    }
+
+    /**
+     * Gets the default fill level unit of this buffer.
+     *
+     * @return The default unit in which the fill level is expressed.
+     */
+    public Unit<Q> getUnit() {
+        return fillLevelUnit;
+    }
+
+    /**
+     * Gets all actuators indexed on their id.
+     * 
+     * @return A map with all actuators indexed on their id.
+     */
+    public Map<Integer, BufferActuator> getActuators() {
+        return actuators;
+    }
+
+    /**
+     * Returns the Actuator object based on the id.
+     * 
+     * @param id
+     *            The id of the actuator.
+     * @return The actuator object.
+     */
+    public BufferActuator getActuatorById(int id) {
+        if (actuators.containsKey(id)) {
+            return actuators.get(id);
+        }
+        else {
+            return null;
+        }
     }
 }

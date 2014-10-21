@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Power;
 
 import org.flexiblepower.efi.buffer.Actuator;
+import org.flexiblepower.efi.buffer.ActuatorAllocation;
 import org.flexiblepower.efi.buffer.RunningModeBehaviour;
 import org.flexiblepower.efi.util.FillLevelFunction;
 import org.flexiblepower.efi.util.FillLevelFunction.RangeElement;
@@ -30,6 +33,8 @@ public class BufferActuator {
     private int currentRunningModeId;
     private Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
     private Map<Integer, ActuatorTimer> timers = new HashMap<Integer, ActuatorTimer>();
+    private Date allocatedUntil;
+    private final List<ActuatorAllocation> currentAllocationList = new ArrayList<ActuatorAllocation>();
 
     /**
      * Gets the identifier of the current running mode.
@@ -96,20 +101,48 @@ public class BufferActuator {
      * @return The reachable running modes including the current one.
      */
     public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
-        Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> targets = new ArrayList<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
-        if (allRunningModes.get(currentRunningModeId) == null)
+        Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> rmSet = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        for (int rmId : getReachableRunningModeIds(now)) {
+            if (!allRunningModes.containsKey(rmId))
+            {
+                throw new IllegalArgumentException("Running Mode Id is not known.");
+            }
+            rmSet.add(allRunningModes.get(rmId));
+        }
+        return rmSet;
+    }
+
+    /**
+     * Returns the reachableRunning mode ids including the current one, if it may stay in it. Returns the empty set if
+     * it has not yet received enough information (All EFI messages including BufferStateUpdate message).
+     *
+     * @param now
+     *            The current time.
+     * @return The reachable running mode ids including the current one.
+     */
+    public Set<Integer> getReachableRunningModeIds(Date now) {
+        Set<Integer> targets = new HashSet<Integer>();
+        if (allRunningModes == null || allRunningModes.get(currentRunningModeId) == null)
         {
             // Device is not in a valid state. No reachable running modes.
             return targets;
         }
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
             // Check for timers that block this transition.
-            if (!isBlockedAt(transition, now)) {
-                targets.add(allRunningModes.get(transition.getToRunningMode()));
+            if (!isBlockedAt(transition, now) && !willOverOrUndercharge(transition, now)) {
+                targets.add(transition.getToRunningMode());
             }
         }
-        targets.add(allRunningModes.get(currentRunningModeId));
+        targets.add(currentRunningModeId);
         return targets;
+    }
+
+    private boolean willOverOrUndercharge(Transition transition, Date now) {
+        // TODO: This is a complex problem... Discussion Wilco JP 17 Oct 2014
+        // If I make this transition will I overcharge the buffer.
+        // Check the blocking timers this transition starts
+        // Check usage and leakage as well...
+        return false;
     }
 
     /**
@@ -123,7 +156,8 @@ public class BufferActuator {
      */
     private boolean isBlockedAt(Transition transition, Date moment) {
         for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
-            if (timers.get(t.getId()).isBlockingAt(moment)) {
+            ActuatorTimer at = timers.get(t.getId());
+            if (at.isBlockingAt(moment)) {
                 return true;
             }
         }
