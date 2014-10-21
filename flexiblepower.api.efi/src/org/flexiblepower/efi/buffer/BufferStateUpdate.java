@@ -18,7 +18,7 @@ import org.flexiblepower.time.TimeService;
  */
 public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
     private final Measurable<Q> currentFillLevel;
-    private final Set<ActuatorUpdate> currentRunningMode;
+    private final Set<ActuatorUpdate> actuatorUpdates;
 
     /**
      * Constructs a new {@link BufferStateUpdate} message with the specific validFrom
@@ -31,23 +31,23 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
      *            This timestamp indicates from which moment on this update is valid.
      * @param currentFillLevel
      *            This value represents the current fill level of the buffer.
-     * @param currentRunningMode
-     *            This is a set of zero or more current running modes. For every actuator there will be one current
-     *            running mode.
+     * @param actuatorUpdates
+     *            This is a set of zero or more actuator updates. For every actuator there will be one current running
+     *            mode and timer update information.
      */
     public BufferStateUpdate(BufferRegistration<Q> bufferRegistration,
                              Date timestamp,
                              Date validFrom,
                              Measurable<Q> currentFillLevel,
-                             Set<ActuatorUpdate> currentRunningMode) {
+                             Set<ActuatorUpdate> actuatorUpdates) {
         super(bufferRegistration.getResourceId(), timestamp, validFrom);
         if (currentFillLevel == null) {
             throw new NullPointerException("currentFillLevel");
         }
 
         this.currentFillLevel = currentFillLevel;
-        this.currentRunningMode = currentRunningMode == null ? Collections.<ActuatorUpdate> emptySet()
-                                                            : currentRunningMode;
+        this.actuatorUpdates = actuatorUpdates == null ? Collections.<ActuatorUpdate> emptySet()
+                                                      : actuatorUpdates;
     }
 
     /**
@@ -67,16 +67,19 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
     }
 
     /**
-     * @return This is a set of zero or more current running modes. For every actuator there will be one current running
-     *         mode.
+     * This gives the actuator updates that are in this system update message. TODO: Change this name to
+     * getActuatorUpdates because it is not only RunningMode, but also TimerUpdate information that is in here.
+     *
+     * @return This is a set of zero or more actuator updates (both running mode and timer info). For every actuator
+     *         there will be one current running mode and timer updates for those timers that have changed.
      */
     public Set<ActuatorUpdate> getCurrentRunningMode() {
-        return currentRunningMode;
+        return actuatorUpdates;
     }
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + 67 * currentFillLevel.hashCode() + currentRunningMode.hashCode();
+        return 31 * super.hashCode() + 67 * currentFillLevel.hashCode() + actuatorUpdates.hashCode();
     }
 
     @Override
@@ -91,7 +94,7 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
         BufferStateUpdate other = (BufferStateUpdate) obj;
         if (!currentFillLevel.equals(other.currentFillLevel)) {
             return false;
-        } else if (!currentRunningMode.equals(other.currentRunningMode)) {
+        } else if (!actuatorUpdates.equals(other.actuatorUpdates)) {
             return false;
         }
         return true;
@@ -101,6 +104,6 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
     protected void toString(StringBuilder sb) {
         super.toString(sb);
         sb.append("currentFillLevel=").append(currentFillLevel).append(", ");
-        sb.append("currentRunningMode=").append(currentRunningMode).append(", ");
+        sb.append("currentRunningMode=").append(actuatorUpdates).append(", ");
     }
 }
