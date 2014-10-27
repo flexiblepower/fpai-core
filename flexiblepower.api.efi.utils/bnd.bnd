@@ -7,7 +7,8 @@
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package:  \
 	org.flexiblepower.api.efi.bufferhelper,\
-	org.flexiblepower.api.efi.unconstrainedhelper
+	org.flexiblepower.api.efi.unconstrainedhelper,\
+	org.flexiblepower.api.efi.commonhelper
 
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
 Tester-Plugin: biz.aQute.junit
