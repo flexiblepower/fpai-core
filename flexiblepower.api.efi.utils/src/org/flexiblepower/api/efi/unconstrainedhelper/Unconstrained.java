@@ -252,4 +252,22 @@ public class Unconstrained {
         }
         return (allRunningModes.containsKey(rmId));
     }
+
+    /**
+     * Indicates whether this Unconstrained has seen a SystemDescription yet.
+     *
+     * @return Whether the Unconstrained has received a valid SystemDescription.
+     */
+    public boolean hasReceivedStateUpdate() {
+        return hasReceivedStateUpdate;
+    }
+
+    /**
+     * Indicates whether this Unconstrained device has seen a SystemDescription yet.
+     *
+     * @return Whether the Unconstrained has received a valid StateUpdate.
+     */
+    public boolean hasReceivedSystemDescription() {
+        return hasReceivedSystemDescription;
+    }
 }
