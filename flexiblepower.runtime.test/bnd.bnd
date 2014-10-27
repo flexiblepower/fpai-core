@@ -11,11 +11,10 @@ Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOT
 -nobundles: true
 
 -runbundles: \
-	flexiblepower.api;version=project,\
-	flexiblepower.api.efi;version=project,\
-	flexiblepower.api.ext;version=project,\
-	flexiblepower.runtime;version=project,\
-	flexiblepower.runtime.test;version=project,\
+	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
+	flexiblepower.api.ext;version=latest,\
+	flexiblepower.runtime;version=latest,\
 	ch.qos.logback.classic;version=latest,\
 	ch.qos.logback.core;version=latest,\
 	org.apache.felix.configadmin;version=latest,\
