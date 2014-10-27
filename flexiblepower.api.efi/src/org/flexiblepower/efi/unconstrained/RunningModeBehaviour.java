@@ -5,11 +5,26 @@ import javax.measure.quantity.MoneyFlow;
 
 import org.flexiblepower.rai.values.CommodityMeasurables;
 
+/**
+ * A RunningModeBehaviour object contains pairs of Commodity and Consumption values, and contains an object in which the
+ * depreciation cost of the unconstrained device expressed as money amount per second is set. A positive value for
+ * runningCosts means a decrease of value of the device.
+ *
+ */
 public class RunningModeBehaviour {
     private final CommodityMeasurables commodityConsumption;
 
     private final Measurable<MoneyFlow> runningCosts;
 
+    /**
+     * Constructs a RunningModeBehaviour object with details about this RunningMode.
+     * 
+     * @param commodityConsumption
+     *
+     * @param runningCosts
+     *            Depreciation cost of the device in this runningmode. A positive value for runningCosts means a
+     *            decrease of value of the device.
+     */
     public RunningModeBehaviour(CommodityMeasurables commodityConsumption,
                                 Measurable<MoneyFlow> runningCosts) {
         if (commodityConsumption == null) {

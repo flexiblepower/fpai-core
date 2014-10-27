@@ -281,14 +281,4 @@ public class BufferTest extends TestCase {
         Assert.assertEquals(-1d, fullBuffer.getCurrentFillLevel().doubleValue(fullBuffer.getUnit()));
         Assert.assertEquals(SI.CELSIUS, fullBuffer.getUnit());
     }
-
-    public void TestTimers() {
-        fullBuffer.processSystemDescription(bsd);
-        fullBuffer.processStateUpdate(bsu);
-        // electrical actuator should be in
-        fullBuffer.getElectricalActuators().get(0).getReachableRunningModes(new Date());
-
-        fullBuffer.getElectricalActuators().get(0).getReachableRunningModes(new Date());
-
-    }
 }

@@ -1,6 +1,5 @@
 package org.flexiblepower.api.efi.bufferhelper;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,8 +12,8 @@ import java.util.Set;
 import javax.measure.Measurable;
 import javax.measure.quantity.Power;
 
+import org.flexiblepower.api.efi.commonhelper.TimerModel;
 import org.flexiblepower.efi.buffer.Actuator;
-import org.flexiblepower.efi.buffer.ActuatorAllocation;
 import org.flexiblepower.efi.buffer.RunningModeBehaviour;
 import org.flexiblepower.efi.util.FillLevelFunction;
 import org.flexiblepower.efi.util.FillLevelFunction.RangeElement;
@@ -32,9 +31,7 @@ public class BufferActuator {
     private final CommoditySet commodities;
     private int currentRunningModeId;
     private Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
-    private Map<Integer, ActuatorTimer> timers = new HashMap<Integer, ActuatorTimer>();
-    private Date allocatedUntil;
-    private final List<ActuatorAllocation> currentAllocationList = new ArrayList<ActuatorAllocation>();
+    private Map<Integer, TimerModel> timers = new HashMap<Integer, TimerModel>();
 
     /**
      * Gets the identifier of the current running mode.
@@ -79,17 +76,32 @@ public class BufferActuator {
             allRunningModes.put(r.getId(), r);
         }
 
-        timers = new HashMap<Integer, ActuatorTimer>();
+        timers = new HashMap<Integer, TimerModel>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> r : allRunningModes.values()) {
             for (Transition tran : r.getTransitions()) {
                 for (org.flexiblepower.efi.util.Timer blockingTimer : tran.getBlockingTimers()) {
-                    timers.put(blockingTimer.getId(), new ActuatorTimer(blockingTimer));
+                    timers.put(blockingTimer.getId(), new TimerModel(blockingTimer));
                 }
                 for (org.flexiblepower.efi.util.Timer startTimer : tran.getStartTimers()) {
-                    timers.put(startTimer.getId(), new ActuatorTimer(startTimer));
+                    timers.put(startTimer.getId(), new TimerModel(startTimer));
                 }
             }
         }
+    }
+
+    /**
+     * Returns whether the RunningMode id is valid for this actuator.
+     *
+     * @param rmId
+     *            the Id of the RunningMode.
+     * @return True when the RunningMode exists for this actuator, false otherwise.
+     */
+    public boolean hasRunningMode(int rmId) {
+        if (allRunningModes == null)
+        {
+            return false;
+        }
+        return (allRunningModes.containsKey(rmId));
     }
 
     /**
@@ -137,6 +149,16 @@ public class BufferActuator {
         return targets;
     }
 
+    /**
+     * This function is not implemented yet, but will provide an estimate of whether a transition (die to
+     * timers/transitions) will lead to an over or undercharge of the buffer.
+     *
+     * @param transition
+     *            The transition to be checked.
+     * @param now
+     *            The moment for whicht the transition should be checked.
+     * @return Whether the transition is impossible due to timers follow-up transitions. Always returns false for now.
+     */
     private boolean willOverOrUndercharge(Transition transition, Date now) {
         // TODO: This is a complex problem... Discussion Wilco JP 17 Oct 2014
         // If I make this transition will I overcharge the buffer.
@@ -156,7 +178,7 @@ public class BufferActuator {
      */
     private boolean isBlockedAt(Transition transition, Date moment) {
         for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
-            ActuatorTimer at = timers.get(t.getId());
+            TimerModel at = timers.get(t.getId());
             if (at.isBlockingAt(moment)) {
                 return true;
             }
@@ -196,7 +218,7 @@ public class BufferActuator {
      *
      * @return A Map of timer id and timers.
      */
-    public Map<Integer, ActuatorTimer> getAllTimers() {
+    public Map<Integer, TimerModel> getAllTimers() {
         return timers;
     }
 

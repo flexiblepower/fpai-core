@@ -3,7 +3,9 @@ package org.flexiblepower.efi.util;
 import java.util.Date;
 
 /**
- * This class contains up to date information about the state of the timers.
+ * This class contains up to date information about the state of the timers. A class sends updates of the timers that
+ * have a new finishedAt time. Timers that are not mentioned are assumed to have the same finishedAt time is the most
+ * recent TimerUpdate.
  */
 public class TimerUpdate {
     private final int timerId;
@@ -12,12 +14,14 @@ public class TimerUpdate {
     /**
      * @param timerId
      *            This id refers uniquely to a timer that is associated to an actuator within a buffer appliance.
+     *
      * @param finishedAt
-     *            The timestamp that indicates when this timer will be finished.
+     *            The timestamp that indicates when this timer will be finished. May lie in the past to indicate this
+     *            timer has finished.
      */
     public TimerUpdate(int timerId, Date finishedAt) {
         if (finishedAt == null) {
-            throw new NullPointerException("finishedAt");
+            throw new NullPointerException("Must mention a new finishedAt time, otherwise no TimerUpdate should be made.");
         }
 
         this.timerId = timerId;

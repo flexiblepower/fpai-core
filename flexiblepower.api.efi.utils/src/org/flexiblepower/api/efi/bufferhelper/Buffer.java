@@ -116,6 +116,10 @@ public class Buffer<Q extends Quantity> {
             if (actuators.containsKey(actUpdate.getActuatorId())) {
                 BufferActuator theActuator = actuators.get(actUpdate.getActuatorId());
 
+                if (!theActuator.hasRunningMode(actUpdate.getCurrentRunningModeId()))
+                {
+                    throw new IllegalArgumentException("The RunningModeId in this message is not known.");
+                }
                 // Update the current RunningMode of this actuator.
                 theActuator.setCurrentRunningModeId(actUpdate.getCurrentRunningModeId());
 
@@ -303,7 +307,7 @@ public class Buffer<Q extends Quantity> {
 
     /**
      * Gets all actuators indexed on their id.
-     * 
+     *
      * @return A map with all actuators indexed on their id.
      */
     public Map<Integer, BufferActuator> getActuators() {
@@ -312,7 +316,7 @@ public class Buffer<Q extends Quantity> {
 
     /**
      * Returns the Actuator object based on the id.
-     * 
+     *
      * @param id
      *            The id of the actuator.
      * @return The actuator object.

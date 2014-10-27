@@ -1,4 +1,4 @@
-package org.flexiblepower.api.efi.bufferhelper;
+package org.flexiblepower.api.efi.commonhelper;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ import java.util.Date;
  * whether the timer is blocking or finished.
  *
  */
-public class ActuatorTimer extends org.flexiblepower.efi.util.Timer {
+public class TimerModel extends org.flexiblepower.efi.util.Timer {
     private Date finishedAt;
 
     /**
@@ -15,7 +15,7 @@ public class ActuatorTimer extends org.flexiblepower.efi.util.Timer {
      *
      * @param base
      */
-    public ActuatorTimer(org.flexiblepower.efi.util.Timer base) {
+    public TimerModel(org.flexiblepower.efi.util.Timer base) {
         super(base.getId(), base.getLabel(), base.getDuration());
     }
 
