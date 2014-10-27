@@ -6,6 +6,8 @@
 *.css text eol=crlf
 *.sql text eol=crlf
 *.perm text eol=crlf
+*.bat text eol=crlf
+*.sh text eol=lf
 
 *.png binary
 *.jar binary
