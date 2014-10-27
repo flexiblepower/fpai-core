@@ -14,6 +14,7 @@ import javax.measure.quantity.Power;
 
 import org.flexiblepower.api.efi.commonhelper.TimerModel;
 import org.flexiblepower.efi.unconstrained.RunningModeBehaviour;
+import org.flexiblepower.efi.unconstrained.UnconstrainedRegistration;
 import org.flexiblepower.efi.unconstrained.UnconstrainedStateUpdate;
 import org.flexiblepower.efi.unconstrained.UnconstrainedSystemDescription;
 import org.flexiblepower.efi.util.RunningMode;
@@ -36,6 +37,17 @@ public class Unconstrained {
     private boolean hasReceivedSystemDescription = false;
     private boolean hasReceivedStateUpdate = false;
     private int currentRunningModeId;
+
+    /**
+     * Constructs a Unconstrained object that keeps the state of the Unconstrained device and provides helper function
+     * for the matcher, like which states are reachable.
+     *
+     * @param registration
+     *            The complete and correct initial registration message.
+     */
+    public Unconstrained(UnconstrainedRegistration registration) {
+        this(registration.getResourceId(), registration.getSupportedCommodities());
+    }
 
     /**
      * Private constructor for the unconstrained model.

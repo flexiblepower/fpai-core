@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.flexiblepower.efi.uncontrolled.UncontrolledUpdate;
 import org.flexiblepower.rai.Allocation;
 import org.flexiblepower.rai.ControlSpaceUpdate;
 import org.flexiblepower.time.TimeService;
@@ -31,7 +30,7 @@ public class UnconstrainedAllocation extends Allocation {
      *            allocation in order to maintain grid stability.
      * @param runningModeSelectors
      */
-    public UnconstrainedAllocation(UncontrolledUpdate resourceUpdate,
+    public UnconstrainedAllocation(UnconstrainedUpdate resourceUpdate,
                                    Date timestamp,
                                    boolean isEmergencyAllocation,
                                    Collection<RunningModeSelector> runningModeSelectors) {
