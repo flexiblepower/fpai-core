@@ -3,4 +3,8 @@
 	<property name="targetversion" value="14.10" />
 	<property name="project.title" value="FlexiblePower Application Infrastructure" />
 	<import file="../cnf.shared/build-jenkins.xml" />
+	
+	<target name="deployment" depends="init">
+		<generatecore zipfile="${builddir}/${ant.project.name}-deployment-${version}.zip" />
+	</target>
 </project>
