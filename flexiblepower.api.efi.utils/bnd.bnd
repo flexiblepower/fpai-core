@@ -5,9 +5,7 @@
 	junit.osgi
 
 Bundle-Version: 1.0.0.${qualifier}
-Export-Package:  \
-	org.flexiblepower.api.efi.bufferhelper,\
-	org.flexiblepower.api.efi.unconstrainedhelper
+Export-Package:  org.flexiblepower.api.efi.*
 
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
 Tester-Plugin: biz.aQute.junit
