@@ -1,0 +1,17 @@
+-runbundles: \
+	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
+	flexiblepower.api.ext;version=latest,\
+	flexiblepower.runtime;version=latest,\
+	flexiblepower.runtime.test;version=latest,\
+	ch.qos.logback.classic;version=latest,\
+	ch.qos.logback.core;version=latest,\
+	org.apache.felix.configadmin;version=latest,\
+	org.apache.felix.scr;version=latest,\
+	biz.aQute.bnd.annotation;version=latest,\
+	slf4j.api;version=latest
+-runee: JavaSE-1.6
+-runfw: org.eclipse.osgi;version='[3.9,4)'
+-runtrace: true
+-runvm: -ea
+
