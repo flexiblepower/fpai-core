@@ -14,8 +14,8 @@ import org.flexiblepower.rai.Allocation;
  * also possible for the {@link ResourceManager} to be connected to several drivers (e.g. for a heatbuffer and an
  * actuator when they are connected separately).
  *
- * Any {@link ResourceManager} is and {@link Endpoint} and should have (at least) 2 ports. One called "driver" to
- * connect to a {@link ResourceDriver} and one called "controller" to connect to a {@link ControllerManager}.
+ * Any {@link ResourceManager} is an {@link Endpoint} and should have (at least) 2 ports. One called "driver" to connect
+ * to a {@link ResourceDriver} and one called "controller" to connect to a {@link ControllerManager}.
  */
 @Ports({ @Port(name = "driver"), @Port(name = "controller") })
 public interface ResourceManager extends Endpoint {
