@@ -175,6 +175,7 @@ public class UncertainMeasure<Q extends Quantity> implements Serializable, Measu
         if (getClass() != obj.getClass()) {
             return false;
         }
+        @SuppressWarnings("rawtypes")
         UncertainMeasure other = (UncertainMeasure) obj;
         if (Double.doubleToLongBits(mean) != Double.doubleToLongBits(other.mean)) {
             return false;
