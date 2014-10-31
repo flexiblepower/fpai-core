@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="fpai-core" default="snapshot">
-	<property name="targetversion" value="14.10" />
+<project name="fpai-core" default="distribute">
 	<property name="project.title" value="FlexiblePower Application Infrastructure" />
 	<import file="../cnf.shared/build-jenkins.xml" />
 	
 	<target name="deployment" depends="init">
-		<generatecore zipfile="${builddir}/${ant.project.name}-deployment-${version}.zip" />
+		<generatecore zipfile="${builddir}/${ant.project.name}-deployment-${version}.zip">
+			<skip pattern="eclipse.osgi" />
+			<skip pattern="felix.framework" />
+			<skip pattern="mockito" />
+			<skip pattern="simulation" />
+			<skip pattern="test" />
+			<skip pattern="useradmin" />
+			<skip pattern="simple" />
+			<skip pattern="gogo" />
+		</generatecore>
 	</target>
 </project>
