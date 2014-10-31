@@ -1,8 +1,6 @@
-Bundle-Version: 1.0.0.${qualifier}
-
+Bundle-Version: 2.0.0.${qualifier}
+Bundle-SymbolicName: flexiblepower.runtime.simulation
 Private-Package: \
-	org.flexiblepower.simulation.scheduling,\
-	org.flexiblepower.runtime.wiring
+	org.flexiblepower.runtime.messaging, \
+	org.flexiblepower.simulation.scheduling
 Service-Component: *
-
-#	org.flexiblepower.runtime.provisioning <-- disabled for now, will be reintroduced later

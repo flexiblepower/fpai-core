@@ -1,11 +1,11 @@
 -buildpath: ${default-buildpath},\
 	com.google.gson,\
-	org.apache.felix.http.jetty
+	org.apache.felix.http.servlet-api
 
-Bundle-Version: 1.0.0.${qualifier}
+Bundle-Version: 1.0.1.${qualifier}
 Private-Package: org.flexiblepower.runtime.ui.server,\
 	org.flexiblepower.runtime.ui.server.pages,\
 	org.flexiblepower.runtime.ui.server.widgets,\
 	org.flexiblepower.runtime.ui.user
 	
-Service-Component: org.flexiblepower.runtime.ui.server.*
+Service-Component: *

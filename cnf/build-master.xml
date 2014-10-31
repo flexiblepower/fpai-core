@@ -1,151 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="fpai" default="snapshot">
-	<tstamp />
-	<property name="targetversion" value="13.10" />
-
-	<property name="releasedir" value="/var/www/html/releases/${ant.project.name}" />
-
-	<!-- TODO: include the appstore again when it is fixed -->
-	<fileset id="build" dir="..">
-		<include name="*/build.xml" />
-		<exclude name="cnf/*" />
-		<exclude name="*appstore*/*" />
-	</fileset>
-
-	<!-- TODO: include the appstore again when it is fixed -->
-	<fileset id="release" dir="..">
-		<include name="*/build.xml" />
-		<exclude name="cnf/*" />
-		<exclude name="*.test/*" />
-		<exclude name="*appstore*/*" />
-	</fileset>
+<project name="fpai-core" default="distribute">
+	<property name="project.title" value="FlexiblePower Application Infrastructure" />
+	<import file="../cnf.shared/build-jenkins.xml" />
 	
-	<target name="snapshot">
-		<property name="version" value="${targetversion}-SNAPSHOT" />
-
-		<antcall target="clean" />
-		<antcall target="release" />
-		<antcall target="coverage-report" />
-		<antcall target="test" />
-		<antcall target="checkstyle" />
-		<antcall target="publishrelease" />
-		<antcall target="publishjavadoc" />
-	</target>
-
-	<target name="nightly">
-		<property name="version" value="${targetversion}-${DSTAMP}-NIGHTLY" />
-		
-		<antcall target="clean" />
-		<antcall target="release" />
-		<antcall target="coverage-report" />
-		<antcall target="test" />
-		<antcall target="checkstyle" />
-		<antcall target="publishrelease" />
-		<antcall target="publishjavadoc" />
-	</target>
-
-	<target name="really-do-release">
-		<property name="version" value="${targetversion}" />
-		
-		<antcall target="clean" />
-		<antcall target="release" />
-		<antcall target="coverage-report" />
-		<antcall target="test" />
-		<antcall target="checkstyle" />
-		<antcall target="publishrelease" />
-		<antcall target="publishjavadoc" />
-	</target>
-
-	<target name="echo">
-		<subant target="echo">
-			<fileset refId="build" />
-		</subant>
-	</target>
-	
-	<target name="build">
-		<subant target="build">
-			<fileset refId="build" />
-		</subant>
-	</target>
-
-	<target name="release">
-		<subant target="release">
-			<fileset refId="release" />
-		</subant>
-	</target>
-
-	<target name="coverage-report">
-		<subant target="coverage-report">
-			<fileset refId="build" />
-		</subant>
-	</target>
-
-	<target name="test" depends="build">
-		<subant target="test">
-			<fileset dir="..">
-				<include name="*.test/build.xml" />
-			</fileset>
-		</subant>
-	</target>
-
-	<target name="clean">
-		<delete dir="release" />
-		<mkdir dir="release" />
-		<subant target="clean">
-			<fileset refId="build" />
-		</subant>
-	</target>
-	
-	<target name="checkstyle">
-		<subant target="checkstyle">
-			<fileset refId="build" />
-		</subant>
-	</target>
-
-	<target name="publishrelease" depends="release">
-		<delete dir="${releasedir}/${version}/repo" />
-		<mkdir dir="${releasedir}/${version}/repo" />
-		<copy todir="${releasedir}/${version}/repo">
-			<fileset dir="release" />
-		</copy>
-		
-		<zip basedir=".." destfile="${releasedir}/${version}/fpai-sources-${version}.zip">
-			<include name="*/src/**"/>
-			<include name="*/test/**"/>
-			<include name="*/res/**"/>
-			<include name="*/*.bnd"/>
-			<include name="*/build*.xml"/>
-			<include name="cnf/**"/>
-			
-			<exclude name="cnf/cache/**"/>
-			<exclude name="cnf/tools/**"/>
-			<exclude name="cnf/release/**"/>
-			<!-- TODO: skip the appstore -->
-			<exclude name="flexiblepower.appstore.*/**"/>
-		</zip>
-		
-		<zip basedir="release" destfile="${releasedir}/${version}/fpai-bundles-${version}.zip">
-			<include name="**" />
-		</zip>
-	</target>
-	
-	<fileset dir=".." id="javadoc_files">
-		<include name="flexiblepower.api/**/*.java" />
-		<include name="flexiblepower.api.ext/**/*.java" />
-		<exclude name="*.test/*" />
-		<exclude name="**/*Test.java" />
-	</fileset>
-	
-	<target name="publishjavadoc">
-		<delete dir="${releasedir}/${version}/javadoc" />
-		<mkdir dir="${releasedir}/${version}/javadoc" />
-		<javadoc encoding="UTF-8" destdir="${releasedir}/${version}/javadoc" windowtitle="FlexiblePower Application Infrastructure (FPAI)">
-			<classpath location="../cnf/bnd/biz.aQute.bnd-2.1.0.jar" />
-			<fileset refid="javadoc_files" />
-		</javadoc>
-		
-		<zip basedir="${releasedir}/${version}/javadoc" destfile="${releasedir}/${version}/fpai-javadoc-${version}.zip">
-			<include name="**" />
-		</zip>
+	<target name="deployment" depends="init">
+		<generatecore zipfile="${builddir}/${ant.project.name}-deployment-${version}.zip">
+			<skip pattern="eclipse.osgi" />
+			<skip pattern="felix.framework" />
+			<skip pattern="mockito" />
+			<skip pattern="simulation" />
+			<skip pattern="test" />
+			<skip pattern="useradmin" />
+			<skip pattern="simple" />
+			<skip pattern="gogo" />
+		</generatecore>
 	</target>
 </project>

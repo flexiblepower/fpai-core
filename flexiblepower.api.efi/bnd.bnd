@@ -1,0 +1,25 @@
+-buildpath:  \
+	osgi.cmpn;version='[4.3,5)',\
+	osgi.core;version='[4.3,5)',\
+	junit.osgi;version='[3.8,4)',\
+	biz.aQute.bnd.annotation,\
+	flexiblepower.api;version=latest
+
+Bundle-Version: 1.0.0.${qualifier}
+
+
+Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
+Tester-Plugin: biz.aQute.junit
+-runtrace: true
+-runbundles: biz.aQute.junit
+-runproperties:  \
+    tester.trace=true, \
+    tester.continuous=true, \
+    tester.dir=testdir
+Export-Package:  \
+	org.flexiblepower.efi.buffer,\
+	org.flexiblepower.efi.unconstrained,\
+	org.flexiblepower.efi.util,\
+	org.flexiblepower.efi.timeshifter,\
+	org.flexiblepower.efi.uncontrolled,\
+	org.flexiblepower.efi

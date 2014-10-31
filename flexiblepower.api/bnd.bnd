@@ -4,15 +4,17 @@
 	junit.osgi;version='[3.8,4)',\
 	biz.aQute.bnd.annotation
 
-Bundle-Version: 1.0.0.${qualifier}
-Export-Package: \
+Bundle-Version: 2.0.0.${qualifier}
+Export-Package:  \
 	javax.measure,\
 	javax.measure.converter,\
+	org.flexiblepower.rai,\
 	javax.measure.quantity,\
 	javax.measure.unit,\
 	org.flexiblepower.control,\
 	org.flexiblepower.observation,\
-	org.flexiblepower.rai,\
+	org.flexiblepower.messaging,\
+	org.flexiblepower.rai.comm,\
 	org.flexiblepower.rai.values,\
 	org.flexiblepower.ral,\
 	org.flexiblepower.time,\

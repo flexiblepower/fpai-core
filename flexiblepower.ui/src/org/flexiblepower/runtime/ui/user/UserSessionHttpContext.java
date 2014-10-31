@@ -24,10 +24,10 @@ import aQute.bnd.annotation.component.Reference;
 import aQute.bnd.annotation.metatype.Meta;
 
 @Component(provide = HttpContext.class,
-           properties = "contextId=fps",
-           designate = UserSessionHttpContext.Config.class,
-           configurationPolicy = ConfigurationPolicy.optional,
-           immediate = true)
+properties = "contextId=fps",
+designate = UserSessionHttpContext.Config.class,
+configurationPolicy = ConfigurationPolicy.optional,
+immediate = true)
 public class UserSessionHttpContext implements HttpContext {
     private final static Logger logger = LoggerFactory.getLogger(UserSessionHttpContext.class);
 
@@ -67,6 +67,8 @@ public class UserSessionHttpContext implements HttpContext {
             Object isDisabled = parameters.get("isDisabled");
             disabled = Boolean.parseBoolean(isDisabled.toString());
         }
+
+        logger.debug("Started user context. Disabled = {}", disabled);
     }
 
     @Override

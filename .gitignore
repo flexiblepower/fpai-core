@@ -1,5 +1,4 @@
 # Generate Java / Eclipse generated stuff
-.metadata
 *.swp
 cnf/db
 cnf/cache
@@ -8,6 +7,18 @@ bin
 bin_test
 generated
 *playground
+cobertura.ser
+instrumented
+coverage.xml
+RemoteSystemsTempFiles
+
+# Keep the projects list
+.metadata/*
+!.metadata/.plugins/
+.metadata/.plugins/*
+!.metadata/.plugins/org.eclipse.core.resources/
+.metadata/.plugins/org.eclipse.core.resources/*
+!.metadata/.plugins/org.eclipse.core.resources/.plugins/
 
 # GWT generated stuff
 .gwt

@@ -2,6 +2,7 @@ package org.flexiblepower.observation.ext;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.flexiblepower.observation.Observation;
 import org.flexiblepower.observation.ObservationConsumer;
@@ -16,16 +17,23 @@ import org.flexiblepower.observation.ObservationProvider;
  *            The type of the value
  */
 public abstract class AbstractObservationProvider<T> implements ObservationProvider<T> {
+
     private final Set<ObservationConsumer<? super T>> consumers = new CopyOnWriteArraySet<ObservationConsumer<? super T>>();
+    private final AtomicReference<Observation<? extends T>> lastObservation = new AtomicReference<Observation<? extends T>>(null);
 
     @Override
-    public final void subscribe(ObservationConsumer<? super T> consumer) {
+    public void subscribe(ObservationConsumer<? super T> consumer) {
         consumers.add(consumer);
     }
 
     @Override
-    public final void unsubscribe(ObservationConsumer<? super T> consumer) {
+    public void unsubscribe(ObservationConsumer<? super T> consumer) {
         consumers.remove(consumer);
+    }
+
+    @Override
+    public Observation<? extends T> getLastObservation() {
+        return lastObservation.get();
     }
 
     /**
@@ -34,9 +42,11 @@ public abstract class AbstractObservationProvider<T> implements ObservationProvi
      * @param observation
      *            The observation that will be sent.
      */
-    protected final void publish(Observation<T> observation) {
+    protected void publish(Observation<? extends T> observation) {
+        lastObservation.set(observation);
         for (ObservationConsumer<? super T> consumer : consumers) {
             consumer.consume(this, observation);
         }
     }
+
 }

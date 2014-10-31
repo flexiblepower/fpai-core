@@ -1,21 +1,7 @@
-Git-Descriptor: ${system-allow-fail;git describe --dirty --always}
-Git-SHA: ${system-allow-fail;git rev-list -1 HEAD}
+-include: cnf.shared/build.bnd
 
-javac.source: 1.6
-javac.target: 1.6
-
-qualifier: RELEASE-13-10
-
-default-buildpath: \
-	flexiblepower.api;version=project,\
-	flexiblepower.api.ext;version=project,\
-	biz.aQute.bnd.annotation;version="[1.43,2.0)",\
-	osgi.core;version="[4.3,5.0)",\
-	osgi.cmpn;version="[4.3,5.0)",\
-	slf4j.api;version="[1.7,2.0)"
-	
 Bundle-Category: FlexiblePower Application Infrastructure
-Bundle-Vendor: TNO
-Include-Resource: res, ../cnf/LICENSE.txt
-Bundle-Copyright: Copyright Flexiblepower Alliance Network (FAN) 2013
-Bundle-License: Apache License, Version 2.0
+qualifier: release-14-10
+
+-baseline: *
+-baselinerepo: fpai-core-prev

@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * The {@link TimeService} is always provided by the runtime environment and should be used to get the current time.
- * When doing this at all times, you make sure that the code is also easily ported to the simlation runtime in which the
+ * When doing this at all times, you make sure that the code is also easily ported to the simulation runtime in which the
  * time can be simulated.
  */
 public interface TimeService {

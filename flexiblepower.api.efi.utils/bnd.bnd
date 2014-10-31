@@ -1,0 +1,20 @@
+-buildpath:  \
+	biz.aQute.bnd.annotation,\
+	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
+	junit.osgi
+
+Bundle-Version: 1.0.0.${qualifier}
+Export-Package:  \
+	org.flexiblepower.api.efi.bufferhelper,\
+	org.flexiblepower.api.efi.unconstrainedhelper,\
+	org.flexiblepower.api.efi.commonhelper
+
+Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase}
+Tester-Plugin: biz.aQute.junit
+-runtrace: true
+-runbundles: biz.aQute.junit
+-runproperties:  \
+    tester.trace=true, \
+    tester.continuous=true, \
+    tester.dir=testdir

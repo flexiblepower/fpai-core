@@ -14,6 +14,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.flexiblepower.simulation.Simulation;
 import org.flexiblepower.time.TimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -21,6 +23,7 @@ import aQute.bnd.annotation.component.Deactivate;
 
 @Component(provide = { ScheduledExecutorService.class, TimeService.class, Simulation.class })
 public class SimulatedScheduleService implements ScheduledExecutorService, TimeService, Simulation, Runnable {
+    private static final Logger log = LoggerFactory.getLogger(SimulatedScheduleService.class);
 
     private volatile boolean running;
     private final Thread thread;
@@ -55,13 +58,21 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
         return jobs.isEmpty() ? Long.MAX_VALUE : jobs.peek().getTimeOfNextRun();
     }
 
+    private volatile boolean isWaiting = false;
+    private volatile long currentTime = 0;
+
     @Override
     public long getCurrentTimeMillis() {
-        long simulationTime = simulationClock.getCurrentTimeMillis(); // also checks if simulation is finished
         if (simulationClock.isStopped()) {
             return System.currentTimeMillis();
         } else {
-            return Math.min(simulationTime, getNextJobTime());
+            if (isWaiting) {
+                long clockTime = simulationClock.getCurrentTimeMillis();
+                if (clockTime > currentTime && clockTime < getNextJobTime()) {
+                    currentTime = clockTime;
+                }
+            }
+            return currentTime;
         }
     }
 
@@ -70,24 +81,29 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
         return new Date(getCurrentTimeMillis());
     }
 
+    private synchronized void addJob(Job<?> job) {
+        jobs.add(job);
+        notifyAll();
+    }
+
     // Adding jobs
 
     @Override
     public void execute(Runnable command) {
-        jobs.add(Job.create(command, this, getCurrentTimeMillis(), 0));
+        addJob(Job.create(command, this, getCurrentTimeMillis(), 0));
     }
 
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
         Job<?> job = Job.create(command, this, getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(delay, unit), 0);
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
         Job<V> job = Job.create(callable, this, getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(delay, unit), 0);
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
@@ -97,7 +113,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                                 this,
                                 getCurrentTimeMillis() + TimeUnit.MILLISECONDS.convert(initialDelay, unit),
                                 TimeUnit.MILLISECONDS.convert(period, unit));
-        jobs.add(job);
+        addJob(job);
         return job;
     }
 
@@ -106,24 +122,33 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
     public void run() {
         while (running) {
             if (simulationClock.isRunning() || simulationClock.isStopping()) {
-                long waitTime = getNextJobTime() - getCurrentTimeMillis();
-                if (waitTime <= 0) {
-                    Job<?> job = jobs.remove();
-                    job.run();
-                    if (!job.isDone()) {
-                        jobs.add(job);
-                    }
-                } else if (simulationClock.isStopping()) {
-                    simulationClock.stop();
-                } else {
-                    long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
-                    try {
-                        synchronized (this) {
+                synchronized (this) {
+                    long now = simulationClock.getCurrentTimeMillis();
+                    log.trace("Simulation step {}", now);
+                    long waitTime = getNextJobTime() - now;
+                    if (waitTime <= 0) {
+                        Job<?> job = jobs.remove();
+                        currentTime = Math.max(currentTime, job.getTimeOfNextRun());
+                        log.trace("Executing  {}", job);
+                        job.run();
+                        if (!job.isDone()) {
+                            jobs.add(job);
+                            log.trace("Rescheduling {}", job);
+                        }
+                    } else if (simulationClock.isStopping()) {
+                        log.trace("Stopping simulation clock");
+                        simulationClock.stop();
+                    } else {
+                        long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
+                        log.trace("Sleeping {}ms until next job", sleepTime);
+                        try {
                             if (sleepTime > 0) {
+                                isWaiting = true;
                                 wait(sleepTime);
                             }
+                        } catch (final InterruptedException ex) {
                         }
-                    } catch (final InterruptedException ex) {
+                        isWaiting = false;
                     }
                 }
             } else {
@@ -131,6 +156,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
                 try {
                     synchronized (this) {
                         wait();
+                        currentTime = simulationClock.getSimulationStartTime();
                     }
                 } catch (InterruptedException e) {
                 }
@@ -155,6 +181,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void startSimulation(Date startTime, Date stopTime, double speedFactor) {
+        log.trace("Starting simulation @ {} until {} with factor {}", startTime, stopTime, speedFactor);
         Job<?>[] oldJobs = jobs.toArray(new Job[jobs.size()]);
         jobs.clear();
 
@@ -174,7 +201,9 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void stopSimulation() {
+        log.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.stop();
+        notifyAll();
     }
 
     @Override
@@ -186,11 +215,13 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void pause() {
+        log.trace("Pause @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.pause();
     }
 
     @Override
     public synchronized void unpause() {
+        log.trace("Unpause @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.unpause();
         notifyAll();
     }
@@ -272,5 +303,4 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
         // simplicity we chose to give both methods the same implementation
         return scheduleAtFixedRate(command, initialDelay, delay, unit);
     }
-
 }

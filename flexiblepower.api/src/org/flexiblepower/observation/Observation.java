@@ -1,11 +1,12 @@
 package org.flexiblepower.observation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.measure.Measure;
 
 /**
  * An {@link Observation} is a measurement that has been done at a certain time. It is a tuple with the observedAt date
@@ -86,11 +87,7 @@ public class Observation<T> {
      * @return The object when such a value has been found, <code>null</code> otherwise.
      */
     public Object getValue(String name) {
-        Method method = ObservationTranslationHelper.getGetterMethods(value.getClass()).get(name);
-        if (method != null) {
-            return executeMethod(method);
-        }
-        return null;
+        return ObservationTranslationHelper.getMember(value, name);
     }
 
     /**
@@ -101,31 +98,30 @@ public class Observation<T> {
      */
     public Map<String, Object> getValueMap() {
         Map<String, Object> result = new HashMap<String, Object>();
-        Map<String, Method> methods = ObservationTranslationHelper.getGetterMethods(value.getClass());
-        for (Entry<String, Method> entry : methods.entrySet()) {
-            Method method = entry.getValue();
-            Object object = executeMethod(method);
-            if (object != null) {
-                if (object.getClass().isEnum()) {
-                    result.put(entry.getKey(), object.toString());
-                } else {
-                    result.put(entry.getKey(), object);
-                }
-            }
-        }
+        fillValueMap(null, result, value);
         return result;
     }
 
-    private Object executeMethod(Method method) {
-        try {
-            method.setAccessible(true);
-            return method.invoke(value);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause());
+    private static void fillValueMap(String prefix, Map<String, Object> result, Object value) {
+        Map<String, Method> methods = ObservationTranslationHelper.getGetterMethods(value.getClass());
+        for (Entry<String, Method> entry : methods.entrySet()) {
+            String key = prefix == null ? entry.getKey() : prefix + "." + entry.getKey();
+            Method method = entry.getValue();
+            Object object = ObservationTranslationHelper.executeMethod(value, method);
+            if (object != null) {
+                if (object instanceof Measure) {
+                    result.put(key, ((Measure<?, ?>) object).getValue());
+                    result.put(key + ".unit", ((Measure<?, ?>) object).getUnit().toString());
+                } else if (object.getClass().isEnum()) {
+                    result.put(key, object.toString());
+                } else {
+                    result.put(key, object);
+
+                    if (ObservationTranslationHelper.isJavaBean(object.getClass())) {
+                        fillValueMap(key, result, object);
+                    }
+                }
+            }
         }
     }
 

@@ -26,7 +26,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 
-@Component(provide = Servlet.class, properties = { "alias=/login.html", "contextId=users" })
+@Component(provide = Servlet.class, properties = { "alias=/login.html" })
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 6873319359921321938L;
 
@@ -74,7 +74,7 @@ public class LoginServlet extends HttpServlet {
                                 logger.error("Could not create user root!");
                             } else {
                                 root.getCredentials()
-                                    .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0O4Gg6Xb0gI8udk/EYVJ8urNqSZKcnfra");
+                                .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0O4Gg6Xb0gI8udk/EYVJ8urNqSZKcnfra");
                                 administrators.addMember(root);
                             }
                         }
@@ -91,7 +91,7 @@ public class LoginServlet extends HttpServlet {
                                 logger.error("Could not create user user!");
                             } else {
                                 user.getCredentials()
-                                    .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0OG8/AsfgzG9eGA/WIbuH3Rb33E.XOGe.");
+                                .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0OG8/AsfgzG9eGA/WIbuH3Rb33E.XOGe.");
                                 users.addMember(user);
                                 users.addMember(userAdmin.getRole("root"));
                             }

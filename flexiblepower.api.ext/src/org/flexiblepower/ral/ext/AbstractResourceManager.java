@@ -1,7 +1,11 @@
 package org.flexiblepower.ral.ext;
 
-import org.flexiblepower.rai.ControlSpace;
-import org.flexiblepower.rai.Controller;
+import java.util.List;
+
+import org.flexiblepower.messaging.Connection;
+import org.flexiblepower.messaging.MessageHandler;
+import org.flexiblepower.rai.AllocationStatusUpdate;
+import org.flexiblepower.rai.ResourceMessage;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
@@ -10,106 +14,151 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Gives a basic implementation for a {@link ResourceManager}. Any subclass of this class should only implement the
- * {@link #consume(org.flexiblepower.observation.ObservationProvider, org.flexiblepower.observation.Observation)}
- * method.
- * 
- * @param <CS>
- *            The type of {@link ControlSpace}
- * @param <RS>
- *            The type of {@link ResourceState}
- * @param <RCP>
- *            The type of {@link ResourceControlParameters}
+ * Gives a basic implementation for a {@link ResourceManager} which does simple translation, possible while keeping
+ * state information.
  */
-public abstract class AbstractResourceManager<CS extends ControlSpace, RS extends ResourceState, RCP extends ResourceControlParameters> implements
-                                                                                                                                        ResourceManager<CS, RS, RCP> {
+public abstract class AbstractResourceManager<RS extends ResourceState, RCP extends ResourceControlParameters> implements
+                                                                                                               ResourceManager {
     /**
-     * The logger that should by any subclass.
+     * The logger that should be used by any subclass.
      */
     protected final Logger logger;
 
-    private final Class<? extends ResourceDriver<RS, RCP>> driverClass;
-    private final Class<CS> controlSpaceType;
-
-    private ResourceDriver<RS, RCP> driver;
-
-    private CS currentControlSpace;
-
-    private Controller<? super CS> controller;
-
     /**
      * Creates a new instance for the specific driver class type and the control space class.
-     * 
-     * @param driverClass
-     *            The class of the driver that is expected.
-     * @param controlSpaceType
-     *            The class of the control space that is expected.
      */
-    protected AbstractResourceManager(Class<? extends ResourceDriver<RS, RCP>> driverClass, Class<CS> controlSpaceType) {
-        this.driverClass = driverClass;
-        this.controlSpaceType = controlSpaceType;
-        this.logger = LoggerFactory.getLogger(getClass());
+    protected AbstractResourceManager() {
+        logger = LoggerFactory.getLogger(getClass());
+    }
+
+    private volatile boolean hasRegistered = false;
+
+    protected abstract List<? extends ResourceMessage> startRegistration(RS state);
+
+    protected abstract List<? extends ResourceMessage> updatedState(RS state);
+
+    protected abstract RCP receivedAllocation(ResourceMessage message);
+
+    private volatile Connection driverConnection, controllerConnection;
+
+    @Override
+    public MessageHandler onConnect(Connection connection) {
+        if (driverConnection == null && "driver".equals(connection.getPort().name())) {
+            driverConnection = connection;
+            return new MessageHandler() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public void handleMessage(Object message) {
+                    try {
+                        if (controllerConnection != null) {
+                            List<? extends ResourceMessage> messages = null;
+                            if (!hasRegistered) {
+                                messages = startRegistration((RS) message);
+                                hasRegistered = true;
+                            } else {
+                                messages = updatedState((RS) message);
+                            }
+
+                            if (messages != null) {
+                                for (ResourceMessage msg : messages) {
+                                    if (msg == null) {
+                                        logger.warn("Trying to send a null message, this is not allowed");
+                                    } else {
+                                        controllerConnection.sendMessage(msg);
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            logger.warn("Message Received by Resource Manager but no controler connected");
+                        }
+                    } catch (ClassCastException ex) {
+                        logger.warn("Received unknown message type {}", message.getClass().getName());
+                    }
+                }
+
+                @Override
+                public void disconnected() {
+                    hasRegistered = false;
+                    driverConnection = null;
+                }
+            };
+        } else if (controllerConnection == null && "controller".equals(connection.getPort().name())) {
+            controllerConnection = connection;
+            return new MessageHandler() {
+                @Override
+                public void handleMessage(Object message) {
+                    try {
+                        if (driverConnection != null) {
+                            RCP control = receivedAllocation((ResourceMessage) message);
+                            if (control != null) {
+                                driverConnection.sendMessage(control);
+                            }
+                        }
+                        else {
+                            logger.warn("Message Received by Resource Manager but no driver connected");
+                        }
+                    } catch (ClassCastException ex) {
+                        logger.warn("Received unknown message type {}", message.getClass().getName());
+                    }
+
+                }
+
+                @Override
+                public void disconnected() {
+                    hasRegistered = false;
+                    controllerConnection = null;
+                }
+            };
+        }
+        return null;
     }
 
     /**
-     * @return The last control space that has been sent
+     * Indicate if this {@link ResourceManager} is currently connected to a {@link ResourceController}
+     *
+     * @return boolean indicating if this {@link ResourceManager} is currently connected to a {@link ResourceController}
      */
-    public ControlSpace getCurrentControlSpace() {
-        return currentControlSpace;
+    protected boolean isConnectedWithResourceController() {
+        return controllerConnection != null;
     }
 
     /**
-     * This helper method publishes the {@link ControlSpace} to its controller if its available.
-     * 
-     * @param controlSpace
-     *            The {@link ControlSpace} that must be published.
+     * Indicate if this {@link ResourceManager} is currently connected to a {@link ResourceDriver}
+     *
+     * @return boolean indicating if this {@link ResourceManager} is currently connected to a {@link ResourceDriver}
      */
-    protected void publish(CS controlSpace) {
-        this.currentControlSpace = controlSpace;
-
-        if (controller != null) {
-            controller.controlSpaceUpdated(this, controlSpace);
-        }
-    }
-
-    @Override
-    public void setController(Controller<? super CS> controller) {
-        if (this.controller != null) {
-            throw new IllegalStateException("This ResourceManager has already got a controller bound to it");
-        }
-        this.controller = controller;
-    }
-
-    @Override
-    public void unsetController(Controller<? super CS> controller) {
-        this.controller = null;
+    protected boolean isConnectedWithResourceDriver() {
+        return driverConnection != null;
     }
 
     /**
-     * @return The {@link ResourceDriver} that is currently linked to this {@link ResourceManager}
+     * Send status update to attached controller
+     *
+     * @param allocationStatusUpdate
      */
-    public ResourceDriver<RS, RCP> getDriver() {
-        return driver;
+    protected void allocationStatusUpdate(AllocationStatusUpdate allocationStatusUpdate) {
+        if (controllerConnection != null) {
+            controllerConnection.sendMessage(allocationStatusUpdate);
+        }
+        else {
+            logger.warn("Allocation Status update from Resource Manager but no controller connected");
+        }
+
     }
 
-    @Override
-    public Class<CS> getControlSpaceType() {
-        return controlSpaceType;
-    }
-
-    @Override
-    public void registerDriver(ResourceDriver<RS, RCP> driver) {
-        if (driver != null && driverClass.isAssignableFrom(driver.getClass())) {
-            this.driver = driver;
-            driver.subscribe(this);
+    /**
+     * Send control parameters to attached controller
+     *
+     * @param allocationStatusUpdate
+     */
+    protected void sendControlParameters(ResourceControlParameters controlParameters) {
+        if (driverConnection != null) {
+            driverConnection.sendMessage(controlParameters);
+        }
+        else {
+            logger.warn("Control Parameters update from Resource Manager but no controller connected");
         }
     }
 
-    @Override
-    public void unregisterDriver(ResourceDriver<RS, RCP> driver) {
-        if (this.driver == driver) {
-            driver.unsubscribe(this);
-            this.driver = null;
-        }
-    }
 }

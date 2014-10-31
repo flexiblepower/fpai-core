@@ -3,111 +3,117 @@ package org.flexiblepower.rai;
 import java.util.Date;
 import java.util.UUID;
 
-import org.flexiblepower.rai.values.EnergyProfile;
+import org.flexiblepower.time.TimeService;
 
 /**
- * An Allocation is the datatype that will be sent back from the {@link Controller} to the {@link ControllableResource}.
- * 
- * @author TNO
+ * An {@link Allocation} message is always a response from the energy application to a {@link ControlSpaceUpdate}
+ * message. It contains instructions on how to use (or fix) the flexibility described in the {@link ControlSpaceUpdate}.
+ *
+ * Each ControlSpace category has its own {@link Allocation} message that is derived from this one.
  */
-public class Allocation extends ResourceInfo {
-    private final UUID controlSpaceId;
-    private final Date energyProfileStartTime;
-    private final EnergyProfile energyProfile;
+public abstract class Allocation extends ResourceMessage {
+    private final UUID controlSpaceUpdateId;
+    private final boolean isEmergencyAllocation;
 
     /**
-     * Creates a new {@link Allocation} based on a given {@link ControlSpace}. Note that one {@link ControlSpace} map
-     * give rise to any number of allocations.
-     * 
-     * @param controlSpace
-     *            is the control space the allocation is based on.
-     * @param energyProfileStartTime
-     *            is the start time of the energy profile.
-     * @param energyProfile
-     *            is the profile of the allocation.
-     * 
-     * @throws NullPointerException
-     *             when one of the parameters is null.
+     * Constructs a new {@link Allocation} object as a response to a specific {@link ControlSpaceUpdate} which is no
+     * emergency. This object will return <code>false</code> for the {@link #isEmergencyAllocation()} method.
+     *
+     * @param timestamp
+     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     * @param controlSpaceUpdate
+     *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      */
-    public Allocation(ControlSpace controlSpace, Date energyProfileStartTime, EnergyProfile energyProfile) {
-        super(controlSpace.getResourceId());
+    public Allocation(Date timestamp,
+                      ControlSpaceUpdate controlSpaceUpdate) {
+        this(timestamp, controlSpaceUpdate, false);
+    }
 
-        controlSpaceId = controlSpace.getId();
-        this.energyProfileStartTime = energyProfileStartTime;
-        this.energyProfile = energyProfile;
+    /**
+     * Constructs a new {@link Allocation} object as a response to a specific {@link ControlSpaceUpdate}.
+     *
+     * @param timestamp
+     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     * @param controlSpaceUpdate
+     *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
+     * @param isEmergencyAllocation
+     *            This Boolean value is optional and is true when a grid emergency situation occurs. (e.g. congestion,
+     *            black start etc.) The energy app then strongly advices the appliance driver to adapt to the sent
+     *            allocation in order to maintain grid stability.
+     */
+    public Allocation(Date timestamp,
+                      ControlSpaceUpdate controlSpaceUpdate,
+                      boolean isEmergencyAllocation) {
+        this(controlSpaceUpdate.getResourceId(),
+             timestamp,
+             controlSpaceUpdate.getResourceMessageId(),
+             isEmergencyAllocation);
+    }
 
-        if (controlSpaceId == null || energyProfileStartTime == null || energyProfile == null) {
-            throw new NullPointerException();
+    /**
+     * Constructs a new {@link Allocation} object.
+     *
+     * @param resourceId
+     *            The resource identifier
+     * @param timestamp
+     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     * @param controlSpaceUpdateId
+     *            An identifier that uniquely identifies the {@link ControlSpaceUpdate} message that this message is a
+     *            response to.
+     * @param isEmergencyAllocation
+     *            This Boolean value is optional and is true when a grid emergency situation occurs. (e.g. congestion,
+     *            black start etc.) The energy app then strongly advices the appliance driver to adapt to the sent
+     *            allocation in order to maintain grid stability.
+     */
+    public Allocation(String resourceId, Date timestamp, UUID controlSpaceUpdateId, boolean isEmergencyAllocation) {
+        super(resourceId, timestamp);
+        if (controlSpaceUpdateId == null) {
+            throw new NullPointerException("controlSpaceUpdateId");
         }
+
+        this.controlSpaceUpdateId = controlSpaceUpdateId;
+        this.isEmergencyAllocation = isEmergencyAllocation;
     }
 
     /**
-     * Copy constructor, creates a new allocation that is the same as the given one.
-     * 
-     * @param allocation
-     *            The {@link Allocation} that should be copied.
+     * @return The id of the control space update on which this allocation message is based.
      */
-    public Allocation(Allocation allocation) {
-        super(allocation);
-        controlSpaceId = allocation.controlSpaceId;
-        energyProfileStartTime = allocation.energyProfileStartTime;
-        energyProfile = allocation.energyProfile;
+    public UUID getControlSpaceUpdateId() {
+        return controlSpaceUpdateId;
     }
 
     /**
-     * @return The UUID of the {@link ControlSpace} that has led to this Allocation.
+     * @return This boolean value is optional and is true when a grid emergency situation occurs. (e.g. congestion,
+     *         black start etc.) The energy application then strongly advices the appliance driver to adapt to the sent
+     *         allocation in order to maintain grid stability.
      */
-    public UUID getControlSpaceId() {
-        return controlSpaceId;
-    }
-
-    /**
-     * @return The start time of the {@link EnergyProfile}.
-     * @see #getEnergyProfile()
-     */
-    public Date getStartTime() {
-        return energyProfileStartTime;
-    }
-
-    /**
-     * @return The {@link EnergyProfile} that describes the expected energy usage of the resource over the period
-     *         starting from the start time.
-     */
-    public EnergyProfile getEnergyProfile() {
-        return energyProfile;
+    public boolean isEmergencyAllocation() {
+        return isEmergencyAllocation;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + controlSpaceId.hashCode();
-        result = prime * result + energyProfile.hashCode();
-        result = prime * result + energyProfileStartTime.hashCode();
+        result = prime * result + controlSpaceUpdateId.hashCode();
+        result = prime * result + (isEmergencyAllocation ? 1231 : 1237);
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (!super.equals(obj) || getClass() != obj.getClass()) {
+        if (!super.equals(obj)) {
             return false;
-        } else {
-            Allocation other = (Allocation) obj;
-            if (!controlSpaceId.equals(other.controlSpaceId)) {
-                return false;
-            } else if (!energyProfile.equals(other.energyProfile)) {
-                return false;
-            } else if (!energyProfileStartTime.equals(other.energyProfileStartTime)) {
-                return false;
-            }
-            return true;
         }
+
+        Allocation other = (Allocation) obj;
+        return controlSpaceUpdateId.equals(other.controlSpaceUpdateId) && isEmergencyAllocation == other.isEmergencyAllocation;
     }
 
     @Override
-    public String toString() {
-        return super.toString() + " energyProfile = " + energyProfileStartTime + " " + energyProfile;
+    protected void toString(StringBuilder sb) {
+        super.toString(sb);
+        sb.append("controlSpaceUpdatedId=").append(controlSpaceUpdateId).append(", ");
+        sb.append("isEmergencyAllocation=").append(isEmergencyAllocation).append(", ");
     }
 }

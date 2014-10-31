@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2007 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -18,12 +18,12 @@ import javax.measure.unit.Unit;
  * <p>
  * This class represents the result of a measurement stated in a known unit.
  * </p>
- * 
+ *
  * <p>
  * There is no constraint upon the measurement value itself: scalars, vectors, or even data sets are valid values as
  * long as an aggregate magnitude can be determined (see {@link Measurable}).
  * </p>
- * 
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.2, August 26, 2007
  */
@@ -36,13 +36,13 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
     protected Measure() {
     }
 
-    public static <Q extends Quantity> Measurable<Q> zero() {
-        return new ZeroMeasurable<Q>();
+    public static <Q extends Quantity> Measurable<Q> zero(Unit<Q> unit) {
+        return new Integer<Q>(0, unit);
     }
 
     /**
      * Returns the scalar measure for the specified <code>double</code> stated in the specified unit.
-     * 
+     *
      * @param doubleValue
      *            the measurement value.
      * @param unit
@@ -54,7 +54,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the scalar measure for the specified <code>double</code> stated in the specified unit.
-     * 
+     *
      * @param longValue
      *            the measurement value.
      * @param unit
@@ -66,7 +66,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the scalar measure for the specified <code>float</code> stated in the specified unit.
-     * 
+     *
      * @param floatValue
      *            the measurement value.
      * @param unit
@@ -78,7 +78,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the scalar measure for the specified <code>int</code> stated in the specified unit.
-     * 
+     *
      * @param intValue
      *            the measurement value.
      * @param unit
@@ -90,14 +90,14 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the measurement value of this measure.
-     * 
+     *
      * @return the measurement value.
      */
     public abstract V getValue();
 
     /**
      * Returns the measurement unit of this measure.
-     * 
+     *
      * @return the measurement unit.
      */
     public abstract Unit<Q> getUnit();
@@ -105,7 +105,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
     /**
      * Returns the measure equivalent to this measure but stated in the specified unit. This method may result in lost
      * of precision (e.g. measure of integral value).
-     * 
+     *
      * @param unit
      *            the new measurement unit.
      * @return the measure stated in the specified unit.
@@ -116,7 +116,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      * Returns the value of this measure stated in the specified unit as a <code>double</code>. If the measure has too
      * great a magnitude to be represented as a <code>double</code>, it will be converted to
      * <code>Double.NEGATIVE_INFINITY</code> or <code>Double.POSITIVE_INFINITY</code> as appropriate.
-     * 
+     *
      * @param unit
      *            the unit in which this measure is stated.
      * @return the numeric value after conversion to type <code>double</code>.
@@ -126,12 +126,12 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the estimated integral value of this measure stated in the specified unit as a <code>long</code>.
-     * 
+     *
      * <p>
      * Note: This method differs from the <code>Number.longValue()</code> in the sense that the closest integer value is
      * returned and an ArithmeticException is raised instead of a bit truncation in case of overflow (safety critical).
      * </p>
-     * 
+     *
      * @param unit
      *            the unit in which the measurable value is stated.
      * @return the numeric value after conversion to type <code>long</code>.
@@ -152,7 +152,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      * Returns the value of this measure stated in the specified unit as a <code>float</code>. If the measure has too
      * great a magnitude to be represented as a <code>float</code>, it will be converted to
      * <code>Float.NEGATIVE_INFINITY</code> or <code>Float.POSITIVE_INFINITY</code> as appropriate.
-     * 
+     *
      * @param unit
      *            the unit in which the measure is stated.
      * @return the numeric value after conversion to type <code>float</code>.
@@ -163,12 +163,12 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the estimated integral value of this measure stated in the specified unit as a <code>int</code>.
-     * 
+     *
      * <p>
      * Note: This method differs from the <code>Number.intValue()</code> in the sense that the closest integer value is
      * returned and an ArithmeticException is raised instead of a bit truncation in case of overflow (safety critical).
      * </p>
-     * 
+     *
      * @param unit
      *            the unit in which the measurable value is stated.
      * @return the numeric value after conversion to type <code>int</code>.
@@ -186,10 +186,10 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
     /**
      * Compares this measure against the specified object for equality. If the units are compatible, the
      * {@link #compareTo} is used to check for equality. Otherwise, false is returned.
-     * 
+     *
      * This is different from the standard implementation of JScience, which tests for strict equality. This is not
      * according to the contract of the {@link #compareTo(Measurable)} method.
-     * 
+     *
      * @param obj
      *            the object to compare with.
      * @return <code>true</code> if both objects are equal; <code>false</code> otherwise.
@@ -210,7 +210,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
 
     /**
      * Returns the hash code for this scalar.
-     * 
+     *
      * @return the hash code value.
      */
     @Override
@@ -223,7 +223,7 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      * the same; it is not affected by locale. This means that it can be used as a canonical string representation for
      * exchanging data, or as a key for a Hashtable, etc. Locale-sensitive measure formatting and parsing is handled by
      * the {@link MeasureFormat} class and its subclasses.
-     * 
+     *
      * @return the string representation of this measure.
      */
     @Override
@@ -239,55 +239,15 @@ public abstract class Measure<V, Q extends Quantity> implements Measurable<Q>, S
      * Compares this measure to the specified measurable quantity. This method compares the
      * {@link Measurable#doubleValue(Unit)} of both this measure and the specified measurable stated in the same unit
      * (this measure's {@link #getUnit() unit}).
-     * 
+     *
      * @return a negative integer, zero, or a positive integer as this measure is less than, equal to, or greater than
      *         the specified measurable quantity.
-     * @return <code>Double.compare(this.doubleValue(getUnit()), 
+     * @return <code>Double.compare(this.doubleValue(getUnit()),
      *         that.doubleValue(getUnit()))</code>
      */
     @Override
     public int compareTo(Measurable<Q> that) {
         return java.lang.Double.compare(doubleValue(getUnit()), that.doubleValue(getUnit()));
-    }
-
-    private static final class ZeroMeasurable<Q extends Quantity> implements Measurable<Q> {
-        @Override
-        public int compareTo(Measurable<Q> other) {
-            if (other instanceof ZeroMeasurable) {
-                return 0;
-            } else {
-                return -other.compareTo(this);
-            }
-        }
-
-        @Override
-        public double doubleValue(Unit<Q> unit) {
-            return 0;
-        }
-
-        @Override
-        public long longValue(Unit<Q> unit) throws ArithmeticException {
-            return 0;
-        }
-
-        @Override
-        public Measurable<Q> add(Measurable<Q> other) {
-            return other;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof Measurable)) {
-                return false;
-            } else {
-                return obj.equals(this);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return 0xCAFEBABE;
-        }
     }
 
     /**

@@ -46,8 +46,20 @@ public class ObservationProviderRegistrationHelper {
      *            The object that will be put into the service registry during the {@link #register(Class...)} method.
      */
     public ObservationProviderRegistrationHelper(Object serviceObject) {
+        this(serviceObject, FrameworkUtil.getBundle(serviceObject.getClass()).getBundleContext());
+    }
+
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param serviceObject
+     *            The object that will be put into the service registry during the {@link #register(Class...)} method.
+     * @param context
+     *            The bundleContext that will be used for service registration.
+     */
+    public ObservationProviderRegistrationHelper(Object serviceObject, BundleContext context) {
         this.serviceObject = serviceObject;
-        bundleContext = FrameworkUtil.getBundle(serviceObject.getClass()).getBundleContext();
+        bundleContext = context;
         properties = new Hashtable<String, Object>();
         properties.put(KEY_OBSERVED_BY, serviceObject.getClass().getName());
         properties.put(KEY_OBSERVATION_OF, "unknown");
@@ -108,24 +120,40 @@ public class ObservationProviderRegistrationHelper {
         Set<String> interfaces = new HashSet<String>();
         addInterfaces(observationClass, interfaces);
         setProperty(KEY_OBSERVATION_TYPE, interfaces.toArray(new String[interfaces.size()]));
+        addType(KEY_OBSERVATION_TYPE, observationClass, new HashSet<Class<?>>());
+        return this;
+    }
 
+    private void addType(String parentPrefix, Class<?> observationClass, HashSet<Class<?>> visitedClasses) {
         Map<String, Method> methods = ObservationTranslationHelper.getGetterMethods(observationClass);
         for (Entry<String, Method> entry : methods.entrySet()) {
-            String name = entry.getKey();
-            Method method = entry.getValue();
+            addTypeField(parentPrefix, entry.getKey(), entry.getValue(), visitedClasses);
+        }
+    }
 
-            Class<?> type = method.getReturnType();
-            String typeName = type.isEnum() ? String.class.getName() : type.getName();
-            setProperty(KEY_OBSERVATION_TYPE + "." + name, typeName);
+    private void addTypeField(String parentPrefix, String name, Method method, HashSet<Class<?>> visitedClasses) {
+        String prefix = parentPrefix + "." + name;
+        Class<?> type = method.getReturnType();
 
-            ObservationAttribute annotation = method.getAnnotation(ObservationAttribute.class);
-            if (annotation != null) {
-                setProperty(KEY_OBSERVATION_TYPE + "." + name + ".unit", annotation.unit());
-                setProperty(KEY_OBSERVATION_TYPE + "." + name + ".optional", annotation.optional());
-            }
+        if (type.isEnum() || type.equals(String.class)) {
+            setProperty(prefix, "string");
+        } else {
+            setProperty(prefix, type.getName());
         }
 
-        return this;
+        ObservationAttribute annotation = method.getAnnotation(ObservationAttribute.class);
+        if (annotation != null) {
+            setProperty(prefix + ".unit", annotation.unit());
+            setProperty(prefix + ".optional", annotation.optional());
+        }
+
+        if (ObservationTranslationHelper.isJavaBean(type)) {
+            if (!visitedClasses.add(type)) {
+                throw new IllegalArgumentException("Circular typing detected in Observation type [" + type + "]");
+            }
+            addType(prefix, type, visitedClasses);
+            visitedClasses.remove(type);
+        }
     }
 
     /**

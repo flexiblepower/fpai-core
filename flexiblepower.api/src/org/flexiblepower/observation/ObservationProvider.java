@@ -45,4 +45,11 @@ public interface ObservationProvider<T> {
      *            The {@link ObservationConsumer} that will be unbound from this provider.
      */
     void unsubscribe(ObservationConsumer<? super T> consumer);
+
+    /**
+     * Get the last published {@link Observation}.
+     * 
+     * @return The last published observation, or null when no observation has been published yet.
+     */
+    Observation<? extends T> getLastObservation();
 }
