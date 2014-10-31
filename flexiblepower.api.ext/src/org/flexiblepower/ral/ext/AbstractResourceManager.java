@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.MessageHandler;
-import org.flexiblepower.rai.AllocationStatus;
 import org.flexiblepower.rai.AllocationStatusUpdate;
 import org.flexiblepower.rai.ResourceMessage;
 import org.flexiblepower.ral.ResourceControlParameters;
@@ -33,8 +32,6 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
     }
 
     private volatile boolean hasRegistered = false;
-
-    private volatile AllocationStatus allocationStatus;
 
     protected abstract List<? extends ResourceMessage> startRegistration(RS state);
 
