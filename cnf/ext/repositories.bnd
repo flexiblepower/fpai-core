@@ -7,7 +7,7 @@ plugindir: ${workspace}/cnf.shared/bnd
 -plugin:\
 	aQute.bnd.deployer.repository.LocalIndexedRepo; name=Release;      local=${workspace}/cnf/release;pretty=true,\
 	aQute.bnd.deployer.repository.FixedIndexedRepo; name=FPAI Bundle Hub; locations=https://raw.githubusercontent.com/flexiblepower/bundle-hub/master/index.xml.gz; cache=${workspace}/cnf/cache,\
-	aQute.bnd.deployer.repository.FixedIndexedRepo; name=fpai-core-prev; locations=https://github.com/flexiblepower/fpai-core/releases/download/v13.10/index.xml; cache=${workspace}/cnf/cache
+	aQute.bnd.deployer.repository.FixedIndexedRepo; name=fpai-core-prev; locations=https://github.com/flexiblepower/fpai-core/releases/download/v14.10/index.xml; cache=${workspace}/cnf/cache
 	#aQute.bnd.deployer.repository.LocalIndexedRepo; name=Local Bundle Hub; local=${workspace}/../bundle-hub; pretty=false,\
 
 -releaserepo: Release
