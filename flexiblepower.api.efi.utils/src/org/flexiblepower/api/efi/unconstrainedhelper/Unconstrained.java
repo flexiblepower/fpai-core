@@ -270,4 +270,22 @@ public class Unconstrained {
     public boolean hasReceivedSystemDescription() {
         return hasReceivedSystemDescription;
     }
+
+    /**
+     * The current running mode.
+     *
+     * @return The Id (integer) of the current running mode.
+     */
+    public int getCurrentRunningModeId() {
+        return currentRunningModeId;
+    }
+
+    /**
+     * The ResourceId of this Unconstrained device
+     * 
+     * @return The ResourceId of this Unconstrained device.
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
 }
