@@ -1,5 +1,6 @@
 package flexiblepower.api.efi.bufferhelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -241,10 +242,16 @@ public class BufferTest extends TestCase {
         List<Measurable<Power>> demandList = a1.getPossibleDemands(new Date(), .2);
         // First actuator is in must off state.
         Assert.assertTrue(demandList.size() == 1);
+        Assert.assertEquals(demandList.get(0).doubleValue(SI.WATT), 0d);
         BufferActuator a2 = fullBuffer.getActuatorById(2);
         List<Measurable<Power>> demandList2 = a2.getPossibleDemands(new Date(), .2);
         // Second actuator should have two possible states.
         Assert.assertTrue(demandList2.size() == 2);
+        List<Double> demands = new ArrayList<Double>();
+        demands.add(demandList2.get(0).doubleValue(SI.WATT));
+        demands.add(demandList2.get(1).doubleValue(SI.WATT));
+        Assert.assertTrue(demands.contains(0d));
+        Assert.assertTrue(demands.contains(1000d));
     }
 
     public void testReceivedMessages() {

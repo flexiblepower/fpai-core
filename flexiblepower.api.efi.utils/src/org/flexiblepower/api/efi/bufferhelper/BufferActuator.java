@@ -23,7 +23,7 @@ import org.flexiblepower.rai.values.Commodity;
 import org.flexiblepower.rai.values.CommoditySet;
 
 /**
- * The BufferActuator that handles updated EFI messages and provides additional methods. *
+ * The BufferActuator that integrates updated EFI messages and provides additional methods.
  */
 public class BufferActuator {
     private final int actuatorId;
@@ -111,6 +111,9 @@ public class BufferActuator {
      * @param now
      *            The current time.
      * @return The reachable running modes including the current one.
+     *
+     * @throws IllegalArgumentException
+     *             When an unknown runningmode id is returned from the reachable running modes.
      */
     public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
         Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> rmSet = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
@@ -293,6 +296,9 @@ public class BufferActuator {
      * Gets the minimum fill level of the buffer expressed in the agreed upon unit.
      *
      * @return The minimum fill level of the buffer.
+     *
+     * @throws IllegalStateException
+     *             Thrown when no running mode is known yet and a minimum fill level is requested.
      */
     public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
@@ -309,6 +315,8 @@ public class BufferActuator {
      * Gets the maximum fill level of the buffer expressed in the agreed upon unit.
      *
      * @return The maximum fill level of the buffer.
+     * @throws IllegalStateException
+     *             Thrown when no running mode is known yet and a maximum fill level is requested.
      */
     public double getMaximumFillLevel() {
         double upperBound = Double.MIN_VALUE;

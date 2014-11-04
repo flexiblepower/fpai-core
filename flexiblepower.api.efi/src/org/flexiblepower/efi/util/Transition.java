@@ -64,7 +64,7 @@ public class Transition {
             return this;
         }
 
-        public Builder blocks(Timer timer) {
+        public Builder isBlockedBy(Timer timer) {
             blockingTimers.add(timer);
             return this;
         }
@@ -102,7 +102,7 @@ public class Transition {
      *            actuator will adhere to the correct minimum “on” time before switching off again.
      * @param blockingTimers
      *            This is a set of zero or more Timer objects. All these timers have to be finished before the
-     *            transition can be made.
+     *            transition can be made (this transition is blocked by the timers).
      * @param transitionCosts
      *            It could be that the transition itself will cause wear to the actuator. The deprecation costs
      *            associated with this transition may be expressed by this attribute.

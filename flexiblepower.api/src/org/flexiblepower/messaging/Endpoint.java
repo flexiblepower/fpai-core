@@ -1,6 +1,5 @@
 package org.flexiblepower.messaging;
 
-
 public interface Endpoint {
     /**
      * Called when a new connection has been established.
