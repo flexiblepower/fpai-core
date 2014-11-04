@@ -93,7 +93,7 @@ cy = cytoscape({
 			'line-style' : 'dotted'
 		}
 	} ],
-
+	// NOTE: in felix there is a hack here which changes the z-index. It should NOT do that here (or the whole plugin is hidden)
 });
 function refresh() {
 	$.get("/system/console/fpai-connection-manager/getGraph.json",
