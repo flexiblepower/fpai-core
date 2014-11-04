@@ -1,4 +1,4 @@
-@Version("1.0.0.${qualifier}")
+@Version("1.0.1.${qualifier}")
 package org.flexiblepower.efi;
 
 import aQute.bnd.annotation.Version;
