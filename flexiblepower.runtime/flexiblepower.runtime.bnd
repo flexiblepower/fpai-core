@@ -1,4 +1,4 @@
-Bundle-Version: 2.0.0.${qualifier}
+Bundle-Version: 2.0.1.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime
 Private-Package: \
 	org.flexiblepower.runtime.messaging,\

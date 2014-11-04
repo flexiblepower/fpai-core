@@ -6,6 +6,6 @@
 	junit.osgi;version='[3.8,4)',\
 	com.google.gson
 
-Bundle-Version: 1.1.0.${qualifier}
+Bundle-Version: 1.0.1.${qualifier}
 Private-Package: org.flexiblepower.felix.webconsole.plugins
 Service-Component: org.flexiblepower.felix.webconsole.plugins.*

@@ -2,3 +2,6 @@
 
 Bundle-Category: FlexiblePower Application Infrastructure
 qualifier: SNAPSHOT-${tstamp}
+
+-baseline: *
+-baselinerepo: fpai-core-prev

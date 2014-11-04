@@ -84,6 +84,9 @@ public class Buffer<Q extends Quantity> {
      *
      * @param bsd
      *            The buffer system description message.
+     *
+     * @throws IllegalArgumentException
+     *             When the ActuatorId in the BufferSystemDescription is not known
      */
     public void processSystemDescription(BufferSystemDescription bsd) {
         setLeakageFunction(bsd.getBufferLeakage());
@@ -104,6 +107,9 @@ public class Buffer<Q extends Quantity> {
      *
      * @param bsu
      *            The BufferStateUpdate message.
+     *
+     * @throws IllegalArgumentException
+     *             Throws when the ActuatorId, RunningModeId or timerId is not known.
      */
     public void processStateUpdate(BufferStateUpdate<Q> bsu)
     {
@@ -115,7 +121,6 @@ public class Buffer<Q extends Quantity> {
         for (ActuatorUpdate actUpdate : bsu.getCurrentRunningMode()) {
             if (actuators.containsKey(actUpdate.getActuatorId())) {
                 BufferActuator theActuator = actuators.get(actUpdate.getActuatorId());
-
                 if (!theActuator.hasRunningMode(actUpdate.getCurrentRunningModeId()))
                 {
                     throw new IllegalArgumentException("The RunningModeId in this message is not known.");
@@ -173,6 +178,8 @@ public class Buffer<Q extends Quantity> {
      * level unit that is defined in the registration message.
      *
      * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level.
+     * @throws IllegalArgumentException
+     *             When minimum fill level is greater than or equal to the maximum fill level, this throws.
      */
     public double getCurrentFillFraction() {
         double minimumFillLevel = getMinimumFillLevel();
@@ -220,9 +227,12 @@ public class Buffer<Q extends Quantity> {
     }
 
     /**
-     *
      * @return The minimum of all actuators, not only the electrical.
-     */
+     *
+     * @throws IllegalStateException
+     *             When no system description has been received, this throws.
+     *
+     **/
     public double getMinimumFillLevel() {
         double lowestBound = Double.MAX_VALUE;
         if (!hasReceivedSystemDescription) {

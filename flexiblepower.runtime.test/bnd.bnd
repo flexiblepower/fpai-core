@@ -5,6 +5,6 @@
 	flexiblepower.api.efi;version=latest
 	org.apache.felix.scr
 
-Bundle-Version: 1.0.0.${qualifier}
+Bundle-Version: 1.0.1.${qualifier}
 Private-Package: org.flexiblepower.runtime.*test
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOTATION;org.junit.Test}

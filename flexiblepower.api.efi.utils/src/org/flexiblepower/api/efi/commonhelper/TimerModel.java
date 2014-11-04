@@ -14,6 +14,7 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
      * Constructs a new timer.
      *
      * @param base
+     *            The object that holds the information from the EFI message about the Timer.
      */
     public TimerModel(org.flexiblepower.efi.util.Timer base) {
         super(base.getId(), base.getLabel(), base.getDuration());
@@ -38,7 +39,7 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
     }
 
     /**
-     * Returns whether the timer is blocking at this moment.
+     * Returns whether the timer is blocking at this moment. No finishedAt time implies that this timer is not blocking.
      *
      * @param moment
      * @return A boolean indicating whether the timer is blocking or not at the given moment.
