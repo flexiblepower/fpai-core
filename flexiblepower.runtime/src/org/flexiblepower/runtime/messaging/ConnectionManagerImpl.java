@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
+import org.flexiblepower.messaging.MessageListener;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -52,12 +53,14 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
     private final Map<String, Object> otherProperties;
     private final SortedMap<String, EndpointWrapper> endpointWrappers;
+    private final MessageListenerContainer messageListenerContainer;
 
     private final Set<String> activeConnections;
 
     public ConnectionManagerImpl() {
         endpointWrappers = new TreeMap<String, EndpointWrapper>();
         otherProperties = new HashMap<String, Object>();
+        messageListenerContainer = new MessageListenerContainer();
 
         activeConnections = new TreeSet<String>();
     }
@@ -125,6 +128,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
     @Deactivate
     public synchronized void deactivate() {
         configuration = null;
+        messageListenerContainer.close();
     }
 
     /**
@@ -259,6 +263,19 @@ public class ConnectionManagerImpl implements ConnectionManager {
         return correct;
     }
 
+    @Reference(dynamic = true,
+               multiple = true,
+               optional = true,
+               service = MessageListener.class,
+               name = "messageListener")
+    public synchronized void addMessageListener(MessageListener messageListener) {
+        messageListenerContainer.addMessageListener(messageListener);
+    }
+
+    public synchronized void removeMessageListener(MessageListener messageListener) {
+        messageListenerContainer.removeMessageListener(messageListener);
+    }
+
     @Override
     public ManagedEndpoint getEndpoint(String pid) {
         EndpointWrapper wrapper = endpointWrappers.get(pid);
@@ -316,5 +333,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
         waitWithStoring = false;
         storeConnections();
+    }
+
+    public MessageListenerContainer getMessageListenerContainer() {
+        return messageListenerContainer;
     }
 }

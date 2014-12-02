@@ -16,7 +16,9 @@ import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.Endpoint;
+import org.flexiblepower.messaging.Filter;
 import org.flexiblepower.messaging.MessageHandler;
+import org.flexiblepower.messaging.MessageListener;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.osgi.framework.BundleContext;
@@ -28,7 +30,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class EndpointTester extends TestCase {
     private static final int SLEEP_TIME = 500;
 
-    private final List<ServiceRegistration<Endpoint>> registrations = new ArrayList<ServiceRegistration<Endpoint>>();
+    private final List<ServiceRegistration<?>> registrations = new ArrayList<ServiceRegistration<?>>();
     private ServiceTracker<ConnectionManager, ConnectionManager> connectionManagerTracker;
 
     private ConnectionManager connectionManager;
@@ -141,9 +143,16 @@ public class EndpointTester extends TestCase {
         return connectionManager;
     }
 
+    protected void setupListeners(MessageListener... listeners) throws Exception {
+        context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        for (MessageListener listener : listeners) {
+            registrations.add(context.registerService(MessageListener.class, listener, null));
+        }
+    }
+
     @Override
     protected void tearDown() throws Exception {
-        for (ServiceRegistration<Endpoint> reg : registrations) {
+        for (ServiceRegistration<?> reg : registrations) {
             reg.unregister();
         }
         registrations.clear();
@@ -616,4 +625,71 @@ public class EndpointTester extends TestCase {
         ManagedEndpoint meImplementing = endpoints.get(endpoints.firstKey());
         assertNotNull(meImplementing.getPort("shouldBeImplemented"));
     }
+
+    @Filter
+    public static final class AllMessageListener implements MessageListener {
+        private final int expectedCount;
+        private int count;
+
+        public AllMessageListener(int expectedCount) {
+            this.expectedCount = expectedCount;
+        }
+
+        public void check() {
+            assertEquals(expectedCount, count);
+        }
+
+        @Override
+        public void handleMessage(EndpointPort from, EndpointPort to, Object message) {
+            count++;
+        }
+    }
+
+    public void testMessageListeners() throws Exception {
+        EchoEndpoint echo = new EchoEndpoint(10);
+        CodecEndpoint echoCodec = new CodecEndpoint();
+        CodecEndpoint dataCodec = new CodecEndpoint();
+        SendDataEndpoint data = new SendDataEndpoint();
+
+        ConnectionManager connectionManager = setupEndpoints(echo, echoCodec, dataCodec, data);
+        AllMessageListener allMessageListener = new AllMessageListener(100);
+        setupListeners(allMessageListener);
+
+        SortedMap<String, ? extends ManagedEndpoint> endpoints = connectionManager.getEndpoints();
+        Iterator<? extends ManagedEndpoint> iterator = endpoints.values().iterator();
+        ManagedEndpoint meCodec1 = iterator.next();
+        ManagedEndpoint meCodec2 = iterator.next();
+        ManagedEndpoint meEcho = iterator.next();
+        ManagedEndpoint meData = iterator.next();
+
+        EndpointPort portEcho = checkNotNull("\"any\" port of the EchoEndpoint", meEcho.getPort("any"));
+        EndpointPort portPrivate1 = checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
+        EndpointPort portPrivate2 = checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
+        EndpointPort portPublic1 = checkNotNull("\"public\" port of the CodecEndpoint 1", meCodec1.getPort("public"));
+        EndpointPort portPublic2 = checkNotNull("\"public\" port of the CodecEndpoint 2", meCodec2.getPort("public"));
+        EndpointPort portData = checkNotNull("\"something\" port of SendDataEndpoint", meData.getPort("something"));
+
+        PotentialConnection connEcho = portEcho.getPotentialConnection(portPrivate1);
+        PotentialConnection connPublic = portPublic1.getPotentialConnection(portPublic2);
+        PotentialConnection connData = portData.getPotentialConnection(portPrivate2);
+
+        echo.reset();
+
+        connPublic.connect();
+        connEcho.connect();
+        connData.connect();
+
+        synchronized (this) {
+            wait(SLEEP_TIME);
+        }
+
+        data.checkIfFinishedAndReset();
+
+        connData.disconnect();
+        connEcho.disconnect();
+        connPublic.disconnect();
+
+        allMessageListener.check();
+    }
+
 }

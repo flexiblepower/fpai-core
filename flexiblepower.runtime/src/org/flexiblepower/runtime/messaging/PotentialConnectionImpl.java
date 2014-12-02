@@ -26,13 +26,18 @@ final class PotentialConnectionImpl implements PotentialConnection {
     };
 
     private static final class HalfConnection implements Connection {
+        private final MessageListenerContainer listeners;
+        private final EndpointPortImpl fromPort, toPort;
         private final Port port;
         private final EndpointWrapper receivingEndpoint;
         volatile MessageHandler messageHandler;
 
-        public HalfConnection(Port port, EndpointWrapper receivingEndpoint) {
-            this.port = port;
-            this.receivingEndpoint = receivingEndpoint;
+        public HalfConnection(EndpointPortImpl fromPort, EndpointPortImpl toPort) {
+            listeners = fromPort.getEndpoint().getConnectionManager().getMessageListenerContainer();
+            this.fromPort = fromPort;
+            this.toPort = toPort;
+            port = fromPort.getPort();
+            receivingEndpoint = toPort.getEndpoint();
             messageHandler = null;
         }
 
@@ -50,6 +55,8 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 log.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
                 return;
             }
+
+            listeners.publishMessage(fromPort, toPort, message);
 
             MessageHandler messageHandler = this.messageHandler;
             if (messageHandler == null) {
@@ -137,8 +144,8 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
             log.debug("Connecting port [{}] to port [{}]", left, right);
 
-            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpoint());
-            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpoint());
+            HalfConnection leftHalfConnection = new HalfConnection(left, right);
+            HalfConnection rightHalfConnection = new HalfConnection(right, left);
 
             leftMessageHandler = left.getEndpoint().getEndpoint().onConnect(leftHalfConnection);
             rightMessageHandler = right.getEndpoint().getEndpoint().onConnect(rightHalfConnection);
