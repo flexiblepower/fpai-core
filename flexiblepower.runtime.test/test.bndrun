@@ -14,4 +14,3 @@
 -runfw: org.eclipse.osgi;version='[3.9,4)'
 -runtrace: true
 -runvm: -ea
-

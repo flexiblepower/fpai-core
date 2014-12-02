@@ -626,12 +626,11 @@ public class EndpointTester extends TestCase {
         assertNotNull(meImplementing.getPort("shouldBeImplemented"));
     }
 
-    @Filter
-    public static final class AllMessageListener implements MessageListener {
+    public static class CountingMessageListener implements MessageListener {
         private final int expectedCount;
         private int count;
 
-        public AllMessageListener(int expectedCount) {
+        public CountingMessageListener(int expectedCount) {
             this.expectedCount = expectedCount;
         }
 
@@ -641,7 +640,22 @@ public class EndpointTester extends TestCase {
 
         @Override
         public void handleMessage(EndpointPort from, EndpointPort to, Object message) {
+            System.out.println(from.toString() + " -> " + to.toString() + " : " + message.toString());
             count++;
+        }
+    }
+
+    @Filter(EncodedStringMessage.class)
+    public static class EncodedMessageListener extends CountingMessageListener {
+        public EncodedMessageListener(int expectedCount) {
+            super(expectedCount);
+        }
+    }
+
+    @Filter(DecodedStringMessage.class)
+    public static class DecodedMessageListener extends CountingMessageListener {
+        public DecodedMessageListener(int expectedCount) {
+            super(expectedCount);
         }
     }
 
@@ -652,8 +666,10 @@ public class EndpointTester extends TestCase {
         SendDataEndpoint data = new SendDataEndpoint();
 
         ConnectionManager connectionManager = setupEndpoints(echo, echoCodec, dataCodec, data);
-        AllMessageListener allMessageListener = new AllMessageListener(100);
-        setupListeners(allMessageListener);
+        CountingMessageListener allMessageListener = new CountingMessageListener(60);
+        EncodedMessageListener encodedMessageListener = new EncodedMessageListener(20);
+        DecodedMessageListener decodedMessageListener = new DecodedMessageListener(40);
+        setupListeners(allMessageListener, encodedMessageListener, decodedMessageListener);
 
         SortedMap<String, ? extends ManagedEndpoint> endpoints = connectionManager.getEndpoints();
         Iterator<? extends ManagedEndpoint> iterator = endpoints.values().iterator();
@@ -690,6 +706,7 @@ public class EndpointTester extends TestCase {
         connPublic.disconnect();
 
         allMessageListener.check();
+        encodedMessageListener.check();
+        decodedMessageListener.check();
     }
-
 }
