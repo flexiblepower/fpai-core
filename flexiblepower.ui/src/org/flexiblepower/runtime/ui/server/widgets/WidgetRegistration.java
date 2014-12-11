@@ -6,8 +6,8 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.flexiblepower.ui.User;
 import org.flexiblepower.ui.Widget;
-import org.osgi.service.useradmin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
