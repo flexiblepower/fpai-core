@@ -7,20 +7,15 @@ import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.osgi.service.useradmin.User;
+import org.flexiblepower.ui.User;
 
 public class SessionManager {
     public static final String SESSION_ID = "org.flexiblepower.session";
 
-    private static final SessionManager instance = new SessionManager();
     private final Map<String, Session> sessions;
 
-    private SessionManager() {
+    public SessionManager() {
         sessions = new HashMap<String, Session>();
-    }
-
-    public static SessionManager getInstance() {
-        return instance;
     }
 
     public Session createSession(User user) {

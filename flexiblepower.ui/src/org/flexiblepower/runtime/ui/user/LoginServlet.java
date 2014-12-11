@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Hashtable;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -14,30 +15,33 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.flexiblepower.ui.User;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.useradmin.Group;
 import org.osgi.service.useradmin.Role;
-import org.osgi.service.useradmin.User;
 import org.osgi.service.useradmin.UserAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
-
-@Component(provide = Servlet.class, properties = { "alias=/login.html" })
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 6873319359921321938L;
 
     private static final int SECONDS_PER_YEAR = 60 * 60 * 24 * 365;
     private static final Logger logger = LoggerFactory.getLogger(LoginServlet.class);
 
-    private String document;
+    private final String document;
+    private final ServiceTracker<UserAdmin, UserAdmin> userAdminTracker;
 
-    @Activate
-    public void activate(BundleContext bundleContext) throws IOException {
-        URL url = bundleContext.getBundle().getEntry("login.html");
+    private final ServiceRegistration<Servlet> registerService;
+
+    private final SessionManager sessionManager;
+
+    public LoginServlet(BundleContext context, SessionManager sessionManager) throws IOException, NoClassDefFoundError {
+        this.sessionManager = sessionManager;
+
+        URL url = context.getBundle().getEntry("login.html");
         Reader reader = new InputStreamReader(url.openStream());
 
         StringBuilder sb = new StringBuilder();
@@ -49,32 +53,47 @@ public class LoginServlet extends HttpServlet {
 
         document = sb.toString();
         reader.close();
+
+        userAdminTracker = new ServiceTracker<UserAdmin, UserAdmin>(context, UserAdmin.class, null);
+        userAdminTracker.open();
+        fillUsers();
+
+        Hashtable<String, Object> properties = new Hashtable<String, Object>();
+        properties.put("alias", "/login.html");
+        properties.put("contextId", "fps");
+        registerService = context.registerService(Servlet.class, this, properties);
     }
 
-    private UserAdmin userAdmin;
+    public void close() {
+        registerService.unregister();
+        userAdminTracker.close();
+    }
 
     @SuppressWarnings("unchecked")
-    @Reference
-    public void setUserAdmin(final UserAdmin userAdmin) {
-        this.userAdmin = userAdmin;
-
+    private void fillUsers() {
         new Thread("Creating users") {
             @Override
             public void run() {
+                UserAdmin userAdmin = null;
+                try {
+                    userAdmin = userAdminTracker.waitForService(0);
+                } catch (InterruptedException ex) {
+                    return;
+                }
                 while (userAdmin.getRole("root") == null || userAdmin.getRole("user") == null) {
                     logger.info("Adding default groups and roles");
                     Group administrators = (Group) userAdmin.getRole("Administrators");
                     if (administrators == null) {
                         administrators = (Group) userAdmin.createRole("Administrators", Role.GROUP);
 
-                        User root = (User) userAdmin.getRole("root");
+                        org.osgi.service.useradmin.User root = (org.osgi.service.useradmin.User) userAdmin.getRole("root");
                         if (root == null) {
-                            root = (User) userAdmin.createRole("root", Role.USER);
+                            root = (org.osgi.service.useradmin.User) userAdmin.createRole("root", Role.USER);
                             if (root == null) {
                                 logger.error("Could not create user root!");
                             } else {
                                 root.getCredentials()
-                                .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0O4Gg6Xb0gI8udk/EYVJ8urNqSZKcnfra");
+                                    .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0O4Gg6Xb0gI8udk/EYVJ8urNqSZKcnfra");
                                 administrators.addMember(root);
                             }
                         }
@@ -84,14 +103,14 @@ public class LoginServlet extends HttpServlet {
                     if (users == null) {
                         users = (Group) userAdmin.createRole("Users", Role.GROUP);
 
-                        User user = (User) userAdmin.getRole("user");
+                        org.osgi.service.useradmin.User user = (org.osgi.service.useradmin.User) userAdmin.getRole("user");
                         if (user == null) {
-                            user = (User) userAdmin.createRole("user", Role.USER);
+                            user = (org.osgi.service.useradmin.User) userAdmin.createRole("user", Role.USER);
                             if (user == null) {
                                 logger.error("Could not create user user!");
                             } else {
                                 user.getCredentials()
-                                .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0OG8/AsfgzG9eGA/WIbuH3Rb33E.XOGe.");
+                                    .put("password", "$2a$10$FhfxMQS1BPDEqcdUT8Qo0OG8/AsfgzG9eGA/WIbuH3Rb33E.XOGe.");
                                 users.addMember(user);
                                 users.addMember(userAdmin.getRole("root"));
                             }
@@ -144,7 +163,7 @@ public class LoginServlet extends HttpServlet {
 
         if (username == null) {
             logger.info("Not logged in yet, serving login form");
-        } else if (userAdmin == null) {
+        } else if (userAdminTracker == null) {
             logger.warn("The userAdmin is unavailable to the LoginServlet");
             error = "Could not connect to user management service, please try again...";
         } else {
@@ -152,7 +171,7 @@ public class LoginServlet extends HttpServlet {
 
             if (user != null) {
                 logger.info("Authenticated " + username + ", creating session");
-                Session session = SessionManager.getInstance().createSession(user);
+                Session session = sessionManager.createSession(user);
 
                 Cookie cookie = new Cookie(SessionManager.SESSION_ID, session.getId());
                 cookie.setMaxAge(SECONDS_PER_YEAR);
@@ -172,24 +191,30 @@ public class LoginServlet extends HttpServlet {
         createResponse(resp, error, redirect);
     }
 
-    private User authenticateUser(String username, String password) {
+    private UserImpl authenticateUser(String username, String password) {
         logger.info("Authenticating with username: " + username);
 
         final String salt = "$2a$10$FhfxMQS1BPDEqcdUT8Qo0O";
         String hash = BCrypt.hashpw(password, salt);
 
-        if (userAdmin != null) {
-            User user = (User) userAdmin.getRole(username);
-
-            if (user == null || !(user.hasCredential("password", hash) || user.hasCredential("password", password))) {
-                logger.warn("No valid user with username " + username);
-                return null;
-            } else {
-                return user;
-            }
-        } else {
-            logger.warn("The userAdmin is unavailable to the LoginServlet when authenticating");
+        UserAdmin userAdmin = null;
+        try {
+            userAdmin = userAdminTracker.waitForService(1000);
+        } catch (InterruptedException e) {
+        }
+        if (userAdmin == null) {
+            logger.warn("No UserAdmin active yet!");
             return null;
+        }
+
+        org.osgi.service.useradmin.User user = (org.osgi.service.useradmin.User) userAdmin.getRole(username);
+
+        if (user == null || !(user.hasCredential("password", hash) || user.hasCredential("password", password))) {
+            logger.warn("No valid user with username " + username);
+            return null;
+        } else {
+            final org.osgi.service.useradmin.User userRef = user;
+            return new UserImpl(userRef);
         }
     }
 }
