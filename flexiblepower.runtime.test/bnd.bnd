@@ -20,10 +20,12 @@ Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOT
 	ch.qos.logback.core;version=latest,\
 	org.apache.felix.configadmin;version=latest,\
 	org.apache.felix.scr;version=latest,\
+	org.apache.felix.metatype;version=latest,\
 	biz.aQute.bnd.annotation;version=latest,\
+	org.slf4j.osgi-over-slf4j;version=latest,\
 	slf4j.api;version=latest
 -runee: JavaSE-1.6
 -runfw: org.apache.felix.framework
--runtrace: true
+#-runtrace: true
 -runvm: -ea
 
