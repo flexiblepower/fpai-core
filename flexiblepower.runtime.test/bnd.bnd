@@ -7,4 +7,23 @@
 
 Bundle-Version: 1.0.1.${qualifier}
 Private-Package: org.flexiblepower.runtime.*test
+
 Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOTATION;org.junit.Test}
+
+-runbundles: \
+	flexiblepower.api;version=latest,\
+	flexiblepower.api.efi;version=latest,\
+	flexiblepower.api.ext;version=latest,\
+	flexiblepower.runtime;version=latest,\
+	flexiblepower.runtime.test;version=latest,\
+	ch.qos.logback.classic;version=latest,\
+	ch.qos.logback.core;version=latest,\
+	org.apache.felix.configadmin;version=latest,\
+	org.apache.felix.scr;version=latest,\
+	biz.aQute.bnd.annotation;version=latest,\
+	slf4j.api;version=latest
+-runee: JavaSE-1.6
+-runfw: org.apache.felix.framework
+-runtrace: true
+-runvm: -ea
+
