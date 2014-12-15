@@ -3,7 +3,7 @@
 cnf/db
 cnf/cache
 cnf/release
-/.gradle/
+.gradle
 bin
 bin_test
 generated
