@@ -43,13 +43,76 @@ public class UnconstrainedTest extends TestCase {
         usu = UnconstrainedTest.constructUSU(ur, 45);
     }
 
+    public void testGetReachableRunningModes() {
+        Assert.assertTrue(incompleteUnconstrained.getReachableRunningModes(new Date()).isEmpty());
+
+        fullUnconstrained.processSystemDescription(usd);
+        // Unconstrained device is off (rm 1) and in minimum off time for 5 minutes.
+        fullUnconstrained.processStateUpdate(usu);
+
+        Set<Integer> reachableRunningModes = fullUnconstrained.getReachableRunningModeIds(new Date());
+        // Minimum Off timer restricts unconstrained from going to rm 2 (on).
+        Assert.assertTrue(reachableRunningModes.contains(fullUnconstrained.getCurrentRunningModeId()));
+        Assert.assertEquals(1, fullUnconstrained.getCurrentRunningModeId());
+        Assert.assertFalse(reachableRunningModes.contains(2));
+
+        // Also in 4 minutes from now, the running mode with id 2 should not be reachable.
+        Calendar cal2 = Calendar.getInstance();
+        cal2.add(Calendar.MINUTE, 4);
+        Assert.assertTrue(fullUnconstrained.getReachableRunningModeIds(cal2.getTime()).contains(1));
+        Assert.assertFalse(fullUnconstrained.getReachableRunningModeIds(cal2.getTime()).contains(2));
+
+        // In 6 minutes from now, the running mode with id 2 should be reachable.
+        Calendar cal3 = Calendar.getInstance();
+        cal3.add(Calendar.MINUTE, 6);
+
+        Assert.assertTrue(fullUnconstrained.getReachableRunningModeIds(cal3.getTime()).contains(2));
+        Assert.assertTrue(fullUnconstrained.getReachableRunningModeIds(cal3.getTime()).contains(1));
+    }
+
+    public void testGetPossibleDemands() {
+        fullUnconstrained.processSystemDescription(usd);
+        fullUnconstrained.processStateUpdate(usu);
+        List<Measurable<Power>> demandList = fullUnconstrained.getPossibleDemands(new Date());
+        // Unconstrained device is in must off state.
+        Assert.assertTrue(demandList.size() == 1);
+        Assert.assertEquals(0d, demandList.get(0).doubleValue(SI.WATT));
+    }
+
+    public void testReceivedMessages() {
+        Assert.assertFalse(fullUnconstrained.hasReceivedSystemDescription());
+        Assert.assertFalse(fullUnconstrained.hasReceivedStateUpdate());
+
+        // Ignore state update if system description is not in yet.
+        fullUnconstrained.processStateUpdate(usu);
+        Assert.assertFalse(fullUnconstrained.hasReceivedSystemDescription());
+        Assert.assertFalse(fullUnconstrained.hasReceivedStateUpdate());
+
+        fullUnconstrained.processSystemDescription(usd);
+        Assert.assertTrue(fullUnconstrained.hasReceivedSystemDescription());
+        fullUnconstrained.processStateUpdate(usu);
+        Assert.assertTrue(fullUnconstrained.hasReceivedStateUpdate());
+    }
+
+    /**
+     * Gets the electrical demands of all reachable RunningModes at this moment including the current one. It returns an
+     * empty list when there has not been a state update.
+     *
+     * @param moment
+     *            The moment of interest.
+     * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
+     *         running modes with the same power demand.
+     *
+     * @throws IllegalArgumentException
+     *             When a RunningMode is empty.
+     */
     private static UnconstrainedStateUpdate constructUSU(UnconstrainedRegistration ur, double fillLevel) {
         Set<TimerUpdate> timerUpdates = new HashSet<TimerUpdate>();
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 5);
+        Calendar moment = Calendar.getInstance();
+        moment.add(Calendar.MINUTE, 5);
         // Set the minimum off timer (timer 2) to be finished 5 minutes from now.
-        timerUpdates.add(new TimerUpdate(2, cal.getTime()));
+        timerUpdates.add(new TimerUpdate(2, moment.getTime()));
 
         // Unconstrained device is on and in minimum run mode.
         return new UnconstrainedStateUpdate(ur.getResourceId(),
@@ -75,10 +138,10 @@ public class UnconstrainedTest extends TestCase {
                                                                                                 NonSI.CUBIC_METRE_PER_SECOND))
                                                                            .build();
 
-        RunningModeBehaviour flf_On = new RunningModeBehaviour(commodityConsumptionOn,
-                                                               Measure.valueOf(0.24, NonSI.EUR_PER_HOUR));
-        RunningModeBehaviour flf_Off = new RunningModeBehaviour(commodityConsumptionOff,
-                                                                Measure.valueOf(0.24, NonSI.EUR_PER_HOUR));
+        RunningModeBehaviour rb_On = new RunningModeBehaviour(commodityConsumptionOn,
+                                                              Measure.valueOf(0.24, NonSI.EUR_PER_HOUR));
+        RunningModeBehaviour rb_Off = new RunningModeBehaviour(commodityConsumptionOff,
+                                                               Measure.valueOf(0.00, NonSI.EUR_PER_HOUR));
 
         Timer minOnTimer = new Timer(1, "Minimum Run Timer", Measure.valueOf(2, SI.SECOND));
         Set<Timer> onTimerSet = new HashSet<Timer>();
@@ -105,11 +168,11 @@ public class UnconstrainedTest extends TestCase {
         Set<RunningMode<RunningModeBehaviour>> runningModeSet = new HashSet<RunningMode<RunningModeBehaviour>>();
         runningModeSet.add(new RunningMode<RunningModeBehaviour>(2,
                                                                  "rmOn",
-                                                                 flf_On,
+                                                                 rb_On,
                                                                  transitionsFromOff));
         runningModeSet.add(new RunningMode<RunningModeBehaviour>(1,
                                                                  "rmOff",
-                                                                 flf_Off,
+                                                                 rb_Off,
                                                                  transitionsFromOn));
 
         return new UnconstrainedSystemDescription(br.getResourceId(),
@@ -130,54 +193,5 @@ public class UnconstrainedTest extends TestCase {
                                              new Date(),
                                              Measure.zero(SI.SECOND),
                                              CommoditySet.onlyGas);
-    }
-
-    public void testGetReachableRunningModes() {
-        Assert.assertTrue(incompleteUnconstrained.getReachableRunningModes(new Date()).isEmpty());
-
-        fullUnconstrained.processSystemDescription(usd);
-        // Unconstrained device is off (rm 1) and in minimum off time for 5 minutes.
-        fullUnconstrained.processStateUpdate(usu);
-
-        Set<Integer> reachableRunningModes = fullUnconstrained.getReachableRunningModeIds(new Date());
-        // Minimum Off timer restricts unconstrained from going to rm 2 (on).
-        Assert.assertTrue(reachableRunningModes.contains(fullUnconstrained.getCurrentRunningModeId()));
-        Assert.assertEquals(fullUnconstrained.getCurrentRunningModeId(), 1);
-        Assert.assertFalse(reachableRunningModes.contains(2));
-
-        // Also in 4 minutes from now, the running mode with id 2 should not be reachable.
-        Calendar cal2 = Calendar.getInstance();
-        cal2.add(Calendar.MINUTE, 4);
-        Assert.assertFalse(fullUnconstrained.getReachableRunningModeIds(cal2.getTime()).contains(2));
-
-        // In 6 minutes from now, the running mode with id 2 should be reachable.
-        Calendar cal3 = Calendar.getInstance();
-        cal3.add(Calendar.MINUTE, 6);
-
-        Assert.assertTrue(fullUnconstrained.getReachableRunningModeIds(cal3.getTime()).contains(2));
-    }
-
-    public void testGetPossibleDemands() {
-        fullUnconstrained.processSystemDescription(usd);
-        fullUnconstrained.processStateUpdate(usu);
-        List<Measurable<Power>> demandList = fullUnconstrained.getPossibleDemands(new Date(), .2);
-        // Unconstrained device is in must off state.
-        Assert.assertTrue(demandList.size() == 1);
-        Assert.assertEquals(demandList.get(0).doubleValue(SI.WATT), 0d);
-    }
-
-    public void testReceivedMessages() {
-        Assert.assertFalse(fullUnconstrained.hasReceivedSystemDescription());
-        Assert.assertFalse(fullUnconstrained.hasReceivedStateUpdate());
-
-        // Ignore state update if system description is not in yet.
-        fullUnconstrained.processStateUpdate(usu);
-        Assert.assertFalse(fullUnconstrained.hasReceivedSystemDescription());
-        Assert.assertFalse(fullUnconstrained.hasReceivedStateUpdate());
-
-        fullUnconstrained.processSystemDescription(usd);
-        Assert.assertTrue(fullUnconstrained.hasReceivedSystemDescription());
-        fullUnconstrained.processStateUpdate(usu);
-        Assert.assertTrue(fullUnconstrained.hasReceivedStateUpdate());
     }
 }

@@ -4,7 +4,7 @@
 	flexiblepower.api.efi;version=latest,\
 	junit.osgi
 
-Bundle-Version: 1.1.0.${qualifier}
+Bundle-Version: 2.0.0.${qualifier}
 Export-Package:  \
 	org.flexiblepower.api.efi.bufferhelper,\
 	org.flexiblepower.api.efi.unconstrainedhelper,\

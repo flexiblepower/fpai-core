@@ -45,6 +45,10 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
      * @return A boolean indicating whether the timer is blocking or not at the given moment.
      */
     public boolean isBlockingAt(Date moment) {
+        if (moment == null)
+        {
+            return false;
+        }
         return (finishedAt != null && finishedAt.after(moment));
     }
 }

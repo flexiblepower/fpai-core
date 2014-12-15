@@ -34,7 +34,7 @@ public class Buffer<Q extends Quantity> {
     private final String fillLevelLabel;
     private final Unit<Q> fillLevelUnit;
     private final Measurable<Duration> allocationDelay;
-    private final Map<Integer, BufferActuator> actuators;
+    private final Map<Integer, BufferActuator<Q>> actuators;
     private FillLevelFunction<LeakageRate> leakageFunction;
     private Measurable<Q> currentFillLevel;
     private boolean hasReceivedSystemDescription = false;
@@ -73,9 +73,9 @@ public class Buffer<Q extends Quantity> {
         fillLevelLabel = getxLabel;
         fillLevelUnit = getxUnit;
         this.allocationDelay = allocationDelay;
-        actuators = new HashMap<Integer, BufferActuator>();
+        actuators = new HashMap<Integer, BufferActuator<Q>>();
         for (Actuator ac : actuatorCapabilities) {
-            actuators.put(ac.getActuatorId(), new BufferActuator(ac));
+            actuators.put(ac.getActuatorId(), new BufferActuator<Q>(ac, this));
         }
     }
 
@@ -89,6 +89,7 @@ public class Buffer<Q extends Quantity> {
      *             When the ActuatorId in the BufferSystemDescription is not known
      */
     public void processSystemDescription(BufferSystemDescription bsd) {
+        hasReceivedStateUpdate = false;
         setLeakageFunction(bsd.getBufferLeakage());
 
         for (ActuatorBehaviour actuatorDescription : bsd.getActuators()) {
@@ -120,7 +121,7 @@ public class Buffer<Q extends Quantity> {
 
         for (ActuatorUpdate actUpdate : bsu.getCurrentRunningMode()) {
             if (actuators.containsKey(actUpdate.getActuatorId())) {
-                BufferActuator theActuator = actuators.get(actUpdate.getActuatorId());
+                BufferActuator<Q> theActuator = actuators.get(actUpdate.getActuatorId());
                 if (!theActuator.hasRunningMode(actUpdate.getCurrentRunningModeId()))
                 {
                     throw new IllegalArgumentException("The RunningModeId in this message is not known.");
@@ -148,9 +149,9 @@ public class Buffer<Q extends Quantity> {
      *
      * @return A list of all electrical BufferActuators or an empty list if none are found.
      */
-    public List<BufferActuator> getElectricalActuators() {
-        List<BufferActuator> result = new ArrayList<BufferActuator>();
-        for (BufferActuator a : actuators.values()) {
+    public List<BufferActuator<Q>> getElectricalActuators() {
+        List<BufferActuator<Q>> result = new ArrayList<BufferActuator<Q>>();
+        for (BufferActuator<Q> a : actuators.values()) {
             if (a.getSupportedCommodities().contains(Commodity.ELECTRICITY)) {
                 result.add(a);
             }
@@ -163,9 +164,9 @@ public class Buffer<Q extends Quantity> {
      *
      * @return A Map of all electrical BufferActuators or an empty list if none are found. The key is the Actuator Id.
      */
-    public Map<Integer, BufferActuator> getElectricalActuatorMap() {
-        Map<Integer, BufferActuator> result = new HashMap<Integer, BufferActuator>();
-        for (BufferActuator a : actuators.values()) {
+    public Map<Integer, BufferActuator<Q>> getElectricalActuatorMap() {
+        Map<Integer, BufferActuator<Q>> result = new HashMap<Integer, BufferActuator<Q>>();
+        for (BufferActuator<Q> a : actuators.values()) {
             if (a.getSupportedCommodities().contains(Commodity.ELECTRICITY)) {
                 result.put(a.getActuatorId(), a);
             }
@@ -177,11 +178,19 @@ public class Buffer<Q extends Quantity> {
      * Gets the fill level of the buffer relative to the maximum and minimum fill level. It is expressed in the fill
      * level unit that is defined in the registration message.
      *
-     * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level.
+     * @return The fill fraction computed where 0 is minimum and 1 is the maximum fill level. May be bigger than 1 or
+     *         smaller than 0 (when circumstances cause the buffer temperature to go out of the bounds of the minimum
+     *         and maximum).
      * @throws IllegalArgumentException
      *             When minimum fill level is greater than or equal to the maximum fill level, this throws.
+     * @throws IllegalStateException
+     *             When no information is available yet about the state of the buffer.
      */
-    public double getCurrentFillFraction() {
+    public double getCurrentFillFraction() throws IllegalStateException, IllegalArgumentException {
+        if (!hasReceivedStateUpdate)
+        {
+            throw new IllegalStateException("No valid state update has been received yet, so cannot give a fill fraction.");
+        }
         double minimumFillLevel = getMinimumFillLevel();
         double maximumFillLevel = getMaximumFillLevel();
 
@@ -195,13 +204,13 @@ public class Buffer<Q extends Quantity> {
     }
 
     /**
-     * Gets the current fill level of the buffer.
+     * Gets the current fill level of the buffer. May be outside of the 'official' range of the running modes.
      *
      * @return A Measurable object containing the current fill level of the buffer and quantity information.
      * @throws IllegalStateException
      *             When no state update has been received.
      */
-    public Measurable<Q> getCurrentFillLevel() {
+    public Measurable<Q> getCurrentFillLevel() throws IllegalStateException {
         if (!hasReceivedStateUpdate) {
             throw new IllegalStateException("Cannot give a fill level when no state update has been sent yet.");
         }
@@ -227,33 +236,34 @@ public class Buffer<Q extends Quantity> {
     }
 
     /**
+     * For a heat pump, minimum fill level is the lowest temperature of the buffer. For a freezer, minimum fill level is
+     * the lowest temperature of the freezer.
+     *
      * @return The minimum of all actuators, not only the electrical.
      *
      * @throws IllegalStateException
      *             When no system description has been received, this throws.
-     *
      **/
-    public double getMinimumFillLevel() {
+    public double getMinimumFillLevel() throws IllegalStateException {
         double lowestBound = Double.MAX_VALUE;
         if (!hasReceivedSystemDescription) {
             throw new IllegalStateException("Cannot give a minimum fill level when no system description has been sent yet.");
         }
-        for (BufferActuator a : actuators.values()) {
+        for (BufferActuator<Q> a : actuators.values()) {
             lowestBound = Math.min(lowestBound, a.getMinimumFillLevel());
         }
         return lowestBound;
     }
 
     /**
-     *
      * @return The maximum of all actuators, not only the electrical.
      */
-    public double getMaximumFillLevel() {
+    public double getMaximumFillLevel() throws IllegalStateException {
         double highestBound = Double.MIN_VALUE;
         if (!hasReceivedSystemDescription) {
             throw new IllegalStateException("Cannot give a maximum fill level when no system description has been sent yet.");
         }
-        for (BufferActuator a : actuators.values()) {
+        for (BufferActuator<Q> a : actuators.values()) {
             highestBound = Math.max(highestBound, a.getMaximumFillLevel());
         }
         return highestBound;
@@ -320,7 +330,7 @@ public class Buffer<Q extends Quantity> {
      *
      * @return A map with all actuators indexed on their id.
      */
-    public Map<Integer, BufferActuator> getActuators() {
+    public Map<Integer, BufferActuator<Q>> getActuators() {
         return actuators;
     }
 
@@ -331,7 +341,7 @@ public class Buffer<Q extends Quantity> {
      *            The id of the actuator.
      * @return The actuator object.
      */
-    public BufferActuator getActuatorById(int id) {
+    public BufferActuator<Q> getActuatorById(int id) {
         if (actuators.containsKey(id)) {
             return actuators.get(id);
         }

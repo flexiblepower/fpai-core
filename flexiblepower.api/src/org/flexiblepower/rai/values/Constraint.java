@@ -8,7 +8,7 @@ import javax.measure.unit.Unit;
 /**
  * A Constraint represents a range of values from the lowerBound to the upperBound. This is mainly used for the
  * {@link ConstraintList}.
- * 
+ *
  * @param <Q>
  *            The quantity of the constraint (see the javax.measure package)
  */
@@ -17,13 +17,13 @@ public final class Constraint<Q extends Quantity> {
     private final Measurable<Q> upperBound;
 
     /**
-     * Construct power constraint with a lower and upper bound as power values. If both are equal, this constructs a
-     * single value power constraint.
-     * 
+     * Construct a constraint with a lower and upper bound expressed in the quantity. If both are equal, this constructs
+     * a single value constraint.
+     *
      * @param lowerBound
-     *            is the lower bound in Power
+     *            is the lower bound expressed in a unit that fits with Q
      * @param upperBound
-     *            is the upper bound in Power
+     *            is the upper bound expressed in a unit that fits with Q
      * @throws NullPointerException
      *             if either the lower or upper bound is null
      * @throws IllegalArgumentException
@@ -43,21 +43,20 @@ public final class Constraint<Q extends Quantity> {
     }
 
     /**
-     * Constructs a power constraint with single power value.
-     * 
-     * @param power
-     *            is the single power value
+     * Constructs a constraint with a single value.
+     *
+     * @param value
+     *            is the single typed input value.
      * @throws NullPointerException
-     *             if power is null
+     *             if value is null
      */
-    public Constraint(Measurable<Q> power) {
-        this(power, power);
+    public Constraint(Measurable<Q> value) {
+        this(value, value);
     }
 
     /**
-     * Construct a power constraint with two (different) power values. If both are equal, this constructs a single value
-     * power constraint.
-     * 
+     * Construct a constraint with two (different) values. If both are equal, this constructs a single value constraint.
+     *
      * @param lowerBound
      *            is the lower bound
      * @param upperBound
@@ -79,15 +78,15 @@ public final class Constraint<Q extends Quantity> {
     }
 
     /**
-     * @return The lower bound of the power constraint
+     * @return The lower bound of the constraint
      */
     public Measurable<Q> getLowerBound() {
         return lowerBound;
     }
 
     /**
-     * @return The upper bound of the power constraint, which will be equal to the lower bound if this represents a
-     *         single value.
+     * @return The upper bound of the constraint, which will be equal to the lower bound if this represents a single
+     *         value.
      */
     public Measurable<Q> getUpperBound() {
         return upperBound;

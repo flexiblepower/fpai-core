@@ -168,6 +168,94 @@ public class BufferTest extends TestCase {
                                             leakageFunction));
     }
 
+    private static BufferSystemDescription constructNewBSD(BufferRegistration<Temperature> br) {
+        // Make a BufferStateUpdate
+        // This fictional device uses both gas and electricity.
+        CommodityMeasurables commodityConsumptionOn = CommodityMeasurables.create()
+                                                                          .electricity(Measure.valueOf(1000,
+                                                                                                       SI.WATT))
+                                                                          .gas(Measure.valueOf(.00025,
+                                                                                               NonSI.CUBIC_METRE_PER_SECOND))
+                                                                          .build();
+        CommodityMeasurables commodityConsumptionOff = CommodityMeasurables.create()
+                                                                           .electricity(Measure.valueOf(0,
+                                                                                                        SI.WATT))
+                                                                           .gas(Measure.valueOf(0,
+                                                                                                NonSI.CUBIC_METRE_PER_SECOND))
+                                                                           .build();
+
+        FillLevelFunction<RunningModeBehaviour> flf_On = FillLevelFunction.<RunningModeBehaviour> create(-100)
+                                                                          .add(-10,
+                                                                               new RunningModeBehaviour(10,
+                                                                                                        commodityConsumptionOn,
+                                                                                                        Measure.valueOf(0.24,
+                                                                                                                        NonSI.EUR_PER_HOUR)))
+                                                                          .build();
+        FillLevelFunction<RunningModeBehaviour> flf_Off = FillLevelFunction.<RunningModeBehaviour> create(-100)
+                                                                           .add(-10,
+                                                                                new RunningModeBehaviour(10,
+                                                                                                         commodityConsumptionOff,
+                                                                                                         Measure.valueOf(0.24,
+                                                                                                                         NonSI.EUR_PER_HOUR)))
+                                                                           .build();
+
+        Timer minOnTimer = new Timer(1, "Minimum Run Timer", Measure.valueOf(2, SI.SECOND));
+        Set<Timer> onTimerSet = new HashSet<Timer>();
+        onTimerSet.add(minOnTimer);
+
+        Timer minOffTimer = new Timer(2, "Minimum Off Timer", Measure.valueOf(2, SI.SECOND));
+        Set<Timer> offTimerSet = new HashSet<Timer>();
+        offTimerSet.add(minOffTimer);
+
+        Set<Transition> transitionsFromOn = new HashSet<Transition>();
+        transitionsFromOn.add(new Transition(2,
+                                             onTimerSet,
+                                             offTimerSet,
+                                             Measure.valueOf(0, NonSI.EUR),
+                                             Measure.valueOf(0, SI.SECOND)));
+
+        Set<Transition> transitionsFromOff = new HashSet<Transition>();
+        transitionsFromOff.add(new Transition(1,
+                                              offTimerSet,
+                                              onTimerSet,
+                                              Measure.valueOf(0, NonSI.EUR),
+                                              Measure.valueOf(0, SI.SECOND)));
+
+        Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModesOfActuator1 = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        runningModesOfActuator1.add(new RunningMode<FillLevelFunction<RunningModeBehaviour>>(2,
+                                                                                             "rmOn",
+                                                                                             flf_On,
+                                                                                             transitionsFromOff));
+        runningModesOfActuator1.add(new RunningMode<FillLevelFunction<RunningModeBehaviour>>(1,
+                                                                                             "rmOff",
+                                                                                             flf_Off,
+                                                                                             transitionsFromOn));
+
+        Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModesOfActuator2 = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
+        runningModesOfActuator2.add(new RunningMode<FillLevelFunction<RunningModeBehaviour>>(2,
+                                                                                             "rm2On",
+                                                                                             flf_On,
+                                                                                             transitionsFromOff));
+        runningModesOfActuator2.add(new RunningMode<FillLevelFunction<RunningModeBehaviour>>(1,
+                                                                                             "rm2Off",
+                                                                                             flf_Off,
+                                                                                             transitionsFromOn));
+
+        Set<ActuatorBehaviour> actBeh = new HashSet<ActuatorBehaviour>();
+        actBeh.add(new ActuatorBehaviour(1, runningModesOfActuator1));
+        actBeh.add(new ActuatorBehaviour(2, runningModesOfActuator2));
+
+        FillLevelFunction<LeakageRate> leakageFunction = FillLevelFunction.<LeakageRate> create(-100)
+                                                                          .add(100, new LeakageRate(14))
+                                                                          .build();
+
+        return (new BufferSystemDescription(br,
+                                            new Date(),
+                                            new Date(),
+                                            actBeh,
+                                            leakageFunction));
+    }
+
     private static BufferRegistration<Temperature> constructTestElectricalBufferRegistration() {
         return new BufferRegistration<Temperature>("BR1",
                                                    new Date(),
@@ -201,7 +289,7 @@ public class BufferTest extends TestCase {
     }
 
     public void testGetReachableRunningModes() {
-        for (BufferActuator a : incompleteBuffer.getElectricalActuators()) {
+        for (BufferActuator<?> a : incompleteBuffer.getElectricalActuators()) {
             Assert.assertTrue(a.getReachableRunningModes(new Date()).isEmpty());
         }
 
@@ -209,7 +297,7 @@ public class BufferTest extends TestCase {
         // Actuator 1 is off (rm 1) and in minimum off time for 5 minutes.
         fullBuffer.processStateUpdate(bsu);
 
-        BufferActuator a1 = fullBuffer.getActuatorById(1);
+        BufferActuator<Temperature> a1 = fullBuffer.getActuatorById(1);
         Set<Integer> reachableRunningModes = a1.getReachableRunningModeIds(new Date());
         // Minimum Off timer restricts actuator 1 from going to rm 2 (on).
         Assert.assertTrue(reachableRunningModes.contains(a1.getCurrentRunningModeId()));
@@ -228,7 +316,7 @@ public class BufferTest extends TestCase {
         Assert.assertTrue(a1.getReachableRunningModeIds(cal3.getTime()).contains(2));
 
         // Actuator 2 has no running timers so should have both runningmodes as options.
-        BufferActuator a2 = fullBuffer.getActuatorById(2);
+        BufferActuator<Temperature> a2 = fullBuffer.getActuatorById(2);
         Set<Integer> reachableRunningModes2 = a2.getReachableRunningModeIds(new Date());
         Assert.assertTrue(reachableRunningModes2.contains(a2.getCurrentRunningModeId()));
         Assert.assertEquals(a2.getCurrentRunningModeId(), 2);
@@ -238,12 +326,12 @@ public class BufferTest extends TestCase {
     public void testGetPossibleDemands() {
         fullBuffer.processSystemDescription(bsd);
         fullBuffer.processStateUpdate(bsu);
-        BufferActuator a1 = fullBuffer.getActuatorById(1);
+        BufferActuator<Temperature> a1 = fullBuffer.getActuatorById(1);
         List<Measurable<Power>> demandList = a1.getPossibleDemands(new Date(), .2);
         // First actuator is in must off state.
         Assert.assertTrue(demandList.size() == 1);
         Assert.assertEquals(demandList.get(0).doubleValue(SI.WATT), 0d);
-        BufferActuator a2 = fullBuffer.getActuatorById(2);
+        BufferActuator<Temperature> a2 = fullBuffer.getActuatorById(2);
         List<Measurable<Power>> demandList2 = a2.getPossibleDemands(new Date(), .2);
         // Second actuator should have two possible states.
         Assert.assertTrue(demandList2.size() == 2);
@@ -287,5 +375,13 @@ public class BufferTest extends TestCase {
         Assert.assertEquals(0d, fullBuffer.getMinimumFillLevel());
         Assert.assertEquals(-1d, fullBuffer.getCurrentFillLevel().doubleValue(fullBuffer.getUnit()));
         Assert.assertEquals(SI.CELSIUS, fullBuffer.getUnit());
+    }
+
+    public void testNewSysDescription() {
+        fullBuffer.processSystemDescription(bsd);
+        fullBuffer.processStateUpdate(bsu);
+        Assert.assertEquals(0.9, fullBuffer.getCurrentFillFraction());
+        fullBuffer.processSystemDescription(constructNewBSD(br));
+        Assert.assertFalse(fullBuffer.hasReceivedStateUpdate());
     }
 }

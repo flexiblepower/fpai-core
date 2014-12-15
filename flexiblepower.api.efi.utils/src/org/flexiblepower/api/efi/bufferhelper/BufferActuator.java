@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Power;
+import javax.measure.quantity.Quantity;
 
 import org.flexiblepower.api.efi.commonhelper.TimerModel;
 import org.flexiblepower.efi.buffer.Actuator;
@@ -24,14 +25,17 @@ import org.flexiblepower.rai.values.CommoditySet;
 
 /**
  * The BufferActuator that integrates updated EFI messages and provides additional methods.
+ *
+ * @param <T>
  */
-public class BufferActuator {
+public class BufferActuator<Q extends Quantity> {
     private final int actuatorId;
     private final String actuatorLabel;
     private final CommoditySet commodities;
     private int currentRunningModeId;
     private Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> allRunningModes = new HashMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
     private Map<Integer, TimerModel> timers = new HashMap<Integer, TimerModel>();
+    private final Buffer<Q> parentBuffer;
 
     /**
      * Gets the identifier of the current running mode.
@@ -46,8 +50,11 @@ public class BufferActuator {
      * Sets the current running mode.
      *
      * @param currentRunningModeId
+     *
+     * @throws IllegalArgumentException
+     *             When running mode id is not valid.
      */
-    public void setCurrentRunningModeId(int currentRunningModeId) {
+    public void setCurrentRunningModeId(int currentRunningModeId) throws IllegalArgumentException {
         if (allRunningModes.containsKey(currentRunningModeId)) {
             this.currentRunningModeId = currentRunningModeId;
         }
@@ -113,9 +120,10 @@ public class BufferActuator {
      * @return The reachable running modes including the current one.
      *
      * @throws IllegalArgumentException
-     *             When an unknown runningmode id is returned from the reachable running modes.
+     *             When an unknown running mode id is returned from the reachable running modes.
      */
-    public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> getReachableRunningModes(Date now) {
+    public Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>>
+            getReachableRunningModes(Date now) throws IllegalArgumentException {
         Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> rmSet = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         for (int rmId : getReachableRunningModeIds(now)) {
             if (!allRunningModes.containsKey(rmId))
@@ -143,8 +151,13 @@ public class BufferActuator {
             return targets;
         }
         for (Transition transition : allRunningModes.get(currentRunningModeId).getTransitions()) {
-            // Check for timers that block this transition.
-            if (!isBlockedAt(transition, now) && !willOverOrUndercharge(transition, now)) {
+            // Check for timers that block this transition, over and undercharge and that the current state of charge is
+            // within the valid range of the target running mode.
+            if (!isBlockedAt(transition, now) && !willOverOrUndercharge(transition, now)
+                && !allRunningModes.get(transition.getToRunningMode())
+                                   .getValue()
+                                   .isOutsideOfRange(parentBuffer.getCurrentFillLevel()
+                                                                 .doubleValue(parentBuffer.getUnit()))) {
                 targets.add(transition.getToRunningMode());
             }
         }
@@ -159,7 +172,7 @@ public class BufferActuator {
      * @param transition
      *            The transition to be checked.
      * @param now
-     *            The moment for whicht the transition should be checked.
+     *            The moment for which the transition should be checked.
      * @return Whether the transition is impossible due to timers follow-up transitions. Always returns false for now.
      */
     private boolean willOverOrUndercharge(Transition transition, Date now) {
@@ -195,9 +208,11 @@ public class BufferActuator {
      *
      * @param ac
      *            The Actuator's initial information.
+     * @param parentBuffer
+     *            The Parent Buffer (to gain access to the fill level).
      */
-    public BufferActuator(Actuator ac) {
-        this(ac.getActuatorId(), ac.getActuatorLabel(), ac.getCommodities());
+    public BufferActuator(Actuator ac, Buffer<Q> parentBuffer) {
+        this(ac.getActuatorId(), ac.getActuatorLabel(), ac.getCommodities(), parentBuffer);
     }
 
     /**
@@ -210,10 +225,11 @@ public class BufferActuator {
      * @param commodities
      *            The supported commodities of this actuator.
      */
-    private BufferActuator(int actuatorId, String actuatorLabel, CommoditySet commodities) {
+    private BufferActuator(int actuatorId, String actuatorLabel, CommoditySet commodities, Buffer<Q> buffer) {
         this.actuatorId = actuatorId;
         this.actuatorLabel = actuatorLabel;
         this.commodities = commodities;
+        parentBuffer = buffer;
     }
 
     /**
@@ -265,7 +281,7 @@ public class BufferActuator {
      * @throws IllegalArgumentException
      *             When a FillLevelFunction of a reachable state has no range elements.
      */
-    public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) {
+    public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) throws IllegalArgumentException {
         List<Measurable<Power>> resultMap = new LinkedList<Measurable<Power>>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> rm : getReachableRunningModes(moment)) {
 
@@ -293,14 +309,14 @@ public class BufferActuator {
     }
 
     /**
-     * Gets the minimum fill level of the buffer expressed in the agreed upon unit.
+     * Gets the minimum fill level of the buffer actuator expressed in the agreed upon unit.
      *
-     * @return The minimum fill level of the buffer.
+     * @return The minimum fill level of the buffer actuator.
      *
      * @throws IllegalStateException
      *             Thrown when no running mode is known yet and a minimum fill level is requested.
      */
-    public double getMinimumFillLevel() {
+    public double getMinimumFillLevel() throws IllegalStateException {
         double lowestBound = Double.MAX_VALUE;
         if (allRunningModes.isEmpty()) {
             throw new IllegalStateException("Cannot give minimum fill level, because it is not known yet.");
@@ -312,13 +328,13 @@ public class BufferActuator {
     }
 
     /**
-     * Gets the maximum fill level of the buffer expressed in the agreed upon unit.
+     * Gets the maximum fill level of the buffer actuator expressed in the agreed upon unit.
      *
-     * @return The maximum fill level of the buffer.
+     * @return The maximum fill level of the buffer actuator.
      * @throws IllegalStateException
      *             Thrown when no running mode is known yet and a maximum fill level is requested.
      */
-    public double getMaximumFillLevel() {
+    public double getMaximumFillLevel() throws IllegalStateException {
         double upperBound = Double.MIN_VALUE;
         if (allRunningModes.isEmpty()) {
             throw new IllegalStateException("Cannot give minimum fill level, because it is not known yet.");

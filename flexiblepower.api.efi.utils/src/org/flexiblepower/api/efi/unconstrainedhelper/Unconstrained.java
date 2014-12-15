@@ -69,6 +69,7 @@ public class Unconstrained {
      *            The description message with Timers and RunningModes.
      */
     public void processSystemDescription(UnconstrainedSystemDescription description) {
+        hasReceivedStateUpdate = false;
         allRunningModes = new HashMap<Integer, RunningMode<RunningModeBehaviour>>();
         for (RunningMode<RunningModeBehaviour> rm : description.getRunningModes())
         {
@@ -95,6 +96,9 @@ public class Unconstrained {
      * @param stateUpdate
      *            Contains an update for the timers that have a new finishedAt time. No timer information means no
      *            updated information and the previously known finishedAt remains true.
+     *
+     * @throws IllegalArgumentException
+     *             StateUpdate contains not known RunningMode.
      */
     public void processStateUpdate(UnconstrainedStateUpdate stateUpdate) {
         if (!hasReceivedSystemDescription) {
@@ -120,8 +124,12 @@ public class Unconstrained {
      * @param now
      *            The current time.
      * @return The reachable running modes including the current one.
+     *
+     * @throws IllegalArgumentException
+     *             The RunningModeId is not known.
      */
-    public Collection<RunningMode<RunningModeBehaviour>> getReachableRunningModes(Date now) {
+    public Collection<RunningMode<RunningModeBehaviour>>
+            getReachableRunningModes(Date now) throws IllegalArgumentException {
         Set<RunningMode<RunningModeBehaviour>> rmSet = new HashSet<RunningMode<RunningModeBehaviour>>();
         for (int rmId : getReachableRunningModeIds(now)) {
             if (!allRunningModes.containsKey(rmId))
@@ -159,32 +167,43 @@ public class Unconstrained {
     }
 
     /**
-     * Gets the electrical demands of all reachable RunningModes at this moment including the current one, given this
-     * fill level of the buffer. It returns an empty list when there has not been a state update.
+     * Gets the electrical demands of all reachable RunningModes at this moment including the current one. It returns an
+     * empty list when there has not been a state update.
      *
      * @param moment
      *            The moment of interest.
-     * @param fillLevel
-     *            The buffer's current fill level expressed as a value where 0 is the minimum and 1 is the maximum. Its
-     *            unit is the agreed upon unit.
      * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
-     *         running modes with the same power demand. For fill levels outside the defined minimum and maximum range,
-     *         the minimum and maximum value is returned.
+     *         running modes with the same power demand.
      *
      * @throws IllegalArgumentException
-     *             When a FillLevelFunction of a reachable state has no range elements.
+     *             When a RunningMode is empty.
      */
-    public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) {
-        List<Measurable<Power>> resultMap = new LinkedList<Measurable<Power>>();
+    public List<Measurable<Power>> getPossibleDemands(Date moment) {
+        List<Measurable<Power>> resultList = new LinkedList<Measurable<Power>>();
         for (RunningMode<RunningModeBehaviour> rm : getReachableRunningModes(moment)) {
             // Check whether the Running Mode is not empty.
             if (rm.getValue() == null) {
                 throw new IllegalArgumentException("RunningMode was not expected to be empty.");
             }
-
-            resultMap.add(rm.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
+            resultList.add(rm.getValue().getCommodityConsumption().get(Commodity.ELECTRICITY));
         }
-        return resultMap;
+        return resultList;
+    }
+
+    /**
+     * Gets the electrical demands of all reachable RunningModes at this moment including the current one. It returns an
+     * empty list when there has not been a state update.
+     *
+     * @param moment
+     *            The moment of interest.
+     * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
+     *         running modes with the same power demand.
+     *
+     * @throws IllegalArgumentException
+     *             When a RunningMode is empty.
+     */
+    public List<Measurable<Power>> getPossibleDemands(Date moment, double fillLevel) {
+        return getPossibleDemands(moment);
     }
 
     /**
@@ -213,8 +232,14 @@ public class Unconstrained {
      * @param moment
      *            The moment at which the possibility is or is not blocked.
      * @return True if the transition is blocked, false if it is not.
+     *
+     * @throws IllegalStateException
+     *
      */
-    private boolean isBlockedAt(Transition transition, Date moment) {
+    private boolean isBlockedAt(Transition transition, Date moment) throws IllegalStateException {
+        if (!hasReceivedSystemDescription) {
+            throw new IllegalStateException("Can not call this method when no sys description is known yet.");
+        }
         for (org.flexiblepower.efi.util.Timer t : transition.getBlockingTimers()) {
             TimerModel at = timers.get(t.getId());
             if (at.isBlockingAt(moment)) {
@@ -282,7 +307,7 @@ public class Unconstrained {
 
     /**
      * The ResourceId of this Unconstrained device
-     * 
+     *
      * @return The ResourceId of this Unconstrained device.
      */
     public String getResourceId() {
