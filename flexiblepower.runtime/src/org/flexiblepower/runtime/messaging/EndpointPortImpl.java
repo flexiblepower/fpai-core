@@ -82,7 +82,8 @@ public class EndpointPortImpl implements EndpointPort {
     }
 
     public void close() {
-        for (PotentialConnectionImpl connection : getPotentialConnections().values()) {
+        PotentialConnectionImpl[] conns = getPotentialConnections().values().toArray(new PotentialConnectionImpl[0]);
+        for (PotentialConnectionImpl connection : conns) {
             connection.close();
             removeMatch(connection);
             connection.getOtherEnd(this).removeMatch(connection);
