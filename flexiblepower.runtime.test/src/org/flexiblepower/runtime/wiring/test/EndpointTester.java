@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
@@ -47,7 +48,7 @@ public class EndpointTester extends TestCase {
             this.expectedMessage = expectedMessage;
         }
 
-        boolean connected = false;
+        private boolean connected = false;
 
         @Override
         public MessageHandler onConnect(Connection connection) {
@@ -628,20 +629,29 @@ public class EndpointTester extends TestCase {
 
     public static class CountingMessageListener implements MessageListener {
         private final int expectedCount;
-        private int count;
+        private final AtomicInteger count = new AtomicInteger(0);
 
         public CountingMessageListener(int expectedCount) {
             this.expectedCount = expectedCount;
         }
 
-        public void check() {
-            assertEquals(expectedCount, count);
+        public synchronized void check() {
+            while (count.get() < expectedCount) {
+                try {
+                    wait(SLEEP_TIME);
+                    break; // If no message has been received for some time, assume it failed
+                } catch (InterruptedException e) {
+                    // Hopefully this happens and we can check again
+                }
+            }
+            assertEquals(expectedCount, count.get());
         }
 
         @Override
-        public void handleMessage(EndpointPort from, EndpointPort to, Object message) {
+        public synchronized void handleMessage(EndpointPort from, EndpointPort to, Object message) {
             System.out.println(from.toString() + " -> " + to.toString() + " : " + message.toString());
-            count++;
+            count.incrementAndGet();
+            notifyAll();
         }
     }
 
