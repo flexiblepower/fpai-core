@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -50,16 +50,18 @@ import javax.measure.quantity.Velocity;
 import javax.measure.quantity.Volume;
 
 /**
- * <p>
  * This class contains SI (Système International d'Unités) base units, and derived units.
- * </p>
+ *
+ * It also defines the 20 SI prefixes used to form decimal multiples and submultiples of SI units. For example:
+ *
+ * <pre>
+ * import static javax.measure.unit.SI.*;
+ * ...
  * 
- * <p>
- * It also defines the 20 SI prefixes used to form decimal multiples and submultiples of SI units. For example:[code]
- * import static org.jscience.physics.units.SI.*; // Static import. ... Unit<Pressure> HECTO_PASCAL = HECTO(PASCAL);
- * Unit<Length> KILO_METER = KILO(METER); [/code]
- * </p>
- * 
+ * Unit&lt;Pressure&gt; HECTO_PASCAL = HECTO(PASCAL);
+ * Unit&lt;Length&gt; KILO_METER = KILO(METER);
+ * </pre>
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.2, August 26, 2006
  * @see <a href="http://en.wikipedia.org/wiki/SI">Wikipedia: SI</a>
@@ -80,7 +82,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the unique instance of this class.
-     * 
+     *
      * @return the SI instance.
      */
     public static SI getInstance() {
@@ -105,7 +107,7 @@ public final class SI extends SystemOfUnits {
      * The base unit for luminous intensity quantities (<code>cd</code>). The candela is the luminous intensity, in a
      * given direction, of a source that emits monochromatic radiation of frequency 540 × 1012 hertz and that has a
      * radiant intensity in that direction of 1/683 watt per steradian
-     * 
+     *
      * @see <a href="http://en.wikipedia.org/wiki/Candela"> Wikipedia: Candela</a>
      */
     public static final BaseUnit<LuminousIntensity> CANDELA = si(new BaseUnit<LuminousIntensity>("cd"));
@@ -121,7 +123,7 @@ public final class SI extends SystemOfUnits {
      * The base unit for mass quantities (<code>kg</code>). It is the only SI unit with a prefix as part of its name and
      * symbol. The kilogram is equal to the mass of an international prototype in the form of a platinum-iridium
      * cylinder kept at Sevres in France.
-     * 
+     *
      * @see #GRAM
      */
     public static final BaseUnit<Mass> KILOGRAM = si(new BaseUnit<Mass>("kg"));
@@ -391,7 +393,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>24</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e24)</code>.
@@ -402,7 +404,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>21</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e21)</code>.
@@ -413,7 +415,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>18</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e18)</code>.
@@ -424,7 +426,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>15</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e15)</code>.
@@ -435,7 +437,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>12</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e12)</code>.
@@ -446,7 +448,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>9</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e9)</code>.
@@ -457,7 +459,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>6</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e6)</code>.
@@ -468,7 +470,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>3</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e3)</code>.
@@ -479,7 +481,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>2</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e2)</code>.
@@ -490,7 +492,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>1</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e1)</code>.
@@ -501,7 +503,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-1</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-1)</code>.
@@ -512,7 +514,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-2</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-2)</code>.
@@ -523,7 +525,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-3</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-3)</code>.
@@ -534,7 +536,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-6</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-6)</code>.
@@ -545,7 +547,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-9</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-9)</code>.
@@ -556,7 +558,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-12</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-12)</code>.
@@ -567,7 +569,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-15</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-15)</code>.
@@ -578,7 +580,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-18</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-18)</code>.
@@ -589,7 +591,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-21</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-21)</code>.
@@ -600,7 +602,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns the specified unit multiplied by the factor <code>10<sup>-24</sup></code>
-     * 
+     *
      * @param unit
      *            any unit.
      * @return <code>unit.multiply(1e-24)</code>.
@@ -615,7 +617,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Returns a read only view over theunits defined in this class.
-     * 
+     *
      * @return the collection of SI units.
      */
     @Override
@@ -625,7 +627,7 @@ public final class SI extends SystemOfUnits {
 
     /**
      * Adds a new unit to the collection.
-     * 
+     *
      * @param unit
      *            the unit being added.
      * @return <code>unit</code>.

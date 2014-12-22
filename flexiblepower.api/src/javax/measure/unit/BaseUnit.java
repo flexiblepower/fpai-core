@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -16,18 +16,24 @@ import javax.measure.quantity.Quantity;
  * This class represents the building blocks on top of which all others units are created. Base units are typically
  * dimensionally independent. The actual unit dimension is determinated by the current {@link Dimension.Model model}.
  * For example using the {@link Dimension.Model#STANDARD standard} model, {@link SI#CANDELA} has the dimension of
- * {@link SI#WATT watt}:[code] // Standard model. BaseUnit<Length> METER = new BaseUnit<Length>("m");
- * BaseUnit<LuminousIntensity> CANDELA = new BaseUnit<LuminousIntensity>("cd");
- * System.out.println(METER.getDimension()); System.out.println(CANDELA.getDimension());
- * 
- * > [L] > [L]²·[M]/[T]³ [/code]
+ * {@link SI#WATT watt}:
+ *
+ * <code>
+ * // Standard model.
+ * BaseUnit&lt;Length&gt; METER = new BaseUnit&lt;Length&gt;("m");
+ * BaseUnit&lt;LuminousIntensity&gt; CANDELA = new BaseUnit&lt;LuminousIntensity&gt;("cd");
+ * System.out.println(METER.getDimension());
+ * System.out.println(CANDELA.getDimension());
+ *
+ * &gt; [L] &gt; [L]²·[M]/[T]³
+ * </code>
  * </p>
  * <p>
  * This class represents the "standard base units" which includes SI base units and possibly others user-defined base
  * units. It does not represent the base units of any specific {@link SystemOfUnits} (they would have be base units
  * accross all possible systems otherwise).
  * </p>
- * 
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
  * @see <a href="http://en.wikipedia.org/wiki/SI_base_unit"> Wikipedia: SI base unit</a>
@@ -41,7 +47,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
 
     /**
      * Creates a base unit having the specified symbol.
-     * 
+     *
      * @param symbol
      *            the symbol of this base unit.
      * @throws IllegalArgumentException
@@ -64,7 +70,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
 
     /**
      * Returns the unique symbol for this base unit.
-     * 
+     *
      * @return this base unit symbol.
      */
     public final String getSymbol() {
@@ -74,7 +80,7 @@ public class BaseUnit<Q extends Quantity> extends Unit<Q> {
     /**
      * Indicates if this base unit is considered equals to the specified object (both are base units with equal symbol,
      * standard dimension and standard transform).
-     * 
+     *
      * @param that
      *            the object to compare for equality.
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>

@@ -8,15 +8,33 @@ import org.flexiblepower.ral.ResourceState;
 /**
  * The {@link DishwasherState} that describes the current state of a dishwasher. In general there are 3 options:
  *
- * <ul>
- * <li><code>latestStartTime == null && startTime == null && program == null</code><br/>
- * This means that the dishwasher is off or no program has been selected. In this case there is nothing to control.</li>
- * <li><code>latestStartTime != null && startTime == null && program != null</code><br/>
- * This means that the dishwasher is on with a selected program that has been delayed. It can be started anywhere
- * between now and the latestStartTime.</li>
- * <li><code>startTime != null && program != null</code><br />
- * This means that the program has started at the startTime and it can not be interrupted anymore.
- * </ul>
+ * <table summary="The meaning of possible states">
+ * <tr>
+ * <th>latestStartTime</th>
+ * <th>startTime</th>
+ * <th>program</th>
+ * <th>Meaning</th>
+ * </tr>
+ * <tr>
+ * <td>null</td>
+ * <td>null</td>
+ * <td>null</td>
+ * <td>The dishwasher is off or no program has been selected. In this case there is nothing to control.</td>
+ * </tr>
+ * <tr>
+ * <td>not null</td>
+ * <td>null</td>
+ * <td>not null</td>
+ * <td>The dishwasher is on with a selected program that has been delayed. It can be started anywhere between now and
+ * the latestStartTime.</td>
+ * </tr>
+ * <tr>
+ * <td>??</td>
+ * <td>not null</td>
+ * <td>not null</td>
+ * <td>The program has started at the startTime and it can not be interrupted anymore.</td>
+ * </tr>
+ * </table>
  */
 public interface DishwasherState extends ResourceState {
     /**

@@ -20,10 +20,10 @@ public class UnconstrainedAllocation extends Allocation {
     /**
      * Constructs a new {@link UnconstrainedAllocation} object as a response to a specific {@link ControlSpaceUpdate}.
      *
+     * @param resourceUpdate
+     *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      * @param timestamp
      *            The moment when this constructor is called (should be {@link TimeService#getTime()}
-     * @param controlSpaceUpdate
-     *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      * @param isEmergencyAllocation
      *            This Boolean value is optional and is true when a grid emergency situation occurs. (e.g. congestion,
      *            black start etc.) The energy app then strongly advices the appliance driver to adapt to the sent

@@ -12,7 +12,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 /**
- * This class contains the constraints for switching from one {@link BufferRunningMode} to another
+ * This class contains the constraints for switching from one {@link RunningMode} to another
  */
 public class Transition {
     public static Builder create(int toRunningMode) {
@@ -95,7 +95,7 @@ public class Transition {
 
     /**
      * @param toRunningMode
-     *            When making this transition this attributes indicates the new {@link BufferRunningMode}
+     *            When making this transition this attributes indicates the new {@link RunningMode}
      * @param startTimers
      *            This is a set of zero or more Timer objects. All these timers have to be started when this transition
      *            is made. E.g. when an actuator is being switched on, the “on” timer has to start to make sure that the
@@ -126,7 +126,7 @@ public class Transition {
     }
 
     /**
-     * @return When making this transition this attributes indicates the new {@link BufferRunningMode}
+     * @return When making this transition this attributes indicates the new {@link RunningMode}
      */
     public int getToRunningMode() {
         return toRunningMode;

@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -12,16 +12,16 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Quantity;
 
 /**
- * <p>
  * This class represents the multi-radix units (such as "hour:min:sec"). Instances of this class are created using the
  * {@link Unit#compound Unit.compound} method.
- * </p>
- * 
- * <p>
- * Examples of compound units:[code] Unit<Duration> HOUR_MINUTE_SECOND = HOUR.compound(MINUTE).compound(SECOND);
- * Unit<Angle> DEGREE_MINUTE_ANGLE = DEGREE_ANGLE.compound(MINUTE_ANGLE); [/code]
- * </p>
- * 
+ *
+ * Examples of compound units:
+ *
+ * <pre>
+ * Unit&lt;Duration&gt; HOUR_MINUTE_SECOND = HOUR.compound(MINUTE).compound(SECOND);
+ * Unit&lt;Angle&gt; DEGREE_MINUTE_ANGLE = DEGREE_ANGLE.compound(MINUTE_ANGLE);
+ * </pre>
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
  */
@@ -39,7 +39,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
 
     /**
      * Creates a compound unit from the specified units.
-     * 
+     *
      * @param high
      *            the high unit.
      * @param low
@@ -58,7 +58,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
 
     /**
      * Returns the lower unit of this compound unit.
-     * 
+     *
      * @return the lower unit.
      */
     public Unit<Q> getLower() {
@@ -67,7 +67,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
 
     /**
      * Returns the higher unit of this compound unit.
-     * 
+     *
      * @return the higher unit.
      */
     public Unit<Q> getHigher() {
@@ -77,7 +77,7 @@ public final class CompoundUnit<Q extends Quantity> extends DerivedUnit<Q> {
     /**
      * Indicates if this compound unit is considered equals to the specified object (both are compound units with same
      * composing units in the same order).
-     * 
+     *
      * @param that
      *            the object to compare for equality.
      * @return <code>true</code> if <code>this</code> and <code>that</code> are considered equals; <code>false</code>

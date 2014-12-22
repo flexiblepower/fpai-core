@@ -80,9 +80,10 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasurabl
         }
 
         /**
-         * Uses the values as set by the {@link #duration(Measurable)}, {@link #electricity(Measurable)},
-         * {@link #gas(Measurable)} and {@link #heat(Measurable)} methods to create a new element. This does not reset
-         * the values, so if you call this method again it will create a second element that is equal to the first.
+         * Uses the values as set by the {@link #duration(Measurable)}, {@link #electricity(UncertainMeasure)},
+         * {@link #gas(UncertainMeasure)} and {@link #heat(UncertainMeasure)} methods to create a new element. This does
+         * not reset the values, so if you call this method again it will create a second element that is equal to the
+         * first.
          *
          * @return This builder
          * @throws IllegalArgumentException
@@ -93,9 +94,9 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasurabl
                 throw new IllegalArgumentException("duration not set");
             }
             elements.add(new CommodityForecast.Element<CommodityUncertainMeasurables>(duration,
-                                                                                  new CommodityUncertainMeasurables(electricityValue,
-                                                                                                                gasValue,
-                                                                                                                heatValue)));
+                                                                                      new CommodityUncertainMeasurables(electricityValue,
+                                                                                                                        gasValue,
+                                                                                                                        heatValue)));
             return this;
         }
 
@@ -169,7 +170,8 @@ public final class CommodityForecast extends Profile<CommodityUncertainMeasurabl
     }
 
     @Override
-    public Profile<CommodityUncertainMeasurables> subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
+    public Profile<CommodityUncertainMeasurables>
+            subProfile(Measurable<Duration> offset, Measurable<Duration> duration) {
         // TODO Needs to be implemented
         throw new UnsupportedOperationException();
     }

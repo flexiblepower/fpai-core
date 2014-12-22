@@ -13,6 +13,7 @@ instrumented
 coverage.xml
 RemoteSystemsTempFiles
 reports
+build
 
 # Keep the projects list
 .metadata/*

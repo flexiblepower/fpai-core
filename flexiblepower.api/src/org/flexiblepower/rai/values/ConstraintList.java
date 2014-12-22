@@ -11,8 +11,7 @@ import javax.measure.unit.Unit;
 
 /**
  * The {@link ConstraintList} is used as a method to describe several modes. It is most commonly used for representing
- * different possible charge speeds in the {@link BufferControlSpace}. This is a list of several values or ranges of
- * values.
+ * different possible charge speeds in a buffer. This is a list of several values or ranges of values.
  *
  * @param <Q>
  *            The quantity of the values that are stored here.

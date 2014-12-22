@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Gives a basic implementation for a {@link ResourceDriver}. Any subclass of this class should only implement the
- * {@link #setControlParameters(ResourceControlParameters)} method and some way to periodically send states (e.g. make
- * it {@link Runnable} and use the {@link ScheduledExecutorService} for scheduling itself).
+ * {@link #handleControlParameters(ResourceControlParameters)} method and some way to periodically send states (e.g.
+ * make it {@link Runnable} and use the {@link ScheduledExecutorService} for scheduling itself).
  *
  * @param <RS>
  *            The type of {@link ResourceState}

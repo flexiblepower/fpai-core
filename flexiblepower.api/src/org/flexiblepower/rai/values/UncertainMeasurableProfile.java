@@ -33,7 +33,7 @@ public final class UncertainMeasurableProfile<Q extends Quantity> extends Profil
          * @param duration
          *            The duration for the element
          * @return This builder
-         * @see #next()
+         * @see #add(UncertainMeasure)
          */
         public Builder<Q> duration(Measurable<Duration> duration) {
             this.duration = duration;

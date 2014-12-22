@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2007 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -21,14 +21,18 @@ import javax.measure.unit.Unit;
  * <p>
  * This class represents a measure whose value is an arbitrary-precision decimal number.
  * </p>
- * 
+ *
  * <p>
- * When converting, applications may supply the <code>java.math.Context</code>:[code] DecimalMeasure<Velocity> c =
- * DecimalMeasure.valueOf("299792458 m/s"); DecimalMeasure<Velocity> milesPerHour = c.to(MILES_PER_HOUR,
- * MathContext.DECIMAL128); System.out.println(milesPerHour);
- * 
- * > 670616629.3843951324266284896206156 mph [/code]
- * 
+ * When converting, applications may supply the <code>java.math.Context</code>:
+ *
+ * <pre>
+ * DecimalMeasure&lt;Velocity&gt; c = DecimalMeasure.valueOf("299792458 m/s");
+ * DecimalMeasure&lt;Velocity&gt; milesPerHour = c.to(MILES_PER_HOUR, MathContext.DECIMAL128);
+ * System.out.println(milesPerHour);
+ *
+ * &gt; 670616629.3843951324266284896206156 mph
+ * </pre>
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 4.3, October 3, 2007
  * @param <Q>
@@ -48,7 +52,7 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
 
     /**
      * Creates a decimal measure for the specified number stated in the specified unit.
-     * 
+     *
      * @param value
      *            The value
      * @param unit
@@ -61,7 +65,7 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
 
     /**
      * Returns the decimal measure for the specified number stated in the specified unit.
-     * 
+     *
      * @param decimal
      *            the measurement value.
      * @param unit
@@ -121,7 +125,7 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
     /**
      * Returns the decimal measure equivalent to this measure but stated in the specified unit. This method will raise
      * an ArithmeticException if the resulting measure does not have a terminating decimal expansion.
-     * 
+     *
      * @param unit
      *            the new measurement unit.
      * @return the measure stated in the specified unit.
@@ -137,7 +141,7 @@ public class DecimalMeasure<Q extends Quantity> extends Measure<BigDecimal, Q> {
     /**
      * Returns the decimal measure equivalent to this measure but stated in the specified unit, the conversion is
      * performed using the specified math context.
-     * 
+     *
      * @param unit
      *            the new measurement unit.
      * @param mathContext

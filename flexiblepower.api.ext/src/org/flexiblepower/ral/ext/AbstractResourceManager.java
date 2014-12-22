@@ -6,6 +6,7 @@ import org.flexiblepower.messaging.Connection;
 import org.flexiblepower.messaging.MessageHandler;
 import org.flexiblepower.rai.AllocationStatusUpdate;
 import org.flexiblepower.rai.ResourceMessage;
+import org.flexiblepower.ral.ControllerManager;
 import org.flexiblepower.ral.ResourceControlParameters;
 import org.flexiblepower.ral.ResourceDriver;
 import org.flexiblepower.ral.ResourceManager;
@@ -115,9 +116,9 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
     }
 
     /**
-     * Indicate if this {@link ResourceManager} is currently connected to a {@link ResourceController}
+     * Indicate if this {@link ResourceManager} is currently connected to a {@link ControllerManager}
      *
-     * @return boolean indicating if this {@link ResourceManager} is currently connected to a {@link ResourceController}
+     * @return boolean indicating if this {@link ResourceManager} is currently connected to a {@link ControllerManager}
      */
     protected boolean isConnectedWithResourceController() {
         return controllerConnection != null;
@@ -148,9 +149,10 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
     }
 
     /**
-     * Send control parameters to attached controller
+     * Send control parameters to attached driver
      *
-     * @param allocationStatusUpdate
+     * @param controlParameters
+     *            The parameters that have to be sent to the driver
      */
     protected void sendControlParameters(ResourceControlParameters controlParameters) {
         if (driverConnection != null) {
