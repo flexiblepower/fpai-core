@@ -2,7 +2,7 @@
 	org.apache.felix.http.servlet-api,\
 	flexiblepower.runtime;version=latest
 
-Bundle-Version: 1.1.0.${qualifier}
+Bundle-Version: 1.0.0.${qualifier}
 Private-Package: org.flexiblepower.runtime.ui.connectionspage
 Service-Component: org.flexiblepower.runtime.ui.connectionspage.*
 Import-Package:  \

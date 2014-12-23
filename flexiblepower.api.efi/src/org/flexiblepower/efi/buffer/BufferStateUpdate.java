@@ -23,8 +23,8 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
     /**
      * Constructs a new {@link BufferStateUpdate} message with the specific validFrom
      *
-     * @param resourceId
-     *            The resource identifier
+     * @param bufferRegistration
+     *            The registration message to which this update is referring to
      * @param timestamp
      *            The moment when this constructor is called (should be {@link TimeService#getTime()}
      * @param validFrom

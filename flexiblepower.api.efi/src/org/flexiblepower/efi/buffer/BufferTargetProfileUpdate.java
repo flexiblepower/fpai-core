@@ -20,8 +20,8 @@ public class BufferTargetProfileUpdate<Q extends Quantity> extends BufferUpdate 
     /**
      * Constructs a new {@link BufferTargetProfileUpdate} message with the specific validFrom
      *
-     * @param resourceId
-     *            The resource identifier
+     * @param bufferRegistration
+     *            The registration message to which this update is referring
      * @param timestamp
      *            The moment when this constructor is called (should be {@link TimeService#getTime()}
      * @param validFrom

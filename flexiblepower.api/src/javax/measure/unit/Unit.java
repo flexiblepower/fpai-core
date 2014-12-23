@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -23,33 +23,23 @@ import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Quantity;
 
 /**
- * <p>
  * This class represents a determinate {@link javax.measure.quantity.Quantity quantity} (as of length, time, heat, or
  * value) adopted as a standard of measurement.
- * </p>
- * 
- * <p>
+ *
  * It is helpful to think of instances of this class as recording the history by which they are created. Thus, for
  * example, the string "g/kg" (which is a dimensionless unit) would result from invoking the method toString() on a unit
  * that was created by dividing a gram unit by a kilogram unit. Yet, "kg" divided by "kg" returns {@link #ONE} and not
  * "kg/kg" due to automatic unit factorization.
- * </p>
- * 
- * <p>
+ *
  * This class supports the multiplication of offsets units. The result is usually a unit not convertible to its
  * {@link #getStandardUnit standard unit}. Such units may appear in derivative quantities. For example °C/m is an unit
  * of gradient, which is common in atmospheric and oceanographic research.
- * </p>
- * 
- * <p>
+ *
  * Units raised at rational powers are also supported. For example the cubic root of "liter" is a unit compatible with
  * meter.
- * </p>
- * 
- * <p>
+ *
  * Instances of this class are immutable.
- * </p>
- * 
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @author <a href="mailto:steve@unidata.ucar.edu">Steve Emmerson</a>
  * @author Martin Desruisseaux
@@ -84,29 +74,34 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Returns the {@link BaseUnit base unit}, {@link AlternateUnit alternate unit} or product of base units and
      * alternate units this unit is derived from. The standard unit identifies the "type" of
-     * {@link javax.measure.quantity.Quantity quantity} for which this unit is employed. For example:[code] boolean
-     * isAngularVelocity(Unit<?> u) { return u.getStandardUnit().equals(RADIAN.divide(SECOND)); }
-     * assert(REVOLUTION.divide(MINUTE).isAngularVelocity()); [/code]
-     * 
+     * {@link javax.measure.quantity.Quantity quantity} for which this unit is employed. For example:
+     *
+     * <pre>
+     * boolean isAngularVelocity(Unit&lt;?&gt; u) {
+     *   return u.getStandardUnit().equals(RADIAN.divide(SECOND));
+     * }
+     * assert(REVOLUTION.divide(MINUTE).isAngularVelocity());
+     * </pre>
+     *
      * <p>
      * <i> Note: Having the same system unit is not sufficient to ensure that a converter exists between the two units
      * (e.g. °C/m and K/m).</i>
      * </p>
-     * 
+     *
      * @return the system unit this unit is derived from.
      */
     public abstract Unit<? super Q> getStandardUnit();
 
     /**
      * Returns the converter from this unit to its system unit.
-     * 
+     *
      * @return <code>this.getConverterTo(this.getSystemUnit())</code>
      */
     public abstract UnitConverter toStandardUnit();
 
     /**
      * Returns the hash code for this unit.
-     * 
+     *
      * @return this unit hashcode value.
      */
     @Override
@@ -114,7 +109,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Indicates if the specified unit can be considered equals to the one specified.
-     * 
+     *
      * @param that
      *            the object to compare to.
      * @return <code>true</code> if this unit is considered equal to that unit; <code>false</code> otherwise.
@@ -125,7 +120,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Indicates if this unit is a standard unit (base units and alternate units are standard units). The standard unit
      * identifies the "type" of {@link javax.measure.quantity.Quantity quantity} for which the unit is employed.
-     * 
+     *
      * @return <code>getStandardUnit().equals(this)</code>
      */
     public boolean isStandardUnit() {
@@ -135,7 +130,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Indicates if this unit is compatible with the unit specified. Units don't need to be equals to be compatible. For
      * example:[code] RADIAN.equals(ONE) == false RADIAN.isCompatible(ONE) == true [/code]
-     * 
+     *
      * @param that
      *            the other unit.
      * @return <code>this.getDimension().equals(that.getDimension())</code>
@@ -148,9 +143,12 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Casts this unit to a parameterized unit of specified nature or throw a <code>ClassCastException</code> if the
-     * dimension of the specified quantity and this unit's dimension do not match. For example:[code] Unit<Length>
-     * LIGHT_YEAR = NonSI.C.times(NonSI.YEAR).asType(Length.class); [/code]
-     * 
+     * dimension of the specified quantity and this unit's dimension do not match. For example:
+     *
+     * <pre>
+     * Unit&lt;Length&gt; LIGHT_YEAR = NonSI.C.times(NonSI.YEAR).asType(Length.class);
+     * </pre>
+     *
      * @param type
      *            the quantity class identifying the nature of the unit.
      * @return this unit parameterized with the specified type.
@@ -178,7 +176,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the dimension of this unit (depends upon the current dimensional {@link Dimension.Model model}).
-     * 
+     *
      * @return the dimension of this unit for the current model.
      */
     public final Dimension getDimension() {
@@ -202,7 +200,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns a converter of numeric values from this unit to another unit.
-     * 
+     *
      * @param that
      *            the unit to which to convert the numeric values.
      * @return the converter from this unit to <code>that</code> unit.
@@ -282,13 +280,15 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Returns a unit equivalent to this unit but used in expressions to distinguish between quantities of a different
      * nature but of the same dimensions.
-     * 
-     * <p>
-     * Examples of alternate units:[code] Unit<Angle> RADIAN = ONE.alternate("rad"); Unit<Force> NEWTON =
-     * METER.times(KILOGRAM).divide(SECOND.pow(2)).alternate("N"); Unit<Pressure> PASCAL =
-     * NEWTON.divide(METER.pow(2)).alternate("Pa"); [/code]
-     * </p>
-     * 
+     *
+     * Examples of alternate units:
+     *
+     * <pre>
+     * Unit&lt;Angle&gt; RADIAN = ONE.alternate(&quot;rad&quot;);
+     * Unit&lt;Force&gt; NEWTON = METER.times(KILOGRAM).divide(SECOND.pow(2)).alternate(&quot;N&quot;);
+     * Unit&lt;Pressure&gt; PASCAL = NEWTON.divide(METER.pow(2)).alternate(&quot;Pa&quot;);
+     * </pre>
+     *
      * @param symbol
      *            the new symbol for the alternate unit.
      * @return the alternate unit.
@@ -306,7 +306,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      * formatting purpose. Examples of compound units:[code] HOUR_MINUTE = NonSI.HOUR.compound(NonSI.MINUTE);
      * DEGREE_MINUTE_SECOND_ANGLE = NonSI.DEGREE_ANGLE.compound( NonSI.DEGREE_MINUTE).compound(NonSI.SECOND_ANGLE);
      * [/code]
-     * 
+     *
      * @param subunit
      *            the sub-unit to combine with this unit.
      * @return the corresponding compound unit.
@@ -317,9 +317,13 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the unit derived from this unit using the specified converter. The converter does not need to be linear.
-     * For example:[code] Unit<Dimensionless> DECIBEL = Unit.ONE.transform( new LogConverter(10).inverse().concatenate(
-     * new RationalConverter(1, 10)));[/code]
-     * 
+     * For example:
+     *
+     * <pre>
+     * Unit&lt;Dimensionless&gt; DECIBEL = Unit.ONE.transform(new LogConverter(10).inverse()
+     *                                                                      .concatenate(new RationalConverter(1, 10)));
+     * </pre>
+     *
      * @param operation
      *            the converter from the transformed unit to this unit.
      * @return the unit after the specified transformation.
@@ -343,7 +347,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Returns the result of adding an offset to this unit. The returned unit is convertible with all units that are
      * convertible with this unit.
-     * 
+     *
      * @param offset
      *            the offset added (expressed in this unit, e.g. <code>CELSIUS = KELVIN.plus(273.15)</code>).
      * @return <code>this.transform(new AddConverter(offset))</code>
@@ -354,7 +358,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the result of multiplying this unit by an exact factor.
-     * 
+     *
      * @param factor
      *            the exact scale factor (e.g. <code>KILOMETER = METER.times(1000)</code>).
      * @return <code>this.transform(new RationalConverter(factor, 1))</code>
@@ -365,7 +369,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the result of multiplying this unit by a an approximate factor
-     * 
+     *
      * @param factor
      *            the approximate factor (e.g. <code>ELECTRON_MASS = KILOGRAM.times(9.10938188e-31)</code>).
      * @return <code>this.transform(new MultiplyConverter(factor))</code>
@@ -376,7 +380,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the product of this unit with the one specified.
-     * 
+     *
      * @param that
      *            the unit multiplicand.
      * @return <code>this * that</code>
@@ -387,7 +391,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the inverse of this unit.
-     * 
+     *
      * @return <code>1 / this</code>
      */
     public final Unit<? extends Quantity> inverse() {
@@ -396,7 +400,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the result of dividing this unit by an exact divisor.
-     * 
+     *
      * @param divisor
      *            the exact divisor. (e.g. <code>QUART = GALLON_LIQUID_US.divide(4)</code>).
      * @return <code>this.transform(new RationalConverter(1 , divisor))</code>
@@ -407,7 +411,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the result of dividing this unit by an approximate divisor.
-     * 
+     *
      * @param divisor
      *            the approximate divisor.
      * @return <code>this.transform(new MultiplyConverter(1.0 / divisor))</code>
@@ -418,7 +422,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns the quotient of this unit with the one specified.
-     * 
+     *
      * @param that
      *            the unit divisor.
      * @return <code>this / that</code>
@@ -429,7 +433,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns a unit equals to the given root of this unit.
-     * 
+     *
      * @param n
      *            the root's order.
      * @return the result of taking the given root of this unit.
@@ -448,7 +452,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
 
     /**
      * Returns a unit equals to this unit raised to an exponent.
-     * 
+     *
      * @param n
      *            the exponent.
      * @return the result of raising this unit to the exponent.
@@ -466,16 +470,17 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
     /**
      * Returns a unit instance that is defined from the specified character sequence using the
      * {@link UnitFormat#getInstance() standard unit format}.
-     * <p>
-     * Examples of valid entries (all for meters per second squared) are: <code><ul>
-     *       <li>m*s-2</li>
-     *       <li>m/s²</li>
-     *       <li>m·s-²</li>
-     *       <li>m*s**-2</li>
-     *       <li>m^+1 s^-2</li>
-     *     </ul></code>
-     * </p>
-     * 
+     *
+     * Examples of valid entries (all for meters per second squared) are:
+     *
+     * <pre>
+     * m*s-2
+     * m/s²
+     * m·s-²
+     * m*s**-2
+     * m^+1 s^-2
+     * </pre>
+     *
      * @param csq
      *            the character sequence to parse.
      * @return <code>UnitFormat.getStandardInstance().parse(csq, new ParsePosition(0))</code>
@@ -498,7 +503,7 @@ public abstract class Unit<Q extends Quantity> implements Serializable {
      * Returns the standard <code>String</code> representation of this unit. This representation is not affected by
      * locale. Locale-sensitive unit formatting and parsing is handled by the {@link MeasureFormat} class and its
      * subclasses.
-     * 
+     *
      * @return <code>UnitFormat.getStandardInstance().format(this)</code>
      */
     @Override

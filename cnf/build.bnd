@@ -1,7 +1,7 @@
--include: cnf.shared/build.bnd
+-include: cnf/gradle/base.bnd
 
 Bundle-Category: FlexiblePower Application Infrastructure
 qualifier: SNAPSHOT-${tstamp}
 
 -baseline: *
--baselinerepo: fpai-core-prev
+-baselinerepo: FPAI Core Current Release

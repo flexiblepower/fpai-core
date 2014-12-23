@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
@@ -47,7 +48,7 @@ public class EndpointTester extends TestCase {
             this.expectedMessage = expectedMessage;
         }
 
-        boolean connected = false;
+        private boolean connected = false;
 
         @Override
         public MessageHandler onConnect(Connection connection) {
@@ -452,7 +453,7 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     class SendDataEndpoint implements Endpoint {
-        private boolean finished = false;
+        private volatile boolean finished = false;
 
         public void checkIfFinishedAndReset() {
             assertTrue("We did not receive all the messages", finished);
@@ -470,10 +471,10 @@ public class EndpointTester extends TestCase {
                     if (message.toString().length() < 1024) {
                         connection.sendMessage(new DecodedStringMessage(message.toString() + message));
                     } else {
+                        finished = true;
                         synchronized (EndpointTester.this) {
                             EndpointTester.this.notifyAll();
                         }
-                        finished = true;
                     }
                 }
 
@@ -628,20 +629,32 @@ public class EndpointTester extends TestCase {
 
     public static class CountingMessageListener implements MessageListener {
         private final int expectedCount;
-        private int count;
+        private final AtomicInteger count = new AtomicInteger(0);
 
         public CountingMessageListener(int expectedCount) {
             this.expectedCount = expectedCount;
         }
 
-        public void check() {
-            assertEquals(expectedCount, count);
+        public synchronized void check() {
+            while (count.get() < expectedCount) {
+                try {
+                    long now = System.currentTimeMillis();
+                    wait(SLEEP_TIME);
+                    if (System.currentTimeMillis() - now >= SLEEP_TIME) {
+                        break; // If no message has been received for some time, assume it failed
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+            assertEquals(expectedCount, count.get());
         }
 
         @Override
-        public void handleMessage(EndpointPort from, EndpointPort to, Object message) {
+        public synchronized void handleMessage(EndpointPort from, EndpointPort to, Object message) {
             System.out.println(from.toString() + " -> " + to.toString() + " : " + message.toString());
-            count++;
+            if (count.incrementAndGet() == expectedCount) {
+                notifyAll();
+            }
         }
     }
 

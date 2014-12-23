@@ -15,8 +15,6 @@ import javax.measure.unit.Unit;
  *
  * @param <T>
  *            The type of the values stored in the elements
- * @param <PE>
- *            The type of the {@link ProfileElement}
  */
 public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
     /**
@@ -85,7 +83,7 @@ public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
      * Find the element in the {@link Profile} at a specific offset
      *
      * @param offset
-     *            Measurable<Duration> of the offset to search for an element
+     *            Measurable&lt;Duration&gt; of the offset to search for an element
      * @return The element of the profile at offset or null if the offset is bigger than the profile
      */
     public Element<T> getElementAtOffset(Measurable<Duration> offset) {

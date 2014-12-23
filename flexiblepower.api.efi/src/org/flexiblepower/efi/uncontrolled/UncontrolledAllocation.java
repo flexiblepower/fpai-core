@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.flexiblepower.rai.Allocation;
 import org.flexiblepower.rai.values.Commodity;
+import org.flexiblepower.rai.values.ConstraintProfile;
 import org.flexiblepower.rai.values.ConstraintProfileMap;
 
 /**
@@ -47,7 +48,7 @@ public final class UncontrolledAllocation extends Allocation {
 
     /**
      *
-     * @return a map of {@link CurtialmentProfile} for every applicable {@link Commodity}
+     * @return a map of {@link ConstraintProfile} for every applicable {@link Commodity}
      */
     public ConstraintProfileMap getCurtailmentProfiles() {
         return curtailmentProfiles;

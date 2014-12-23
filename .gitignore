@@ -3,6 +3,7 @@
 cnf/db
 cnf/cache
 cnf/release
+.gradle
 bin
 bin_test
 generated
@@ -11,6 +12,8 @@ cobertura.ser
 instrumented
 coverage.xml
 RemoteSystemsTempFiles
+reports
+build
 
 # Keep the projects list
 .metadata/*

@@ -23,7 +23,7 @@ import aQute.bnd.annotation.component.Deactivate;
 
 @Component(provide = { ScheduledExecutorService.class, TimeService.class, Simulation.class })
 public class SimulatedScheduleService implements ScheduledExecutorService, TimeService, Simulation, Runnable {
-    private static final Logger log = LoggerFactory.getLogger(SimulatedScheduleService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulatedScheduleService.class);
 
     private volatile boolean running;
     private final Thread thread;
@@ -124,23 +124,23 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
             if (simulationClock.isRunning() || simulationClock.isStopping()) {
                 synchronized (this) {
                     long now = simulationClock.getCurrentTimeMillis();
-                    log.trace("Simulation step {}", now);
+                    logger.trace("Simulation step {}", now);
                     long waitTime = getNextJobTime() - now;
                     if (waitTime <= 0) {
                         Job<?> job = jobs.remove();
                         currentTime = Math.max(currentTime, job.getTimeOfNextRun());
-                        log.trace("Executing  {}", job);
+                        logger.trace("Executing  {}", job);
                         job.run();
                         if (!job.isDone()) {
                             jobs.add(job);
-                            log.trace("Rescheduling {}", job);
+                            logger.trace("Rescheduling {}", job);
                         }
                     } else if (simulationClock.isStopping()) {
-                        log.trace("Stopping simulation clock");
+                        logger.trace("Stopping simulation clock");
                         simulationClock.stop();
                     } else {
                         long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
-                        log.trace("Sleeping {}ms until next job", sleepTime);
+                        logger.trace("Sleeping {}ms until next job", sleepTime);
                         try {
                             if (sleepTime > 0) {
                                 isWaiting = true;
@@ -181,7 +181,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void startSimulation(Date startTime, Date stopTime, double speedFactor) {
-        log.trace("Starting simulation @ {} until {} with factor {}", startTime, stopTime, speedFactor);
+        logger.trace("Starting simulation @ {} until {} with factor {}", startTime, stopTime, speedFactor);
         Job<?>[] oldJobs = jobs.toArray(new Job[jobs.size()]);
         jobs.clear();
 
@@ -201,7 +201,7 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void stopSimulation() {
-        log.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
+        logger.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.stop();
         notifyAll();
     }
@@ -215,13 +215,13 @@ public class SimulatedScheduleService implements ScheduledExecutorService, TimeS
 
     @Override
     public synchronized void pause() {
-        log.trace("Pause @ {}", simulationClock.getCurrentTimeMillis());
+        logger.trace("Pause @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.pause();
     }
 
     @Override
     public synchronized void unpause() {
-        log.trace("Unpause @ {}", simulationClock.getCurrentTimeMillis());
+        logger.trace("Unpause @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.unpause();
         notifyAll();
     }

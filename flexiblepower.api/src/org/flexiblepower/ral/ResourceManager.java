@@ -4,10 +4,11 @@ import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.flexiblepower.rai.Allocation;
+import org.flexiblepower.rai.ResourceMessage;
 
 /**
  * The {@link ResourceManager} is responsible to translating the current state of an appliance (as received from a
- * {@link ResourceDriver}) to {@link ControlSpace} messages and to translate the {@link Allocation}s to actions that are
+ * {@link ResourceDriver}) to {@link ResourceMessage}s to translate the {@link Allocation}s to actions that are
  * performed on the {@link ResourceDriver}. The {@link ResourceDriver} is dynamically connected to the
  * {@link ResourceManager} in OSGi, using the messaging framework in FPAI. For this it is expected for each
  * {@link ResourceManager} to define 2 ports: 1 for the link to the controller and 1 for the link to the driver. It is

@@ -2,7 +2,7 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2007 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
@@ -14,30 +14,35 @@ import javax.measure.unit.CompoundUnit;
 import javax.measure.unit.Unit;
 
 /**
- * <p>
- * This class represents a measurement vector of two or more dimensions. For example:[code] VectorMeasure<Length>
- * dimension = VectorMeasure.valueOf(12.0, 30.0, 40.0, MILLIMETER); VectorMeasure<Velocity> v2d =
- * VectorMeasure.valueOf(-2.2, -3.0, KNOTS); VectorMeasure<ElectricCurrent> c2d = VectorMeasure.valueOf(-7.3, 3.5,
- * NANOAMPERE); [/code]
- * </p>
+ * This class represents a measurement vector of two or more dimensions. For example:
+ *
+ * <pre>
+ * VectorMeasure&lt;Length&gt; dimension = VectorMeasure.valueOf(12.0, 30.0, 40.0, MILLIMETER);
+ * VectorMeasure&lt;Velocity&gt; v2d = VectorMeasure.valueOf(-2.2, -3.0, KNOTS);
+ * VectorMeasure&lt;ElectricCurrent&gt; c2d = VectorMeasure.valueOf(-7.3, 3.5, NANOAMPERE);
+ * </pre>
  * 
- * <p>
- * Subclasses may provide fixed dimensions specializations:[code] class Velocity2D extends VectorMeasure<Velocity> {
- * public Velocity2D(double x, double y, Unit<Velocity> unit) { ... } } [/code]
- * </p>
+ * Subclasses may provide fixed dimensions specializations:
  * 
- * <p>
- * Measurement vectors may use {@link CompoundUnit compound units}:[code] VectorMeasure<Angle> latLong =
- * VectorMeasure.valueOf(12.345, 22.23, DEGREE_ANGLE); Unit<Angle> HOUR_MINUTE_SECOND_ANGLE =
- * DEGREE_ANGLE.compound(MINUTE_ANGLE).compound(SECOND_ANGLE); System.out.println(latLong.to(HOUR_MINUTE_SECOND_ANGLE));
+ * <pre>
+ * class Velocity2D extends VectorMeasure&lt;Velocity&gt; {
+ *     public Velocity2D(double x, double y, Unit&lt;Velocity&gt; unit) { ... }
+ * }
  * 
- * > [12°19'42", 22°12'48"] [/code]
- * </p>
+ * </pre>
+ *
+ * Measurement vectors may use {@link CompoundUnit compound units}:
+ *
+ * <pre>
+ * VectorMeasure&lt;Angle&gt; latLong = VectorMeasure.valueOf(12.345, 22.23, DEGREE_ANGLE);
+ * Unit&lt;Angle&gt; HOUR_MINUTE_SECOND_ANGLE = DEGREE_ANGLE.compound(MINUTE_ANGLE).compound(SECOND_ANGLE);
+ * System.out.println(latLong.to(HOUR_MINUTE_SECOND_ANGLE));
+ *
+ * &gt; [12°19'42", 22°12'48"]
+ * </pre>
  * 
- * <p>
  * Instances of this class (and sub-classes) are immutable.
- * </p>
- * 
+ *
  * @param <Q>
  *            The quantity of the vector (e.g. Power)
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
@@ -73,7 +78,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
     /**
      * Returns a 2-dimensional measurement vector.
-     * 
+     *
      * @param x
      *            the first vector component value.
      * @param y
@@ -87,7 +92,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
     /**
      * Returns a 3-dimensional measurement vector.
-     * 
+     *
      * @param x
      *            the first vector component value.
      * @param y
@@ -103,7 +108,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
     /**
      * Returns a multi-dimensional measurement vector.
-     * 
+     *
      * @param components
      *            the vector component values.
      * @param unit
@@ -115,7 +120,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
     /**
      * Returns the measurement vector equivalent to this one but stated in the specified unit.
-     * 
+     *
      * @param unit
      *            the new measurement unit.
      * @return the vector measure stated in the specified unit.
@@ -125,7 +130,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
 
     /**
      * Returns the norm of this measurement vector stated in the specified unit.
-     * 
+     *
      * @param unit
      *            the unit in which the norm is stated.
      * @return <code>|this|</code>
@@ -136,7 +141,7 @@ public abstract class VectorMeasure<Q extends Quantity> extends Measure<double[]
     /**
      * Returns the <code>String</code> representation of this measurement vector (for example
      * <code>[2.3 m/s, 5.6 m/s]</code>).
-     * 
+     *
      * @return the textual representation of the measurement vector.
      */
     @Override

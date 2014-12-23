@@ -2,22 +2,22 @@
  * JScience - Java(TM) Tools and Libraries for the Advancement of Sciences.
  * Copyright (C) 2006 - JScience (http://jscience.org/)
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software is
  * freely granted, provided that this notice is preserved.
  */
 package javax.measure.converter;
 
 /**
- * <p>
  * This class represents a logarithmic converter. Such converter is typically used to create logarithmic unit. For
- * example:[code] Unit<Dimensionless> BEL = Unit.ONE.transform(new LogConverter(10).inverse()); [/code]
- * </p>
- * 
- * <p>
+ * example:
+ *
+ * <pre>
+ * Unit&lt;Dimensionless&gt; BEL = Unit.ONE.transform(new LogConverter(10).inverse());
+ * </pre>
+ *
  * Instances of this class are immutable.
- * </p>
- * 
+ *
  * @author <a href="mailto:jean-marie@dautelle.com">Jean-Marie Dautelle</a>
  * @version 3.1, April 22, 2006
  */
@@ -45,7 +45,7 @@ public final class LogConverter extends UnitConverter {
 
     /**
      * Creates a logarithmic converter having the specified base.
-     * 
+     *
      * @param base
      *            the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
@@ -57,7 +57,7 @@ public final class LogConverter extends UnitConverter {
 
     /**
      * Returns the logarithmic base of this converter.
-     * 
+     *
      * @return the logarithmic base (e.g. <code>Math.E</code> for the Natural Logarithm).
      */
     public double getBase() {

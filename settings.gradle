@@ -1,0 +1,3 @@
+apply from: file("${bnd_cnf_shared}/init.gradle")
+rootProject.name = 'fpai-core'
+
