@@ -638,10 +638,12 @@ public class EndpointTester extends TestCase {
         public synchronized void check() {
             while (count.get() < expectedCount) {
                 try {
+                    long now = System.currentTimeMillis();
                     wait(SLEEP_TIME);
-                    break; // If no message has been received for some time, assume it failed
+                    if (System.currentTimeMillis() - now >= SLEEP_TIME) {
+                        break; // If no message has been received for some time, assume it failed
+                    }
                 } catch (InterruptedException e) {
-                    // Hopefully this happens and we can check again
                 }
             }
             assertEquals(expectedCount, count.get());
@@ -650,8 +652,9 @@ public class EndpointTester extends TestCase {
         @Override
         public synchronized void handleMessage(EndpointPort from, EndpointPort to, Object message) {
             System.out.println(from.toString() + " -> " + to.toString() + " : " + message.toString());
-            count.incrementAndGet();
-            notifyAll();
+            if (count.incrementAndGet() == expectedCount) {
+                notifyAll();
+            }
         }
     }
 
