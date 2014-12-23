@@ -1,1 +1,109 @@
 apply from: rootProject.file("${bnd_cnf_shared}/master.gradle")
+
+import aQute.bnd.deployer.repository.*
+import java.io.*
+import java.util.zip.*
+
+/* Add bnd as a script dependency */
+buildscript {
+  dependencies {
+    classpath files(bndURI, bndRepoURI)
+  }
+}
+
+// These methods are used to generate a deployment zip file
+def zipDir(ZipOutputStream zos, File dir) {
+	def topDirLength = dir.absolutePath.length() + 1
+	dir.eachFileRecurse { file ->
+		def relative = file.absolutePath.substring(topDirLength).replaceAll('\\\\', '/')
+		if ( file.isDirectory() && !relative.endsWith('/')){
+			relative += "/"
+		}
+
+		ZipEntry entry = new ZipEntry(relative)
+		entry.time = file.lastModified()
+		zos.putNextEntry(entry)
+		if(file.isFile()) {
+			zos << new FileInputStream(file)
+		}
+	}
+}
+
+def zipFiles(ZipOutputStream zos, Iterable files, String baseDir) {
+	return files.collect { file ->
+		def name = "${baseDir}/${file.name}"
+		zos.putNextEntry(new ZipEntry(name))
+		zos << new FileInputStream(file)
+		return name
+	}
+}
+
+def downloadRepo(ZipOutputStream zos, String url) {
+	def repo = new FixedIndexedRepo()
+	repo.setProperties(["locations": url])
+	zipFiles(zos,
+	         repo.list(null).collect {
+	             bsn -> repo.get(bsn, repo.versions(bsn).last().toString())
+	         }.flatten(),
+	         "bundles/ext");
+}
+
+def copyRelease(ZipOutputStream zos) {
+	zipFiles(zos,
+	         fileTree("${deploymentDir.absolutePath}/repo").include("**/*.jar").exclude("**/*.test/**").getFiles(),
+	         "bundles/fpai-core")
+}
+
+def generateProperties(ZipOutputStream zos, Iterable dependancyFiles, Iterable fpaiFiles) {
+	zos.putNextEntry(new ZipEntry("etc/config.properties"));
+	new OutputStreamWriter(zos).withPrintWriter { w ->
+		w.println("org.osgi.framework.storage.clean=onFirstInit");
+		w.println()
+		w.println("felix.startlevel.framework=1");
+		w.println("felix.startlevel.bundle=3");
+		w.println("org.osgi.framework.startlevel.beginning=3");
+		w.println()
+
+		// First all the framework stuff
+		w.println("felix.auto.start.1=\\");
+		for (String name : dependancyFiles) {
+			w.println("\tfile:./${name} \\")
+		}
+		w.println()
+
+		// Then add the fpai bundles
+		w.println("felix.auto.start.2=\\");
+		for (String name : fpaiFiles) {
+		    w.println("\tfile:./${name} \\");
+		}
+		w.println()
+
+		w.println("felix.auto.deploy.dir=bundles/fpai-apps");
+		w.println("felix.auto.deploy.action=install,update,start");
+		w.println("#org.osgi.framework.security=osgi");
+	}
+}
+
+task(generateDeploymentZip, dependsOn: [cleanDeployment, releaseBundles]) {
+	def deployDir = file("${cnf.projectDir}/deployment")
+	ext.dependancies = 'https://raw.githubusercontent.com/flexiblepower/bundle-hub/split-repos/run/index.xml'
+	if(deployDir.exists() && deployDir.isDirectory()) {
+		doFirst {
+			def zipfile = file("${deploymentDir.absolutePath}/${project.name}-runtime-${qualifier}.zip")
+			logger.info("Generating ZIP file: ${zipfile.absolutePath}")
+			def zos = new ZipOutputStream(new FileOutputStream(zipfile))
+
+			zipDir(zos, deployDir)
+			def dependancyFiles = downloadRepo(zos, dependancies)
+			def fpaiFiles = copyRelease(zos)
+			zos.putNextEntry(new ZipEntry("bundles/fpai-apps/"))
+
+			generateProperties(zos, dependancyFiles, fpaiFiles)
+
+			zos.close();
+		}
+	}
+}
+
+distribute.dependsOn generateDeploymentZip
+

@@ -453,7 +453,7 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     class SendDataEndpoint implements Endpoint {
-        private boolean finished = false;
+        private volatile boolean finished = false;
 
         public void checkIfFinishedAndReset() {
             assertTrue("We did not receive all the messages", finished);
@@ -471,10 +471,10 @@ public class EndpointTester extends TestCase {
                     if (message.toString().length() < 1024) {
                         connection.sendMessage(new DecodedStringMessage(message.toString() + message));
                     } else {
+                        finished = true;
                         synchronized (EndpointTester.this) {
                             EndpointTester.this.notifyAll();
                         }
-                        finished = true;
                     }
                 }
 
