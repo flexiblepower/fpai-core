@@ -2,6 +2,8 @@ package org.flexiblepower.runtime.ui.user;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.servlet.Servlet;
 import javax.servlet.http.Cookie;
@@ -10,26 +12,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-
-@Component(provide = Servlet.class, properties = { "alias=/logout.html,contextId=fps" })
 public class LogoutServlet extends HttpServlet {
-
     private static final long serialVersionUID = 5622570409132973468L;
     private static final Logger logger = LoggerFactory.getLogger(LogoutServlet.class);
 
     private final SessionManager sessionManager;
+    private final ServiceRegistration<Servlet> serviceRegistration;
 
-    public LogoutServlet() {
-        sessionManager = SessionManager.getInstance();
+    public LogoutServlet(BundleContext context, SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+
+        Dictionary<String, Object> properties = new Hashtable<String, Object>();
+        properties.put("alias", "/logout.html");
+        properties.put("contextId", "fps");
+        serviceRegistration = context.registerService(Servlet.class, this, properties);
     }
 
-    @Activate
-    public void activate(BundleContext context) {
+    public void close() {
+        serviceRegistration.unregister();
     }
 
     @Override

@@ -9,3 +9,6 @@ Private-Package: org.flexiblepower.runtime.ui.server,\
 	org.flexiblepower.runtime.ui.user
 	
 Service-Component: *
+Import-Package:  \
+	org.osgi.service.useradmin;resolution:=optional,\
+	*

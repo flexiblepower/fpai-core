@@ -2,7 +2,7 @@ package org.flexiblepower.runtime.ui.user;
 
 import java.util.HashMap;
 
-import org.osgi.service.useradmin.User;
+import org.flexiblepower.ui.User;
 
 public class Session extends HashMap<String, Object> {
     private static final long serialVersionUID = -1885458683578572091L;
