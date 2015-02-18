@@ -1,0 +1,13 @@
+-buildpath:  \
+	biz.aQute.bnd.annotation,\
+	flexiblepower.api;version=latest,\
+	flexiblepower.ral;version=latest,\
+	flexiblepower.ral.efi;version=latest,\
+	junit.osgi
+
+Bundle-Version: 2.0.0.${qualifier}
+Export-Package:  \
+	org.flexiblepower.api.efi.bufferhelper,\
+	org.flexiblepower.api.efi.unconstrainedhelper,\
+	org.flexiblepower.api.efi.commonhelper
+

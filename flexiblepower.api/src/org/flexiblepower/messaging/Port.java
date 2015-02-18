@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.flexiblepower.ral.ResourceManager;
-
 /**
  * The {@link Port} annotation should be put on {@link Endpoint}s that are registered in the service registry. It
  * indicates what kind of connections it can support (including what object it can send, receive and the cardinality).

@@ -6,16 +6,10 @@
 
 Bundle-Version: 2.1.0.${qualifier}
 Export-Package:  \
-	javax.measure,\
-	javax.measure.converter,\
-	org.flexiblepower.rai,\
-	javax.measure.quantity,\
-	javax.measure.unit,\
-	org.flexiblepower.control,\
-	org.flexiblepower.observation,\
+	javax.measure*,\
+	org.flexiblepower.context,\
 	org.flexiblepower.messaging,\
-	org.flexiblepower.rai.comm,\
-	org.flexiblepower.rai.values,\
-	org.flexiblepower.ral,\
+	org.flexiblepower.observation,\
+	org.flexiblepower.observation.ext,\
 	org.flexiblepower.time,\
 	org.flexiblepower.ui

@@ -1,7 +1,5 @@
 package org.flexiblepower.observation;
 
-import org.flexiblepower.ral.ResourceDriver;
-
 /**
  * The {@link ObservationProvider} is any object that wants to publish {@link Observation}s to a
  * {@link ObservationConsumer}. When using OSGi, there are a couple of properties that should be registered to make it
