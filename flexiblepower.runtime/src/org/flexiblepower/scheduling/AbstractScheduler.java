@@ -147,7 +147,7 @@ public abstract class AbstractScheduler implements Scheduler, Runnable {
                         jobs.add(job);
                     }
                 } else {
-                    logger.debug("Sleeping {}ms until next job", waitTime);
+                    logger.trace("Sleeping {}ms until next job", waitTime);
                     try {
                         jobs.wait(waitTime);
                     } catch (final InterruptedException ex) {
