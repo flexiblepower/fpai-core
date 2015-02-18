@@ -4,9 +4,12 @@
 	biz.aQute.bnd.annotation
 -testpath: ${test}
 
-Bundle-Version: 2.1.0.${qualifier}
+Bundle-Version: 3.0.0.${qualifier}
 Export-Package:  \
-	javax.measure*,\
+	javax.measure,\
+	javax.measure.converter,\
+	javax.measure.quantity,\
+	javax.measure.unit,\
 	org.flexiblepower.context,\
 	org.flexiblepower.messaging,\
 	org.flexiblepower.observation,\

@@ -1,6 +1,5 @@
-package org.flexiblepower.simulation.scheduling;
+package org.flexiblepower.scheduling;
 
-import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
@@ -14,49 +13,52 @@ import org.slf4j.LoggerFactory;
 public class Job<V> implements ScheduledFuture<V> {
     private final static Logger logger = LoggerFactory.getLogger(Job.class);
 
-    public static Job<Object> create(final Runnable runnable,
-                                     final SimulatedScheduleService scheduleService,
-                                     long timeOfNextRun,
-                                     long timeStep) {
-        return new Job<Object>(new Callable<Object>() {
+    public static <V> Job<V> create(final Runnable runnable,
+                                    final V result,
+                                    final AbstractScheduler scheduler,
+                                    long timeOfNextRun,
+                                    long timeStep) {
+        return new Job<V>(new Callable<V>() {
             @Override
-            public Object call() throws Exception {
+            public V call() throws Exception {
                 runnable.run();
-                return null;
+                return result;
             }
 
             @Override
             public String toString() {
                 return runnable.toString();
             }
-        }, scheduleService, timeOfNextRun, timeStep);
+        }, scheduler, timeOfNextRun, timeStep);
     }
 
     public static <V> Job<V> create(final Callable<V> callable,
-                                    final SimulatedScheduleService scheduleService,
+                                    final AbstractScheduler scheduler,
                                     long timeOfNextRun,
                                     long timeStep) {
-        return new Job<V>(callable, scheduleService, timeOfNextRun, timeStep);
+        return new Job<V>(callable, scheduler, timeOfNextRun, timeStep);
     }
 
     private final Callable<V> callable;
-    private final SimulatedScheduleService scheduleService;
+    private final AbstractScheduler scheduler;
 
     private volatile V result;
     private volatile Exception exception;
 
     // Both of these are is milliseconds
     private volatile long timeOfNextRun, timeStep;
+    private volatile boolean cancelled;
 
-    private Job(Callable<V> callable, SimulatedScheduleService scheduleService, long timeOfNextRun, long timeStep) {
+    private Job(Callable<V> callable, AbstractScheduler scheduler, long timeOfNextRun, long timeStep) {
         this.callable = callable;
-        this.scheduleService = scheduleService;
+        this.scheduler = scheduler;
 
         this.timeOfNextRun = timeOfNextRun;
         this.timeStep = timeStep;
 
         result = null;
         exception = null;
+        cancelled = false;
     }
 
     public long getTimeOfNextRun() {
@@ -69,7 +71,7 @@ public class Job<V> implements ScheduledFuture<V> {
 
     @Override
     public long getDelay(TimeUnit unit) {
-        long delay = timeOfNextRun - scheduleService.getCurrentTimeMillis();
+        long delay = timeOfNextRun - scheduler.currentTimeMillis();
         if (delay < 0) {
             delay = 0;
         }
@@ -94,15 +96,18 @@ public class Job<V> implements ScheduledFuture<V> {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        timeOfNextRun = 0;
-        timeStep = 0;
-        scheduleService.remove(this);
+        if (timeOfNextRun > 0) {
+            cancelled = true;
+            timeOfNextRun = 0;
+            timeStep = 0;
+            scheduler.remove(this);
+        }
         return true;
     }
 
     @Override
     public boolean isCancelled() {
-        return isDone();
+        return cancelled;
     }
 
     @Override
@@ -111,7 +116,7 @@ public class Job<V> implements ScheduledFuture<V> {
     }
 
     public synchronized void run() {
-        logger.debug("Running Job " + this);
+        logger.trace("Running {}", this);
         try {
             result = callable.call();
         } catch (Exception e) {
@@ -122,16 +127,19 @@ public class Job<V> implements ScheduledFuture<V> {
 
         if (timeStep > 0) {
             timeOfNextRun += timeStep;
-            logger.debug("Rescheduled job " + this + " to " + timeOfNextRun);
+            logger.trace("Rescheduled {}", this);
+        } else if (timeStep < 0) {
+            timeOfNextRun = scheduler.currentTimeMillis() + timeStep;
+            logger.trace("Rescheduled {}", this);
         } else {
             timeOfNextRun = 0;
-            logger.debug("Unscheduled job " + this);
+            logger.trace("Unscheduled {}", this);
         }
     }
 
     @Override
     public synchronized V get() throws InterruptedException, ExecutionException {
-        if (!isDone()) {
+        while (!isDone()) {
             this.wait();
         }
 
@@ -146,12 +154,17 @@ public class Job<V> implements ScheduledFuture<V> {
     public synchronized V get(long timeout, TimeUnit unit) throws InterruptedException,
                                                           ExecutionException,
                                                           TimeoutException {
-        if (!isDone()) {
-            this.wait(TimeUnit.MILLISECONDS.convert(timeout, unit));
+        long waitUntil = scheduler.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(timeout, unit);
+        long waitTime = waitUntil - scheduler.currentTimeMillis();
+        while (!isDone() && waitTime > 0) {
+            this.wait(waitTime);
+            waitTime = waitUntil - scheduler.currentTimeMillis();
         }
 
         if (exception != null) {
             throw new ExecutionException(exception);
+        } else if (!isDone()) {
+            throw new TimeoutException();
         } else {
             return result;
         }
@@ -159,16 +172,8 @@ public class Job<V> implements ScheduledFuture<V> {
 
     public void reschedule(long time) {
         if (timeOfNextRun > time) {
-            // if (timeStep > 0) {
-            // timeOfNextRun -= ((timeOfNextRun - time) / timeStep) * timeStep;
-            // } else {
-            // timeOfNextRun = time;
-            // }
             timeOfNextRun = time;
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Rescheduled job " + this + " to " + new Date(timeOfNextRun));
-            }
+            logger.trace("Rescheduled {}", this);
         }
     }
 

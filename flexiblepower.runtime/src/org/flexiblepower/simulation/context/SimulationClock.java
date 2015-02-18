@@ -1,15 +1,15 @@
-package org.flexiblepower.simulation.scheduling;
+package org.flexiblepower.simulation.context;
 
 import java.util.Date;
 
-import org.flexiblepower.simulation.Simulation;
-import org.flexiblepower.simulation.Simulation.State;
+import org.flexiblepower.context.Simulation;
+import org.flexiblepower.context.Simulation.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SimulationClock {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimulationClock.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulationClock.class);
 
     private long simulationStartTime;
     private long simulationStopTime;
@@ -38,7 +38,7 @@ public class SimulationClock {
         wallStartTime = System.currentTimeMillis();
         this.speedFactor = speedFactor;
         state = Simulation.State.RUNNING;
-        LOG.debug("Simulation starting with simulated time " + new Date(startTime).toString());
+        logger.debug("Simulation starting with simulated time " + new Date(startTime).toString());
     }
 
     public synchronized void pause() {
@@ -47,7 +47,7 @@ public class SimulationClock {
         }
         simulationStartTime = getCurrentTimeMillis();
         state = Simulation.State.PAUSED;
-        LOG.debug("Simulation paused at simulated time " + new Date(simulationStartTime).toString());
+        logger.debug("Simulation paused at simulated time " + new Date(simulationStartTime).toString());
     }
 
     public synchronized void unpause() {
@@ -56,11 +56,11 @@ public class SimulationClock {
         }
         state = Simulation.State.RUNNING;
         wallStartTime = System.currentTimeMillis();
-        LOG.debug("Simulation upaused at simulated time " + new Date(simulationStartTime).toString());
+        logger.debug("Simulation upaused at simulated time " + new Date(simulationStartTime).toString());
     }
 
     public synchronized void stop() {
-        LOG.debug("Simulation stopped");
+        logger.debug("Simulation stopped");
         state = Simulation.State.STOPPED;
     }
 
@@ -122,8 +122,8 @@ public class SimulationClock {
         default:
             long currentTime = (long) ((System.currentTimeMillis() - wallStartTime) * speedFactor + simulationStartTime);
             if (currentTime > simulationStopTime) {
-                LOG.debug("Simulation reached end time " + new Date(simulationStopTime).toString()
-                          + ", stopping simulation...");
+                logger.debug("Simulation reached end time " + new Date(simulationStopTime).toString()
+                             + ", stopping simulation...");
                 state = State.STOPPING;
                 return simulationStopTime;
             } else {

@@ -38,7 +38,7 @@ import aQute.bnd.annotation.metatype.Meta;
            provide = ConnectionManager.class)
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final String KEY_ACTIVE_CONNECTIONS = "active.connections";
-    private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
     public static interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
@@ -106,13 +106,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 }
             }
         }
-        log.debug("These connections are configured at boottime: {}", activeConnections);
+        logger.debug("These connections are configured at boottime: {}", activeConnections);
 
         for (EndpointWrapper leftWrapper : endpointWrappers.values()) {
             for (EndpointPortImpl leftPort : leftWrapper.getPorts().values()) {
                 for (PotentialConnectionImpl connection : leftPort.getPotentialConnections().values()) {
                     if (connection.isConnectable() && activeConnections.contains(connection.toString())) {
-                        log.info("Auto-starting connection on {}", connection);
+                        logger.info("Auto-starting connection on {}", connection);
                         connection.connect();
                     }
                 }
@@ -178,7 +178,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                     try {
                         configuration.update(properties);
                     } catch (IOException e) {
-                        log.warn("Could not store the new active connections: " + e.getMessage(), e);
+                        logger.warn("Could not store the new active connections: " + e.getMessage(), e);
                     }
                 }
             }
@@ -193,10 +193,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 EndpointWrapper wrapper = new EndpointWrapper(key, endpoint, this);
                 endpointWrappers.put(key, wrapper);
                 detectPossibleConnections(wrapper);
-                log.debug("Added endpoint on key [{}]", key);
+                logger.debug("Added endpoint on key [{}]", key);
             }
         } catch (IllegalArgumentException ex) {
-            log.warn("Could not add endpoint: {}", ex.getMessage());
+            logger.warn("Could not add endpoint: {}", ex.getMessage());
         }
     }
 
@@ -206,7 +206,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
             EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
             if (endpointWrapper != null && endpointWrapper.getEndpoint() == endpoint) {
                 endpointWrapper.close();
-                log.debug("Removed endpoint on key [{}]", key);
+                logger.debug("Removed endpoint on key [{}]", key);
             }
         }
     }
@@ -230,13 +230,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                                                                                     left.getPort()
                                                                                                         .accepts())) {
                             PotentialConnectionImpl connection = new PotentialConnectionImpl(left, right);
-                            log.info("Found matching ports: {} <--> {}", left, right);
+                            logger.info("Found matching ports: {} <--> {}", left, right);
                             left.addMatch(connection);
                             right.addMatch(connection);
 
                             String key = connection.toString();
                             if (activeConnections.contains(key)) {
-                                log.info("Auto-starting connection on {}", connection);
+                                logger.info("Auto-starting connection on {}", connection);
                                 connection.connect();
                             }
                         }
@@ -322,7 +322,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                 if ((otherEnd.getCardinality() == Cardinality.SINGLE && otherEnd.getPotentialConnections()
                                                                                                 .size() == 1) || otherEnd.getCardinality() == Cardinality.MULTIPLE) {
                                     connection.connect();
-                                    log.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
+                                    logger.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
                                 }
                             }
                         }

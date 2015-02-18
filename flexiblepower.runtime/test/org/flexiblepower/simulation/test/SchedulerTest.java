@@ -1,17 +1,19 @@
 package org.flexiblepower.simulation.test;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.measure.Measure;
+import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
-import org.flexiblepower.simulation.Simulation;
-import org.flexiblepower.simulation.scheduling.SimulatedScheduleService;
+import org.flexiblepower.context.Simulation;
+import org.flexiblepower.simulation.context.SimulationContext;
 
 public class SchedulerTest extends TestCase {
     public void testRecurringTask() throws InterruptedException {
-        SimulatedScheduleService scheduler = new SimulatedScheduleService();
+        SimulationContext scheduler = new SimulationContext();
         scheduler.activate();
 
         final AtomicInteger runCounter = new AtomicInteger();
@@ -20,7 +22,7 @@ public class SchedulerTest extends TestCase {
             public void run() {
                 runCounter.incrementAndGet();
             }
-        }, 0, 1, TimeUnit.SECONDS);
+        }, Measure.valueOf(0, SI.SECOND), Measure.valueOf(1, SI.SECOND));
 
         Date startDate = new Date(1325376000000L); // 01-01-2012 00:00:00.000
         Date endDate = new Date(1325376059999L); // 01-01-2012 00:00:59.999
