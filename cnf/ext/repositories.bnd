@@ -18,6 +18,10 @@
 		    locations=https://raw.githubusercontent.com/flexiblepower/bundle-hub/split-repos/test/index.xml;\
 		    cache=${workspace}/cnf/cache,\
 		aQute.bnd.deployer.repository.FixedIndexedRepo;\
+		    name=FlexiblePower Base (snapshot);\
+		    locations=http://fpai-ci.sensorlab.tno.nl/builds/flexiblepower-base/development/LATEST/repo/index.xml;\
+		    cache=${workspace}/cnf/cache,\
+		aQute.bnd.deployer.repository.FixedIndexedRepo;\
 		    name=FPAI Core Current Release;\
 		    locations=https://github.com/flexiblepower/fpai-core/releases/download/v14.10/index.xml;\
 		    cache=${workspace}/cnf/cache

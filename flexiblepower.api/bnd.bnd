@@ -14,5 +14,4 @@ Export-Package:  \
 	org.flexiblepower.messaging,\
 	org.flexiblepower.observation,\
 	org.flexiblepower.observation.ext,\
-	org.flexiblepower.time,\
-	org.flexiblepower.ui
+	org.flexiblepower.time
