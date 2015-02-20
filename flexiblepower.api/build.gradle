@@ -1,2 +1,0 @@
-checkstyleMain.exclude '**/javax/measure/**'
-
