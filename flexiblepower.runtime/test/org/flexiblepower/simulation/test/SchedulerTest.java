@@ -8,7 +8,7 @@ import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
-import org.flexiblepower.context.Simulation;
+import org.flexiblepower.simulation.api.Simulation;
 import org.flexiblepower.simulation.context.SimulationContext;
 
 public class SchedulerTest extends TestCase {

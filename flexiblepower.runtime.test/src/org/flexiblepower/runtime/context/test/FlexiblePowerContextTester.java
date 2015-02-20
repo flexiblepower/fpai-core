@@ -13,7 +13,6 @@ import javax.measure.unit.SI;
 import junit.framework.TestCase;
 
 import org.flexiblepower.context.FlexiblePowerContext;
-import org.flexiblepower.context.Scheduler;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
@@ -45,19 +44,16 @@ public class FlexiblePowerContextTester extends TestCase {
                    Math.abs(System.currentTimeMillis() - ctx.currentTimeMillis()) < 20);
         assertTrue("Date should be system time (approximately)",
                    Math.abs(System.currentTimeMillis() - ctx.currentTime().getTime()) < 20);
-        assertFalse("The runtime should not be a simulation", ctx.isSimulation());
-        assertNull("The runtime should not be a simulation", ctx.getSimulation());
     }
 
     public void testSchedulerThread() throws Exception {
         FlexiblePowerContext ctx = getContext();
-        Scheduler scheduler = ctx.getScheduler();
 
         logger.info("Adding 100 runnables");
         Queue<Future<?>> futures = new LinkedList<Future<?>>();
         for (int ix = 0; ix < 100; ix++) {
             final boolean firstThread = ix == 0;
-            futures.add(scheduler.submit(new Runnable() {
+            futures.add(ctx.submit(new Runnable() {
                 @Override
                 public void run() {
                     String threadName = Thread.currentThread().getName();
@@ -76,7 +72,7 @@ public class FlexiblePowerContextTester extends TestCase {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new Runnable() {
+        ScheduledFuture<?> future = ctx.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 counter.incrementAndGet();

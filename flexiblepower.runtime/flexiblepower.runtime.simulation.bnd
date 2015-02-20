@@ -4,4 +4,5 @@ Private-Package: \
 	org.flexiblepower.simulation.context,\
 	org.flexiblepower.runtime.messaging,\
 	org.flexiblepower.scheduling
+Export-Package: org.flexiblepower.simulation.api
 Service-Component: *

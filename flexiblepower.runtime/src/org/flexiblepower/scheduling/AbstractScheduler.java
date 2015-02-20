@@ -11,32 +11,28 @@ import javax.measure.quantity.Duration;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.flexiblepower.context.Scheduler;
+import org.flexiblepower.context.FlexiblePowerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractScheduler implements Scheduler, Runnable {
+public abstract class AbstractScheduler implements FlexiblePowerContext, Runnable {
     public static final Unit<Duration> MS = SI.MILLI(SI.SECOND);
 
     public static final ThreadGroup schedulerGroup = new ThreadGroup("FlexiblePower Scheduling");
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final String name;
-
     protected final AtomicBoolean running;
     protected final PriorityQueue<Job<?>> jobs;
 
     private volatile Thread thread;
 
-    public AbstractScheduler(String name) {
-        this.name = name;
-
+    public AbstractScheduler() {
         running = new AtomicBoolean(false);
         jobs = new PriorityQueue<Job<?>>();
     }
 
-    public void start() {
+    public void start(String name) {
         if (running.compareAndSet(false, true)) {
             thread = new Thread(schedulerGroup, this, "Scheduler thread for " + name);
             thread.setDaemon(true);
@@ -58,6 +54,7 @@ public abstract class AbstractScheduler implements Scheduler, Runnable {
         }
     }
 
+    @Override
     public abstract long currentTimeMillis();
 
     private <T> Job<T> addJob(Job<T> job) {

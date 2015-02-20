@@ -3,30 +3,22 @@ package org.flexiblepower.simulation.context;
 import java.util.Date;
 
 import org.flexiblepower.context.FlexiblePowerContext;
-import org.flexiblepower.context.Scheduler;
-import org.flexiblepower.context.Simulation;
 import org.flexiblepower.scheduling.AbstractScheduler;
 import org.flexiblepower.scheduling.Job;
+import org.flexiblepower.simulation.api.Simulation;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 
-@Component(provide = { FlexiblePowerContext.class })
-public class SimulationContext extends AbstractScheduler
-                                                               implements
-                                                               FlexiblePowerContext,
-                                                               Simulation {
+@Component(provide = { FlexiblePowerContext.class, Simulation.class })
+public class SimulationContext extends AbstractScheduler implements Simulation {
 
     private final SimulationClock simulationClock = new SimulationClock();
 
-    public SimulationContext() {
-        super("Simulation");
-    }
-
     @Activate
     public void activate() {
-        start();
+        start("simulator");
     }
 
     @Deactivate
@@ -55,21 +47,6 @@ public class SimulationContext extends AbstractScheduler
     @Override
     public Date currentTime() {
         return new Date(currentTimeMillis());
-    }
-
-    @Override
-    public Scheduler getScheduler() {
-        return this;
-    }
-
-    @Override
-    public Simulation getSimulation() {
-        return this;
-    }
-
-    @Override
-    public boolean isSimulation() {
-        return true;
     }
 
     // The main run method
