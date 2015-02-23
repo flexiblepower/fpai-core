@@ -3,7 +3,7 @@
 	osgi.core;version='[4.3,5)',\
 	biz.aQute.bnd.annotation,\
 	flexiblepower.api;version=latest
--testpath: ${test}
+-testpath: ${test-buildpath}
 
 Bundle-Version: 1.0.0.${qualifier}
 Export-Package:  org.flexiblepower.ral*
