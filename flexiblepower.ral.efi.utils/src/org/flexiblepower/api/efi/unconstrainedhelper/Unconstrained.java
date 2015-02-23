@@ -313,4 +313,11 @@ public class Unconstrained {
     public String getResourceId() {
         return resourceId;
     }
+
+    /**
+     * @return The supported commodities by this device.
+     */
+    public CommoditySet getSupportedCommodities() {
+        return supportedCommodities;
+    }
 }

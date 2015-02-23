@@ -16,15 +16,15 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
      */
     public static final CommoditySet empty = new CommoditySet(false, false, false);
     /**
-     * The CommoditySet that will only contain {@link Commodity#ELECTRICITY}
+     * The CommoditySet that will only contain {@link Commodity#ELECTRICITY}.
      */
     public static final CommoditySet onlyElectricity = new CommoditySet(true, false, false);
     /**
-     * The CommoditySet that will only contain {@link Commodity#GAS}
+     * The CommoditySet that will only contain {@link Commodity#GAS}.
      */
     public static final CommoditySet onlyGas = new CommoditySet(false, true, false);
     /**
-     * The CommoditySet that will only contain {@link Commodity#HEAT}
+     * The CommoditySet that will only contain {@link Commodity#HEAT}.
      */
     public static final CommoditySet onlyHeat = new CommoditySet(false, false, true);
 
@@ -45,6 +45,13 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
     public static class Builder {
         private boolean hasElectricity, hasGas, hasHeat;
 
+        /**
+         * Adds the selected {@link Commodity} to the set.
+         * 
+         * @param commodity
+         *            The commodity that should be added.
+         * @return This builder
+         */
         public Builder add(Commodity<?, ?> commodity) {
             if (commodity == Commodity.ELECTRICITY) {
                 hasElectricity = true;
@@ -56,21 +63,39 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
             return this;
         }
 
+        /**
+         * Adds {@link Commodity#ELECTRICITY} to the set.
+         * 
+         * @return this
+         */
         public Builder addElectricity() {
             hasElectricity = true;
             return this;
         }
 
+        /**
+         * Adds {@link Commodity#GAS} to the set.
+         * 
+         * @return this
+         */
         public Builder addGas() {
             hasGas = true;
             return this;
         }
 
+        /**
+         * Adds {@link Commodity#HEAT} to the set.
+         * 
+         * @return this
+         */
         public Builder addHeat() {
             hasHeat = true;
             return this;
         }
 
+        /**
+         * @return The newly created {@link CommoditySet} that contains the set commodities.
+         */
         public CommoditySet build() {
             return new CommoditySet(hasElectricity, hasGas, hasHeat);
         }
