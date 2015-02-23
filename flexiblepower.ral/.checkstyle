@@ -7,7 +7,4 @@
   <fileset name="all" enabled="true" check-config-name="fpai-checks" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
-  <filter name="FilesFromPackage" enabled="true">
-    <filter-data value="src/javax/measure"/>
-  </filter>
 </fileset-config>
