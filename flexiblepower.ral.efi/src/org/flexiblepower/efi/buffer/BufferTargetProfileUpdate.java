@@ -22,7 +22,7 @@ public class BufferTargetProfileUpdate<Q extends Quantity> extends BufferUpdate 
      * @param bufferRegistration
      *            The registration message to which this update is referring
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param validFrom
      *            This timestamp indicates from which moment on this update is valid. This also indicates the starttime
      *            of the profile

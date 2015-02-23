@@ -18,7 +18,7 @@ public abstract class Allocation extends ResourceMessage {
      * emergency. This object will return <code>false</code> for the {@link #isEmergencyAllocation()} method.
      *
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param controlSpaceUpdate
      *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      */
@@ -31,7 +31,7 @@ public abstract class Allocation extends ResourceMessage {
      * Constructs a new {@link Allocation} object as a response to a specific {@link ControlSpaceUpdate}.
      *
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param controlSpaceUpdate
      *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      * @param isEmergencyAllocation
@@ -54,7 +54,7 @@ public abstract class Allocation extends ResourceMessage {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param controlSpaceUpdateId
      *            An identifier that uniquely identifies the {@link ControlSpaceUpdate} message that this message is a
      *            response to.

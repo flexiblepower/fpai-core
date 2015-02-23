@@ -27,7 +27,7 @@ public abstract class ResourceMessage {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      */
     public ResourceMessage(String resourceId, Date timestamp) {
         if (resourceId == null) {

@@ -15,7 +15,7 @@ public class UnconstrainedUpdate extends ControlSpaceUpdate {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param validFrom
      *            This timestamp indicates from which moment on this update is valid.
      */

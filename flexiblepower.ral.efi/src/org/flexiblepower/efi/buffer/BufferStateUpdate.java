@@ -24,7 +24,7 @@ public class BufferStateUpdate<Q extends Quantity> extends BufferUpdate {
      * @param bufferRegistration
      *            The registration message to which this update is referring to
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param validFrom
      *            This timestamp indicates from which moment on this update is valid.
      * @param currentFillLevel

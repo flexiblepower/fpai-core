@@ -26,7 +26,8 @@ import org.flexiblepower.ral.values.CommoditySet;
 /**
  * The BufferActuator that integrates updated EFI messages and provides additional methods.
  *
- * @param <T>
+ * @param <Q>
+ *            The quantity type of the buffer
  */
 public class BufferActuator<Q extends Quantity> {
     private final int actuatorId;

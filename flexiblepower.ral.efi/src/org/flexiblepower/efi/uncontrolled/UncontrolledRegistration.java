@@ -36,7 +36,7 @@ public final class UncontrolledRegistration extends ControlSpaceRegistration {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()})
+     *            The moment when this constructor is called)
      * @param allocationDelay
      *            The duration of the delay in communications channel from the moment of sending to the moment the
      *            command is executed up by the device.

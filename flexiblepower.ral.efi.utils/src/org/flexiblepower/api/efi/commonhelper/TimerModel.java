@@ -2,12 +2,13 @@ package org.flexiblepower.api.efi.commonhelper;
 
 import java.util.Date;
 
+import org.flexiblepower.efi.util.Timer;
+
 /**
  * The implementation of the timer that can change when new updates are received and that provides information on
  * whether the timer is blocking or finished.
- *
  */
-public class TimerModel extends org.flexiblepower.efi.util.Timer {
+public class TimerModel extends Timer {
     private Date finishedAt;
 
     /**
@@ -16,7 +17,7 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
      * @param base
      *            The object that holds the information from the EFI message about the Timer.
      */
-    public TimerModel(org.flexiblepower.efi.util.Timer base) {
+    public TimerModel(Timer base) {
         super(base.getId(), base.getLabel(), base.getDuration());
     }
 
@@ -24,6 +25,7 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
      * A new finishedAt moment overwrites the old moment.
      *
      * @param finishedAt
+     *            The new date at which the timer should be finished.
      */
     public void updateFinishedAt(Date finishedAt) {
         this.finishedAt = finishedAt;
@@ -41,12 +43,11 @@ public class TimerModel extends org.flexiblepower.efi.util.Timer {
     /**
      * Returns whether the timer is blocking at this moment. No finishedAt time implies that this timer is not blocking.
      *
-     * @param moment
+     * @param moment The timestamp for which we should check.
      * @return A boolean indicating whether the timer is blocking or not at the given moment.
      */
     public boolean isBlockingAt(Date moment) {
-        if (moment == null)
-        {
+        if (moment == null) {
             return false;
         }
         return (finishedAt != null && finishedAt.after(moment));

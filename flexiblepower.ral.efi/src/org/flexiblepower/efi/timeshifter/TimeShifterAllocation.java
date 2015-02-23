@@ -20,7 +20,7 @@ public final class TimeShifterAllocation extends Allocation {
      * Constructs a new {@link TimeShifterAllocation} object as a response to a specific {@link ControlSpaceUpdate}.
      *
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param resourceUpdate
      *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      * @param isEmergencyAllocation
@@ -48,7 +48,7 @@ public final class TimeShifterAllocation extends Allocation {
      * Constructs a new {@link TimeShifterAllocation} object as a response to a specific {@link ControlSpaceUpdate}.
      *
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param resourceUpdate
      *            The {@link ControlSpaceUpdate} object to which this {@link Allocation} is responding to.
      * @param isEmergencyAllocation

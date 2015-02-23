@@ -196,6 +196,8 @@ public class Unconstrained {
      *
      * @param moment
      *            The moment of interest.
+     * @param fillLevel
+     *            The current fillLevel
      * @return An unordered list of the possible electricity consumption demands of the RunningModes, possibly including
      *         running modes with the same power demand.
      *

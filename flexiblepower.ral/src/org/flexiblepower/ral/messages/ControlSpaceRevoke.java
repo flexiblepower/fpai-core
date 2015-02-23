@@ -14,7 +14,7 @@ public class ControlSpaceRevoke extends ResourceMessage {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      */
     public ControlSpaceRevoke(String resourceId, Date timestamp) {
         super(resourceId, timestamp);

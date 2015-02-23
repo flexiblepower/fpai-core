@@ -129,7 +129,7 @@ public abstract class Profile<T> extends AbstractList<Profile.Element<T>> {
      * method should select a single part of the whole profile.
      *
      * @param offset
-     *            The offset of where the subsection of the profile should start. This should always be >= 0.
+     *            The offset of where the subsection of the profile should start. This should always be &gt;= 0.
      * @param duration
      *            The total duration of the new profile. The offset + duration should never be more than the total
      *            duration of this profile.

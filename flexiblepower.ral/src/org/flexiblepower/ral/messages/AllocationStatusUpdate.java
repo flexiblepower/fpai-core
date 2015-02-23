@@ -15,7 +15,7 @@ public final class AllocationStatusUpdate extends ResourceMessage {
 
     /**
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      *
      * @param allocation
      *            the {@link Allocation} to which this update is the response
@@ -34,7 +34,7 @@ public final class AllocationStatusUpdate extends ResourceMessage {
      * @param resourceId
      *            The resource identifier
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param allocationId
      *            An identifier that uniquely identifies the {@link Allocation} message that this update refers to (the
      *            {@link Allocation#getResourceMessageId()}).

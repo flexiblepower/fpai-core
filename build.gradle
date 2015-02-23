@@ -11,6 +11,16 @@ buildscript {
   }
 }
 
+// Reconfigure the Javadoc classes
+generateJavadoc.source = fileTree('.') {
+                             include 'flexiblepower.ral*/**/*.java'
+                             include 'flexiblepower.runtime/src/org/flexiblepower/simulation/api/*.java'
+                             include 'flexiblepower.ui/src/org/flexiblepower/ui/*.java'
+                             exclude '*.test/*'
+                             exclude '**/*Test.java'
+                         }
+generateJavadoc.enabled = true
+
 // These methods are used to generate a deployment zip file
 def zipDir(ZipOutputStream zos, File dir) {
 	def topDirLength = dir.absolutePath.length() + 1

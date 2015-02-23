@@ -23,7 +23,7 @@ public class BufferSystemDescription extends BufferUpdate {
      *            The original registration on which this message will be based. This will copy the resourceId from the
      *            {@link BufferRegistration} and will check if the defined actuator behaviour is complete.
      * @param timestamp
-     *            The moment when this constructor is called (should be {@link TimeService#getTime()}
+     *            The moment when this constructor is called
      * @param validFrom
      *            This timestamp indicates from which moment on this update is valid.
      * @param actuators
