@@ -12,8 +12,6 @@ Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOT
 
 -runbundles: \
 	flexiblepower.api;version=latest,\
-	flexiblepower.api.efi;version=latest,\
-	flexiblepower.api.ext;version=latest,\
 	flexiblepower.runtime;version=latest,\
 	flexiblepower.runtime.test;version=latest,\
 	ch.qos.logback.classic;version=latest,\

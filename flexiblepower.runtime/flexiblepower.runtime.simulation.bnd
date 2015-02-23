@@ -1,6 +1,8 @@
-Bundle-Version: 2.0.1.${qualifier}
+Bundle-Version: 3.0.0.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime.simulation
 Private-Package: \
-	org.flexiblepower.runtime.messaging, \
-	org.flexiblepower.simulation.scheduling
+	org.flexiblepower.simulation.context,\
+	org.flexiblepower.runtime.messaging,\
+	org.flexiblepower.scheduling
+Export-Package: org.flexiblepower.simulation.api
 Service-Component: *

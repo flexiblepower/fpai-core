@@ -12,12 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class PotentialConnectionImpl implements PotentialConnection {
-    private static final Logger log = LoggerFactory.getLogger(PotentialConnectionImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PotentialConnectionImpl.class);
 
     private static final MessageHandler DUMP = new MessageHandler() {
         @Override
         public void handleMessage(Object message) {
-            log.debug("Dumping message {}", message);
+            logger.debug("Dumping message {}", message);
         }
 
         @Override
@@ -52,7 +52,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
         @Override
         public void sendMessage(Object message) {
             if (message == null) {
-                log.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
+                logger.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
                 return;
             }
 
@@ -142,7 +142,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 throw new IllegalStateException(connectableError);
             }
 
-            log.debug("Connecting port [{}] to port [{}]", left, right);
+            logger.debug("Connecting port [{}] to port [{}]", left, right);
 
             HalfConnection leftHalfConnection = new HalfConnection(left, right);
             HalfConnection rightHalfConnection = new HalfConnection(right, left);
@@ -151,7 +151,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
             rightMessageHandler = right.getEndpoint().getEndpoint().onConnect(rightHalfConnection);
 
             if (leftMessageHandler == null || rightMessageHandler == null) {
-                log.warn("Could not connect port [{}] to port [{}], because the onConnect failed (returned null)",
+                logger.warn("Could not connect port [{}] to port [{}], because the onConnect failed (returned null)",
                          left,
                          right);
 
@@ -164,7 +164,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 rightHalfConnection.setMessageHandler(leftMessageHandler);
 
                 left.getEndpoint().getConnectionManager().connectedPort(toString());
-                log.debug("Connected port [{}] to port [{}]", left, right);
+                logger.debug("Connected port [{}] to port [{}]", left, right);
             }
         }
     }
@@ -177,7 +177,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
     synchronized void close() {
         if (isConnected()) {
-            log.debug("Disconnecting port [{}] to port [{}]", left, right);
+            logger.debug("Disconnecting port [{}] to port [{}]", left, right);
             try {
                 CountDownLatch latch = new CountDownLatch(2);
 

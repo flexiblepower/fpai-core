@@ -27,16 +27,16 @@ import aQute.bnd.annotation.component.Reference;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-@Component(provide = Servlet.class, properties = {
-                                                  "felix.webconsole.title=FPAI: ConnectionManager",
+@Component(provide = Servlet.class, properties = { "felix.webconsole.title=FPAI: ConnectionManager",
                                                   "felix.webconsole.label=fpai-connection-manager" })
 public class ConnectionManagerPlugin extends HttpServlet {
     private static final long serialVersionUID = 7146852312931261310L;
-    private static final Logger log = LoggerFactory
-                                                   .getLogger(ConnectionManagerPlugin.class);
+    private static final Logger logger = LoggerFactory
+                                                      .getLogger(ConnectionManagerPlugin.class);
 
-    private static final String[] servedFiles = new String[] {
-                                                              "connectionManager.js", "cytoscape.min.js", "index.html" };
+    private static final String[] SERVED_FILES = new String[] { "connectionManager.js",
+                                                               "cytoscape.min.js",
+                                                               "index.html" };
 
     private ConnectionManager connectionManager;
     private HashMap<String, PotentialConnection> connectionCache;
@@ -57,30 +57,12 @@ public class ConnectionManagerPlugin extends HttpServlet {
             }
         }
 
-        if (Arrays.binarySearch(servedFiles, path, null) >= 0) {
-            if (path.endsWith(".js")) {
-                resp.setContentType("application/x-javascript");
-            } else if (path.endsWith(".html")) {
-                resp.setContentType("text/html");
-            }
-
-            InputStream input = getClass().getClassLoader()
-                                          .getResourceAsStream(path);
-            if (input == null) {
-                log.debug("Could not find file {}", path);
-                resp.sendError(404);
-            } else {
-                log.debug("Serving file {}", path);
-                IOUtils.copy(input, resp.getWriter());
-            }
+        if (Arrays.binarySearch(SERVED_FILES, path, null) >= 0) {
+            serveFile(resp, path);
         } else if (path.equals("")) {
             resp.sendRedirect("fpai-connection-manager/index.html");
         } else if (path.equals("getGraph.json")) {
-            Collection<? extends ManagedEndpoint> values = connectionManager
-                                                                            .getEndpoints().values();
-            String graphJson = createGraphJson(values);
-            sendJson(resp, graphJson);
-
+            sendJson(resp, createGraphJson(connectionManager.getEndpoints().values()));
         } else {
             resp.getWriter().print("GET Not yet implemented: " + path);
             resp.getWriter().close();
@@ -98,66 +80,96 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 path = path.substring(1);
             }
         }
-        log.debug("path: " + path);
+        logger.debug("path: " + path);
         if (path.endsWith(".json")) {
             resp.setContentType("application/json");
         }
         if (path.equals("autoconnect.json")) {
-            log.debug("autoconnect called");
-            connectionManager.autoConnect();
-            w.print("{\"autoconnected\": true, \"class\": \"\"}");
+            autoconnect(w);
         } else if (path.equals("connect.json")) {
-            final String id = req.getParameter("id");
-            if (connectionCache.containsKey(id)) {
-                PotentialConnection connection = connectionCache.get(id);
-                if (!connection.isConnected()) {
-                    log.debug("Calling connect for " + id);
-                    try {
-                        connection.connect();
-                        w.print("{\"status\": \"Connected " + id + "\", \"class\": \"\"}");
-                    } catch (IllegalStateException e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                        w.print("{\"status\": \"Connect was called for " + id
-                                + ", but " + e.getMessage() + "\", \"class\": \"ui-state-error\"}");
-                    }
-
-                } else {
-                    log.error("Connect was called for " + id + ", but it was already connected");
-                    w.print("{\"status\": \"Connect was called for " + id
-                            + ", but it was already connected\", \"class\": \"ui-state-error\"}");
-                }
-            } else {
-                log.error("Connect was called for " + id + ", but it was not found in the cache");
-                w.print("{\"status\": \"Connect was called for " + id
-                        + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
-            }
+            connect(req, w);
         } else if (path.equals("disconnect.json")) {
-            final String id = req.getParameter("id");
-            if (connectionCache.containsKey(id)) {
-                PotentialConnection connection = connectionCache.get(id);
-                if (connection.isConnected()) {
-                    log.debug("Calling disconnect for " + id);
-                    connection.disconnect();
-                    w.print("{\"status\": \"Disconnected " + id + "\", \"class\": \"\"}");
-                } else {
-                    w.print("{\"status\": \"Disconnect was called for " + id
-                            + ", but it was already disconnected\", \"class\": \"ui-state-error\"}");
-                    log.error("Disconnect was called for " + id + ", but it was already disconnected");
-                }
-            } else {
-                w.print("{\"status\": \"Disonnect was called for " + id
-                        + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
-                log.error("Disonnect was called for " + id + ", but it was not found in the cache");
-            }
+            disconnect(req, w);
         } else {
             w.print("POST Not yet implemented: " + path);
         }
         w.close();
     }
 
+    private void serveFile(HttpServletResponse resp, String path) throws IOException {
+        if (path.endsWith(".js")) {
+            resp.setContentType("application/x-javascript");
+        } else if (path.endsWith(".html")) {
+            resp.setContentType("text/html");
+        }
+
+        InputStream input = getClass().getClassLoader()
+                                      .getResourceAsStream(path);
+        if (input == null) {
+            logger.debug("Could not find file {}", path);
+            resp.sendError(404);
+        } else {
+            logger.debug("Serving file {}", path);
+            IOUtils.copy(input, resp.getWriter());
+        }
+    }
+
+    private void autoconnect(PrintWriter w) {
+        logger.debug("autoconnect called");
+        connectionManager.autoConnect();
+        w.print("{\"autoconnected\": true, \"class\": \"\"}");
+    }
+
+    private void connect(HttpServletRequest req, PrintWriter w) {
+        final String id = req.getParameter("id");
+        if (connectionCache.containsKey(id)) {
+            PotentialConnection connection = connectionCache.get(id);
+            if (!connection.isConnected()) {
+                logger.debug("Calling connect for " + id);
+                try {
+                    connection.connect();
+                    w.print("{\"status\": \"Connected " + id + "\", \"class\": \"\"}");
+                } catch (IllegalStateException e) {
+                    logger.error(e.getMessage());
+                    e.printStackTrace();
+                    w.print("{\"status\": \"Connect was called for " + id
+                            + ", but " + e.getMessage() + "\", \"class\": \"ui-state-error\"}");
+                }
+
+            } else {
+                logger.error("Connect was called for " + id + ", but it was already connected");
+                w.print("{\"status\": \"Connect was called for " + id
+                        + ", but it was already connected\", \"class\": \"ui-state-error\"}");
+            }
+        } else {
+            logger.error("Connect was called for " + id + ", but it was not found in the cache");
+            w.print("{\"status\": \"Connect was called for " + id
+                    + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
+        }
+    }
+
+    private void disconnect(HttpServletRequest req, PrintWriter w) {
+        final String id = req.getParameter("id");
+        if (connectionCache.containsKey(id)) {
+            PotentialConnection connection = connectionCache.get(id);
+            if (connection.isConnected()) {
+                logger.debug("Calling disconnect for " + id);
+                connection.disconnect();
+                w.print("{\"status\": \"Disconnected " + id + "\", \"class\": \"\"}");
+            } else {
+                w.print("{\"status\": \"Disconnect was called for " + id
+                        + ", but it was already disconnected\", \"class\": \"ui-state-error\"}");
+                logger.error("Disconnect was called for " + id + ", but it was already disconnected");
+            }
+        } else {
+            w.print("{\"status\": \"Disonnect was called for " + id
+                    + ", but it was not found in the cache\", \"class\": \"ui-state-error\"}");
+            logger.error("Disonnect was called for " + id + ", but it was not found in the cache");
+        }
+    }
+
     private void sendJson(HttpServletResponse resp, String graphJson) {
-        log.debug("Sending nodes and edges as JSON");
+        logger.debug("Sending nodes and edges as JSON");
         resp.setContentType("application/json");
         try {
             PrintWriter w = resp.getWriter();
@@ -172,21 +184,26 @@ public class ConnectionManagerPlugin extends HttpServlet {
         if (connectionCache == null) {
             connectionCache = new HashMap<String, ConnectionManager.PotentialConnection>();
         }
-        int i = 0;
 
         JsonArray elements = new JsonArray();
 
-        // add nodes
+        generateNodes(values, elements);
+        generateEdges(values, elements);
+
+        return elements.toString();
+    }
+
+    private void generateNodes(Collection<? extends ManagedEndpoint> values, JsonArray elements) {
         for (ManagedEndpoint me : values) {
             JsonObject endpoint = new JsonObject();
             endpoint.addProperty("group", "nodes");
 
             String pid = me.getPid();
             String[] split = pid.split("\\.");
-            log.trace("length " + split.length);
+            logger.trace("length " + split.length);
             String name = split[split.length - 2];
 
-            log.debug("Adding {} {}", pid, name);
+            logger.debug("Adding {} {}", pid, name);
 
             JsonObject endpointdata = new JsonObject();
             endpointdata.addProperty("id", pid);
@@ -207,8 +224,10 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 elements.add(endpointport);
             }
         }
+    }
 
-        // add edges
+    private void generateEdges(Collection<? extends ManagedEndpoint> values, JsonArray elements) {
+        int i = 0;
         for (ManagedEndpoint me : values) {
             for (EndpointPort ep : me.getPorts().values()) {
                 for (PotentialConnection pc : ep.getPotentialConnections().values()) {
@@ -242,6 +261,5 @@ public class ConnectionManagerPlugin extends HttpServlet {
                 }
             }
         }
-        return elements.toString();
     }
 }

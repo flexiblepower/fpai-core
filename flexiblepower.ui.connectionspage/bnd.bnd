@@ -1,6 +1,8 @@
 -buildpath: ${default-buildpath},\
 	org.apache.felix.http.servlet-api,\
-	flexiblepower.runtime;version=latest
+	flexiblepower.ral;version=latest,\
+	flexiblepower.runtime;version=latest,\
+	flexiblepower.ui;version=latest
 
 Bundle-Version: 1.0.0.${qualifier}
 Private-Package: org.flexiblepower.runtime.ui.connectionspage

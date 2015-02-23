@@ -2,12 +2,10 @@
 	com.google.gson,\
 	org.apache.felix.http.servlet-api
 
-Bundle-Version: 1.0.2.${qualifier}
-Private-Package: org.flexiblepower.runtime.ui.server,\
-	org.flexiblepower.runtime.ui.server.pages,\
-	org.flexiblepower.runtime.ui.server.widgets,\
-	org.flexiblepower.runtime.ui.user
-	
+Bundle-Version: 1.2.0.${qualifier}
+Private-Package: org.flexiblepower.runtime.ui.*
+Export-Package: org.flexiblepower.ui
+
 Service-Component: *
 Import-Package:  \
 	org.osgi.service.useradmin;resolution:=optional,\

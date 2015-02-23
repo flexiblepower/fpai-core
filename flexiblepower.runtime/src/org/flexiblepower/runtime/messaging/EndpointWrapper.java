@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
-    private static final Logger log = LoggerFactory.getLogger(EndpointWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(EndpointWrapper.class);
 
     private final String pid;
     private final Endpoint endpoint;
@@ -43,7 +43,7 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
     }
 
     private void parsePorts(Class<?> clazz) {
-        log.debug("Start detection of ports on {}", clazz.getName());
+        logger.debug("Start detection of ports on {}", clazz.getName());
         Port[] ports = null;
 
         Ports portsAnnotation = clazz.getAnnotation(Ports.class);
@@ -63,27 +63,27 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
             EndpointPortImpl storedPort = this.ports.get(port.name());
 
             if (storedPort == null) {
-                log.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
+                logger.debug("Adding port on endpoint [{}]: {}", endpoint, port.name());
                 this.ports.put(port.name(), endpointPort);
             } else if (storedPort.getPort().sends().length == 0 && storedPort.getPort().accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
-                    log.warn("Defined cardinality {} on port {} is different from the implementation port {}",
+                    logger.warn("Defined cardinality {} on port {} is different from the implementation port {}",
                              storedPort.getCardinality(),
                              port.name(),
                              port.cardinality());
                 }
-                log.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
+                logger.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
                 this.ports.put(port.name(), endpointPort);
                 storedPort.close();
             } else if (port.sends().length == 0 && port.accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
-                    log.warn("Defined cardinality {} on port {} is different from the implementation port {}",
+                    logger.warn("Defined cardinality {} on port {} is different from the implementation port {}",
                              storedPort.getCardinality(),
                              port.name(),
                              port.cardinality());
                 }
             } else {
-                log.error("Implementation of port {} is defined multiple times! Possibly undefined behavior can be expected.",
+                logger.error("Implementation of port {} is defined multiple times! Possibly undefined behavior can be expected.",
                           port.name());
             }
         }
