@@ -22,8 +22,7 @@ public class TestEndpoint implements Endpoint {
         String message();
     }
 
-    private static final Logger log = LoggerFactory
-                                                   .getLogger(TestEndpoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestEndpoint.class);
 
     @Override
     public MessageHandler onConnect(Connection connection) {
@@ -32,12 +31,12 @@ public class TestEndpoint implements Endpoint {
 
             @Override
             public void handleMessage(Object message) {
-                log.info("got a message {}", message);
+                logger.info("got a message {}", message);
             }
 
             @Override
             public void disconnected() {
-                log.trace("Disconnected TestEndpoint");
+                logger.trace("Disconnected TestEndpoint");
             }
         };
     }
