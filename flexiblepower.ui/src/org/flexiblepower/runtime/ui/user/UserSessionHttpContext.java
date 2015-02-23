@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpContext;
+import org.osgi.service.useradmin.UserAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,8 @@ public class UserSessionHttpContext implements HttpContext {
     private LoginServlet loginServlet;
     private LogoutServlet logoutServlet;
 
+    private ServiceTracker<UserAdmin, UserAdmin> trackedUserAdmins;
+
     @Activate
     public void activate(BundleContext context, Map<String, Object> parameters) throws IOException {
         bundle = context.getBundle();
@@ -61,6 +65,9 @@ public class UserSessionHttpContext implements HttpContext {
 
         if (!disabled) {
             try {
+                trackedUserAdmins = new ServiceTracker<UserAdmin, UserAdmin>(context, UserAdmin.class, null);
+                trackedUserAdmins.open();
+
                 loginServlet = new LoginServlet(context, sessionManager);
                 logoutServlet = new LogoutServlet(context, sessionManager);
             } catch (NoClassDefFoundError error) {
@@ -74,6 +81,8 @@ public class UserSessionHttpContext implements HttpContext {
 
     @Deactivate
     public void deactivate() {
+        trackedUserAdmins.close();
+
         if (loginServlet != null) {
             loginServlet.close();
         }
@@ -86,7 +95,7 @@ public class UserSessionHttpContext implements HttpContext {
     public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.trace("Entering handleSecurity, request.pathInfo = {}", request.getPathInfo());
 
-        if (disabled) {
+        if (disabled || trackedUserAdmins.isEmpty()) {
             return true;
         }
 
