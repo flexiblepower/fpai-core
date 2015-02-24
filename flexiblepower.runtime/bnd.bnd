@@ -2,3 +2,5 @@
 	junit.osgi
 
 -sub: *.bnd
+
+Provide-Capability: flexiblepower.context; runtime=fpai
