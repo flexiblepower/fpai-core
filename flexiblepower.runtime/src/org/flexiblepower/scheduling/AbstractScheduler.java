@@ -19,9 +19,6 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     public static final Unit<Duration> MS = SI.MILLI(SI.SECOND);
 
     public static final ThreadGroup SCHEDULER_GROUP = new ThreadGroup("FlexiblePower Scheduling");
-    {
-        SCHEDULER_GROUP.setDaemon(true);
-    }
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 

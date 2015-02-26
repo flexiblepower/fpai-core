@@ -6,8 +6,6 @@ import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.scheduling.AbstractScheduler;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -15,8 +13,6 @@ import aQute.bnd.annotation.component.Deactivate;
 
 @Component(servicefactory = true, provide = FlexiblePowerContext.class)
 public class RuntimeContext extends AbstractScheduler {
-    private static final Logger logger = LoggerFactory.getLogger(RuntimeContext.class);
-
     private Bundle bundle;
 
     @Activate
