@@ -26,11 +26,6 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     public static final Unit<Duration> MS = SI.MILLI(SI.SECOND);
 
     /**
-     * The {@link ThreadGroup} on which all activated {@link Thread}s are added.
-     */
-    public static final ThreadGroup SCHEDULER_GROUP = new ThreadGroup("FlexiblePower Scheduling");
-
-    /**
      * The logger that will be used for all logging. Subclasses should reuse this.
      */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -67,7 +62,7 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
      */
     public void start(String name) {
         if (running.compareAndSet(false, true)) {
-            thread = new Thread(SCHEDULER_GROUP, this, "Scheduler thread for " + name);
+            thread = new Thread(this, "Scheduler thread for " + name);
             thread.setDaemon(true);
             thread.start();
         }
