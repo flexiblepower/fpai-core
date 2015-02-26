@@ -18,7 +18,10 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractScheduler implements FlexiblePowerContext, Runnable {
     public static final Unit<Duration> MS = SI.MILLI(SI.SECOND);
 
-    public static final ThreadGroup schedulerGroup = new ThreadGroup("FlexiblePower Scheduling");
+    public static final ThreadGroup SCHEDULER_GROUP = new ThreadGroup("FlexiblePower Scheduling");
+    {
+        SCHEDULER_GROUP.setDaemon(true);
+    }
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,7 +37,7 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
 
     public void start(String name) {
         if (running.compareAndSet(false, true)) {
-            thread = new Thread(schedulerGroup, this, "Scheduler thread for " + name);
+            thread = new Thread(SCHEDULER_GROUP, this, "Scheduler thread for " + name);
             thread.setDaemon(true);
             thread.start();
         }
@@ -139,17 +142,18 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                 long waitTime = getNextJobTime() - now;
                 if (waitTime <= 0) {
                     Job<?> job = jobs.remove();
+                    logger.trace("{} is executing job {}", thread.getName(), job);
                     job.run();
                     if (!job.isDone()) {
                         jobs.add(job);
                     }
                 } else {
-                    logger.info("Sleeping {}ms until next job", waitTime);
+                    logger.trace("{} is sleeping {}ms until next job", thread.getName(), waitTime);
                     try {
                         jobs.wait(waitTime);
-                        logger.info("{} wake up", thread.getName());
+                        logger.trace("{} wake up", thread.getName());
                     } catch (final InterruptedException ex) {
-                        logger.info("{} interrupted", thread.getName());
+                        logger.debug("{} interrupted", thread.getName());
                     }
                 }
             }

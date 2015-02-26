@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Job<V> implements ScheduledFuture<V> {
+public final class Job<V> implements ScheduledFuture<V> {
     private final static Logger logger = LoggerFactory.getLogger(Job.class);
 
     public static <V> Job<V> create(final Runnable runnable,
@@ -116,7 +116,6 @@ public class Job<V> implements ScheduledFuture<V> {
     }
 
     public synchronized void run() {
-        logger.trace("Running {}", this);
         try {
             result = callable.call();
         } catch (Exception e) {
