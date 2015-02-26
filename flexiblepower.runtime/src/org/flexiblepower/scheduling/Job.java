@@ -100,7 +100,7 @@ public final class Job<V> implements ScheduledFuture<V> {
             cancelled = true;
             timeOfNextRun = 0;
             timeStep = 0;
-            scheduler.remove(this);
+            scheduler.remove(this, mayInterruptIfRunning);
         }
         return true;
     }
