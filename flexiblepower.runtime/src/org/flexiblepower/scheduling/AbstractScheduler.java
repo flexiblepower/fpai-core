@@ -133,8 +133,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
 
     @Override
     public void run() {
-        while (running.get()) {
-            synchronized (jobs) {
+        synchronized (jobs) {
+            while (running.get()) {
                 long now = currentTimeMillis();
                 long waitTime = getNextJobTime() - now;
                 if (waitTime <= 0) {
@@ -150,6 +150,10 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                     } catch (final InterruptedException ex) {
                     }
                 }
+            }
+
+            while (!jobs.isEmpty()) {
+                jobs.peek().cancel(false);
             }
         }
     }

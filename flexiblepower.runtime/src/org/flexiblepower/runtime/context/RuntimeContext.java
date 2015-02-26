@@ -17,16 +17,20 @@ import aQute.bnd.annotation.component.Deactivate;
 public class RuntimeContext extends AbstractScheduler {
     private static final Logger logger = LoggerFactory.getLogger(RuntimeContext.class);
 
+    private Bundle bundle;
+
     @Activate
     public void activate(ComponentContext context) {
-        Bundle bundle = context.getUsingBundle();
+        bundle = context.getUsingBundle();
         start(bundle.getSymbolicName());
         logger.info("Created RuntimeContext for bundle: {}", bundle.getSymbolicName());
     }
 
     @Deactivate
     public void deactivate() {
+        logger.info("Stopping RuntimeContext for bundle: {}", bundle.getSymbolicName());
         stop();
+        logger.debug("Stopped RuntimeContext for bundle: {}", bundle.getSymbolicName());
     }
 
     @Override
