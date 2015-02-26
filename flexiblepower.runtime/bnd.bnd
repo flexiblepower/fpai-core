@@ -1,5 +1,5 @@
--buildpath: ${default-buildpath},\
-	junit.osgi
+-buildpath: ${default-buildpath}
+-testpath: ${test-buildpath}
 
 -sub: *.bnd
 

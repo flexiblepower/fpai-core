@@ -8,8 +8,12 @@ import javax.measure.unit.SI;
 
 import junit.framework.TestCase;
 
+import org.flexiblepower.runtime.context.RuntimeContext;
 import org.flexiblepower.simulation.api.Simulation;
 import org.flexiblepower.simulation.context.SimulationContext;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.service.component.ComponentContext;
 
 public class SchedulerTest extends TestCase {
     public void testRecurringTask() throws InterruptedException {
@@ -39,5 +43,27 @@ public class SchedulerTest extends TestCase {
         assertEquals(60, runCounter.get());
         System.out.printf("Running took %dms, expected around 1 sec%n", duration);
         assertTrue(duration > 950 && duration < 1150);
+    }
+
+    public void testStopping() throws Exception {
+        Bundle bundle = Mockito.mock(Bundle.class);
+        ComponentContext cc = Mockito.mock(ComponentContext.class);
+        Mockito.when(cc.getUsingBundle()).thenReturn(bundle);
+        Mockito.when(bundle.getSymbolicName()).thenReturn("test.bundle");
+
+        final RuntimeContext context = new RuntimeContext();
+        context.activate(cc);
+
+        Thread stopThread = new Thread() {
+            @Override
+            public void run() {
+                context.deactivate();
+            }
+        };
+        stopThread.setDaemon(true);
+        stopThread.start();
+
+        Thread.sleep(1000);
+        assertFalse(stopThread.isAlive());
     }
 }

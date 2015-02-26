@@ -44,13 +44,13 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
         synchronized (jobs) {
             running.set(false);
             jobs.notifyAll();
+        }
 
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-            } finally {
-                thread = null;
-            }
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+        } finally {
+            thread = null;
         }
     }
 
@@ -144,10 +144,12 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                         jobs.add(job);
                     }
                 } else {
-                    logger.trace("Sleeping {}ms until next job", waitTime);
+                    logger.info("Sleeping {}ms until next job", waitTime);
                     try {
                         jobs.wait(waitTime);
+                        logger.info("{} wake up", thread.getName());
                     } catch (final InterruptedException ex) {
+                        logger.info("{} interrupted", thread.getName());
                     }
                 }
             }
