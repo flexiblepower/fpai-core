@@ -1,7 +1,0 @@
-Bundle-Version: 3.0.0.${qualifier}
-Bundle-SymbolicName: flexiblepower.runtime
-Private-Package: \
-	org.flexiblepower.runtime.context,\
-	org.flexiblepower.runtime.messaging,\
-	org.flexiblepower.scheduling
-Service-Component: *

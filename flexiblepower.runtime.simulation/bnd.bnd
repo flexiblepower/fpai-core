@@ -1,3 +1,6 @@
+-buildpath: ${default-buildpath}, flexiblepower.runtime;version=project
+-testpath: ${test-buildpath}
+
 Bundle-Version: 3.0.0.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime.simulation
 Private-Package: \
@@ -6,3 +9,5 @@ Private-Package: \
 	org.flexiblepower.scheduling
 Export-Package: org.flexiblepower.simulation.api
 Service-Component: *
+
+Provide-Capability: flexiblepower.context; runtime=fpai
