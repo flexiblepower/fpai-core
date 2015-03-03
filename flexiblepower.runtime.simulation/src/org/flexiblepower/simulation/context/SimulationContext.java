@@ -54,7 +54,7 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
     public void run() {
         while (running.get()) {
             if (simulationClock.isRunning() || simulationClock.isStopping()) {
-                synchronized (this) {
+                synchronized (jobs) {
                     long now = simulationClock.getCurrentTimeMillis();
                     logger.trace("Simulation step {}", now);
                     long waitTime = getNextJobTime() - now;
@@ -76,7 +76,7 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
                         try {
                             if (sleepTime > 0) {
                                 isWaiting = true;
-                                wait(sleepTime);
+                                jobs.wait(sleepTime);
                             }
                         } catch (final InterruptedException ex) {
                         }
@@ -86,8 +86,8 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
             } else {
                 // Wait for simulation start
                 try {
-                    synchronized (this) {
-                        wait();
+                    synchronized (jobs) {
+                        jobs.wait();
                         currentTime = simulationClock.getSimulationStartTime();
                     }
                 } catch (InterruptedException e) {

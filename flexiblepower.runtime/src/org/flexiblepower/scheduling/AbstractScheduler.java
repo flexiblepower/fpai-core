@@ -1,5 +1,7 @@
 package org.flexiblepower.scheduling;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -20,6 +22,8 @@ import org.slf4j.LoggerFactory;
  * methods, except the current time.
  */
 public abstract class AbstractScheduler implements FlexiblePowerContext, Runnable {
+    static final SchedulerThreadMonitor THREAD_MONITOR = new SchedulerThreadMonitor();
+
     /**
      * The unit of milliseconds. Used as the base unit to translate {@link Measurable}s into a row amount.
      */
@@ -78,7 +82,10 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
         }
 
         try {
-            thread.join();
+            thread.join(10000);
+            if (thread.isAlive()) {
+                logger.warn("Could not kill {}", thread);
+            }
         } catch (InterruptedException e) {
         } finally {
             thread = null;
@@ -176,6 +183,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     @Override
     public void run() {
         synchronized (jobs) {
+            THREAD_MONITOR.addScheduler(Thread.currentThread().getName(), this);
+
             while (running.get()) {
                 long now = currentTimeMillis();
                 long waitTime = getNextJobTime() - now;
@@ -202,6 +211,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
             while (!jobs.isEmpty()) {
                 jobs.peek().cancel(false);
             }
+
+            THREAD_MONITOR.removeScheduler(Thread.currentThread().getName());
         }
     }
 
@@ -219,5 +230,15 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
         } else {
             return -1;
         }
+    }
+
+    public List<String> getJobs() {
+        List<String> result = new ArrayList<String>();
+        synchronized (jobs) {
+            for (Job<?> job : jobs) {
+                result.add(job.toString());
+            }
+        }
+        return result;
     }
 }

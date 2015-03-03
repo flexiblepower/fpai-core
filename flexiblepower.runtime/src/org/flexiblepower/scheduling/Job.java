@@ -125,11 +125,9 @@ public final class Job<V> implements ScheduledFuture<V> {
         notifyAll();
 
         if (timeStep > 0) {
-            timeOfNextRun += timeStep;
-            logger.trace("Rescheduled {}", this);
+            reschedule(timeOfNextRun + timeStep);
         } else if (timeStep < 0) {
-            timeOfNextRun = scheduler.currentTimeMillis() + timeStep;
-            logger.trace("Rescheduled {}", this);
+            reschedule(scheduler.currentTimeMillis() - timeStep);
         } else {
             timeOfNextRun = 0;
             logger.trace("Unscheduled {}", this);
@@ -178,6 +176,22 @@ public final class Job<V> implements ScheduledFuture<V> {
 
     @Override
     public String toString() {
-        return "Job (" + callable.toString() + ") nextRun: " + timeOfNextRun;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Job (").append(callable).append(')');
+        if (timeOfNextRun > 0) {
+            sb.append(" nextRun: ").append(timeOfNextRun);
+        } else if (cancelled) {
+            sb.append(" cancelled");
+        } else {
+            sb.append(" done");
+        }
+
+        if (timeStep > 0) {
+            sb.append(", scheduled at fixed rate ").append(timeStep).append("ms");
+        } else if (timeStep < 0) {
+            sb.append(", scheduled with delay ").append(timeStep).append("ms");
+        }
+
+        return sb.toString();
     }
 }

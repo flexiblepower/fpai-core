@@ -1,4 +1,6 @@
--buildpath: ${default-buildpath}
+-buildpath: ${default-buildpath},\
+            org.apache.felix.http.servlet-api,\
+            org.apache.felix.webconsole
 -testpath: ${test-buildpath}
 
 Bundle-Version: 3.0.0.${qualifier}
@@ -7,6 +9,10 @@ Private-Package: \
 	org.flexiblepower.runtime.context,\
 	org.flexiblepower.runtime.messaging,\
 	org.flexiblepower.scheduling
+Import-Package:  \
+	javax.servlet*;resolution:=optional,\
+	org.apache.felix*;resolution:=optional,\
+	*
 Service-Component: *
 
 Provide-Capability: flexiblepower.context; runtime=fpai
