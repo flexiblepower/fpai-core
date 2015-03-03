@@ -168,10 +168,8 @@ public final class Job<V> implements ScheduledFuture<V> {
     }
 
     public void reschedule(long time) {
-        if (timeOfNextRun > time) {
-            timeOfNextRun = time;
-            logger.trace("Rescheduled {}", this);
-        }
+        timeOfNextRun = time;
+        logger.trace("Rescheduled {}", this);
     }
 
     @Override

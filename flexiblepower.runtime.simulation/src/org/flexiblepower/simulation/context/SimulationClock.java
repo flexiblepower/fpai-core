@@ -71,11 +71,9 @@ public class SimulationClock {
             stop();
             start(simulationTime, simulationStopTime, newSpeedFactor);
             break;
-        case PAUSED:
+        default:
             speedFactor = newSpeedFactor;
             break;
-        default:
-            throw new IllegalStateException("Cannot change speedFactor while stopped");
         }
     }
 

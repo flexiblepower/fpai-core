@@ -99,59 +99,63 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
     // Start or stop the simulation
 
     @Override
-    public synchronized void startSimulation(Date startTime, double speedFactor) {
+    public void startSimulation(Date startTime, double speedFactor) {
         startSimulation(startTime, null, speedFactor);
     }
 
     @Override
-    public synchronized void startSimulation(Date startTime, Date stopTime, double speedFactor) {
-        logger.trace("Starting simulation @ {} until {} with factor {}", startTime, stopTime, speedFactor);
-        Job<?>[] oldJobs = jobs.toArray(new Job[jobs.size()]);
-        jobs.clear();
+    public void startSimulation(Date startTime, Date stopTime, double speedFactor) {
+        synchronized (jobs) {
+            logger.trace("Starting simulation @ {} until {} with factor {}", startTime, stopTime, speedFactor);
+            Job<?>[] oldJobs = jobs.toArray(new Job[jobs.size()]);
+            jobs.clear();
 
-        for (Job<?> job : oldJobs) {
-            job.reschedule(startTime.getTime());
-            jobs.add(job);
-        }
+            for (Job<?> job : oldJobs) {
+                job.reschedule(startTime.getTime());
+                jobs.add(job);
+            }
 
-        if (stopTime == null) {
-            simulationClock.start(startTime.getTime(), speedFactor);
-        } else {
-            simulationClock.start(startTime.getTime(), stopTime.getTime(), speedFactor);
-        }
+            if (stopTime == null) {
+                simulationClock.start(startTime.getTime(), speedFactor);
+            } else {
+                simulationClock.start(startTime.getTime(), stopTime.getTime(), speedFactor);
+            }
 
-        notifyAll();
-    }
-
-    @Override
-    public synchronized void stopSimulation() {
-        logger.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
-        simulationClock.stop();
-        notifyAll();
-    }
-
-    @Override
-    public synchronized void changeSpeedFactor(double newSpeedFactor) {
-        if (!simulationClock.isStopped()) {
-            simulationClock.changeSpeedFactor(newSpeedFactor);
+            jobs.notifyAll();
         }
     }
 
     @Override
-    public synchronized void pause() {
+    public void stopSimulation() {
+        synchronized (jobs) {
+            logger.trace("Signaling the end of the simulation @ {}", simulationClock.getCurrentTimeMillis());
+            simulationClock.stop();
+            jobs.notifyAll();
+        }
+    }
+
+    @Override
+    public void changeSpeedFactor(double newSpeedFactor) {
+        simulationClock.changeSpeedFactor(newSpeedFactor);
+    }
+
+    @Override
+    public void pause() {
         logger.trace("Pause @ {}", simulationClock.getCurrentTimeMillis());
         simulationClock.pause();
     }
 
     @Override
-    public synchronized void unpause() {
-        logger.trace("Unpause @ {}", simulationClock.getCurrentTimeMillis());
-        simulationClock.unpause();
-        notifyAll();
+    public void unpause() {
+        synchronized (jobs) {
+            logger.trace("Unpause @ {}", simulationClock.getCurrentTimeMillis());
+            simulationClock.unpause();
+            jobs.notifyAll();
+        }
     }
 
     @Override
-    public synchronized Simulation.State getSimulationClockState() {
+    public Simulation.State getSimulationClockState() {
         return simulationClock.getState();
     }
 }
