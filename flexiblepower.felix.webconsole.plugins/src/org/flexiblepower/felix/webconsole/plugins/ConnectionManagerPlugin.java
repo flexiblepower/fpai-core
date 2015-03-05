@@ -27,8 +27,9 @@ import aQute.bnd.annotation.component.Reference;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-@Component(provide = Servlet.class, properties = { "felix.webconsole.title=FPAI: ConnectionManager",
-                                                  "felix.webconsole.label=fpai-connection-manager" })
+@Component(provide = Servlet.class, properties = { "felix.webconsole.title=ConnectionManager",
+                                                  "felix.webconsole.label=fpai-connection-manager",
+                                                  "felix.webconsole.category=FPAI" })
 public class ConnectionManagerPlugin extends HttpServlet {
     private static final long serialVersionUID = 7146852312931261310L;
     private static final Logger logger = LoggerFactory
