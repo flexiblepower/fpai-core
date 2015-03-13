@@ -66,6 +66,16 @@ public class SchedulingServlet extends SimpleWebConsolePlugin {
                     w.print(jobs.get(ix));
                 }
             }
+            long currentExecutionTime = entry.getValue().getCurrentExecutionTime();
+            if (currentExecutionTime > 0) {
+                w.print("</td></tr>");
+                if (i % 2 == 1) {
+                    w.print("<tr class=\"odd ui-state-default\"><td></td><td>");
+                } else {
+                    w.print("<tr class=\"even ui-state-default\"><td></td><td>");
+                }
+                w.print("Current Job executing for: " + currentExecutionTime + "ms");
+            }
             w.print("</td></tr>");
 
             i++;
