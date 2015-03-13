@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,7 +45,7 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     /**
      * The {@link PriorityQueue} of {@link Job}s that are scheduled.
      */
-    protected final PriorityQueue<Job<?>> jobs;
+    protected final PriorityBlockingQueue<Job<?>> jobs;
 
     private volatile Thread thread;
 
@@ -54,7 +55,7 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
      */
     public AbstractScheduler() {
         running = new AtomicBoolean(false);
-        jobs = new PriorityQueue<Job<?>>();
+        jobs = new PriorityBlockingQueue<Job<?>>();
     }
 
     /**
@@ -76,8 +77,10 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
      * Stops the execution thread. Notice: this will cancel all jobs that are still scheduled.
      */
     public void stop() {
+        if (!running.compareAndSet(true, false)) {
+            return; // Already stopped
+        }
         synchronized (jobs) {
-            running.set(false);
             jobs.notifyAll();
         }
 
@@ -182,22 +185,14 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
 
     @Override
     public void run() {
-        synchronized (jobs) {
-            THREAD_MONITOR.addScheduler(Thread.currentThread().getName(), this);
+        THREAD_MONITOR.addScheduler(Thread.currentThread().getName(), this);
 
-            while (running.get()) {
-                long now = currentTimeMillis();
+        while (running.get()) {
+            long now = currentTimeMillis();
+
+            synchronized (jobs) {
                 long waitTime = getNextJobTime() - now;
-                if (waitTime <= 0) {
-                    currentJob = jobs.remove();
-                    startOfCurrentJob = now;
-                    logger.trace("{} is executing job {}", thread.getName(), currentJob);
-                    currentJob.run();
-                    if (!currentJob.isDone()) {
-                        jobs.add(currentJob);
-                    }
-                    currentJob = null;
-                } else {
+                if (waitTime > 0) {
                     logger.trace("{} is sleeping {}ms until next job", thread.getName(), waitTime);
                     try {
                         jobs.wait(waitTime);
@@ -205,15 +200,29 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                     } catch (final InterruptedException ex) {
                         logger.debug("{} interrupted", thread.getName());
                     }
+                    // Go back to the start of the while loop
+                    continue;
                 }
             }
 
-            while (!jobs.isEmpty()) {
-                jobs.peek().cancel(false);
+            // Now the wait time is <= 0, so execute the first job
+            currentJob = jobs.remove();
+            startOfCurrentJob = now;
+            logger.trace("{} is executing job {}", thread.getName(), currentJob);
+            currentJob.run();
+            if (!currentJob.isDone()) {
+                jobs.add(currentJob);
             }
-
-            THREAD_MONITOR.removeScheduler(Thread.currentThread().getName());
+            currentJob = null;
         }
+
+        while (!jobs.isEmpty()) {
+            jobs.peek().cancel(false);
+        }
+
+        logger.debug("Stopped thread [{}]", thread.getName());
+
+        THREAD_MONITOR.removeScheduler(Thread.currentThread().getName());
     }
 
     /**
