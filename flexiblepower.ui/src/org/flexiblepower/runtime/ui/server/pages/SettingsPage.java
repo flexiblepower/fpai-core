@@ -1,6 +1,8 @@
 package org.flexiblepower.runtime.ui.server.pages;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
@@ -12,6 +14,9 @@ import org.flexiblepower.runtime.ui.server.widgets.AbstractWidgetManager;
 import org.flexiblepower.runtime.ui.server.widgets.WidgetRegistration;
 import org.flexiblepower.runtime.ui.server.widgets.WidgetRegistry;
 import org.flexiblepower.ui.Widget;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +35,7 @@ import aQute.bnd.annotation.metatype.Meta.OCD;
            properties = { "widget.type=full", "widget.name=settings", "widget.ranking=1000000" })
 public class SettingsPage extends AbstractWidgetManager implements Widget {
     private static final Logger logger = LoggerFactory.getLogger(SettingsPage.class);
+    private final List configurationList = new ArrayList();
 
     @OCD(description = "Configuration of the Settings Servlet", name = "Settings Configuration")
     public interface Config {
@@ -43,12 +49,19 @@ public class SettingsPage extends AbstractWidgetManager implements Widget {
     }
 
     private long expirationTime = 31536000000L;
+    private ConfigurationAdmin configurationAdmin;
 
     @Activate
     public void activate(Map<String, Object> properties) {
         logger.trace("Entering activate, properties = " + properties);
         Config config = Configurable.createConfigurable(Config.class, properties);
         expirationTime = config.expireTime() * 1000;
+
+        Bundle[] bundles = FrameworkUtil.getBundle(this.getClass()).getBundleContext().getBundles();
+
+        MetaTypeServiceImpl metaTypeService = new MetaTypeServiceImpl();
+        metaTypeService.start(FrameworkUtil.getBundle(this.getClass()).getBundleContext());
+
         logger.trace("Leaving activate");
     }
 
@@ -60,6 +73,11 @@ public class SettingsPage extends AbstractWidgetManager implements Widget {
     public synchronized void addWidget(Widget widget, Map<String, Object> properties) {
         super.addWidget(widget, properties);
         notifyAll();
+    }
+
+    @Reference
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
     @Override
@@ -111,4 +129,5 @@ public class SettingsPage extends AbstractWidgetManager implements Widget {
         }
         return widgetInfo;
     }
+
 }
