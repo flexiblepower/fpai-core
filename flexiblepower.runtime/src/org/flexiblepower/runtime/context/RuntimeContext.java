@@ -29,7 +29,7 @@ import aQute.bnd.annotation.component.Deactivate;
 @Component(servicefactory = true, provide = { FlexiblePowerContext.class,
                                              ScheduledExecutorService.class,
                                              TimeService.class })
-public class RuntimeContext extends AbstractScheduler implements ScheduledExecutorService {
+public class RuntimeContext extends AbstractScheduler implements ScheduledExecutorService, TimeService {
     private Bundle bundle;
 
     @Activate
@@ -143,5 +143,17 @@ public class RuntimeContext extends AbstractScheduler implements ScheduledExecut
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
         return scheduleWithFixedDelay(command, measure(initialDelay, unit), measure(delay, unit));
+    }
+
+    // Time service methods
+
+    @Override
+    public Date getTime() {
+        return currentTime();
+    }
+
+    @Override
+    public long getCurrentTimeMillis() {
+        return currentTimeMillis();
     }
 }

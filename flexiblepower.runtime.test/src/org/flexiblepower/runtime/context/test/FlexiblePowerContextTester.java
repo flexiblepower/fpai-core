@@ -33,6 +33,7 @@ public class FlexiblePowerContextTester extends TestCase {
                                                                                         null);
         contextTracker.open();
         FlexiblePowerContext service = contextTracker.waitForService(10000);
+        assertNotNull(service);
 
         return service;
     }

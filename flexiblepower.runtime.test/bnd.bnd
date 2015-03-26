@@ -16,9 +16,15 @@ Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOT
 	flexiblepower.runtime.test;version=latest,\
 	ch.qos.logback.classic;version=latest,\
 	ch.qos.logback.core;version=latest,\
+	org.apache.felix.http.api;version=latest,\
+	org.apache.felix.http.jetty;version=latest,\
+	org.apache.felix.http.servlet-api;version=latest,\
+	org.apache.felix.webconsole;version=latest,\
+	org.apache.felix.webconsole.plugins.ds;version=latest,\
 	org.apache.felix.configadmin;version=latest,\
 	org.apache.felix.scr;version=latest,\
 	org.apache.felix.metatype;version=latest,\
+	org.apache.felix.eventadmin;version=latest,\
 	biz.aQute.bnd.annotation;version=latest,\
 	org.slf4j.osgi-over-slf4j;version=latest,\
 	slf4j.api;version=latest
