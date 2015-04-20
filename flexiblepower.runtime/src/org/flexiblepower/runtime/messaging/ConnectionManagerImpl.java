@@ -144,8 +144,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Modified
-    public void modified() {
-        // All configuration modifications will be ignored! Only on boot, will everything be started
+    public void modified(Map<String, Object> properties) {
+        // Only the autoConnect change will be parsed, other changes will be ignored
+        parseAutoConnect(new Hashtable<String, Object>(properties));
     }
 
     @Deactivate
