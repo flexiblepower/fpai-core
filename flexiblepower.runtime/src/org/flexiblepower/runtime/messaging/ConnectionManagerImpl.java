@@ -38,17 +38,24 @@ import aQute.bnd.annotation.metatype.Meta;
            provide = ConnectionManager.class)
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final String KEY_ACTIVE_CONNECTIONS = "active.connections";
+    private static final String KEY_AUTOCONNECT = "autoconnect";
     private static final Logger logger = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
-    public static interface Config {
+    @Meta.OCD(name = "Connection Manager Configuration",
+              description = "The ConnectionManager is responsible for wiring 2 ports for 2 different endpoints to each other."
+                            + "Warning: any modifications during runtime won't be activated right away. "
+                            + "If you want to connect something, use the special UI for that.")
+    public interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
                  deflt = "",
-                 description = "List of the active connections (e.g. endpoint:a-endpoint:b). "
-                               + "Warning: any modifications during runtime won't be activated right away. "
-                               + "If you want to connect something, use the special UI for that.",
+                 description = "List of the active connections (e.g. endpoint:a-endpoint:b).",
                  required = false)
-        List<String>
-                active_connections();
+        List<String> activeConnections();
+
+        @Meta.AD(name = KEY_AUTOCONNECT,
+                 deflt = "false",
+                 description = "When this is set to true, every new Endpoint will trigger an autoconnect call")
+        boolean autoconnect();
     }
 
     private final Map<String, Object> otherProperties;
@@ -57,12 +64,15 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
     private final Set<String> activeConnections;
 
+    private boolean autoconnect;
+
     public ConnectionManagerImpl() {
         endpointWrappers = new TreeMap<String, EndpointWrapper>();
         otherProperties = new HashMap<String, Object>();
         messageListenerContainer = new MessageListenerContainer();
 
         activeConnections = new TreeSet<String>();
+        autoconnect = false;
     }
 
     private ConfigurationAdmin configurationAdmin;
@@ -105,6 +115,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
                     throw new IllegalArgumentException("The active connections should be a list of strings");
                 }
             }
+
+            parseAutoConnect(properties);
         }
         logger.debug("These connections are configured at boottime: {}", activeConnections);
 
@@ -116,6 +128,17 @@ public class ConnectionManagerImpl implements ConnectionManager {
                         connection.connect();
                     }
                 }
+            }
+        }
+    }
+
+    private void parseAutoConnect(Dictionary<String, Object> properties) {
+        Object autoconnect = properties.get(KEY_AUTOCONNECT);
+        if (autoconnect != null) {
+            if (autoconnect instanceof Boolean) {
+                this.autoconnect = (Boolean) autoconnect;
+            } else {
+                this.autoconnect = Boolean.parseBoolean(autoconnect.toString());
             }
         }
     }
@@ -194,6 +217,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 endpointWrappers.put(key, wrapper);
                 detectPossibleConnections(wrapper);
                 logger.debug("Added endpoint on key [{}]", key);
+
+                if (autoconnect) {
+                    autoConnect();
+                }
             }
         } catch (IllegalArgumentException ex) {
             logger.warn("Could not add endpoint: {}", ex.getMessage());
