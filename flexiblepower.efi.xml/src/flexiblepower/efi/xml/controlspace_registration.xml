@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource_message type=TimeShifter_Controlspace_Registration>
+	<resource_message_id>1</resource_message_id>
+	<resource_id>test</resource_id>
+	<timestamp>2015-01-01T12:00:00Z</timestamp>
+	<allocation_delay>1</allocation_delay>
+	<commodity_set>
+		<electricity>true</electricity>
+		<gas>false</gas>
+		<heat>false</heat>
+	</commodity_set> 
+</resource_message>
+
+<resource_message type=Uncontrolled_Controlspace_Registration>
+	<resource_message_id>1</resource_message_id>
+	<resource_id>test</resource_id>
+	<timestamp>2015-01-01T12:00:00Z</timestamp>
+	<allocation_delay>1</allocation_delay>
+	<commodity_set>
+		<electricity>true</electricity>
+		<gas>false</gas>
+		<heat>false</heat>
+	</commodity_set> 
+</resource_message>
