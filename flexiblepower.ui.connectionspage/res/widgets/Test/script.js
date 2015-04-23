@@ -33,23 +33,31 @@ jsPlumb.ready(function() {
 	};
 	
 	jsPlumb.batch(function() {
-		jsPlumb.addEndpoint("powerMatcher", endpointProps, {
+		var ep = null;
+		
+		ep = jsPlumb.addEndpoint("powerMatcher", endpointProps, {
 			uuid: "powerMatcher:timeshifter",
 			label: "timeshifter"
 		});
-		jsPlumb.addEndpoint("dishwasher-manager", endpointProps, {
+		ep.setParameter("potentialTargets", ["dishwasher-manager:controller"]);
+		
+		ep = jsPlumb.addEndpoint("dishwasher-manager", endpointProps, {
 			uuid: "dishwasher-manager:driver",
 			label: "driver"
 		});
-		jsPlumb.addEndpoint("dishwasher-manager", endpointProps, {
+		ep.setParameter("potentialTargets", ["dishwasher-driver:manager"]);
+		
+		ep = jsPlumb.addEndpoint("dishwasher-manager", endpointProps, {
 			uuid: "dishwasher-manager:controller",
 			label: "controller"
 		});
-		d = jsPlumb.addEndpoint("dishwasher-driver", endpointProps, {
+		ep.setParameter("potentialTargets", ["powerMatcher:timeshifter"]);
+		
+		ep = jsPlumb.addEndpoint("dishwasher-driver", endpointProps, {
 			uuid: "dishwasher-driver:manager",
 			label: "manager"			
 		});
-		d.setParameter("potentialTargets", ["dishwasher-manager:driver"]);
+		ep.setParameter("potentialTargets", ["dishwasher-manager:driver"]);
 		
 		jsPlumb.draggable(document.querySelectorAll(".node"), { grid: [20, 20] });
 		
