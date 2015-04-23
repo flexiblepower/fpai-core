@@ -1,0 +1,157 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/efi" xmlns:tns="http://www.example.org/efi" elementFormDefault="qualified">
+
+
+    <complexType name="ResourceMessage">
+    	<sequence>
+    		<element name="resourceMessageId" type="ID"></element>
+    		<element name="resourceId" type="ID"></element>
+    		<element name="NewElement" type="dateTime"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ControlSpaceRegistration">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage">
+    			<sequence>
+    				<element name="allocationDelay" type="duration"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="ControlSpaceUpdate">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage">
+    			<sequence>
+    				<element name="validFrom" type="dateTime"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="Allocation">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage">
+    			<sequence>
+    				<element name="controlSpaceUpdateId"
+    					type="ID">
+    				</element>
+    				<element name="isEmergencyAllocation" type="boolean"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="AllocationStatusUpdate">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage">
+    			<sequence>
+    				<element name="allocationId" type="ID"></element>
+                    <element name="status" type="tns:AllocationStatus"></element>
+                    <element name="additionalInfo" type="string"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <simpleType name="AllocationStatus">
+    	<restriction base="string">
+    		<enumeration value="ACCEPTED"></enumeration>
+    		<enumeration value="REJECTED"></enumeration>
+    		<enumeration value="PROCESSING"></enumeration>
+    		<enumeration value="STARTED"></enumeration>
+    		<enumeration value="FINISHED"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+     <simpleType name="CommodityEnum">
+    	<restriction base="string">
+    		<enumeration value="ELECTRICITY"></enumeration>
+    		<enumeration value="GAS"></enumeration>
+    		<enumeration value="HEAT"></enumeration>
+    	</restriction>
+    </simpleType>
+
+
+    <complexType name="ControlSpaceRevoke">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="AllocationRevoke">
+    	<complexContent>
+    		<extension base="tns:ResourceMessage"></extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="Commodity">
+    	<sequence>
+    		<element name="billableUnit" type="string"></element>
+    		<element name="flowUnit" type="string"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Gas">
+    	<complexContent>
+    		<extension base="tns:Commodity"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electricity">
+    	<complexContent>
+    		<extension base="tns:Commodity"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Heat">
+    	<complexContent>
+    		<extension base="tns:Commodity"></extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="ProfileElement">
+    	<sequence>
+    		<element name="duration" type="duration"></element>
+    		<element name="value" type="double"></element>
+    		<element name="unit" type="string"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Profile">
+    	<sequence>
+    		<element name="element" type="tns:ProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="commocity" type="tns:CommodityEnum"></attribute>
+    </complexType>
+    
+    <complexType name="UncertainMeasure">
+    	<sequence>
+    		<element name="the68PPRLowerBound" type="double"></element>
+    		<element name="the95PPRLowerBound" type="double"></element>
+    		<element name="mean" type="double"></element>
+    		<element name="the95PPRUpperBound" type="double"></element>
+    		<element name="the68PPRUpperBound" type="double"></element>
+    		<element name="unit" type="string"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="UncertaintyProfileElement">
+    	<sequence>
+    		<element name="duration" type="duration"></element>
+    		<element name="value" type="double"></element>
+    		<element name="unit" type="string"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="UncertaintyProfile">
+    	<sequence>
+    		<element name="element" type="tns:UncertaintyProfileElement"
+    			maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="commocity" type="tns:CommodityEnum"></attribute>
+    </complexType>
+
+</schema>
