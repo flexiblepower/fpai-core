@@ -1,6 +1,12 @@
 jsPlumb.ready(function() {
 	jsPlumb.setContainer(document.querySelectorAll("div#main"))
 	
+	jsPlumb.registerEndpointTypes({
+		"disabled": { paintStyle: {
+			strokeStyle: "red"
+		}}
+	});
+	
 	var endpointProps = {
         endpoint: "Dot",
         paintStyle: {
@@ -39,12 +45,34 @@ jsPlumb.ready(function() {
 			uuid: "dishwasher-manager:controller",
 			label: "controller"
 		});
-		jsPlumb.addEndpoint("dishwasher-driver", endpointProps, {
+		d = jsPlumb.addEndpoint("dishwasher-driver", endpointProps, {
 			uuid: "dishwasher-driver:manager",
-			label: "manager"
+			label: "manager"			
 		});
+		d.setParameter("potentialTargets", ["dishwasher-manager:driver"]);
 		
 		jsPlumb.draggable(document.querySelectorAll(".node"), { grid: [20, 20] });
-	})
+		
+		jsPlumb.bind("beforeDrag", function(params) {
+			jsPlumb.batch(function() {
+				jsPlumb.selectEndpoints().setEnabled(false);
+				jsPlumb.selectEndpoints().setType("disabled");
+				
+				params.endpoint.clearTypes();
+				
+				var targets = params.endpoint.getParameter("potentialTargets");
+				for(ix in targets) {
+					var target = jsPlumb.getEndpoint(targets[ix]);
+					target.setEnabled(true);
+					target.clearTypes();
+				}
+			});
+		});
+		
+		jsPlumb.bind("connectionDragStop", function(params) {
+			jsPlumb.selectEndpoints().setEnabled(true);
+			jsPlumb.selectEndpoints().each(function(ep) {ep.clearTypes();});
+		});
+	});
 	
 });
