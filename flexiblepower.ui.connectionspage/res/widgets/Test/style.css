@@ -1,6 +1,11 @@
 #main {
 	width: 100%;
 	height: 100%;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .node {
@@ -15,7 +20,7 @@
     filter: alpha(opacity=80);
     width: 160px;
     height: 60px;
-    line-height: 1em;
+    line-height: 1.1em;
     cursor: pointer;
     text-align: center;
     z-index: 20;
@@ -55,4 +60,11 @@
 
 #main ._jsPlumb_overlay {
     z-index: 21;
+}
+
+.connectionLabel {
+	z-index: 23;
+	background: white;
+	padding: .5em;
+	border: 1px solid #346789;
 }
