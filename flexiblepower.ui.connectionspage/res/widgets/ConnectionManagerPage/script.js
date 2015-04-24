@@ -43,18 +43,20 @@ jsPlumb.ready(function() {
 		// Now create the node
 		var node = $('<div class="node" id="' + endpoint.id + '"><p class="small">' + pkgName + '</p><p>' + epName + '</p><p class="small">' + epId + '</p></div>');
 		
-//		node.hover(function() {
+//		var propertiesNode = $('<div class="tooltip"></div>')
+//		if(endpoint.properties) {
 //			for(ix in endpoint.properties) {
-//				var prop = endpoint.properties[ix];
-//				node.appendChild(_createTextNode(prop, true));
+//				prop = endpoint.properties[ix];
+//				$('<p class="small">' + prop + "</p>").appendTo(propertiesNode);
 //			}
+//		}
+		
+//		node.bind("mouseenter", function(event) {
+//			propertiesNode.css({left:event.clientX,top: event.clientY}).show();
 //		});
-		if(endpoint.properties) {
-			for(ix in endpoint.properties) {
-				prop = endpoint.properties[ix];
-				$('<p class="small">' + prop + "</p>").appendTo(node);
-			}
-		}
+//		node.bind("mouseexit", function(event) {
+//			propertiesNode.hide();
+//		});
 		
 		for(key in endpoint.style) {
 			node.css(key, endpoint.style[key]);
@@ -118,7 +120,7 @@ jsPlumb.ready(function() {
 						
 						params.endpoint.clearTypes();
 						
-						var targets = params.endpoint.potentialTargets;
+						var targets = params.endpoint.getParameter("potentialTargets");
 						for(ix in targets) {
 							var target = instance.getEndpoint(targets[ix]);
 							target.setEnabled(true);
@@ -130,6 +132,28 @@ jsPlumb.ready(function() {
 				instance.bind("connectionDragStop", function(params) {
 					instance.selectEndpoints().setEnabled(true);
 					instance.selectEndpoints().each(function(ep) {ep.clearTypes();});
+				});
+				
+				instance.bind("connection", function(params) {
+					$.ajax({
+						type: "POST",
+						contentType: 'application/json',
+						processData: false,
+						url: "connect",
+						data: JSON.stringify({ source: params.sourceEndpoint.getUuid(), target: params.targetEndpoint.getUuid() }),
+					});
+				});
+
+				instance.bind("connectionDetached", function(params) {
+					if(params.targetEndpoint) {
+						$.ajax({
+							type: "POST",
+							contentType: 'application/json',
+							processData: false,
+							url: "disconnect",
+							data: JSON.stringify({ source: params.sourceEndpoint.getUuid(), target: params.targetEndpoint.getUuid() }),
+						});
+					}
 				});
 			});
 		}

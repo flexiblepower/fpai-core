@@ -289,6 +289,74 @@ public class ConnectionManagerPage implements Widget {
         connectionManager.autoConnect();
     }
 
+    public static class ConnectionInfo {
+        private String source, target;
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getSourceEndpoint() {
+            return source.substring(0, source.lastIndexOf(':'));
+        }
+
+        public String getSourcePort() {
+            return source.substring(source.lastIndexOf(':') + 1);
+        }
+
+        public String getTargetEndpoint() {
+            return target.substring(0, target.lastIndexOf(':'));
+        }
+
+        public String getTargetPort() {
+            return target.substring(target.lastIndexOf(':') + 1);
+        }
+    }
+
+    public boolean connect(ConnectionInfo info) {
+        ManagedEndpoint sourceEndpoint = connectionManager.getEndpoint(info.getSourceEndpoint());
+        ManagedEndpoint targetEndpoint = connectionManager.getEndpoint(info.getTargetEndpoint());
+
+        if (sourceEndpoint != null && targetEndpoint != null) {
+            EndpointPort sourcePort = sourceEndpoint.getPort(info.getSourcePort());
+            EndpointPort targetPort = targetEndpoint.getPort(info.getTargetPort());
+
+            if (sourcePort != null && targetPort != null) {
+                PotentialConnection connection = sourcePort.getPotentialConnection(targetPort);
+                if (connection != null && connection.isConnectable()) {
+                    connection.connect();
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean disconnect(ConnectionInfo info) {
+        ManagedEndpoint sourceEndpoint = connectionManager.getEndpoint(info.getSourceEndpoint());
+        ManagedEndpoint targetEndpoint = connectionManager.getEndpoint(info.getTargetEndpoint());
+
+        if (sourceEndpoint != null && targetEndpoint != null) {
+            EndpointPort sourcePort = sourceEndpoint.getPort(info.getSourcePort());
+            EndpointPort targetPort = targetEndpoint.getPort(info.getTargetPort());
+
+            if (sourcePort != null && targetPort != null) {
+                PotentialConnection connection = sourcePort.getPotentialConnection(targetPort);
+                if (connection != null && connection.isConnected()) {
+                    connection.disconnect();
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public String getTitle(Locale locale) {
         return "Connection Manager";
