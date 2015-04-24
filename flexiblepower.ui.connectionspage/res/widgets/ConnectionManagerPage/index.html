@@ -1,3 +1,69 @@
+<style type="text/css">
+#main {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	position: absolute;
+	left: 1em;
+	right: 1em;
+	top: 150px;
+	bottom: 130px;
+	overflow: auto;
+	background: white;
+}
+
+.node {
+    position: absolute;
+    padding: 1em 0.5em;
+    z-index: 20;
+    cursor: pointer;
+
+    text-align: center;
+    color: white;
+    line-height: 1.1em;
+    overflow: auto;
+    
+    background-color: rgb(68,79,85);
+    opacity: 0.8;
+
+	border: 5px solid rgb(161,168,171);
+    -moz-border-radius: 1em;
+    border-radius: 1em;
+}
+
+.node p {
+	width: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+.node p.small {
+	font-size: 70%;
+}
+
+#main ._jsPlumb_connector {
+    z-index: 4;
+}
+
+#main ._jsPlumb_endpoint {
+    z-index: 22;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+#main ._jsPlumb_endpoint._jsPlumb_hover {
+	opacity: 0.7;
+}
+
+#main ._jsPlumb_overlay {
+    z-index: 21;
+    font-weight: bold !important;
+}
+</style>
+
 <div id="main">
 </div>
 <script src="dom.jsPlumb-1.7.5.js"></script>
