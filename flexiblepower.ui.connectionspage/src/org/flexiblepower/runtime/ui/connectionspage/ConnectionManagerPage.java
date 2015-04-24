@@ -139,7 +139,7 @@ public class ConnectionManagerPage implements Widget {
 
     public static class State {
         private final Set<EndpointState> endpoints;
-        private final List<String[]> activeConnections;
+        private final Set<String> activeConnections;
 
         public State(ConnectionManager connectionManager, BundleContext context) {
             endpoints = new TreeSet<EndpointState>();
@@ -147,7 +147,16 @@ public class ConnectionManagerPage implements Widget {
                 endpoints.add(new EndpointState(context, ep));
             }
 
-            activeConnections = new ArrayList<String[]>();
+            activeConnections = new TreeSet<String>();
+            for (ManagedEndpoint ep : connectionManager.getEndpoints().values()) {
+                for (EndpointPort port : ep.getPorts().values()) {
+                    for (PotentialConnection conn : port.getPotentialConnections().values()) {
+                        if (conn.isConnected()) {
+                            activeConnections.add(conn.toString());
+                        }
+                    }
+                }
+            }
         }
 
         private Set<EndpointState> nextLayer(Set<EndpointState> lastLayer, Set<EndpointState> toLayout) {
@@ -251,7 +260,7 @@ public class ConnectionManagerPage implements Widget {
             return endpoints;
         }
 
-        public List<String[]> getActiveConnections() {
+        public Set<String> getActiveConnections() {
             return activeConnections;
         }
     }
@@ -274,6 +283,10 @@ public class ConnectionManagerPage implements Widget {
         State state = new State(connectionManager, bunleContext);
         state.performLayout();
         return state;
+    }
+
+    public void autoconnect() {
+        connectionManager.autoConnect();
     }
 
     @Override

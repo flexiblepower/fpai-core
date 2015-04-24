@@ -88,6 +88,7 @@ jsPlumb.ready(function() {
 		        uuid: endpoint.id + ":" + port.id,
 		        label: port.id,
 		        parameters: { potentialTargets: port.potentialConnections },
+		        maxConnections: port.isMultiple ? -1 : 1,
 			});
 		}
 	}
@@ -97,6 +98,17 @@ jsPlumb.ready(function() {
 			instance.batch(function() {
 				for(ix in data.endpoints) {
 					_addEndpoint(data.endpoints[ix]);
+				}
+				
+				// Now create the connections that already are active
+				for(ix in data.activeConnections) {
+					var connection = data.activeConnections[ix];
+					
+					var match = connection.match(/^(.*:[a-z]*)-(.*:[a-z]*)$/);
+					instance.connect({
+						source: instance.getEndpoint(match[1]), 
+						target: instance.getEndpoint(match[2]),
+					});
 				}
 				
 				instance.bind("beforeDrag", function(params) {
