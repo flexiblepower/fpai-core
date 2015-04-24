@@ -17,7 +17,7 @@ jsPlumb.ready(function() {
 		return node;
 	}
 	
-	var _addEndpoint = function(endpointId, ports) {
+	var _addEndpoint = function(endpointId, ports, style) {
 		// First check if a node with that ID already exists, then just return
 		if(document.getElementById(endpointId) != null) {
 			return;
@@ -47,11 +47,16 @@ jsPlumb.ready(function() {
 		node.appendChild(_createTextNode(pkgName, true));
 		node.appendChild(_createTextNode(epName, false));
 		node.appendChild(_createTextNode(epId, true));
-		node.style.left = (Math.random() * 1000) + "px";
-		node.style.top = (Math.random() * 500) + "px";
+		
+		for(key in style) {
+			node.style[key] = style[key];
+		}
 		
 		// Add the node to the document
 		document.getElementById("main").appendChild(node);
+		
+		// Make it draggable
+		instance.draggable(node);
 				
 		// Now create the ports
 		for(portId in ports) {			
@@ -59,15 +64,19 @@ jsPlumb.ready(function() {
 		        endpoint: "Dot",
 		        isSource: true,
 		        isTarget: true,
-		        connector: [ "Flowchart", { stub: 20, gap: 10, cornerRadius: 5} ],
+		        connector: [ "Bezier", { curviness: 50, gap: 10 }], // [ "Flowchart", { stub: 20, gap: 10, cornerRadius: 5} ],
 		        paintStyle: {
 		            strokeStyle: "#216477",
-		            fillStyle: "transparent",
+		            fillStyle: "#216477",
 		            radius: 10,
-		            lineWidth: 3
+		            lineWidth: 3,
 		        },
 		        hoverPaintStyle: {
-		            fillStyle: "#216477"
+		            fillStyle: "#216477",
+		            lineWidth: 3,
+		        },
+		        connectorStyle: {
+		        	strokeStyle: "#216477",
 		        },
 		        anchor: ["Continuous", { faces:[ "bottom", "top" ] } ],
 		        uuid: endpointId + ":" + portId,
@@ -83,16 +92,24 @@ jsPlumb.ready(function() {
 			buffer: [],
 			unconstrained: [],
 			uncontrolled: []
+		}, {
+			left: "50px",
+			top: "30px",
+			width: "320px",
 		});
 		_addEndpoint("org.flexblepower.manager.dishwasher.DishwasherManager.1", {
 			controller: ["net.powermatcher.fpai.controller.PowerMatcherController.auctioneer:timeshifter"],
 			driver: ["org.flexiblepower.driver.dishwasher.DishwasherDriver.1:manager"]
+		}, {
+			left: "50px",
+			top: "230px",
 		});
 		_addEndpoint("org.flexiblepower.driver.dishwasher.DishwasherDriver.1", {
 			manager: ["org.flexblepower.manager.dishwasher.DishwasherManager.1:driver"]
+		}, {
+			left: "50px",
+			top: "430px",
 		});
-		
-		instance.draggable(document.querySelectorAll(".node"), { grid: [200, 100] });
 		
 		instance.bind("beforeDrag", function(params) {
 			instance.batch(function() {
