@@ -52,9 +52,9 @@ jsPlumb.ready(function() {
 		
 		// Add the node to the document
 		document.getElementById("main").appendChild(node);
-		
+				
 		// Now create the ports
-		for(portId in ports) {
+		for(portId in ports) {			
 			var ep = instance.addEndpoint(endpointId, {
 		        endpoint: "Dot",
 		        isSource: true,
