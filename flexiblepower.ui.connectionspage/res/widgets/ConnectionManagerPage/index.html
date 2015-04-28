@@ -6,12 +6,43 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	position: absolute;
-	left: 1em;
-	right: 1em;
+	left: 0;
+	width: 80%;
 	top: 150px;
 	bottom: 130px;
+	padding: 1em;
 	overflow: auto;
 	background: white;
+}
+
+#properties {
+	position: absolute;
+	top: 150px;
+	bottom: 130px;
+	right: 0;
+	padding: 1em;
+	width: 20%;
+	overflow: auto;
+	background: white;
+	border-left: 2px solid #33333;
+	z-index: 30;
+}
+
+#properties input {
+	width: 100%;
+}
+
+#properties h1 {
+	width: 100%;
+	font-size: 150%;
+	padding-top: 1em;
+	padding-bottom: .5em;
+	margin-bottom: .5em;
+	border-bottom: 1px dotted black;
+}
+
+#properties p {
+	line-height: 1.3em;
 }
 
 .node {
@@ -65,6 +96,10 @@
 </style>
 
 <div id="main">
+</div>
+<div id="properties">
+	<input type="button" value="Autoconnect" id="autoconnect" />
+	<h1>Properties of <span id="componentname">&lt;no selection&gt;</span></h1>
 </div>
 <script src="dom.jsPlumb-1.7.5.js"></script>
 <script src="script.js"></script>

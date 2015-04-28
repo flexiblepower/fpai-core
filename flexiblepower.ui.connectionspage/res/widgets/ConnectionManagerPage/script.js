@@ -43,20 +43,19 @@ jsPlumb.ready(function() {
 		// Now create the node
 		var node = $('<div class="node" id="' + endpoint.id + '"><p class="small">' + pkgName + '</p><p>' + epName + '</p><p class="small">' + epId + '</p></div>');
 		
-//		var propertiesNode = $('<div class="tooltip"></div>')
-//		if(endpoint.properties) {
-//			for(ix in endpoint.properties) {
-//				prop = endpoint.properties[ix];
-//				$('<p class="small">' + prop + "</p>").appendTo(propertiesNode);
-//			}
-//		}
-		
-//		node.bind("mouseenter", function(event) {
-//			propertiesNode.css({left:event.clientX,top: event.clientY}).show();
-//		});
-//		node.bind("mouseexit", function(event) {
-//			propertiesNode.hide();
-//		});
+		node.bind("mouseenter", function(event){
+			$('#properties p, #properties br').detach();
+			$('#componentname').html(epName);
+			var container = $('#properties');
+			
+			$('<p>Package: ' + pkgName + '</p>').appendTo(container);
+			$('<p>Unique ID: ' + epId + '</p>').appendTo(container);
+			$('<br />').appendTo(container);
+			for(ix in endpoint.properties) {
+				$('<p>' + endpoint.properties[ix] + '</p>').appendTo(container);
+			}
+			
+		});
 		
 		for(key in endpoint.style) {
 			node.css(key, endpoint.style[key]);
@@ -67,7 +66,7 @@ jsPlumb.ready(function() {
 		
 		// Make it draggable
 		instance.draggable(node);
-				
+		
 		// Now create the ports
 		for(ix in endpoint.ports) {
 			port = endpoint.ports[ix];
@@ -159,4 +158,11 @@ jsPlumb.ready(function() {
 		}
 	});
 	
+	$('#autoconnect').click(function() {
+		$.ajax("autoconnect", {
+			success: function(data) {
+				window.location.reload();
+			}
+		});
+	});
 });
