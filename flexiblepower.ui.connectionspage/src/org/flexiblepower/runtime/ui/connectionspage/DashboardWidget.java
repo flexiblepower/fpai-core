@@ -13,6 +13,6 @@ public class DashboardWidget extends BaseWidget implements Widget {
 
     @Override
     public String getTitle(Locale locale) {
-        return "Connection Manager";
+        return "Connections";
     }
 }
