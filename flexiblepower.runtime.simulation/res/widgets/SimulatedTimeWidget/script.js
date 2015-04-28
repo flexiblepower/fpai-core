@@ -9,7 +9,7 @@ $(window).load(function() {
 		var startBtn = $("#startstop");
 		var pauseBtn = $("#pauseunpause");
 		
-		if(data.state == "RUNNING") {
+		if(data.state == "RUNNING" || data.state == "STOPPING") {
 			startBtn.text("Stop").removeAttr('disabled');
 			pauseBtn.text("Pause").removeAttr('disabled');
 			$("#period").attr('disabled', 'disabled');
@@ -30,7 +30,11 @@ $(window).load(function() {
 
 	$("#startstop").click(function() {
 		var btn = $(this);
-		var startTime = 1325376000000;
+		var parts = $("#datepicker").val().split('-');
+		if(parts.length != 3) alert("Invalid date entered. Use dd-mm-yyyy format.");
+		var date = new Date(parts[2], parts[1]-1, parts[0]); // months are 0-based
+		var startTime = date.getTime()+1000*60*60*10;
+		if(isNaN(startTime)) startTime = 1325376000000;
 		var stopTime = 0;
 		switch($("#period").val()) {
 			case "year":  stopTime = startTime + 31556926000; break;
