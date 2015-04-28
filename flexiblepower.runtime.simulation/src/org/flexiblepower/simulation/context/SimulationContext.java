@@ -53,8 +53,8 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
     @Override
     public void run() {
         while (running.get()) {
-            if (simulationClock.isRunning() || simulationClock.isStopping()) {
-                synchronized (jobs) {
+            synchronized (jobs) {
+                if (simulationClock.isRunning() || simulationClock.isStopping()) {
                     long now = simulationClock.getCurrentTimeMillis();
                     logger.trace("Simulation step {}", now);
                     long waitTime = getNextJobTime() - now;
@@ -82,15 +82,13 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
                         }
                         isWaiting = false;
                     }
-                }
-            } else {
-                // Wait for simulation start
-                try {
-                    synchronized (jobs) {
+                } else {
+                    // Wait for simulation start
+                    try {
                         jobs.wait();
                         currentTime = simulationClock.getSimulationStartTime();
+                    } catch (InterruptedException e) {
                     }
-                } catch (InterruptedException e) {
                 }
             }
         }

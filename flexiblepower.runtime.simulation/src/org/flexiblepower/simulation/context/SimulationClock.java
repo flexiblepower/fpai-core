@@ -11,11 +11,11 @@ public class SimulationClock {
 
     private static final Logger logger = LoggerFactory.getLogger(SimulationClock.class);
 
-    private long simulationStartTime;
-    private long simulationStopTime;
-    private long wallStartTime;
-    private double speedFactor;
-    private Simulation.State state;
+    private volatile long simulationStartTime;
+    private volatile long simulationStopTime;
+    private volatile long wallStartTime;
+    private volatile double speedFactor;
+    private volatile Simulation.State state;
 
     public SimulationClock() {
         state = Simulation.State.STOPPED;

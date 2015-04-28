@@ -35,14 +35,17 @@ public class SchedulerTest extends TestCase {
 
         scheduler.startSimulation(startDate, endDate, 60);
         long startTime = System.currentTimeMillis();
-        while (scheduler.getSimulationClockState() != Simulation.State.STOPPED) {
+        while (scheduler.getSimulationClockState() != Simulation.State.STOPPED && System.currentTimeMillis() - startTime < 10000) {
             Thread.sleep(10);
         }
         long duration = System.currentTimeMillis() - startTime;
+        assertEquals(Simulation.State.STOPPED, scheduler.getSimulationClockState());
 
         assertEquals(60, runCounter.get());
         System.out.printf("Running took %dms, expected around 1 sec%n", duration);
         assertTrue(duration > 950 && duration < 1150);
+
+        scheduler.deactivate();
     }
 
     public void testStopping() throws Exception {
