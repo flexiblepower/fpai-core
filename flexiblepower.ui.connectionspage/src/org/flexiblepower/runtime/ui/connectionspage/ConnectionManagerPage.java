@@ -318,6 +318,10 @@ public class ConnectionManagerPage implements Widget {
     }
 
     public boolean connect(ConnectionInfo info) {
+        if (info.getSourceEndpoint() == null || info.getTargetEndpoint() == null) {
+            return false;
+        }
+
         ManagedEndpoint sourceEndpoint = connectionManager.getEndpoint(info.getSourceEndpoint());
         ManagedEndpoint targetEndpoint = connectionManager.getEndpoint(info.getTargetEndpoint());
 
@@ -338,6 +342,10 @@ public class ConnectionManagerPage implements Widget {
     }
 
     public boolean disconnect(ConnectionInfo info) {
+        if (info.getSourceEndpoint() == null || info.getTargetEndpoint() == null) {
+            return false;
+        }
+
         ManagedEndpoint sourceEndpoint = connectionManager.getEndpoint(info.getSourceEndpoint());
         ManagedEndpoint targetEndpoint = connectionManager.getEndpoint(info.getTargetEndpoint());
 
