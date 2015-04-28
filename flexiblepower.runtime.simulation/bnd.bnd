@@ -1,4 +1,4 @@
--buildpath: ${default-buildpath}, flexiblepower.runtime;version=project
+-buildpath: ${default-buildpath}, flexiblepower.runtime;version=latest
 -testpath: ${test-buildpath}
 
 Bundle-Version: 3.0.0.${qualifier}
