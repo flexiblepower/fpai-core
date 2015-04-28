@@ -6,7 +6,7 @@
     </appender>
     
     <!--<logger name="org.flexiblepower.runtime.context.RuntimeContext" level="TRACE"/>-->
-    <logger name="org.eclipse" level="ERROR"/>
+    <logger name="org.eclipse" level="INFO"/>
     <logger name="org.flexiblepower.runtime.ui" level="DEBUG"/>
     <root level="INFO">
         <appender-ref ref="STDOUT" />

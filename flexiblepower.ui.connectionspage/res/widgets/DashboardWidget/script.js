@@ -1,9 +1,11 @@
 jsPlumb.ready(function() {
+	var prefix = window.location.pathname.search(/console/) > 0 ? "connection-manager/" : "";
+	
 	var instance = jsPlumb.getInstance({
 //		ConnectionOverlays: [
 //            [ "Label", { label: "FOO", id: "label", cssClass: "connectionLabel", enabled: false } ]
 //		],
-		Container: "main"
+		Container: "graph"
 	});
 	
 	instance.registerEndpointType("disabled", { paintStyle: { strokeStyle: "red" } });
@@ -62,7 +64,7 @@ jsPlumb.ready(function() {
 		}
 		
 		// Add the node to the document
-		node.appendTo($("#main"));
+		node.appendTo($("#graph"));
 		
 		// Make it draggable
 		instance.draggable(node);
@@ -94,7 +96,7 @@ jsPlumb.ready(function() {
 		}
 	}
 	
-	$.ajax("currentState", {
+	$.ajax(prefix + "currentState", {
 		success: function(data) {
 			instance.batch(function() {
 				for(ix in data.endpoints) {
@@ -138,7 +140,7 @@ jsPlumb.ready(function() {
 						type: "POST",
 						contentType: 'application/json',
 						processData: false,
-						url: "connect",
+						url: prefix + "connect",
 						data: JSON.stringify({ source: params.sourceEndpoint.getUuid(), target: params.targetEndpoint.getUuid() }),
 					});
 				});
@@ -149,7 +151,7 @@ jsPlumb.ready(function() {
 							type: "POST",
 							contentType: 'application/json',
 							processData: false,
-							url: "disconnect",
+							url: prefix + "disconnect",
 							data: JSON.stringify({ source: params.sourceEndpoint.getUuid(), target: params.targetEndpoint.getUuid() }),
 						});
 					}
@@ -159,7 +161,7 @@ jsPlumb.ready(function() {
 	});
 	
 	$('#autoconnect').click(function() {
-		$.ajax("autoconnect", {
+		$.ajax(prefix + "autoconnect", {
 			success: function(data) {
 				window.location.reload();
 			}
