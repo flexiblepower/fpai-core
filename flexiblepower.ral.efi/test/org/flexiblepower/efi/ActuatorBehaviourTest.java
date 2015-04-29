@@ -85,7 +85,7 @@ public class ActuatorBehaviourTest extends TestCase {
     }
 
     /**
-     * Test if the ActuatorBehaviour constructor works with transitions
+     * Test if the ActuatorBehaviour constructor works with valid transitions
      */
     public void testWithTransitions() {
         RunningModeBehaviour rmb = new RunningModeBehaviour(1,
@@ -97,7 +97,6 @@ public class ActuatorBehaviourTest extends TestCase {
         FillLevelFunction<RunningModeBehaviour> flf = FillLevelFunction.<RunningModeBehaviour> create(0)
                                                                        .add(100, rmb)
                                                                        .build();
-        // runningmode 1 does'n exist
         RunningMode<FillLevelFunction<RunningModeBehaviour>> rm1 = new RunningMode<FillLevelFunction<RunningModeBehaviour>>(0,
                                                                                                                             "First",
                                                                                                                             flf,

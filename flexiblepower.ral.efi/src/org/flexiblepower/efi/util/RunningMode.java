@@ -6,9 +6,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.flexiblepower.efi.buffer.Actuator;
+
 /**
  * This class is used to describe different modes in which a device can run. This is used in both the buffer and the
  * unconstrained abstractions.
+ *
+ * @param <T>
+ *            The value stored in this {@link RunningMode} (depends on where the {@link RunningMode} is being used)
  */
 public class RunningMode<T> {
     private final int id;
@@ -16,8 +21,22 @@ public class RunningMode<T> {
     private final T value;
     private final Map<Integer, Transition> possibleTransitions;
 
-    // TODO should this constructor be protected?
-    // There may be no transition to this RunningMode (itself).
+    /**
+     * Construct a new, immutable {@link RunningMode} object.
+     *
+     * @param id
+     *            Device-unique identifier for this {@link RunningMode}
+     * @param name
+     *            Human readable name for this {@link RunningMode}
+     * @param value
+     *            Value stored in this {@link RunningMode}
+     * @param possibleTransitions
+     *            Possible transitions from this {@link RunningMode} to another. This Set should not be empty, unless
+     *            this is the only {@link RunningMode} for this {@link Actuator}.
+     *
+     * @throws NullPointerException
+     *             Thrown when name, value or possibleTransitions is null
+     */
     public RunningMode(int id,
                        String name,
                        T value,

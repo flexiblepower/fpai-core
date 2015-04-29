@@ -12,17 +12,32 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
 /**
- * This class contains the constraints for switching from one {@link RunningMode} to another
+ * This class contains the constraints for switching from one {@link RunningMode} to another.
  */
 public class Transition {
+
+    /**
+     * @param toRunningMode
+     *            Identifier the target of this {@link Transition}
+     * @return a new {@link Builder} object that can be used to easily create the {@link Transition}
+     */
     public static Builder create(int toRunningMode) {
         return new Builder(toRunningMode);
     }
 
+    /**
+     * @param toRunningMode
+     *            The target of this {@link Transition}
+     * @return a new {@link Builder} object that can be used to easily create the {@link Transition}
+     */
     public static Builder create(RunningMode<?> toRunningMode) {
         return new Builder(toRunningMode.getId());
     }
 
+    /**
+     * This helper class should be used to easily define a {@link Transition}. Use the {@link Transition#create(int)} or
+     * {@link Transition#create(RunningMode))} method to get a new instance of this class.
+     */
     public static class Builder {
         private final int toRunningMode;
         private final Set<Timer> startTimers;
@@ -38,42 +53,80 @@ public class Transition {
             transitionTime = Measure.valueOf(0, SI.SECOND);
         }
 
+        /**
+         * @param costs
+         *            The costs of making this transition.
+         *
+         * @return This {@link Builder}
+         */
         public Builder setCosts(Measurable<Money> costs) {
             transitionCosts = costs;
             return this;
         }
 
         /**
-         * Set the costs in eurocents
+         * @param costs
+         *            The costs of making this transition in eurocents.
+         *
+         * @return This {@link Builder}
          */
         public Builder setCosts(double costs) {
             transitionCosts = Measure.valueOf(costs, NonSI.EUROCENT);
             return this;
         }
 
+        /**
+         * @param time
+         *            The time it takes to make this transition.
+         *
+         * @return This {@link Builder}
+         */
         public Builder setTime(Measurable<Duration> time) {
             transitionTime = time;
             return this;
         }
 
         /**
-         * Set the time in seconds
+         * @param time
+         *            The time it takes to make this transition in seconds.
+         *
+         * @return This {@link Builder}
          */
         public Builder setTime(double time) {
             transitionTime = Measure.valueOf(time, SI.SECOND);
             return this;
         }
 
+        /**
+         * Add a {@link Timer} that can block this {@link Transition}.
+         *
+         * @param timer
+         *            The timer that can block this {@link Transition}
+         *
+         * @return This {@link Builder}
+         */
         public Builder isBlockedBy(Timer timer) {
             blockingTimers.add(timer);
             return this;
         }
 
+        /**
+         * Add a {@link Timer} that is started when this {@link Transition} is made.
+         *
+         * @param timer
+         *            The timer that is started by this {@link Transition}
+         *
+         * @return This {@link Builder}
+         */
         public Builder starts(Timer timer) {
             startTimers.add(timer);
             return this;
         }
 
+        /**
+         * @return A new immutable {@link Transition} object that contains all the elements that have been added until
+         *         now.
+         */
         public Transition build() {
             return new Transition(toRunningMode,
                                   startTimers,

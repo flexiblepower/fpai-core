@@ -30,7 +30,7 @@ public class ActuatorBehaviour {
 
     /**
      * This helper class should be used to easily define a {@link ActuatorBehaviour}. Use the
-     * {@link ActuatorBehaviour#create(double)} method to get a new instance of this class.
+     * {@link ActuatorBehaviour#create(int)} method to get a new instance of this class.
      */
     public static class Builder {
         private final int id;
