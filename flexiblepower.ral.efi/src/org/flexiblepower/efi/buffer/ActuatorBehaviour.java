@@ -9,16 +9,29 @@ import java.util.TreeMap;
 
 import org.flexiblepower.efi.util.FillLevelFunction;
 import org.flexiblepower.efi.util.RunningMode;
+import org.flexiblepower.efi.util.Transition;
 
 /**
  * This class describes how an actuator can affect the buffer. It contains a collection of {@link RunningMode}s that use
- * a {@link FillLevelFunction} to describe each one. Each {@link FillLevelFunction} contains a single double value that
+ * a {@link FillLevelFunction} to describe each one. Each {@link FillLevelFunction} contains for every fill level of the
+ * buffer a {@link RunningModeBehaviour}. The {@link RunningModeBehaviour} describes the effect on the buffer when this
+ * {@link RunningMode} is selected and the consumed or produced commodities.
  */
 public class ActuatorBehaviour {
+
+    /**
+     * @param id
+     *            Identifier of this Actuator
+     * @return a new {@link Builder} object that can be used to easily create the {@link ActuatorBehaviour}
+     */
     public static Builder create(int id) {
         return new Builder(id);
     }
 
+    /**
+     * This helper class should be used to easily define a {@link ActuatorBehaviour}. Use the
+     * {@link ActuatorBehaviour#create(double)} method to get a new instance of this class.
+     */
     public static class Builder {
         private final int id;
         private final Set<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModes;
@@ -28,11 +41,22 @@ public class ActuatorBehaviour {
             runningModes = new HashSet<RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         }
 
+        /**
+         * Adds a {@link RunningMode} to the {@link ActuatorBehaviour} object that we are creating.
+         *
+         * @param runningMode
+         *            The {@link RunningMode} to add to the {@link ActuatorBehaviour} object that we are creating
+         * @return This {@link Builder}
+         */
         public Builder add(RunningMode<FillLevelFunction<RunningModeBehaviour>> runningMode) {
             runningModes.add(runningMode);
             return this;
         }
 
+        /**
+         * @return A new immutable {@link ActuatorBehaviour} object that contains all the elements that have been added
+         *         until now.
+         */
         public ActuatorBehaviour build() {
             return new ActuatorBehaviour(id, runningModes);
         }
@@ -41,16 +65,37 @@ public class ActuatorBehaviour {
     private final int id;
     private final Map<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModes;
 
+    /**
+     * Construct an ActuatorBehaviour instance.
+     *
+     * @param id
+     *            Device unique identifier for this actuator
+     * @param runningModes
+     *            Collection describing all the supported runningModes of this
+     *
+     * @throws IllegalArgumentException
+     *             Thrown when there are multiple RunningMode with the same identifier or when a {@link Transition} has
+     *             an unknown RunningMode as target
+     */
     public ActuatorBehaviour(int id,
                              Collection<RunningMode<FillLevelFunction<RunningModeBehaviour>>> runningModes) {
         this.id = id;
+        // Test for duplicate RunningMode Id's
         TreeMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>> tempRunningModes = new TreeMap<Integer, RunningMode<FillLevelFunction<RunningModeBehaviour>>>();
         for (RunningMode<FillLevelFunction<RunningModeBehaviour>> runningMode : runningModes) {
             if (tempRunningModes.containsKey(runningMode.getId())) {
-                throw new IllegalArgumentException(String.format("Cannot add another RunningMode with the same Id {0} to this ActuatorBehaviour instance.",
-                                                                 runningMode.getId()));
+                throw new IllegalArgumentException("Cannot add multiple RunningModes with the same Id (" + runningMode.getId()
+                                                   + ") to this ActuatorBehaviour instance");
             }
             tempRunningModes.put(runningMode.getId(), runningMode);
+        }
+        // Test for Transitions with non-existing destinations
+        for (RunningMode<FillLevelFunction<RunningModeBehaviour>> runningMode : tempRunningModes.values()) {
+            for (Transition transition : runningMode.getTransitions()) {
+                if (!tempRunningModes.containsKey(transition.getToRunningMode())) {
+                    throw new IllegalArgumentException("There is a Transition that has a target (toRunningMode) with a RunningMode Id which does not exist: " + transition.getToRunningMode());
+                }
+            }
         }
         this.runningModes = Collections.unmodifiableMap(tempRunningModes);
     }
