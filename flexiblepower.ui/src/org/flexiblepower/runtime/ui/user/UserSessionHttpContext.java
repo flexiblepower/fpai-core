@@ -81,7 +81,9 @@ public class UserSessionHttpContext implements HttpContext {
 
     @Deactivate
     public void deactivate() {
-        trackedUserAdmins.close();
+        if (trackedUserAdmins != null) {
+            trackedUserAdmins.close();
+        }
 
         if (loginServlet != null) {
             loginServlet.close();
