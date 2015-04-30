@@ -2,7 +2,6 @@ package org.flexiblepower.ral;
 
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
-import org.flexiblepower.messaging.Ports;
 import org.flexiblepower.ral.messages.Allocation;
 import org.flexiblepower.ral.messages.ResourceMessage;
 
@@ -18,6 +17,6 @@ import org.flexiblepower.ral.messages.ResourceMessage;
  * Any {@link ResourceManager} is an {@link Endpoint} and should have (at least) 1 port, called "controller" to connect
  * to a {@link ControllerManager}.
  */
-@Ports(@Port(name = "controller"))
+@Port(name = "controller")
 public interface ResourceManager extends Endpoint {
 }
