@@ -26,4 +26,8 @@ public class ConnectionInfo {
     public String getTargetPort() {
         return target.substring(target.lastIndexOf(':') + 1);
     }
+
+    public boolean isValid() {
+        return source != null && target != null && !source.isEmpty() && !target.isEmpty();
+    }
 }

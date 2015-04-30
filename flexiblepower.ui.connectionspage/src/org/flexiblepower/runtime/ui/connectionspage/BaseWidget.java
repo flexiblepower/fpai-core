@@ -27,7 +27,7 @@ public class BaseWidget {
     }
 
     public boolean connect(ConnectionInfo info) {
-        if (info == null || info.getSourceEndpoint() == null || info.getTargetEndpoint() == null) {
+        if (info == null || !info.isValid()) {
             return false;
         }
 
@@ -51,7 +51,7 @@ public class BaseWidget {
     }
 
     public boolean disconnect(ConnectionInfo info) {
-        if (info == null || info.getSourceEndpoint() == null || info.getTargetEndpoint() == null) {
+        if (info == null || !info.isValid()) {
             return false;
         }
 
