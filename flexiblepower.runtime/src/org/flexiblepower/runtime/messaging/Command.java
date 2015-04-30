@@ -6,8 +6,7 @@ import org.flexiblepower.messaging.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface Command {
-    void execute();
+public interface Command extends Runnable {
 
     public class HandleMessage implements Command {
         private static final Logger logger = LoggerFactory.getLogger(Command.HandleMessage.class);
@@ -24,13 +23,18 @@ public interface Command {
         }
 
         @Override
-        public void execute() {
+        public void run() {
             try {
                 logger.trace("Handling message {}", message);
                 handler.handleMessage(message);
             } catch (RuntimeException ex) {
                 logger.error("Error while handling message (" + message + "): " + ex.getMessage(), ex);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "Handle message: " + message.toString();
         }
     }
 
@@ -46,7 +50,7 @@ public interface Command {
         }
 
         @Override
-        public void execute() {
+        public void run() {
             try {
                 logger.trace("Disconnecting");
                 handler.disconnected();
@@ -55,6 +59,11 @@ public interface Command {
             } finally {
                 latch.countDown();
             }
+        }
+
+        @Override
+        public String toString() {
+            return "Disconnect command";
         }
     }
 }

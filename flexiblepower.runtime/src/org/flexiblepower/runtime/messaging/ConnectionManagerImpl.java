@@ -14,6 +14,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
@@ -73,6 +74,15 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
         activeConnections = new TreeSet<String>();
         autoconnect = false;
+    }
+
+    // This reference is only needed to make sure that the EndpointWrapper
+    @SuppressWarnings("unused")
+    private FlexiblePowerContext flexiblePowerContext;
+
+    @Reference
+    public void setFlexiblePowerContext(FlexiblePowerContext flexiblePowerContext) {
+        this.flexiblePowerContext = flexiblePowerContext;
     }
 
     private ConfigurationAdmin configurationAdmin;

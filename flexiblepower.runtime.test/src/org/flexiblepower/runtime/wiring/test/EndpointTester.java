@@ -64,7 +64,6 @@ public class EndpointTester extends TestCase {
                 public void handleMessage(Object message) {
                     System.out.println(TestEndpoint.this.getClass().getSimpleName() + " got message [" + message + "]");
                     assertEquals(expectedMessage, message);
-                    assertTrue(Thread.currentThread().getName().contains(TestEndpoint.this.getClass().getSimpleName()));
                     gotMessage = true;
                 }
 

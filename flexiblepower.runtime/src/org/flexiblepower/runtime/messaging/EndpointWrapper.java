@@ -3,30 +3,45 @@ package org.flexiblepower.runtime.messaging;
 import java.io.Closeable;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
+import org.flexiblepower.runtime.context.RuntimeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
+/**
+ * The {@link EndpointWrapper} wraps the {@link Endpoint} object and makes sure that each message is handled on a
+ * separate thread.
+ */
+public class EndpointWrapper implements ManagedEndpoint, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(EndpointWrapper.class);
 
     private final String pid;
     private final Endpoint endpoint;
     private final ConnectionManagerImpl connectionManager;
 
-    private final Thread thread;
-    private final AtomicBoolean running;
-    private final BlockingQueue<Command> commandQueue;
+    private final BundleContext bundleContext;
+    private final ServiceReference<FlexiblePowerContext> serviceReference;
+    private final FlexiblePowerContext endpointContext;
 
     private final SortedMap<String, EndpointPortImpl> ports;
 
+    /**
+     * @param pid
+     *            The persistent identifier of the {@link Endpoint} that uniquely identifies it.
+     * @param endpoint
+     *            The reference to the {@link Endpoint} object
+     * @param connectionManager
+     *            The reference back to the implementation of the connection manager
+     */
     public EndpointWrapper(String pid, Endpoint endpoint, ConnectionManagerImpl connectionManager) {
         this.pid = pid;
         this.endpoint = endpoint;
@@ -35,11 +50,19 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         parsePorts(endpoint.getClass());
         checkPorts();
 
-        thread = new Thread(this, "Message handler thread for " + endpoint.getClass().getSimpleName());
-        running = new AtomicBoolean(true);
-        commandQueue = new LinkedBlockingQueue<Command>();
+        Bundle bundle = FrameworkUtil.getBundle(endpoint.getClass());
+        if (bundle == null) {
+            RuntimeContext context = new RuntimeContext();
+            context.start(endpoint.getClass().getName());
 
-        thread.start();
+            bundleContext = null;
+            serviceReference = null;
+            endpointContext = context;
+        } else {
+            bundleContext = bundle.getBundleContext();
+            serviceReference = bundleContext.getServiceReference(FlexiblePowerContext.class);
+            endpointContext = bundleContext.getService(serviceReference);
+        }
     }
 
     private void parsePorts(Class<?> clazz) {
@@ -68,9 +91,9 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
             } else if (storedPort.getPort().sends().length == 0 && storedPort.getPort().accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
                     logger.warn("Defined cardinality {} on port {} is different from the implementation port {}",
-                             storedPort.getCardinality(),
-                             port.name(),
-                             port.cardinality());
+                                storedPort.getCardinality(),
+                                port.name(),
+                                port.cardinality());
                 }
                 logger.debug("Replacing port on endpoint [{}]: {}", endpoint, port.name());
                 this.ports.put(port.name(), endpointPort);
@@ -78,13 +101,13 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
             } else if (port.sends().length == 0 && port.accepts().length == 0) {
                 if (storedPort.getPort().cardinality() != port.cardinality()) {
                     logger.warn("Defined cardinality {} on port {} is different from the implementation port {}",
-                             storedPort.getCardinality(),
-                             port.name(),
-                             port.cardinality());
+                                storedPort.getCardinality(),
+                                port.name(),
+                                port.cardinality());
                 }
             } else {
                 logger.error("Implementation of port {} is defined multiple times! Possibly undefined behavior can be expected.",
-                          port.name());
+                             port.name());
             }
         }
 
@@ -112,6 +135,9 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         return connectionManager;
     }
 
+    /**
+     * @return The real object that has been wrapped.
+     */
     public Endpoint getEndpoint() {
         return endpoint;
     }
@@ -131,19 +157,8 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
         return ports;
     }
 
-    @Override
-    public void run() {
-        while (running.get()) {
-            try {
-                commandQueue.take().execute();
-            } catch (InterruptedException ex) {
-                // Is expected, the thread is probably closing down
-            }
-        }
-    }
-
     void addCommand(Command command) {
-        commandQueue.add(command);
+        endpointContext.submit(command);
     }
 
     @Override
@@ -152,11 +167,10 @@ public class EndpointWrapper implements Runnable, ManagedEndpoint, Closeable {
             port.close();
         }
 
-        try {
-            running.set(false);
-            thread.interrupt();
-            thread.join();
-        } catch (InterruptedException e) {
+        if (serviceReference != null) {
+            bundleContext.ungetService(serviceReference);
+        } else {
+            ((RuntimeContext) endpointContext).stop();
         }
     }
 }
