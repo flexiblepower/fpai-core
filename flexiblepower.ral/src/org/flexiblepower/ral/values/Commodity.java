@@ -25,17 +25,17 @@ import javax.measure.unit.Unit;
  */
 public abstract class Commodity<BQ extends Quantity, FQ extends Quantity> implements Serializable {
     /**
-     * The singleton object for {@link Gas}
+     * The singleton object for {@link Gas}.
      */
     public static final Gas GAS = new Gas();
 
     /**
-     * The singleton object for {@link Electricity}
+     * The singleton object for {@link Electricity}.
      */
     public static final Electricity ELECTRICITY = new Electricity();
 
     /**
-     * The singleton object for {@link Heat}
+     * The singleton object for {@link Heat}.
      */
     public static final Heat HEAT = new Heat();
 
