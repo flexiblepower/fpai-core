@@ -47,7 +47,7 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
         /**
          * Adds the selected {@link Commodity} to the set.
-         * 
+         *
          * @param commodity
          *            The commodity that should be added.
          * @return This builder
@@ -65,7 +65,7 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
         /**
          * Adds {@link Commodity#ELECTRICITY} to the set.
-         * 
+         *
          * @return this
          */
         public Builder addElectricity() {
@@ -75,7 +75,7 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
         /**
          * Adds {@link Commodity#GAS} to the set.
-         * 
+         *
          * @return this
          */
         public Builder addGas() {
@@ -85,7 +85,7 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
         /**
          * Adds {@link Commodity#HEAT} to the set.
-         * 
+         *
          * @return this
          */
         public Builder addHeat() {
@@ -130,7 +130,8 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
     @Override
     public boolean contains(Object o) {
-        return (hasElectricity && o == Commodity.ELECTRICITY) || (hasGas && o == Commodity.GAS);
+        return (hasElectricity && o == Commodity.ELECTRICITY) || (hasGas && o == Commodity.GAS)
+               || (hasHeat && o == Commodity.HEAT);
     }
 
     @Override
@@ -170,7 +171,7 @@ public class CommoditySet extends AbstractSet<Commodity<?, ?>> {
 
     @Override
     public int size() {
-        return (hasElectricity ? 1 : 0) + (hasGas ? 1 : 0);
+        return (hasElectricity ? 1 : 0) + (hasGas ? 1 : 0) + (hasHeat ? 1 : 0);
     }
 
     @Override
