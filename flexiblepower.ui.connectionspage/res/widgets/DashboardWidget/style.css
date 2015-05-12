@@ -1,0 +1,113 @@
+#graph {
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;	
+	position: absolute;
+	top: 150px;
+	bottom: 130px;
+	left: 0px;
+	right: 320px;
+	padding: 1em;
+	overflow: auto;
+	background: white;
+}
+
+#properties {
+	position: absolute;
+	top: 150px;
+	bottom: 130px;
+	right: 0;
+	padding: 1em;
+	width: 300px;
+	overflow: auto;
+	background: white;
+	border-left: 2px solid #33333;
+	z-index: 30;
+}
+
+#properties input {
+	width: 100%;
+}
+
+#properties h1 {
+	width: 100%;
+	font-size: 150%;
+	padding-top: 1em;
+	padding-bottom: .5em;
+	margin-bottom: .5em;
+	border-bottom: 1px dotted black;
+}
+
+#properties p {
+	line-height: 1.3em;
+}
+
+.node {
+    position: absolute;
+    padding: 1em 0.5em;
+    z-index: 20;
+    cursor: pointer;
+
+    text-align: center;
+    color: white;
+    line-height: 1.1em;
+    overflow: auto;
+    
+    background-color: rgb(68,79,85);
+    opacity: 0.8;
+
+	border: 5px solid rgb(161,168,171);
+    -moz-border-radius: 1em;
+    border-radius: 1em;
+}
+
+.node p {
+	width: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+.node p.small {
+	font-size: 70%;
+}
+
+#graph ._jsPlumb_connector {
+    z-index: 4;
+}
+
+#graph ._jsPlumb_endpoint {
+    z-index: 22;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+#graph ._jsPlumb_endpoint._jsPlumb_hover {
+	opacity: 0.7;
+}
+
+#graph ._jsPlumb_overlay {
+    z-index: 21;
+    font-weight: bold !important;
+}
+
+/* Specific stuff for the felix webconsole layout */
+.ui-widget #graph {
+	top: 120px;
+	left: 96px;
+	right: 416px;
+	bottom: 0;
+}
+
+.ui-widget #properties {
+	top: 120px;
+	right: 96px;
+	width: 300px;
+	bottom: 0;
+}
+
+#navmenu li ul {
+	z-index: 30;
+}

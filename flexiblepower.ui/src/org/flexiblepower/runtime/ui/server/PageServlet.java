@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.flexiblepower.runtime.ui.server.widgets.WidgetRegistration;
-import org.osgi.service.useradmin.User;
+import org.flexiblepower.ui.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,8 @@ public class PageServlet extends HttpServlet {
                 } catch (NoSuchMethodException e) {
                     resp.sendError(404, e.getMessage());
                 } catch (InvocationTargetException e) {
-                    resp.sendError(500, e.getMessage());
+                    resp.sendError(500, e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+                    logger.error("Error while invocating the method for url: " + url, e.getCause());
                 }
             } else if (path.endsWith(".html")) {
                 logger.debug("HTML File found for {}", path);

@@ -6,11 +6,10 @@ import org.flexiblepower.messaging.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface Command {
-    void execute();
+public interface Command extends Runnable {
 
     public class HandleMessage implements Command {
-        private static final Logger log = LoggerFactory.getLogger(Command.HandleMessage.class);
+        private static final Logger logger = LoggerFactory.getLogger(Command.HandleMessage.class);
 
         private final Object message;
         private final MessageHandler handler;
@@ -24,18 +23,23 @@ public interface Command {
         }
 
         @Override
-        public void execute() {
+        public void run() {
             try {
-                log.trace("Handling message {}", message);
+                logger.trace("Handling message {}", message);
                 handler.handleMessage(message);
             } catch (RuntimeException ex) {
-                log.error("Error while handling message (" + message + "): " + ex.getMessage(), ex);
+                logger.error("Error while handling message (" + message + "): " + ex.getMessage(), ex);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "Handle message: " + message.toString();
         }
     }
 
     public class Disconnect implements Command {
-        private static final Logger log = LoggerFactory.getLogger(Command.Disconnect.class);
+        private static final Logger logger = LoggerFactory.getLogger(Command.Disconnect.class);
 
         private final MessageHandler handler;
         private final CountDownLatch latch;
@@ -46,15 +50,20 @@ public interface Command {
         }
 
         @Override
-        public void execute() {
+        public void run() {
             try {
-                log.trace("Disconnecting");
+                logger.trace("Disconnecting");
                 handler.disconnected();
             } catch (RuntimeException ex) {
-                log.error("Error while disconnecting: " + ex.getMessage(), ex);
+                logger.error("Error while disconnecting: " + ex.getMessage(), ex);
             } finally {
                 latch.countDown();
             }
+        }
+
+        @Override
+        public String toString() {
+            return "Disconnect command";
         }
     }
 }

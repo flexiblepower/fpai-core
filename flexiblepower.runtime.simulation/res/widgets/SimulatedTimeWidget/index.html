@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" href="/css/widget.css" />
+<link rel="stylesheet" href="style.css" />
+<script type="text/javascript" src="/js/vendor/jquery.min.js"></script>
+<script type="text/javascript" src="/js/vendor/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/js/widget.js"></script>
+<script type="text/javascript" src="script.js"></script>
+<title>Simulated Clock</title>
+</head>
+<body class="widget">
+	<img id="loading" src="/img/loading.gif" alt="Loading..." />
+
+	<img id="icon" src="clock.png" alt="Clock" />
+
+	<p class="error"></p>
+	<p>
+		<span id="time"></span>
+	</p>
+
+	<div id="simulation_parameters">
+		<p>
+			Start: <input type="text" id="datepicker" value="01-01-2012" />
+		</p>
+		<select id="period">
+			<option value="year">Year</option>
+			<option value="month">Month</option>
+			<option value="week">Week</option>
+			<option value="day">Day</option>
+		</select> <select id="speed">
+			<option value="1">1x (realtime)</option>
+			<option value="60">60x (min=sec)</option>
+			<option value="3600">3600x (hour=sec)</option>
+			<option value="86400">86400x (day=sec)</option>
+		</select> <br />
+		<button id="startstop">Start</button>
+		<button id="pauseunpause">Pause</button>
+	</div>
+</body>
+</html>

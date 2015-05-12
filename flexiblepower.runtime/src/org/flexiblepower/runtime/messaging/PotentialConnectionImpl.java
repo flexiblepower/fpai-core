@@ -12,12 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class PotentialConnectionImpl implements PotentialConnection {
-    private static final Logger log = LoggerFactory.getLogger(PotentialConnectionImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PotentialConnectionImpl.class);
 
     private static final MessageHandler DUMP = new MessageHandler() {
         @Override
         public void handleMessage(Object message) {
-            log.debug("Dumping message {}", message);
+            logger.debug("Dumping message {}", message);
         }
 
         @Override
@@ -26,13 +26,18 @@ final class PotentialConnectionImpl implements PotentialConnection {
     };
 
     private static final class HalfConnection implements Connection {
+        private final MessageListenerContainer listeners;
+        private final EndpointPortImpl fromPort, toPort;
         private final Port port;
         private final EndpointWrapper receivingEndpoint;
         volatile MessageHandler messageHandler;
 
-        public HalfConnection(Port port, EndpointWrapper receivingEndpoint) {
-            this.port = port;
-            this.receivingEndpoint = receivingEndpoint;
+        public HalfConnection(EndpointPortImpl fromPort, EndpointPortImpl toPort) {
+            listeners = fromPort.getEndpoint().getConnectionManager().getMessageListenerContainer();
+            this.fromPort = fromPort;
+            this.toPort = toPort;
+            port = fromPort.getPort();
+            receivingEndpoint = toPort.getEndpoint();
             messageHandler = null;
         }
 
@@ -47,9 +52,11 @@ final class PotentialConnectionImpl implements PotentialConnection {
         @Override
         public void sendMessage(Object message) {
             if (message == null) {
-                log.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
+                logger.warn("Trying to send a null message to {}, ignoring", receivingEndpoint.getPid());
                 return;
             }
+
+            listeners.publishMessage(fromPort, toPort, message);
 
             MessageHandler messageHandler = this.messageHandler;
             if (messageHandler == null) {
@@ -135,16 +142,16 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 throw new IllegalStateException(connectableError);
             }
 
-            log.debug("Connecting port [{}] to port [{}]", left, right);
+            logger.debug("Connecting port [{}] to port [{}]", left, right);
 
-            HalfConnection leftHalfConnection = new HalfConnection(left.getPort(), right.getEndpoint());
-            HalfConnection rightHalfConnection = new HalfConnection(right.getPort(), left.getEndpoint());
+            HalfConnection leftHalfConnection = new HalfConnection(left, right);
+            HalfConnection rightHalfConnection = new HalfConnection(right, left);
 
             leftMessageHandler = left.getEndpoint().getEndpoint().onConnect(leftHalfConnection);
             rightMessageHandler = right.getEndpoint().getEndpoint().onConnect(rightHalfConnection);
 
             if (leftMessageHandler == null || rightMessageHandler == null) {
-                log.warn("Could not connect port [{}] to port [{}], because the onConnect failed (returned null)",
+                logger.warn("Could not connect port [{}] to port [{}], because the onConnect failed (returned null)",
                          left,
                          right);
 
@@ -157,7 +164,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
                 rightHalfConnection.setMessageHandler(leftMessageHandler);
 
                 left.getEndpoint().getConnectionManager().connectedPort(toString());
-                log.debug("Connected port [{}] to port [{}]", left, right);
+                logger.debug("Connected port [{}] to port [{}]", left, right);
             }
         }
     }
@@ -170,7 +177,7 @@ final class PotentialConnectionImpl implements PotentialConnection {
 
     synchronized void close() {
         if (isConnected()) {
-            log.debug("Disconnecting port [{}] to port [{}]", left, right);
+            logger.debug("Disconnecting port [{}] to port [{}]", left, right);
             try {
                 CountDownLatch latch = new CountDownLatch(2);
 

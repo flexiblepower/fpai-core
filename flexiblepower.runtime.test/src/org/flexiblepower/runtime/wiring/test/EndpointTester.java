@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
@@ -16,7 +17,9 @@ import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.Endpoint;
+import org.flexiblepower.messaging.Filter;
 import org.flexiblepower.messaging.MessageHandler;
+import org.flexiblepower.messaging.MessageListener;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
 import org.osgi.framework.BundleContext;
@@ -28,7 +31,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class EndpointTester extends TestCase {
     private static final int SLEEP_TIME = 500;
 
-    private final List<ServiceRegistration<Endpoint>> registrations = new ArrayList<ServiceRegistration<Endpoint>>();
+    private final List<ServiceRegistration<?>> registrations = new ArrayList<ServiceRegistration<?>>();
     private ServiceTracker<ConnectionManager, ConnectionManager> connectionManagerTracker;
 
     private ConnectionManager connectionManager;
@@ -45,7 +48,7 @@ public class EndpointTester extends TestCase {
             this.expectedMessage = expectedMessage;
         }
 
-        boolean connected = false;
+        private boolean connected = false;
 
         @Override
         public MessageHandler onConnect(Connection connection) {
@@ -61,7 +64,6 @@ public class EndpointTester extends TestCase {
                 public void handleMessage(Object message) {
                     System.out.println(TestEndpoint.this.getClass().getSimpleName() + " got message [" + message + "]");
                     assertEquals(expectedMessage, message);
-                    assertTrue(Thread.currentThread().getName().contains(TestEndpoint.this.getClass().getSimpleName()));
                     gotMessage = true;
                 }
 
@@ -141,9 +143,16 @@ public class EndpointTester extends TestCase {
         return connectionManager;
     }
 
+    protected void setupListeners(MessageListener... listeners) throws Exception {
+        context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        for (MessageListener listener : listeners) {
+            registrations.add(context.registerService(MessageListener.class, listener, null));
+        }
+    }
+
     @Override
     protected void tearDown() throws Exception {
-        for (ServiceRegistration<Endpoint> reg : registrations) {
+        for (ServiceRegistration<?> reg : registrations) {
             reg.unregister();
         }
         registrations.clear();
@@ -443,7 +452,7 @@ public class EndpointTester extends TestCase {
 
     @Port(name = "something", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class)
     class SendDataEndpoint implements Endpoint {
-        private boolean finished = false;
+        private volatile boolean finished = false;
 
         public void checkIfFinishedAndReset() {
             assertTrue("We did not receive all the messages", finished);
@@ -461,10 +470,10 @@ public class EndpointTester extends TestCase {
                     if (message.toString().length() < 1024) {
                         connection.sendMessage(new DecodedStringMessage(message.toString() + message));
                     } else {
+                        finished = true;
                         synchronized (EndpointTester.this) {
                             EndpointTester.this.notifyAll();
                         }
-                        finished = true;
                     }
                 }
 
@@ -615,5 +624,101 @@ public class EndpointTester extends TestCase {
 
         ManagedEndpoint meImplementing = endpoints.get(endpoints.firstKey());
         assertNotNull(meImplementing.getPort("shouldBeImplemented"));
+    }
+
+    public static class CountingMessageListener implements MessageListener {
+        private final int expectedCount;
+        private final AtomicInteger count = new AtomicInteger(0);
+
+        public CountingMessageListener(int expectedCount) {
+            this.expectedCount = expectedCount;
+        }
+
+        public synchronized void check() {
+            while (count.get() < expectedCount) {
+                try {
+                    long now = System.currentTimeMillis();
+                    wait(SLEEP_TIME);
+                    if (System.currentTimeMillis() - now >= SLEEP_TIME) {
+                        break; // If no message has been received for some time, assume it failed
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+            assertEquals(expectedCount, count.get());
+        }
+
+        @Override
+        public synchronized void handleMessage(EndpointPort from, EndpointPort to, Object message) {
+            System.out.println(from.toString() + " -> " + to.toString() + " : " + message.toString());
+            if (count.incrementAndGet() == expectedCount) {
+                notifyAll();
+            }
+        }
+    }
+
+    @Filter(EncodedStringMessage.class)
+    public static class EncodedMessageListener extends CountingMessageListener {
+        public EncodedMessageListener(int expectedCount) {
+            super(expectedCount);
+        }
+    }
+
+    @Filter(DecodedStringMessage.class)
+    public static class DecodedMessageListener extends CountingMessageListener {
+        public DecodedMessageListener(int expectedCount) {
+            super(expectedCount);
+        }
+    }
+
+    public void testMessageListeners() throws Exception {
+        EchoEndpoint echo = new EchoEndpoint(10);
+        CodecEndpoint echoCodec = new CodecEndpoint();
+        CodecEndpoint dataCodec = new CodecEndpoint();
+        SendDataEndpoint data = new SendDataEndpoint();
+
+        ConnectionManager connectionManager = setupEndpoints(echo, echoCodec, dataCodec, data);
+        CountingMessageListener allMessageListener = new CountingMessageListener(60);
+        EncodedMessageListener encodedMessageListener = new EncodedMessageListener(20);
+        DecodedMessageListener decodedMessageListener = new DecodedMessageListener(40);
+        setupListeners(allMessageListener, encodedMessageListener, decodedMessageListener);
+
+        SortedMap<String, ? extends ManagedEndpoint> endpoints = connectionManager.getEndpoints();
+        Iterator<? extends ManagedEndpoint> iterator = endpoints.values().iterator();
+        ManagedEndpoint meCodec1 = iterator.next();
+        ManagedEndpoint meCodec2 = iterator.next();
+        ManagedEndpoint meEcho = iterator.next();
+        ManagedEndpoint meData = iterator.next();
+
+        EndpointPort portEcho = checkNotNull("\"any\" port of the EchoEndpoint", meEcho.getPort("any"));
+        EndpointPort portPrivate1 = checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
+        EndpointPort portPrivate2 = checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
+        EndpointPort portPublic1 = checkNotNull("\"public\" port of the CodecEndpoint 1", meCodec1.getPort("public"));
+        EndpointPort portPublic2 = checkNotNull("\"public\" port of the CodecEndpoint 2", meCodec2.getPort("public"));
+        EndpointPort portData = checkNotNull("\"something\" port of SendDataEndpoint", meData.getPort("something"));
+
+        PotentialConnection connEcho = portEcho.getPotentialConnection(portPrivate1);
+        PotentialConnection connPublic = portPublic1.getPotentialConnection(portPublic2);
+        PotentialConnection connData = portData.getPotentialConnection(portPrivate2);
+
+        echo.reset();
+
+        connPublic.connect();
+        connEcho.connect();
+        connData.connect();
+
+        synchronized (this) {
+            wait(SLEEP_TIME);
+        }
+
+        data.checkIfFinishedAndReset();
+
+        connData.disconnect();
+        connEcho.disconnect();
+        connPublic.disconnect();
+
+        allMessageListener.check();
+        encodedMessageListener.check();
+        decodedMessageListener.check();
     }
 }

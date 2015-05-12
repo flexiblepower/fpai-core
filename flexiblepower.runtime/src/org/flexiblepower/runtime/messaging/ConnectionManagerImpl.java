@@ -14,9 +14,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.Endpoint;
+import org.flexiblepower.messaging.MessageListener;
 import org.osgi.framework.Constants;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -37,29 +39,50 @@ import aQute.bnd.annotation.metatype.Meta;
            provide = ConnectionManager.class)
 public class ConnectionManagerImpl implements ConnectionManager {
     private static final String KEY_ACTIVE_CONNECTIONS = "active.connections";
-    private static final Logger log = LoggerFactory.getLogger(ConnectionManagerImpl.class);
+    private static final String KEY_AUTOCONNECT = "autoconnect";
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionManagerImpl.class);
 
-    public static interface Config {
+    @Meta.OCD(name = "Connection Manager Configuration",
+              description = "The ConnectionManager is responsible for wiring 2 ports for 2 different endpoints to each other."
+                            + "Warning: any modifications during runtime won't be activated right away. "
+                            + "If you want to connect something, use the special UI for that.")
+    public interface Config {
         @Meta.AD(name = KEY_ACTIVE_CONNECTIONS,
                  deflt = "",
-                 description = "List of the active connections (e.g. endpoint:a-endpoint:b). "
-                               + "Warning: any modifications during runtime won't be activated right away. "
-                               + "If you want to connect something, use the special UI for that.",
+                 description = "List of the active connections (e.g. endpoint:a-endpoint:b).",
                  required = false)
-        List<String>
-                active_connections();
+        List<String> activeConnections();
+
+        @Meta.AD(name = KEY_AUTOCONNECT,
+                 deflt = "false",
+                 description = "When this is set to true, every new Endpoint will trigger an autoconnect call")
+        boolean autoconnect();
     }
 
     private final Map<String, Object> otherProperties;
     private final SortedMap<String, EndpointWrapper> endpointWrappers;
+    private final MessageListenerContainer messageListenerContainer;
 
     private final Set<String> activeConnections;
+
+    private boolean autoconnect;
 
     public ConnectionManagerImpl() {
         endpointWrappers = new TreeMap<String, EndpointWrapper>();
         otherProperties = new HashMap<String, Object>();
+        messageListenerContainer = new MessageListenerContainer();
 
         activeConnections = new TreeSet<String>();
+        autoconnect = false;
+    }
+
+    // This reference is only needed to make sure that the EndpointWrapper
+    @SuppressWarnings("unused")
+    private FlexiblePowerContext flexiblePowerContext;
+
+    @Reference
+    public void setFlexiblePowerContext(FlexiblePowerContext flexiblePowerContext) {
+        this.flexiblePowerContext = flexiblePowerContext;
     }
 
     private ConfigurationAdmin configurationAdmin;
@@ -102,14 +125,16 @@ public class ConnectionManagerImpl implements ConnectionManager {
                     throw new IllegalArgumentException("The active connections should be a list of strings");
                 }
             }
+
+            parseAutoConnect(properties);
         }
-        log.debug("These connections are configured at boottime: {}", activeConnections);
+        logger.debug("These connections are configured at boottime: {}", activeConnections);
 
         for (EndpointWrapper leftWrapper : endpointWrappers.values()) {
             for (EndpointPortImpl leftPort : leftWrapper.getPorts().values()) {
                 for (PotentialConnectionImpl connection : leftPort.getPotentialConnections().values()) {
                     if (connection.isConnectable() && activeConnections.contains(connection.toString())) {
-                        log.info("Auto-starting connection on {}", connection);
+                        logger.info("Auto-starting connection on {}", connection);
                         connection.connect();
                     }
                 }
@@ -117,14 +142,27 @@ public class ConnectionManagerImpl implements ConnectionManager {
         }
     }
 
+    private void parseAutoConnect(Dictionary<String, Object> properties) {
+        Object autoconnect = properties.get(KEY_AUTOCONNECT);
+        if (autoconnect != null) {
+            if (autoconnect instanceof Boolean) {
+                this.autoconnect = (Boolean) autoconnect;
+            } else {
+                this.autoconnect = Boolean.parseBoolean(autoconnect.toString());
+            }
+        }
+    }
+
     @Modified
-    public void modified() {
-        // All configuration modifications will be ignored! Only on boot, will everything be started
+    public void modified(Map<String, Object> properties) {
+        // Only the autoConnect change will be parsed, other changes will be ignored
+        parseAutoConnect(new Hashtable<String, Object>(properties));
     }
 
     @Deactivate
     public synchronized void deactivate() {
         configuration = null;
+        messageListenerContainer.close();
     }
 
     /**
@@ -174,7 +212,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                     try {
                         configuration.update(properties);
                     } catch (IOException e) {
-                        log.warn("Could not store the new active connections: " + e.getMessage(), e);
+                        logger.warn("Could not store the new active connections: " + e.getMessage(), e);
                     }
                 }
             }
@@ -189,10 +227,14 @@ public class ConnectionManagerImpl implements ConnectionManager {
                 EndpointWrapper wrapper = new EndpointWrapper(key, endpoint, this);
                 endpointWrappers.put(key, wrapper);
                 detectPossibleConnections(wrapper);
-                log.debug("Added endpoint on key [{}]", key);
+                logger.debug("Added endpoint on key [{}]", key);
+
+                if (autoconnect) {
+                    autoConnect();
+                }
             }
         } catch (IllegalArgumentException ex) {
-            log.warn("Could not add endpoint: {}", ex.getMessage());
+            logger.warn("Could not add endpoint: {}", ex.getMessage());
         }
     }
 
@@ -202,7 +244,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
             EndpointWrapper endpointWrapper = endpointWrappers.remove(key);
             if (endpointWrapper != null && endpointWrapper.getEndpoint() == endpoint) {
                 endpointWrapper.close();
-                log.debug("Removed endpoint on key [{}]", key);
+                logger.debug("Removed endpoint on key [{}]", key);
             }
         }
     }
@@ -226,13 +268,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                                                                                     left.getPort()
                                                                                                         .accepts())) {
                             PotentialConnectionImpl connection = new PotentialConnectionImpl(left, right);
-                            log.info("Found matching ports: {} <--> {}", left, right);
+                            logger.info("Found matching ports: {} <--> {}", left, right);
                             left.addMatch(connection);
                             right.addMatch(connection);
 
                             String key = connection.toString();
                             if (activeConnections.contains(key)) {
-                                log.info("Auto-starting connection on {}", connection);
+                                logger.info("Auto-starting connection on {}", connection);
                                 connection.connect();
                             }
                         }
@@ -257,6 +299,19 @@ public class ConnectionManagerImpl implements ConnectionManager {
             }
         }
         return correct;
+    }
+
+    @Reference(dynamic = true,
+               multiple = true,
+               optional = true,
+               service = MessageListener.class,
+               name = "messageListener")
+    public synchronized void addMessageListener(MessageListener messageListener) {
+        messageListenerContainer.addMessageListener(messageListener);
+    }
+
+    public synchronized void removeMessageListener(MessageListener messageListener) {
+        messageListenerContainer.removeMessageListener(messageListener);
     }
 
     @Override
@@ -305,7 +360,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                 if ((otherEnd.getCardinality() == Cardinality.SINGLE && otherEnd.getPotentialConnections()
                                                                                                 .size() == 1) || otherEnd.getCardinality() == Cardinality.MULTIPLE) {
                                     connection.connect();
-                                    log.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
+                                    logger.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
                                 }
                             }
                         }
@@ -316,5 +371,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
         waitWithStoring = false;
         storeConnections();
+    }
+
+    public MessageListenerContainer getMessageListenerContainer() {
+        return messageListenerContainer;
     }
 }

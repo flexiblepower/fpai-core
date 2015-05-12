@@ -14,20 +14,21 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.useradmin.UserAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.ConfigurationPolicy;
-import aQute.bnd.annotation.component.Reference;
+import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.metatype.Meta;
 
 @Component(provide = HttpContext.class,
-properties = "contextId=fps",
-designate = UserSessionHttpContext.Config.class,
-configurationPolicy = ConfigurationPolicy.optional,
-immediate = true)
+           properties = "contextId=fps",
+           designate = UserSessionHttpContext.Config.class,
+           configurationPolicy = ConfigurationPolicy.optional,
+           immediate = true)
 public class UserSessionHttpContext implements HttpContext {
     private final static Logger logger = LoggerFactory.getLogger(UserSessionHttpContext.class);
 
@@ -40,26 +41,20 @@ public class UserSessionHttpContext implements HttpContext {
     private final SessionManager sessionManager;
 
     public UserSessionHttpContext() {
-        sessionManager = SessionManager.getInstance();
+        sessionManager = new SessionManager();
     }
 
     private Bundle bundle;
 
     private boolean disabled;
 
-    private UserAdmin userAdmin;
+    private LoginServlet loginServlet;
+    private LogoutServlet logoutServlet;
 
-    @Reference(dynamic = true, optional = true)
-    public void setUserAdmin(UserAdmin userAdmin) {
-        this.userAdmin = userAdmin;
-    }
-
-    public void unsetUserAdmin(UserAdmin userAdmin) {
-        this.userAdmin = null;
-    }
+    private ServiceTracker<UserAdmin, UserAdmin> trackedUserAdmins;
 
     @Activate
-    public void activate(BundleContext context, Map<String, Object> parameters) {
+    public void activate(BundleContext context, Map<String, Object> parameters) throws IOException {
         bundle = context.getBundle();
 
         disabled = false;
@@ -68,14 +63,41 @@ public class UserSessionHttpContext implements HttpContext {
             disabled = Boolean.parseBoolean(isDisabled.toString());
         }
 
+        if (!disabled) {
+            try {
+                trackedUserAdmins = new ServiceTracker<UserAdmin, UserAdmin>(context, UserAdmin.class, null);
+                trackedUserAdmins.open();
+
+                loginServlet = new LoginServlet(context, sessionManager);
+                logoutServlet = new LogoutServlet(context, sessionManager);
+            } catch (NoClassDefFoundError error) {
+                // No UserAdmin package available...
+                disabled = true;
+            }
+        }
+
         logger.debug("Started user context. Disabled = {}", disabled);
+    }
+
+    @Deactivate
+    public void deactivate() {
+        if (trackedUserAdmins != null) {
+            trackedUserAdmins.close();
+        }
+
+        if (loginServlet != null) {
+            loginServlet.close();
+        }
+        if (logoutServlet != null) {
+            logoutServlet.close();
+        }
     }
 
     @Override
     public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.trace("Entering handleSecurity, request.pathInfo = {}", request.getPathInfo());
 
-        if (disabled || userAdmin == null) {
+        if (disabled || trackedUserAdmins.isEmpty()) {
             return true;
         }
 

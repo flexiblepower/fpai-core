@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.flexiblepower.runtime.ui.server.HttpUtils;
 import org.flexiblepower.runtime.ui.server.widgets.WidgetRegistration;
-import org.osgi.service.useradmin.User;
+import org.flexiblepower.ui.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

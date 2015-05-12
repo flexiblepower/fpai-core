@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpUtils {
+public final class HttpUtils {
     private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
-    private static final Map<String, String> contentTypes = new HashMap<String, String>();
+    private static final Map<String, String> CONTEINT_TYPES = new HashMap<String, String>();
 
     static {
         add("text/html", "html", "htm");
@@ -38,7 +38,7 @@ public class HttpUtils {
     private static void add(String contentType, String... extensions) {
         logger.trace("Entering add, contentType = {}, extensions = {}", contentType, extensions);
         for (String ext : extensions) {
-            contentTypes.put(ext, contentType);
+            CONTEINT_TYPES.put(ext, contentType);
         }
         logger.trace("Leaving add");
     }
@@ -48,8 +48,8 @@ public class HttpUtils {
         int ix = filename.lastIndexOf('.');
         if (ix > 0) {
             String ext = filename.substring(ix + 1).toLowerCase();
-            if (contentTypes.containsKey(ext)) {
-                return contentTypes.get(ext);
+            if (CONTEINT_TYPES.containsKey(ext)) {
+                return CONTEINT_TYPES.get(ext);
             }
         }
         String result = URLConnection.guessContentTypeFromName(filename);

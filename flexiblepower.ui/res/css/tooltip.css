@@ -1,0 +1,55 @@
+/** Tooltip CSS **/
+
+a.tooltip, a.tooltip:hover {
+    text-decoration: none;
+	outline: none; 
+} 
+
+a.tooltip strong {
+	line-height: 2em;
+}
+
+a.tooltip span {
+	display:none;
+}
+
+a.tooltip:hover span {
+	position: absolute;
+	display: inline;
+	border: 1px solid #DCA;
+	padding: .7em .4em;
+	z-index: 10;
+
+	text-align: justify;
+	font-size: 90%;
+	line-height:1.2em;
+	background: white;
+	color: black;
+	
+	width: 240px;
+	margin: 0 0 0 12px;
+
+	border-radius: .5em;
+	box-shadow: .4em .4em .7em #CCC;
+}
+
+a.tooltip:hover span img {
+	float: right;
+}
+
+/** For the info button **/
+
+a.tooltip.info {
+	position: absolute;
+	right: 1em;
+	top: .5em;
+}
+
+a.tooltip.info img {
+	width: 25px;
+	height: 25px;
+}
+
+a.tooltip.info:hover span {
+	margin-left: -260px;
+}
