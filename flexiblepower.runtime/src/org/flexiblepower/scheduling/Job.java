@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,8 @@ public final class Job<V> implements ScheduledFuture<V> {
                                     final V result,
                                     final AbstractScheduler scheduler,
                                     long timeOfNextRun,
-                                    long timeStep) {
+                                    long timeStep,
+                                    AtomicLong serialGenerator) {
         return new Job<V>(new Callable<V>() {
             @Override
             public V call() throws Exception {
@@ -29,32 +31,37 @@ public final class Job<V> implements ScheduledFuture<V> {
             public String toString() {
                 return runnable.toString();
             }
-        }, scheduler, timeOfNextRun, timeStep);
+        }, scheduler, timeOfNextRun, timeStep, serialGenerator.getAndIncrement());
     }
 
     public static <V> Job<V> create(final Callable<V> callable,
                                     final AbstractScheduler scheduler,
                                     long timeOfNextRun,
-                                    long timeStep) {
-        return new Job<V>(callable, scheduler, timeOfNextRun, timeStep);
+                                    long timeStep,
+                                    AtomicLong serialGenerator) {
+        return new Job<V>(callable, scheduler, timeOfNextRun, timeStep, serialGenerator.getAndIncrement());
     }
 
     private final Callable<V> callable;
     private final AbstractScheduler scheduler;
 
     private volatile V result;
-    private volatile Exception exception;
+    private volatile Throwable exception;
+
+    // Serial number for the jobs to distinguish between them for sorting
+    private final long serial;
 
     // Both of these are is milliseconds
     private volatile long timeOfNextRun, timeStep;
     private volatile boolean cancelled;
 
-    private Job(Callable<V> callable, AbstractScheduler scheduler, long timeOfNextRun, long timeStep) {
+    private Job(Callable<V> callable, AbstractScheduler scheduler, long timeOfNextRun, long timeStep, long serial) {
         this.callable = callable;
         this.scheduler = scheduler;
 
         this.timeOfNextRun = timeOfNextRun;
         this.timeStep = timeStep;
+        this.serial = serial;
 
         result = null;
         exception = null;
@@ -88,6 +95,10 @@ public final class Job<V> implements ScheduledFuture<V> {
                 return -1;
             } else if (timeOfNextRun > job.timeOfNextRun) {
                 return 1;
+            } else if (serial < job.serial) {
+                return -1;
+            } else if (serial > job.serial) {
+                return 1;
             } else {
                 return hashCode() - job.hashCode();
             }
@@ -118,7 +129,7 @@ public final class Job<V> implements ScheduledFuture<V> {
     public synchronized void run() {
         try {
             result = callable.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.warn("Exception during execution of job", e);
             exception = e;
         }

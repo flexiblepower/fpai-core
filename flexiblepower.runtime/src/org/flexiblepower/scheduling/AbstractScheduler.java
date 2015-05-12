@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.measure.Measurable;
 import javax.measure.quantity.Duration;
@@ -42,6 +43,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
      */
     protected final AtomicBoolean running;
 
+    private final AtomicLong serialGenerator;
+
     /**
      * The {@link PriorityQueue} of {@link Job}s that are scheduled.
      */
@@ -55,6 +58,7 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
      */
     public AbstractScheduler() {
         running = new AtomicBoolean(false);
+        serialGenerator = new AtomicLong();
         jobs = new PriorityBlockingQueue<Job<?>>();
     }
 
@@ -120,13 +124,13 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     @Override
     public <T> Future<T> submit(Callable<T> task) {
         logger.trace("submit(callable: {})", task);
-        return addJob(Job.create(task, this, currentTimeMillis(), 0));
+        return addJob(Job.create(task, this, currentTimeMillis(), 0, serialGenerator));
     }
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
         logger.trace("submit(runnable: {}, result: {})", task, result);
-        return addJob(Job.create(task, result, this, currentTimeMillis(), 0));
+        return addJob(Job.create(task, result, this, currentTimeMillis(), 0, serialGenerator));
     }
 
     @Override
@@ -138,14 +142,14 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
     public ScheduledFuture<?> schedule(Runnable command, Measurable<Duration> delay) {
         logger.trace("schedule(runnable: {}, delay: {})", command, delay);
         long ms = delay.longValue(MS);
-        return addJob(Job.create(command, null, this, currentTimeMillis() + ms, 0));
+        return addJob(Job.create(command, null, this, currentTimeMillis() + ms, 0, serialGenerator));
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, Measurable<Duration> delay) {
         logger.trace("schedule(callable: {}, delay: {})", callable, delay);
         long ms = delay.longValue(MS);
-        return addJob(Job.create(callable, this, currentTimeMillis() + ms, 0));
+        return addJob(Job.create(callable, this, currentTimeMillis() + ms, 0, serialGenerator));
     }
 
     @Override
@@ -157,7 +161,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                                  null,
                                  this,
                                  currentTimeMillis() + initialDelay.longValue(MS),
-                                 period.longValue(MS)));
+                                 period.longValue(MS),
+                                 serialGenerator));
     }
 
     @Override
@@ -169,7 +174,8 @@ public abstract class AbstractScheduler implements FlexiblePowerContext, Runnabl
                                  null,
                                  this,
                                  currentTimeMillis() + initialDelay.longValue(MS),
-                                 -delay.longValue(MS)));
+                                 -delay.longValue(MS),
+                                 serialGenerator));
     }
 
     /**
