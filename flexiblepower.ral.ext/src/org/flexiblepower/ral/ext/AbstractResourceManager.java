@@ -11,6 +11,7 @@ import org.flexiblepower.ral.ResourceManager;
 import org.flexiblepower.ral.ResourceState;
 import org.flexiblepower.ral.messages.Allocation;
 import org.flexiblepower.ral.messages.AllocationStatusUpdate;
+import org.flexiblepower.ral.messages.ControlSpaceRevoke;
 import org.flexiblepower.ral.messages.ResourceMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,13 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
      */
     protected abstract RCP receivedAllocation(ResourceMessage message);
 
+    /**
+     * This method is called when a revoke message is needed (e.g. when the driver has disconnected).
+     *
+     * @return The {@link ControlSpaceRevoke} that will be sent to the controller.
+     */
+    protected abstract ControlSpaceRevoke createRevokeMessage();
+
     private volatile Connection driverConnection, controllerConnection;
 
     @Override
@@ -123,6 +131,10 @@ public abstract class AbstractResourceManager<RS extends ResourceState, RCP exte
                 public void disconnected() {
                     hasRegistered = false;
                     driverConnection = null;
+
+                    if (controllerConnection != null) {
+                        controllerConnection.sendMessage(createRevokeMessage());
+                    }
                 }
             };
         } else if (controllerConnection == null && "controller".equals(connection.getPort().name())) {
