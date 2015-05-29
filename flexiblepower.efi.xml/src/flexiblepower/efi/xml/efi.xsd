@@ -4,9 +4,9 @@
 
     <complexType name="ResourceMessage">
     	<sequence>
-    		<element name="resourceMessageId" type="ID"></element>
-    		<element name="resourceId" type="ID"></element>
-    		<element name="NewElement" type="dateTime"></element>
+    		<element name="resourceMessageId" type="ID" maxOccurs="1" minOccurs="1"></element>
+    		<element name="resourceId" type="ID" maxOccurs="1" minOccurs="1"></element>
+    		<element name="NewElement" type="dateTime" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
@@ -14,7 +14,7 @@
     	<complexContent>
     		<extension base="tns:ResourceMessage">
     			<sequence>
-    				<element name="allocationDelay" type="duration"></element>
+    				<element name="allocationDelay" type="duration" maxOccurs="1" minOccurs="1"></element>
     			</sequence>
     		</extension>
     	</complexContent>
