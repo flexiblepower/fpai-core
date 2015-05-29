@@ -200,7 +200,7 @@
 
     <complexType name="ValueWithProbability">
     	<sequence>
-    		<element name="value" type="double"></element>
+    		<element name="value" type="double" maxOccurs="1" minOccurs="1"></element>
     		<element name="probabilityInfo" type="tns:ProbabilityInfo" maxOccurs="1" minOccurs="0"></element>
     	</sequence>
     </complexType>
@@ -251,4 +251,303 @@
     		<element name="upperBound" type="double"></element>
     	</sequence>
     </complexType>
+
+    <complexType name="UncontrolledUpdate">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceUpdate"></extension>
+    	</complexContent>
+    </complexType>
+
+
+    <complexType name="UncontrolledMeasurement">
+    	<complexContent>
+    		<extension base="tns:UncontrolledUpdate">
+    			<attribute name="measurement" type="double"></attribute>
+    			<attribute name="commodity" type="tns:CommodityEnum"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="UncontrolledForecast">
+    	<complexContent>
+    		<extension base="tns:UncontrolledUpdate">
+    			<sequence>
+    			<element name="forecast" type="tns:CommodityProfileContainer"</element>
+    			
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="UncontrolledAllocation">
+    	<complexContent>
+    		<extension base="tns:Allocation">
+    			<sequence>
+    				<element name="startTim" type="dateTime"></element>
+    				<element name="curtailProfiles" type="tns:CommodityProfileContainer"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="TimeShifterRegistration">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceRegistration">
+    			<sequence>
+    				<element name="supportedCommodities" type="tns:SupportedCommodities"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="TimeShifterUpdate">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceUpdate"></extension>
+    		<sequence>
+    			<element name="sequentialProfiles" type="tns:SequentialProfile"></element>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="SequentialProfile">
+    	<sequence>
+    		<element name="profileId" type="int"></element>
+    		<element name="maxIntervalBefore" type="int"></element>
+    		<element name="commodityProfile" type="tns:CommodityProfile" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="TimeShifterAllocation">
+    	<complexContent>
+    		<extension base="tns:Allocation">
+    			<sequence>
+    				<element name="sequentialProfileId" type="int"></element>
+    				<element name="startTime" type="dateTime"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="BufferControlSpaceRegistration">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceRegistration">
+    			<sequence>
+    				<element name="fillLevelLabel" type="string" maxOccurs="1" minOccurs="1"></element>
+    				<element name="fillLevelUnit" type="string" maxOccurs="1" minOccurs="1"></element>
+    				<element name="actuators" type="tns:Actuator" maxOccurs="unbounded" minOccurs="0"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="Actuator">
+    	<sequence>
+    		<element name="actuatorId" type="int" maxOccurs="1" minOccurs="1"></element>
+    		<element name="actuatorLabel" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="supportedCommodities" type="tns:SupportedCommodities" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Timer">
+    	<sequence>
+    		<element name="timerId" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="timerLabel" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="timerDurationInSeconds" type="int" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Transition">
+    	<sequence>
+    		<element name="toRunningMode" type="int" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="timer" type="tns:Timer" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="transitionTime" type="duration"
+    			maxOccurs="1" minOccurs="0">
+    		</element>
+    		<element name="transitionCostsInEuro" type="tns:Price"></element>
+    	</sequence>
+    </complexType>
+
+	<complexType name="Price">
+	  <simpleContent>
+	    <extension base="decimal">
+	      <attribute name="currency" type="currencyType"/>
+	    </extension>
+	  </simpleContent>
+	</complexType>
+
+	<simpleType name="CurrencyType">
+	  <restriction base="string">
+	    <enumeration value="pounds"/>
+	    <enumeration value="euros"/>
+	    <enumeration value="dollars"/>
+	  </restriction>
+	</simpleType>
+
+	<complexType name="RangeElement">
+		<sequence>
+			<element name="lowerBound" type="double" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="upperBound" type="double" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="fillingRate" type="double" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="runningCosts" type="tns:Price" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="RunningMode">
+		<sequence>
+			<element name="runningModeId" type="int" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="runningModeName" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="runningModeBehaviour" type="tns:RunningModeBehaviour" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="RunningModeBehaviour">
+		<sequence>
+			<element name="rangeElement" type="tns:RangeElement" maxOccurs="1" minOccurs="1"></element>
+			<element name="electricityConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
+			<element name="gasConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
+			<element name="heatConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ActuatorBehaviour">
+		<sequence>
+			<element name="actuatorId" type="string" maxOccurs="1" minOccurs="1"></element>
+			<element name="runningModes" type="tns:RunningMode"
+				maxOccurs="1" minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="LeakageBehaviour">
+		<sequence>
+			<element name="rangeElement" type="tns:RangeElement" maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="BufferSystemDescription">
+		<complexContent>
+			<extension base="tns:BufferUpdate">
+				<sequence>
+					<element name="actuators" type="tns:ActuatorBehaviour" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="leakageBehaviour" type="tns:LeakageBehaviour" maxOccurs="1" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BufferUpdate">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceUpdate"></extension>
+    	</complexContent>
+    </complexType>
+
+	<complexType name="TimerUpdate">
+		<sequence>
+			<element name="timeId" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="finishedAt" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ActuatorUpdate">
+		<sequence>
+			<element name="actuatorId" type="int" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="currentRunningMode" type="int" maxOccurs="1" minOccurs="1"></element>
+			<element name="timersUpdate" type="tns:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="BufferStateUpdate">
+		<complexContent>
+			<extension base="tns:BufferUpdate">
+				<sequence>
+					<element name="currentFillLevel" type="double"
+						maxOccurs="1" minOccurs="1">
+					</element>
+					<element name="actuatorsUpdate" type="tns:ActuatorUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="TargetProfileElement">
+		<sequence>
+			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
+			<element name="lowerBound" type="double" maxOccurs="1" minOccurs="1"></element>
+			<element name="upperBound" type="double" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="TargetProfile">
+		<sequence>
+			<element name="startTime" type="dateTime"></element>
+			<element name="NewElement" type="string"></element>
+		</sequence>
+	</complexType>
+
+
+	<complexType name="BufferTargetStateUpdate">
+		<complexContent>
+			<extension base="tns:BufferUpdate">
+				<sequence>
+					<element name="targetProfile" type="tns:TargetProfile"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+
+	<complexType name="BufferForecastElement">
+		<sequence>
+			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
+			<element name="valueWithProbabiltiy"
+				type="tns:ValueWithProbability" maxOccurs="1" minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="BufferUsageForecast">
+		<complexContent>
+			<extension base="tns:BufferUpdate">
+				<sequence>
+					<element name="unit" type="string" maxOccurs="1"
+						minOccurs="1">
+					</element>
+					<element name="bufferUsageForecastElements" type="tns:BufferForecastElement" maxOccurs="unbounded" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BufferAllocation">
+		<complexContent>
+			<extension base="tns:Allocation">
+				<sequence>
+					<element name="actuatorAllocation" type="tns:ActuatorAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="ActuatorAllocation">
+		<sequence>
+			<element name="actuatorId" type="int" maxOccurs="1" minOccurs="1"></element>
+			<element name="runningModeId" type="int" maxOccurs="1" minOccurs="1"></element>
+			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
 </schema>
