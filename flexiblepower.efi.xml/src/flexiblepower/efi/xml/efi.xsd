@@ -73,7 +73,6 @@
     	</restriction>
     </simpleType>
 
-
     <complexType name="ControlSpaceRevoke">
     	<complexContent>
     		<extension base="tns:ResourceMessage"></extension>
@@ -88,8 +87,16 @@
 
     <complexType name="Commodity">
     	<sequence>
-    		<element name="billableUnit" type="string"></element>
-    		<element name="flowUnit" type="string"></element>
+    		<element name="energyUnit" type="string">
+    			<annotation>
+    				<documentation>This is the unit of energy for this commodity.</documentation>
+    			</annotation>
+    		</element>
+    		<element name="powerUnit" type="string"></element>
+    		<element name="potentialUnit" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="flowUnit" type="string" maxOccurs="1" minOccurs="0"></element>
     	</sequence>
     </complexType>
 
@@ -101,29 +108,31 @@
     
     <complexType name="Electricity">
     	<complexContent>
-    		<extension base="tns:Commodity"></extension>
+    		<extension base="tns:CommodityProfile"></extension>
     	</complexContent>
     </complexType>
-    
+
     <complexType name="Heat">
     	<complexContent>
     		<extension base="tns:Commodity"></extension>
     	</complexContent>
     </complexType>
 
-    <complexType name="ProfileElement">
+    <complexType name="CommodityProfileElement">
     	<sequence>
     		<element name="duration" type="duration"></element>
-    		<element name="value" type="double"></element>
-    		<element name="unit" type="string"></element>
+    		<element name="powerValue" type="double"></element>
+    		<element name="flowValue" type="double" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="potentialValue" type="double" maxOccurs="1" minOccurs="0"></element>
     	</sequence>
     </complexType>
 
-    <complexType name="Profile">
+    <complexType name="CommodityProfile">
     	<sequence>
-    		<element name="element" type="tns:ProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="element" type="tns:CommodityProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
-    	<attribute name="commocity" type="tns:CommodityEnum"></attribute>
     </complexType>
     
     <complexType name="UncertainMeasure">
@@ -154,4 +163,28 @@
     	<attribute name="commocity" type="tns:CommodityEnum"></attribute>
     </complexType>
 
+
+    <complexType name="GasProfile">
+        <annotation>
+        	<documentation>This profile can only be used for gas values.</documentation>
+        </annotation>
+        <complexContent>
+    		<extension base="tns:CommodityProfile">
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <element name="NewElement" type="string"></element>
+
+    <complexType name="HeatProfile">
+    	<complexContent>
+    		<extension base="tns:CommodityProfile"></extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="ElectricityProfile">
+    	<complexContent>
+    		<extension base="tns:CommodityProfile"></extension>
+    	</complexContent>
+    </complexType>
 </schema>
