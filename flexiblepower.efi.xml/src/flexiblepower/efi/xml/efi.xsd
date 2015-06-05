@@ -272,7 +272,7 @@
     	<complexContent>
     		<extension base="tns:UncontrolledUpdate">
     			<sequence>
-    			<element name="forecast" type="tns:CommodityProfileContainer"</element>
+    			<element name="forecast" type="tns:CommodityProfileContainer"></element>
     			
     			</sequence>
     		</extension>
@@ -302,9 +302,11 @@
 
     <complexType name="TimeShifterUpdate">
     	<complexContent>
-    		<extension base="tns:ControlSpaceUpdate"></extension>
+    		<extension base="tns:ControlSpaceUpdate">
     		<sequence>
     			<element name="sequentialProfiles" type="tns:SequentialProfile"></element>
+    		</sequence>
+    		</extension>
     	</complexContent>
     </complexType>
 
@@ -373,7 +375,7 @@
 	<complexType name="Price">
 	  <simpleContent>
 	    <extension base="decimal">
-	      <attribute name="currency" type="currencyType"/>
+	      <attribute name="currency" type="tns:CurrencyType"/>
 	    </extension>
 	  </simpleContent>
 	</complexType>
