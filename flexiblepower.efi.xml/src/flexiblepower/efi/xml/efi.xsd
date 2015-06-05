@@ -135,17 +135,6 @@
     	</sequence>
     </complexType>
     
-    <complexType name="UncertainMeasure">
-    	<sequence>
-    		<element name="the68PPRLowerBound" type="double"></element>
-    		<element name="the95PPRLowerBound" type="double"></element>
-    		<element name="mean" type="double"></element>
-    		<element name="the95PPRUpperBound" type="double"></element>
-    		<element name="the68PPRUpperBound" type="double"></element>
-    		<element name="unit" type="string"></element>
-    	</sequence>
-    </complexType>
-    
     <complexType name="UncertaintyProfileElement">
     	<sequence>
     		<element name="duration" type="duration"></element>
@@ -200,7 +189,7 @@
 
     <complexType name="ValueWithProbability">
     	<sequence>
-    		<element name="value" type="double" maxOccurs="1" minOccurs="1"></element>
+    		<element name="value" type="tns:MeasureType" maxOccurs="1" minOccurs="1"></element>
     		<element name="probabilityInfo" type="tns:ProbabilityInfo" maxOccurs="1" minOccurs="0"></element>
     	</sequence>
     </complexType>
@@ -262,11 +251,22 @@
     <complexType name="UncontrolledMeasurement">
     	<complexContent>
     		<extension base="tns:UncontrolledUpdate">
-    			<attribute name="measurement" type="double"></attribute>
-    			<attribute name="commodity" type="tns:CommodityEnum"></attribute>
+    		<sequence>
+    		<element name="measurement" type="tns:MeasureType"></element>
+    		<element name="commodityType" type="tns:CommodityEnum"></element>
+    		<element name="commodityUnit" type="tns:FlowUnitType"></element>
+    	</sequence>
     		</extension>
     	</complexContent>
     </complexType>
+
+	<complexType name="MeasureType">
+	  <simpleContent>
+	    <extension base="double">
+	      <attribute name="multiplier" type="tns:MultiplierType"/>
+	    </extension>
+	  </simpleContent>
+	</complexType>
 
     <complexType name="UncontrolledForecast">
     	<complexContent>
@@ -283,7 +283,7 @@
     	<complexContent>
     		<extension base="tns:Allocation">
     			<sequence>
-    				<element name="startTim" type="dateTime"></element>
+    				<element name="startTime" type="dateTime"></element>
     				<element name="curtailProfiles" type="tns:CommodityProfileContainer"></element>
     			</sequence>
     		</extension>
@@ -304,7 +304,7 @@
     	<complexContent>
     		<extension base="tns:ControlSpaceUpdate">
     		<sequence>
-    			<element name="sequentialProfiles" type="tns:SequentialProfile"></element>
+    			<element name="sequentialProfiles" type="tns:SequentialProfile" maxOccurs="unbounded" minOccurs="1"></element>
     		</sequence>
     		</extension>
     	</complexContent>
@@ -314,7 +314,7 @@
     	<sequence>
     		<element name="profileId" type="int"></element>
     		<element name="maxIntervalBefore" type="int"></element>
-    		<element name="commodityProfile" type="tns:CommodityProfile" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="commodityProfile" type="tns:CommodityProfile" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
@@ -329,7 +329,7 @@
     	</complexContent>
     </complexType>
 
-    <complexType name="BufferControlSpaceRegistration">
+    <complexType name="BufferRegistration">
     	<complexContent>
     		<extension base="tns:ControlSpaceRegistration">
     			<sequence>
@@ -351,9 +351,9 @@
 
     <complexType name="Timer">
     	<sequence>
-    		<element name="timerId" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="timerId" type="int" maxOccurs="1" minOccurs="1"></element>
     		<element name="timerLabel" type="string" maxOccurs="1" minOccurs="1"></element>
-    		<element name="timerDurationInSeconds" type="int" maxOccurs="1" minOccurs="1"></element>
+    		<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
@@ -362,8 +362,11 @@
     		<element name="toRunningMode" type="int" maxOccurs="1"
     			minOccurs="1">
     		</element>
-    		<element name="timer" type="tns:Timer" maxOccurs="1"
-    			minOccurs="1">
+    		<element name="startTimerId" type="int" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    		<element name="blockingTimerId" type="int" maxOccurs="unbounded"
+    			minOccurs="0">
     		</element>
     		<element name="transitionTime" type="duration"
     			maxOccurs="1" minOccurs="0">
@@ -388,6 +391,34 @@
 	  </restriction>
 	</simpleType>
 
+	<simpleType name="PowerUnitType">
+	  <restriction base="string">
+	    <enumeration value="Watt"/>
+	  </restriction>
+	</simpleType>
+
+	<simpleType name="PotentialUnitType">
+	  <restriction base="string">
+	    <enumeration value="ToBeDone"/>
+	  </restriction>
+	</simpleType>
+
+	<simpleType name="FlowUnitType">
+	  <restriction base="string">
+	    <enumeration value="ToBeDone"/>
+	  </restriction>
+	</simpleType>
+
+	<simpleType name="MultiplierType">
+	  <restriction base="string">
+	  	<enumeration value="micro"/>
+	    <enumeration value="milli"/>
+	    <enumeration value="none"/>
+	    <enumeration value="kilo"/>
+	    <enumeration value="mega"/>
+	  </restriction>
+	</simpleType>
+
 	<complexType name="RangeElement">
 		<sequence>
 			<element name="lowerBound" type="double" maxOccurs="1"
@@ -409,16 +440,17 @@
 				minOccurs="1">
 			</element>
 			<element name="runningModeName" type="string" maxOccurs="1" minOccurs="1"></element>
-			<element name="runningModeBehaviour" type="tns:RunningModeBehaviour" maxOccurs="1" minOccurs="1"></element>
+			<element name="runningModeBehaviour" type="tns:RunningModeElement" maxOccurs="1" minOccurs="1"></element>
+			<element name="possibleTransition" type="tns:Transition" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
-	<complexType name="RunningModeBehaviour">
+	<complexType name="RunningModeElement">
 		<sequence>
 			<element name="rangeElement" type="tns:RangeElement" maxOccurs="1" minOccurs="1"></element>
-			<element name="electricityConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
-			<element name="gasConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
-			<element name="heatConsumption" type="double" maxOccurs="1" minOccurs="0"></element>
+			<element name="electricityConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+			<element name="gasConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+			<element name="heatConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
@@ -426,7 +458,7 @@
 		<sequence>
 			<element name="actuatorId" type="string" maxOccurs="1" minOccurs="1"></element>
 			<element name="runningModes" type="tns:RunningMode"
-				maxOccurs="1" minOccurs="1">
+				maxOccurs="unbounded" minOccurs="1">
 			</element>
 		</sequence>
 	</complexType>
@@ -489,15 +521,15 @@
 	<complexType name="TargetProfileElement">
 		<sequence>
 			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
-			<element name="lowerBound" type="double" maxOccurs="1" minOccurs="1"></element>
-			<element name="upperBound" type="double" maxOccurs="1" minOccurs="1"></element>
+			<element name="fillLevelLowerBound" type="double" maxOccurs="1" minOccurs="1"></element>
+			<element name="fillLevelUpperBound" type="double" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
 	<complexType name="TargetProfile">
 		<sequence>
 			<element name="startTime" type="dateTime"></element>
-			<element name="NewElement" type="string"></element>
+			<element name="targetProfileElement" type="tns:TargetProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
@@ -516,7 +548,7 @@
 	<complexType name="BufferForecastElement">
 		<sequence>
 			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
-			<element name="valueWithProbabiltiy"
+			<element name="deltaFillLevelWithProbabiltiy"
 				type="tns:ValueWithProbability" maxOccurs="1" minOccurs="1">
 			</element>
 		</sequence>
