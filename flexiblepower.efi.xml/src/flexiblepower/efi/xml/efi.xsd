@@ -322,8 +322,7 @@
     	<complexContent>
     		<extension base="tns:Allocation">
     			<sequence>
-    				<element name="sequentialProfileId" type="int"></element>
-    				<element name="startTime" type="dateTime"></element>
+    				<element name="allocations" type="tns:SequentialProfileAllocation" maxOccurs="unbounded" minOccurs="1"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -581,6 +580,71 @@
 		<sequence>
 			<element name="actuatorId" type="int" maxOccurs="1" minOccurs="1"></element>
 			<element name="runningModeId" type="int" maxOccurs="1" minOccurs="1"></element>
+			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="UnconstrainedRegistration">
+		<complexContent>
+			<extension base="tns:ControlSpaceRegistration">
+				<sequence>
+    				<element name="supportedCommodities" type="tns:SupportedCommodities" maxOccurs="1" minOccurs="1"></element>
+    			</sequence>
+    			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="UnconstrainedSystemDescription">
+		<complexContent>
+			<extension base="tns:UncontrolledUpdate">
+				<sequence>
+					<element name="runningModes" type="tns:RunningMode" maxOccurs="unbounded" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="UnconstrainedUpdate">
+    	<complexContent>
+    		<extension base="tns:ControlSpaceUpdate"></extension>
+    	</complexContent>
+    </complexType>
+
+	<complexType name="UnconstrainedStateUpdate">
+		<complexContent>
+			<extension base="tns:UnconstrainedUpdate">
+				<sequence>
+					<element name="currentRunningModeId" type="int"
+						maxOccurs="1" minOccurs="1">
+					</element>
+					<element name="timerUpdates" type="tns:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="UnconstrainedAllocation">
+		<complexContent>
+			<extension base="tns:Allocation">
+				<sequence>
+					<element name="runningModeSelectors" type="tns:RunningModeSelector" maxOccurs="unbounded" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="RunningModeSelector">
+		<sequence>
+			<element name="runningModeId" type="int" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SequentialProfileAllocation">
+		<sequence>
+			<element name="sequentialProfileId" type="int" maxOccurs="1" minOccurs="1"></element>
 			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 	</complexType>
