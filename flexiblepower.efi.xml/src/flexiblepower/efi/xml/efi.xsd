@@ -1,9 +1,9 @@
 <?xml version="1.1" encoding="UTF-8"?>
-<schema targetNamespace="http://www.flexiblepower.org/efi" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.flexiblepower.org/efi">
+<schema targetNamespace="http://www.flexiblepower.org/efi" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.flexiblepower.org/efi" elementFormDefault="qualified" attributeFormDefault="qualified">
 
     <complexType name="EfiMessage">
     	<sequence>
-    		<element name="efiMessageId" type="ID" maxOccurs="1" minOccurs="1"></element>
+    		<element name="messageId" type="ID" maxOccurs="1" minOccurs="1"></element>
     		<element name="deviceId" type="ID" maxOccurs="1" minOccurs="1"></element>
     		<element name="timestamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
@@ -84,36 +84,55 @@
     	</complexContent>
     </complexType>
 
-    <complexType name="Commodity">
+    <complexType name="Commodity" abstract="true">
     	<sequence>
-    		<element name="UnitOfEnergy" type="string">
+    		<element name="unitOfEnergy" type="string">
     			<annotation>
     				<documentation>This is the unit of energy for this commodity.</documentation>
     			</annotation>
     		</element>
-    		<element name="UnitOfPower" type="string"></element>
-    		<element name="UnitOfPotential" type="string" maxOccurs="1"
-    			minOccurs="0">
-    		</element>
-    		<element name="UnitOfFlow" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="unitOfPower" type="string"></element>
+    		<element name="unitOfPotential" type="string"></element>
+    		<element name="unitOfFlow" type="string"></element>
     	</sequence>
     </complexType>
 
     <complexType name="Gas">
     	<complexContent>
-    		<extension base="tns:Commodity"></extension>
+    		<restriction base="tns:Commodity">
+				<sequence>
+					<element name="unitOfEnergy" type="string" fixed="Joule" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPotential" type="string" fixed="Pressure" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" minOccurs="1" maxOccurs="1"></element>
+				</sequence>
+    		</restriction>
     	</complexContent>
     </complexType>
     
     <complexType name="Electricity">
     	<complexContent>
-    		<extension base="tns:Commodity"></extension>
+    		<restriction base="tns:Commodity">
+				<sequence>
+					<element name="unitOfEnergy" type="string" fixed="WattHour" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPotential" type="string" fixed="Volt" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfFlow" type="string" fixed="Ampere" minOccurs="1" maxOccurs="1"></element>
+				</sequence>
+    		</restriction>
     	</complexContent>
     </complexType>
 
     <complexType name="Heat">
     	<complexContent>
-    		<extension base="tns:Commodity"></extension>
+    		<restriction base="tns:Commodity">
+				<sequence>
+					<element name="unitOfEnergy" type="string" fixed="Joule" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPotential" type="string" fixed="Temperature" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" minOccurs="1" maxOccurs="1"></element>
+				</sequence>
+    		</restriction>
     	</complexContent>
     </complexType>
 
@@ -128,8 +147,9 @@
     	</sequence>
     </complexType>
 
-    <complexType name="Profile">
+    <complexType name="Profile" abstract="true">
     	<sequence>
+    		<element name="unit" type="string"></element>
     		<element name="element" type="tns:ProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
     </complexType>
@@ -143,8 +163,6 @@
     		</extension>
     	</complexContent>
     </complexType>
-
-    <element name="NewElement" type="tns:InflexibleRegistration"></element>
 
     <complexType name="HeatProfile">
     	<complexContent>
@@ -254,13 +272,12 @@
     		<extension base="tns:InflexibleUpdate">
     			<sequence>
     			<element name="forecast" type="tns:ProfileContainer"></element>
-    			
     			</sequence>
     		</extension>
     	</complexContent>
     </complexType>
 
-    <complexType name="InflexibleAllocation">
+    <complexType name="CurtailmentAllocation">
     	<complexContent>
     		<extension base="tns:Allocation">
     			<sequence>
@@ -351,7 +368,7 @@
     		<element name="transitionTime" type="duration"
     			maxOccurs="1" minOccurs="0">
     		</element>
-    		<element name="transitionCostsInEuro" type="tns:Price"></element>
+    		<element name="transitionCosts" type="tns:Price"></element>
     	</sequence>
     </complexType>
 
@@ -365,9 +382,9 @@
 
 	<simpleType name="CurrencyType">
 	  <restriction base="string">
-	    <enumeration value="pounds"/>
-	    <enumeration value="euros"/>
-	    <enumeration value="dollars"/>
+	    <enumeration value="pound"/>
+	    <enumeration value="euro"/>
+	    <enumeration value="dollar"/>
 	  </restriction>
 	</simpleType>
 
@@ -420,17 +437,8 @@
 				minOccurs="1">
 			</element>
 			<element name="runningModeName" type="string" maxOccurs="1" minOccurs="1"></element>
-			<element name="runningModeBehaviour" type="tns:RunningModeElement" maxOccurs="1" minOccurs="1"></element>
+			<element name="runningModeBehaviour" type="tns:RunningModeBehaviourType" maxOccurs="1" minOccurs="1"></element>
 			<element name="possibleTransition" type="tns:Transition" maxOccurs="unbounded" minOccurs="1"></element>
-		</sequence>
-	</complexType>
-
-	<complexType name="RunningModeElement">
-		<sequence>
-			<element name="rangeElement" type="tns:RangeElement" maxOccurs="1" minOccurs="1"></element>
-			<element name="electricityConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
-			<element name="gasConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
-			<element name="heatConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
@@ -629,4 +637,33 @@
 			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 	</complexType>
+
+	<complexType name="RunningModeElement">
+		<complexContent>
+			<extension base="tns:RangeElement">
+				<sequence>
+					<element name="electricityConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+					<element name="gasConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+					<element name="heatConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+			</sequence>
+		</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="RunningModeBehaviourType">
+		<sequence>
+			<element name="runningModeElement" type="tns:RunningModeElement" maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="EfiMessageChoice">
+		<choice minOccurs="1" maxOccurs="1">
+			<element name="inFlexibleRegistration" type="tns:InflexibleRegistration"/>
+			<element name="inFlexibileUpdate" type="tns:InflexibleUpdate"/>
+			<element name="curtailmentAllocation" type="tns:CurtailmentAllocation"/>
+		</choice>
+	</complexType>
+	
+	<element name="efiMessage" type="tns:EfiMessageChoice"></element>
+	
 </schema>
