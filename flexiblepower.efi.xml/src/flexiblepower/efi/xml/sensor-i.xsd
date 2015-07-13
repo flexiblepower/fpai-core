@@ -3,8 +3,7 @@
 
     <complexType name="SensingModuleCapabilities">
     	<sequence>
-    		<element name="Quantity" type="tns:Quantity" maxOccurs="1" minOccurs="1"></element>
-    		<element name="Unit" type="tns:Unit" maxOccurs="1" minOccurs="1"></element>
+    		<element name="Quantity" type="tns:SI_Quantity" maxOccurs="1" minOccurs="1"></element>
     		<element name="MinimumValue" type="double" maxOccurs="1" minOccurs="0"></element>
     		<element name="MaximumValue" type="double" maxOccurs="1" minOccurs="0"></element>
     		<element name="Precision" type="double" maxOccurs="1" minOccurs="0"></element>
@@ -21,22 +20,431 @@
     		<element name="XMPP" type="boolean" maxOccurs="1" minOccurs="1"></element>
     		<element name="XMPPServerAddress" type="string" maxOccurs="unbounded" minOccurs="0"></element>
     		<element name="XMPPUserName" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="XMPPTopic" type="string" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
+    
+    <complexType name="SI_Quantity">
+    
+    
+    </complexType>
 
-    <simpleType name="Quantity">
-    	<restriction base="string">
-    		<enumeration value="Voltage"></enumeration>
-    		<enumeration value="Frequency"></enumeration>
-    		<enumeration value="Temperature"></enumeration>
-    	</restriction>
-    </simpleType>
+    <complexType name="Length">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Meter"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="m"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+   <complexType name="Mass">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Kilogram"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="kg"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Time">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Second"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="s"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electric_Current">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Ampere"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="A"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Thermodynamic_Temperature">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Kelvin"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="K"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Amount_of_Substance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Mole"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="mol"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Luminous_Intensity">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Candela"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="cd"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+  	<complexType name="Angle">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Radian"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="rad"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Solid_Angle">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Steradian"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="sr"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Frequency">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Hertz"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Hz"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Force">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Newton"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="N"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Weight">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Newton"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="N"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Pressure">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Pascal"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Pa"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Stress">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Pascal"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Pa"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Energy">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Joule"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="J"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Work">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Joule"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="J"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Heat">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Joule"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="J"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Power">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Watt"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="W"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Radiant_Flux">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Watt"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="W"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electrical_Charge">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Coulomb"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="C"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Quantity_of_Electricity">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Coulomb"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="C"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Voltage">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Volt"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="V"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electric_Capacitance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Farad"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="F"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electric_Resistance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Ohm"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Ω"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electric_Impedance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Ohm"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Ω"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Electrical_Conductance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Siemens"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="S"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Magnetic_Flux">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Weber"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Wb"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Magnetic_Field">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Tesla"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="T"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Inductance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Henry"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="H"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Temperature">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Degree_Celsius"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="°C"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Luminous_Flux">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Lumen"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="lm"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Illuminance">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Lux"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="lx"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Radioactivity">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Becquerel"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Bq"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Absorbed_Dose">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Gray"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Gy"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Equivalent_Dose">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Sievert"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="Sv"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Catalytic_Activity">
+    	<complexContent>
+    		<extension base="tns:SI_Quantity">
+    				<attribute name="Unit" type="tns:Unit" fixed="Katal"></attribute>
+    				<attribute name="Prefix" type="tns:SI_Prefix" use="optional"></attribute>
+    				<attribute name="Symbol" type="string" fixed="kat"> </attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
     
     <simpleType name="Unit">
     	<restriction base="string">
-    		<enumeration value="Voltage"></enumeration>
+    		<enumeration value="Meter"></enumeration>
+    		<enumeration value="Kilogram"></enumeration>
+    		<enumeration value="Second"></enumeration>
+    		<enumeration value="Ampere"></enumeration>
+    		<enumeration value="Kelvin"></enumeration>
+    		<enumeration value="Mole"></enumeration>
+    		<enumeration value="Candela"></enumeration>
+    		<enumeration value="Radian"></enumeration>
+    		<enumeration value="Steradian"></enumeration>
     		<enumeration value="Hertz"></enumeration>
-    		<enumeration value="Celcius"></enumeration>
+    		<enumeration value="Newton"></enumeration>
+    		<enumeration value="Pascal"></enumeration>
+    		<enumeration value="Joule"></enumeration>
+    		<enumeration value="Watt"></enumeration>
+    		<enumeration value="Coulomb"></enumeration>
+    		<enumeration value="Volt"></enumeration>
+    		<enumeration value="Farad"></enumeration>
+    		<enumeration value="Ohm"></enumeration>
+    		<enumeration value="Siemens"></enumeration>
+    		<enumeration value="Weber"></enumeration>
+    		<enumeration value="Tesla"></enumeration>
+    		<enumeration value="Henry"></enumeration>
+    		<enumeration value="Degree_Celsius"></enumeration>
+    		<enumeration value="Lumen"></enumeration>
+    		<enumeration value="Lux"></enumeration>
+    		<enumeration value="Becquerel"></enumeration>
+    		<enumeration value="Gray"></enumeration>
+    		<enumeration value="Sievert"></enumeration>
+    		<enumeration value="Katal"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+    <simpleType name="SI_Prefix">
+    	<restriction base="string">
+    		<enumeration value="yocto"></enumeration>
+    		<enumeration value="zepto"></enumeration>
+    		<enumeration value="atto"></enumeration>
+    		<enumeration value="femto"></enumeration>
+    		<enumeration value="pico"></enumeration>
+    	    <enumeration value="deci"></enumeration>
+    		<enumeration value="nano"></enumeration>
+    		<enumeration value="micro"></enumeration>
+    		<enumeration value="milli"></enumeration>
+    		<enumeration value="centi"></enumeration>
+    		<enumeration value="deca"></enumeration>
+    		<enumeration value="hecto"></enumeration>
+    		<enumeration value="kilo"></enumeration>
+    		<enumeration value="mega"></enumeration>
+    		<enumeration value="giga"></enumeration>
+    		<enumeration value="tera"></enumeration>
+    		<enumeration value="peta"></enumeration>
+    		<enumeration value="exa"></enumeration>
+    		<enumeration value="zetta"></enumeration>
+    		<enumeration value="yotta"></enumeration>
     	</restriction>
     </simpleType>
 
@@ -64,6 +472,7 @@
 
     <complexType name="SensorInfo">
     	<sequence>
+    		<element name="SensorId" type="string" maxOccurs="1" minOccurs="0"></element>
     		<element name="Location" type="string" maxOccurs="1" minOccurs="0"></element>
     		<element name="Address" type="string" maxOccurs="1" minOccurs="0"></element>
     		<element name="Room" type="string" maxOccurs="1" minOccurs="0"></element>
@@ -79,13 +488,24 @@
 
     <complexType name="SensorMeasurement">
     	<sequence>
+    		<element name="SensorId" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
     		<element name="SensorModuleId" type="string" maxOccurs="1"
     			minOccurs="1">
     		</element>
+    		<element name="Measurement" type="tns:Measurement" maxOccurs="unbounded"
+    			minOccurs="1">
+    		</element>
+        </sequence>
+    </complexType>
+    
+    <complexType name="Measurement">
+    	<sequence>
     		<element name="Value" type="double" maxOccurs="1"
     			minOccurs="1">
     		</element>
-    		<element name="Unit" type="tns:Unit" maxOccurs="1"
+    		<element name="SI_Quantity" type="tns:SI_Quantity" maxOccurs="1"
     			minOccurs="1">
     		</element>
             <element name="TimeStamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
@@ -97,4 +517,6 @@
     		<element name="WhiteListedUser" type="string" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
+
+    <element name="NewElement" type="string"></element>
 </schema>
