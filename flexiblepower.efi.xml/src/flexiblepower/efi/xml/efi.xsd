@@ -286,7 +286,7 @@
     	<complexContent>
     		<extension base="efi:InflexibleUpdate">
     			<sequence>
-    			<element name="forecast" type="efi:ProfileContainer"></element>
+    			<element name="forecastProfiles" type="efi:ProfileContainer"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -674,7 +674,8 @@
 	<complexType name="EfiMessageChoice">
 		<choice minOccurs="1" maxOccurs="1">
 			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
-			<element name="inFlexibileUpdate" type="efi:InflexibleUpdate"/>
+			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
+			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
 			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
 		</choice>
 	</complexType>

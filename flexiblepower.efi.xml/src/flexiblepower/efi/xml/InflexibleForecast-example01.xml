@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+  <efi:inFlexibileForecast>
+    <efi:messageId>idvalue0</efi:messageId>
+    <efi:deviceId>idvalue1</efi:deviceId>
+    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:forecastProfiles>
+	  <efi:electricityProfile>
+	    <efi:unit>Watt</efi:unit>
+	    <efi:profileElements>
+	      <efi:element>
+	        <efi:duration>P1D</efi:duration>
+	        <efi:powerValue>
+	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	        </efi:powerValue>
+	      </efi:element>
+	    </efi:profileElements>
+	  </efi:electricityProfile>
+	  <efi:heatProfile>
+	    <efi:unit>Watt</efi:unit>
+	    <efi:profileElements>
+	      <efi:element>
+	        <efi:duration>P1D</efi:duration>
+	        <efi:powerValue>
+	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	        </efi:powerValue>
+	      </efi:element>
+	    </efi:profileElements>
+	  </efi:heatProfile>
+	  <efi:gasProfile>
+	    <efi:unit>Watt</efi:unit>
+	    <efi:profileElements>
+	      <efi:element>
+	        <efi:duration>P1D</efi:duration>
+	        <efi:powerValue>
+	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	        </efi:powerValue>
+	      </efi:element>
+	    </efi:profileElements>
+	  </efi:gasProfile>
+    </efi:forecastProfiles>
+  </efi:inFlexibileForecast>
+</efi:efiMessage>
