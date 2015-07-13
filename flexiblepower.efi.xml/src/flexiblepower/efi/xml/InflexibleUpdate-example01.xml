@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+  <efi:inFlexibileUpdate xsi:type="efi:InflexibleUpdate">
+    <efi:messageId>message-002</efi:messageId>
+    <efi:deviceId>device-001</efi:deviceId>
+    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+  </efi:inFlexibileUpdate>
+</efi:efiMessage>

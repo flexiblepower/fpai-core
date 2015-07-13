@@ -1,5 +1,5 @@
 <?xml version="1.1" encoding="UTF-8"?>
-<schema targetNamespace="http://www.flexiblepower.org/efi" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.flexiblepower.org/efi" elementFormDefault="qualified" attributeFormDefault="qualified">
+<schema targetNamespace="http://www.flexiblepower.org/efi" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:efi="http://www.flexiblepower.org/efi" elementFormDefault="qualified" attributeFormDefault="qualified">
 
     <complexType name="EfiMessage">
     	<sequence>
@@ -11,7 +11,7 @@
 
     <complexType name="ControlSpaceRegistration">
     	<complexContent>
-    		<extension base="tns:EfiMessage">
+    		<extension base="efi:EfiMessage">
     			<sequence>
     				<element name="allocationDelay" type="duration" maxOccurs="1" minOccurs="1"></element>
     			</sequence>
@@ -21,7 +21,7 @@
 
     <complexType name="ControlSpaceUpdate">
     	<complexContent>
-    		<extension base="tns:EfiMessage">
+    		<extension base="efi:EfiMessage">
     			<sequence>
     				<element name="validFrom" type="dateTime"></element>
     			</sequence>
@@ -31,7 +31,7 @@
 
     <complexType name="Allocation">
     	<complexContent>
-    		<extension base="tns:EfiMessage">
+    		<extension base="efi:EfiMessage">
     			<sequence>
     				<element name="controlSpaceUpdateId"
     					type="ID">
@@ -44,10 +44,10 @@
 
     <complexType name="AllocationStatusUpdate">
     	<complexContent>
-    		<extension base="tns:EfiMessage">
+    		<extension base="efi:EfiMessage">
     			<sequence>
     				<element name="allocationId" type="ID"></element>
-                    <element name="status" type="tns:AllocationStatus"></element>
+                    <element name="status" type="efi:AllocationStatus"></element>
                     <element name="additionalInfo" type="string"></element>
     			</sequence>
     		</extension>
@@ -63,7 +63,19 @@
     		<enumeration value="FINISHED"></enumeration>
     	</restriction>
     </simpleType>
+
+    <complexType name="ControlSpaceRevoke">
+    	<complexContent>
+    		<extension base="efi:EfiMessage"></extension>
+    	</complexContent>
+    </complexType>
     
+    <complexType name="AllocationRevoke">
+    	<complexContent>
+    		<extension base="efi:EfiMessage"></extension>
+    	</complexContent>
+    </complexType>
+
      <simpleType name="CommodityEnum">
     	<restriction base="string">
     		<enumeration value="ELECTRICITY"></enumeration>
@@ -71,18 +83,6 @@
     		<enumeration value="HEAT"></enumeration>
     	</restriction>
     </simpleType>
-
-    <complexType name="ControlSpaceRevoke">
-    	<complexContent>
-    		<extension base="tns:EfiMessage"></extension>
-    	</complexContent>
-    </complexType>
-    
-    <complexType name="AllocationRevoke">
-    	<complexContent>
-    		<extension base="tns:EfiMessage"></extension>
-    	</complexContent>
-    </complexType>
 
     <complexType name="Commodity" abstract="true">
     	<sequence>
@@ -96,23 +96,10 @@
     		<element name="unitOfFlow" type="string"></element>
     	</sequence>
     </complexType>
-
-    <complexType name="Gas">
-    	<complexContent>
-    		<restriction base="tns:Commodity">
-				<sequence>
-					<element name="unitOfEnergy" type="string" fixed="Joule" minOccurs="1" maxOccurs="1"></element>
-					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
-					<element name="unitOfPotential" type="string" fixed="Pressure" minOccurs="1" maxOccurs="1"></element>
-					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" minOccurs="1" maxOccurs="1"></element>
-				</sequence>
-    		</restriction>
-    	</complexContent>
-    </complexType>
     
     <complexType name="Electricity">
     	<complexContent>
-    		<restriction base="tns:Commodity">
+    		<restriction base="efi:Commodity">
 				<sequence>
 					<element name="unitOfEnergy" type="string" fixed="WattHour" minOccurs="1" maxOccurs="1"></element>
 					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
@@ -125,7 +112,7 @@
 
     <complexType name="Heat">
     	<complexContent>
-    		<restriction base="tns:Commodity">
+    		<restriction base="efi:Commodity">
 				<sequence>
 					<element name="unitOfEnergy" type="string" fixed="Joule" minOccurs="1" maxOccurs="1"></element>
 					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
@@ -136,22 +123,59 @@
     	</complexContent>
     </complexType>
 
+    <complexType name="Gas">
+    	<complexContent>
+    		<restriction base="efi:Commodity">
+				<sequence>
+					<element name="unitOfEnergy" type="string" fixed="Joule" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPower" type="string" fixed="Watt" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfPotential" type="string" fixed="Pressure" minOccurs="1" maxOccurs="1"></element>
+					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" minOccurs="1" maxOccurs="1"></element>
+				</sequence>
+    		</restriction>
+    	</complexContent>
+    </complexType>
+
     <complexType name="ProfileElement">
     	<sequence>
     		<element name="duration" type="duration"></element>
-    		<element name="powerValue" type="tns:ValueWithProbability"></element>
-    		<element name="flowValue" type="tns:ValueWithProbability" maxOccurs="1"
-    			minOccurs="0">
-    		</element>
-    		<element name="potentialValue" type="tns:ValueWithProbability" maxOccurs="1" minOccurs="0"></element>
+    		<element name="powerValue" type="efi:ValueWithProbability" minOccurs="1" maxOccurs="1"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="ProfileElements">
+    	<sequence>
+			<element name="element" type="efi:ProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
     <complexType name="Profile" abstract="true">
     	<sequence>
     		<element name="unit" type="string"></element>
-    		<element name="element" type="tns:ProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="profileElements" type="efi:ProfileElements" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
+    </complexType>
+
+    <complexType name="ElectricityProfile">
+    	<complexContent>
+    		<restriction base="efi:Profile">
+				<sequence>
+					<element name="unit" type="string" fixed="Watt"></element>
+					<element name="profileElements" type="efi:ProfileElements" maxOccurs="1" minOccurs="1"></element>
+				</sequence>
+    		</restriction>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="HeatProfile">
+    	<complexContent>
+    		<restriction base="efi:Profile">
+				<sequence>
+					<element name="unit" type="string" fixed="Watt"></element>
+					<element name="profileElements" type="efi:ProfileElements" maxOccurs="1" minOccurs="1"></element>
+				</sequence>
+    		</restriction>
+    	</complexContent>
     </complexType>
 
     <complexType name="GasProfile">
@@ -159,37 +183,19 @@
         	<documentation>This profile can only be used for gas values.</documentation>
         </annotation>
         <complexContent>
-    		<extension base="tns:Profile">
-    		</extension>
-    	</complexContent>
-    </complexType>
-
-    <complexType name="HeatProfile">
-    	<complexContent>
-    		<extension base="tns:Profile"></extension>
+    		<restriction base="efi:Profile">
+				<sequence>
+					<element name="unit" type="string" fixed="Watt"></element>
+					<element name="profileElements" type="efi:ProfileElements" maxOccurs="1" minOccurs="1"></element>
+				</sequence>
+    		</restriction>
     	</complexContent>
     </complexType>
     
-    <complexType name="ElectricityProfile">
-    	<complexContent>
-    		<extension base="tns:Profile"></extension>
-    	</complexContent>
-    </complexType>
-
-    <complexType name="ProfileContainer">
-    	<sequence>
-    		<element name="electricityProfile"
-    			type="tns:ElectricityProfile" maxOccurs="1" minOccurs="0">
-    		</element>
-    		<element name="heatProfile" type="tns:HeatProfile" maxOccurs="1" minOccurs="0"></element>
-    		<element name="gasProfile" type="tns:GasProfile" maxOccurs="1" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
-
     <complexType name="ValueWithProbability">
     	<sequence>
-    		<element name="value" type="tns:MeasureType" maxOccurs="1" minOccurs="1"></element>
-    		<element name="probabilityInfo" type="tns:ProbabilityInfo" maxOccurs="1" minOccurs="0"></element>
+    		<element name="value" type="efi:MeasureType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="probabilityInfo" type="efi:ProbabilityInfo" maxOccurs="1" minOccurs="0"></element>
     	</sequence>
     </complexType>
 
@@ -204,10 +210,10 @@
 
     <complexType name="InflexibleRegistration">
     	<complexContent>
-    		<extension base="tns:ControlSpaceRegistration">
+    		<extension base="efi:ControlSpaceRegistration">
     			<sequence>
-    				<element name="supportedCommodities" type="tns:SupportedCommodities"></element>
-    				<element name="curtailmentOptions" type="tns:CurtailmentOptions" maxOccurs="1" minOccurs="0"></element>
+    				<element name="supportedCommodities" type="efi:SupportedCommodities"></element>
+    				<element name="curtailmentOptions" type="efi:CurtailmentOptions" maxOccurs="1" minOccurs="0"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -216,20 +222,20 @@
 
     <complexType name="SupportedCommodities">
     	<sequence>
-    		<element name="commodityType" type="tns:CommodityEnum" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="commodityType" type="efi:CommodityEnum" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
     <complexType name="CurtailmentOptions">
     	<sequence>
-    		<element name="commodityType" type="tns:CommodityEnum"></element>
-    		<element name="curtailmentLevels" type="tns:CurtailmentLevels"></element>
+    		<element name="commodityType" type="efi:CommodityEnum"></element>
+    		<element name="curtailmentLevels" type="efi:CurtailmentLevels"></element>
     	</sequence>
     </complexType>
 
     <complexType name="CurtailmentLevels">
     	<sequence>
-    		<element name="curtailmentRange" type="tns:CurtailmentRange" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="curtailmentRange" type="efi:CurtailmentRange" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
     </complexType>
     
@@ -242,18 +248,17 @@
 
     <complexType name="InflexibleUpdate">
     	<complexContent>
-    		<extension base="tns:ControlSpaceUpdate"></extension>
+    		<extension base="efi:ControlSpaceUpdate"></extension>
     	</complexContent>
     </complexType>
 
-
     <complexType name="InflexibleMeasurement">
     	<complexContent>
-    		<extension base="tns:InflexibleUpdate">
+    		<extension base="efi:InflexibleUpdate">
     		<sequence>
-    		<element name="measurement" type="tns:MeasureType"></element>
-    		<element name="commodityType" type="tns:CommodityEnum"></element>
-    		<element name="commodityUnit" type="tns:FlowUnitType"></element>
+    		<element name="measurement" type="efi:MeasureType"></element>
+    		<element name="commodityType" type="efi:CommodityEnum"></element>
+    		<element name="commodityUnit" type="efi:FlowUnitType"></element>
     	</sequence>
     		</extension>
     	</complexContent>
@@ -262,16 +267,26 @@
 	<complexType name="MeasureType">
 	  <simpleContent>
 	    <extension base="double">
-	      <attribute name="multiplier" type="tns:MultiplierType"/>
+	      <attribute name="multiplier" type="efi:MultiplierType"/>
 	    </extension>
 	  </simpleContent>
 	</complexType>
 
+    <complexType name="ProfileContainer">
+    	<sequence>
+    		<element name="electricityProfile"
+    			type="efi:ElectricityProfile" maxOccurs="1" minOccurs="0">
+    		</element>
+    		<element name="heatProfile" type="efi:HeatProfile" maxOccurs="1" minOccurs="0"></element>
+    		<element name="gasProfile" type="efi:GasProfile" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
     <complexType name="InflexibleForecast">
     	<complexContent>
-    		<extension base="tns:InflexibleUpdate">
+    		<extension base="efi:InflexibleUpdate">
     			<sequence>
-    			<element name="forecast" type="tns:ProfileContainer"></element>
+    			<element name="forecast" type="efi:ProfileContainer"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -279,10 +294,10 @@
 
     <complexType name="CurtailmentAllocation">
     	<complexContent>
-    		<extension base="tns:Allocation">
+    		<extension base="efi:Allocation">
     			<sequence>
     				<element name="startTime" type="dateTime"></element>
-    				<element name="curtailProfiles" type="tns:ProfileContainer"></element>
+    				<element name="curtailProfiles" type="efi:ProfileContainer"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -290,9 +305,9 @@
 
     <complexType name="TimeShiftableRegistration">
     	<complexContent>
-    		<extension base="tns:ControlSpaceRegistration">
+    		<extension base="efi:ControlSpaceRegistration">
     			<sequence>
-    				<element name="supportedCommodities" type="tns:SupportedCommodities"></element>
+    				<element name="supportedCommodities" type="efi:SupportedCommodities"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -300,9 +315,9 @@
 
     <complexType name="TimeShiftableUpdate">
     	<complexContent>
-    		<extension base="tns:ControlSpaceUpdate">
+    		<extension base="efi:ControlSpaceUpdate">
     		<sequence>
-    			<element name="sequentialProfiles" type="tns:SequentialProfile" maxOccurs="unbounded" minOccurs="1"></element>
+    			<element name="sequentialProfiles" type="efi:SequentialProfile" maxOccurs="unbounded" minOccurs="1"></element>
     		</sequence>
     		</extension>
     	</complexContent>
@@ -312,15 +327,15 @@
     	<sequence>
     		<element name="profileId" type="int"></element>
     		<element name="maxIntervalBefore" type="int"></element>
-    		<element name="commodityProfile" type="tns:Profile" maxOccurs="1" minOccurs="1"></element>
+    		<element name="commodityProfile" type="efi:Profile" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
     <complexType name="TimeShiftableAllocation">
     	<complexContent>
-    		<extension base="tns:Allocation">
+    		<extension base="efi:Allocation">
     			<sequence>
-    				<element name="allocations" type="tns:SequentialProfileAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+    				<element name="allocations" type="efi:SequentialProfileAllocation" maxOccurs="unbounded" minOccurs="1"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -328,11 +343,11 @@
 
     <complexType name="StorageRegistration">
     	<complexContent>
-    		<extension base="tns:ControlSpaceRegistration">
+    		<extension base="efi:ControlSpaceRegistration">
     			<sequence>
     				<element name="fillLevelLabel" type="string" maxOccurs="1" minOccurs="1"></element>
     				<element name="fillLevelUnit" type="string" maxOccurs="1" minOccurs="1"></element>
-    				<element name="actuators" type="tns:Actuator" maxOccurs="unbounded" minOccurs="0"></element>
+    				<element name="actuators" type="efi:Actuator" maxOccurs="unbounded" minOccurs="0"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -342,7 +357,7 @@
     	<sequence>
     		<element name="actuatorId" type="int" maxOccurs="1" minOccurs="1"></element>
     		<element name="actuatorLabel" type="string" maxOccurs="1" minOccurs="1"></element>
-    		<element name="supportedCommodities" type="tns:SupportedCommodities" maxOccurs="unbounded" minOccurs="1"></element>
+    		<element name="supportedCommodities" type="efi:SupportedCommodities" maxOccurs="unbounded" minOccurs="1"></element>
     	</sequence>
     </complexType>
 
@@ -368,14 +383,14 @@
     		<element name="transitionTime" type="duration"
     			maxOccurs="1" minOccurs="0">
     		</element>
-    		<element name="transitionCosts" type="tns:Price"></element>
+    		<element name="transitionCosts" type="efi:Price"></element>
     	</sequence>
     </complexType>
 
 	<complexType name="Price">
 	  <simpleContent>
 	    <extension base="decimal">
-	      <attribute name="currency" type="tns:CurrencyType"/>
+	      <attribute name="currency" type="efi:CurrencyType"/>
 	    </extension>
 	  </simpleContent>
 	</complexType>
@@ -427,7 +442,7 @@
 			<element name="fillingRate" type="double" maxOccurs="1"
 				minOccurs="1">
 			</element>
-			<element name="runningCosts" type="tns:Price" maxOccurs="1" minOccurs="0"></element>
+			<element name="runningCosts" type="efi:Price" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
@@ -437,15 +452,15 @@
 				minOccurs="1">
 			</element>
 			<element name="runningModeName" type="string" maxOccurs="1" minOccurs="1"></element>
-			<element name="runningModeBehaviour" type="tns:RunningModeBehaviourType" maxOccurs="1" minOccurs="1"></element>
-			<element name="possibleTransition" type="tns:Transition" maxOccurs="unbounded" minOccurs="1"></element>
+			<element name="runningModeBehaviour" type="efi:RunningModeBehaviourType" maxOccurs="1" minOccurs="1"></element>
+			<element name="possibleTransition" type="efi:Transition" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
 	<complexType name="ActuatorBehaviour">
 		<sequence>
 			<element name="actuatorId" type="string" maxOccurs="1" minOccurs="1"></element>
-			<element name="runningModes" type="tns:RunningMode"
+			<element name="runningModes" type="efi:RunningMode"
 				maxOccurs="unbounded" minOccurs="1">
 			</element>
 		</sequence>
@@ -453,16 +468,16 @@
 
 	<complexType name="LeakageFunction">
 		<sequence>
-			<element name="rangeElement" type="tns:RangeElement" maxOccurs="unbounded" minOccurs="1"></element>
+			<element name="rangeElement" type="efi:RangeElement" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
 	<complexType name="StorageSystemDescription">
 		<complexContent>
-			<extension base="tns:StorageUpdate">
+			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="actuators" type="tns:ActuatorBehaviour" maxOccurs="unbounded" minOccurs="0"></element>
-					<element name="leakageBehaviour" type="tns:LeakageFunction" maxOccurs="1" minOccurs="0"></element>
+					<element name="actuators" type="efi:ActuatorBehaviour" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="leakageBehaviour" type="efi:LeakageFunction" maxOccurs="1" minOccurs="0"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -470,7 +485,7 @@
 
 	<complexType name="StorageUpdate">
     	<complexContent>
-    		<extension base="tns:ControlSpaceUpdate"></extension>
+    		<extension base="efi:ControlSpaceUpdate"></extension>
     	</complexContent>
     </complexType>
 
@@ -489,18 +504,18 @@
 				minOccurs="1">
 			</element>
 			<element name="currentRunningMode" type="int" maxOccurs="1" minOccurs="1"></element>
-			<element name="timersUpdate" type="tns:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="timersUpdate" type="efi:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
 	<complexType name="StorageStateUpdate">
 		<complexContent>
-			<extension base="tns:StorageUpdate">
+			<extension base="efi:StorageUpdate">
 				<sequence>
 					<element name="currentFillLevel" type="double"
 						maxOccurs="1" minOccurs="1">
 					</element>
-					<element name="actuatorsUpdate" type="tns:ActuatorUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="actuatorsUpdate" type="efi:ActuatorUpdate" maxOccurs="unbounded" minOccurs="0"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -517,16 +532,16 @@
 	<complexType name="TargetProfile">
 		<sequence>
 			<element name="startTime" type="dateTime"></element>
-			<element name="targetProfileElement" type="tns:TargetProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
+			<element name="targetProfileElement" type="efi:TargetProfileElement" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
 
 	<complexType name="StorageTargetStateUpdate">
 		<complexContent>
-			<extension base="tns:StorageUpdate">
+			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="targetProfile" type="tns:TargetProfile"></element>
+					<element name="targetProfile" type="efi:TargetProfile"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -537,19 +552,19 @@
 		<sequence>
 			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
 			<element name="deltaFillLevelWithProbabiltiy"
-				type="tns:ValueWithProbability" maxOccurs="1" minOccurs="1">
+				type="efi:ValueWithProbability" maxOccurs="1" minOccurs="1">
 			</element>
 		</sequence>
 	</complexType>
 
 	<complexType name="StorageUsageForecast">
 		<complexContent>
-			<extension base="tns:StorageUpdate">
+			<extension base="efi:StorageUpdate">
 				<sequence>
 					<element name="unit" type="string" maxOccurs="1"
 						minOccurs="1">
 					</element>
-					<element name="storageUsageForecastElements" type="tns:StorageForecastElement" maxOccurs="unbounded" minOccurs="1"></element>
+					<element name="storageUsageForecastElements" type="efi:StorageForecastElement" maxOccurs="unbounded" minOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -557,9 +572,9 @@
 
 	<complexType name="StorageAllocation">
 		<complexContent>
-			<extension base="tns:Allocation">
+			<extension base="efi:Allocation">
 				<sequence>
-					<element name="actuatorAllocation" type="tns:ActuatorAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+					<element name="actuatorAllocation" type="efi:ActuatorAllocation" maxOccurs="unbounded" minOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -575,9 +590,9 @@
 
 	<complexType name="OutputAdjustableRegistration">
 		<complexContent>
-			<extension base="tns:ControlSpaceRegistration">
+			<extension base="efi:ControlSpaceRegistration">
 				<sequence>
-    				<element name="supportedCommodities" type="tns:SupportedCommodities" maxOccurs="1" minOccurs="1"></element>
+    				<element name="supportedCommodities" type="efi:SupportedCommodities" maxOccurs="1" minOccurs="1"></element>
     			</sequence>
     			</extension>
 		</complexContent>
@@ -585,9 +600,9 @@
 
 	<complexType name="OutputAdjustableSystemDescription">
 		<complexContent>
-			<extension base="tns:InflexibleUpdate">
+			<extension base="efi:InflexibleUpdate">
 				<sequence>
-					<element name="runningModes" type="tns:RunningMode" maxOccurs="unbounded" minOccurs="1"></element>
+					<element name="runningModes" type="efi:RunningMode" maxOccurs="unbounded" minOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -595,18 +610,18 @@
 
 	<complexType name="OutputAdjustableUpdate">
     	<complexContent>
-    		<extension base="tns:ControlSpaceUpdate"></extension>
+    		<extension base="efi:ControlSpaceUpdate"></extension>
     	</complexContent>
     </complexType>
 
 	<complexType name="OutputAdjustableStateUpdate">
 		<complexContent>
-			<extension base="tns:OutputAdjustableUpdate">
+			<extension base="efi:OutputAdjustableUpdate">
 				<sequence>
 					<element name="currentRunningModeId" type="int"
 						maxOccurs="1" minOccurs="1">
 					</element>
-					<element name="timerUpdates" type="tns:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="timerUpdates" type="efi:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -614,9 +629,9 @@
 
 	<complexType name="OutputAdjustableAllocation">
 		<complexContent>
-			<extension base="tns:Allocation">
+			<extension base="efi:Allocation">
 				<sequence>
-					<element name="runningModeSelectors" type="tns:RunningModeSelector" maxOccurs="unbounded" minOccurs="1"></element>
+					<element name="runningModeSelectors" type="efi:RunningModeSelector" maxOccurs="unbounded" minOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -640,11 +655,11 @@
 
 	<complexType name="RunningModeElement">
 		<complexContent>
-			<extension base="tns:RangeElement">
+			<extension base="efi:RangeElement">
 				<sequence>
-					<element name="electricityConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
-					<element name="gasConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
-					<element name="heatConsumption" type="tns:MeasureType" maxOccurs="1" minOccurs="0"></element>
+					<element name="electricityConsumption" type="efi:MeasureType" maxOccurs="1" minOccurs="0"></element>
+					<element name="gasConsumption" type="efi:MeasureType" maxOccurs="1" minOccurs="0"></element>
+					<element name="heatConsumption" type="efi:MeasureType" maxOccurs="1" minOccurs="0"></element>
 			</sequence>
 		</extension>
 		</complexContent>
@@ -652,18 +667,18 @@
 
 	<complexType name="RunningModeBehaviourType">
 		<sequence>
-			<element name="runningModeElement" type="tns:RunningModeElement" maxOccurs="unbounded" minOccurs="1"></element>
+			<element name="runningModeElement" type="efi:RunningModeElement" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 	
 	<complexType name="EfiMessageChoice">
 		<choice minOccurs="1" maxOccurs="1">
-			<element name="inFlexibleRegistration" type="tns:InflexibleRegistration"/>
-			<element name="inFlexibileUpdate" type="tns:InflexibleUpdate"/>
-			<element name="curtailmentAllocation" type="tns:CurtailmentAllocation"/>
+			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
+			<element name="inFlexibileUpdate" type="efi:InflexibleUpdate"/>
+			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
 		</choice>
 	</complexType>
 	
-	<element name="efiMessage" type="tns:EfiMessageChoice"></element>
+	<element name="efiMessage" type="efi:EfiMessageChoice"></element>
 	
 </schema>
