@@ -1,0 +1,100 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<schema targetNamespace="http://www.flexiblepower.org/sensor-i" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.flexiblepower.org/sensor-i">
+
+    <complexType name="SensingModuleCapabilities">
+    	<sequence>
+    		<element name="Quantity" type="tns:Quantity" maxOccurs="1" minOccurs="1"></element>
+    		<element name="Unit" type="tns:Unit" maxOccurs="1" minOccurs="1"></element>
+    		<element name="MinimumValue" type="double" maxOccurs="1" minOccurs="0"></element>
+    		<element name="MaximumValue" type="double" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Precision" type="double" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Deviation" type="double" maxOccurs="1" minOccurs="0"></element>
+    		<element name="MeasurmentFrequency" type="double" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="SensingModuleConnectivity">
+    	<sequence>
+    		<element name="MQTT" type="boolean" maxOccurs="1" minOccurs="1"></element>
+    		<element name="MQTTServerAddress" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="MQTTTopic" type="double" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="XMPP" type="boolean" maxOccurs="1" minOccurs="1"></element>
+    		<element name="XMPPServerAddress" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="XMPPUserName" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <simpleType name="Quantity">
+    	<restriction base="string">
+    		<enumeration value="Voltage"></enumeration>
+    		<enumeration value="Frequency"></enumeration>
+    		<enumeration value="Temperature"></enumeration>
+    	</restriction>
+    </simpleType>
+    
+    <simpleType name="Unit">
+    	<restriction base="string">
+    		<enumeration value="Voltage"></enumeration>
+    		<enumeration value="Hertz"></enumeration>
+    		<enumeration value="Celcius"></enumeration>
+    	</restriction>
+    </simpleType>
+
+    <complexType name="SensingModule">
+    	<sequence>
+    		<element name="SensingModuleId" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="SensingModuleCapabilities"
+    			type="tns:SensingModuleCapabilities" maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    		<element name="SensingModuleConnectivity" type="tns:SensingModuleConnectivity" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Sensor">
+    	<sequence>
+    		<element name="SensingModules" type="tns:SensingModule"
+    			maxOccurs="unbounded" minOccurs="1">
+    		</element>
+    		<element name="SensorInfo" type="tns:SensorInfo"
+    			maxOccurs="1" minOccurs="0">
+    		</element>
+    		<element name="AccessRights" type="tns:SensorAccesRight" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="SensorInfo">
+    	<sequence>
+    		<element name="Location" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Address" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Room" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Outside" type="boolean" maxOccurs="1" minOccurs="0"></element>
+    		<element name="GpsLongitude" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="GpsLatitude" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="GpsAltitude" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="UriToDataSheet" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="SensorBrand" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="Owner" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="SensorMeasurement">
+    	<sequence>
+    		<element name="SensorModuleId" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="Value" type="double" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="Unit" type="tns:Unit" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+            <element name="TimeStamp" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SensorAccesRight">
+    	<sequence>
+    		<element name="WhiteListedUser" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+</schema>
