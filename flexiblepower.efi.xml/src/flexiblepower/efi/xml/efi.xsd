@@ -338,11 +338,24 @@
     	</complexContent>
     </complexType>
 
+	<complexType name="SequentialProfileAllocation">
+		<sequence>
+			<element name="sequenceNr" type="int" maxOccurs="1" minOccurs="1"></element>
+			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SequentialProfileAllocations">
+		<sequence>
+			<element name="sequentialProfileAllocation" type="efi:SequentialProfileAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
     <complexType name="TimeShiftableAllocation">
     	<complexContent>
     		<extension base="efi:Allocation">
     			<sequence>
-    				<element name="allocations" type="efi:SequentialProfileAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+    				<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations" maxOccurs="unbounded" minOccurs="1"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -668,13 +681,6 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="SequentialProfileAllocation">
-		<sequence>
-			<element name="sequentialProfileId" type="int" maxOccurs="1" minOccurs="1"></element>
-			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
-		</sequence>
-	</complexType>
-
 	<complexType name="RunningModeElement">
 		<complexContent>
 			<extension base="efi:RangeElement">
@@ -701,6 +707,7 @@
 			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
 			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
 			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
+			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
 		</choice>
 	</complexType>
 	
