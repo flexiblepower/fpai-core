@@ -708,6 +708,7 @@
 			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
 			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
 			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
+			<element name="storageRegistration" type="efi:StorageRegistration"/>
 		</choice>
 	</complexType>
 	
