@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+  <efi:timeShiftableUpdate>
+    <efi:messageId>idvalue0</efi:messageId>
+    <efi:deviceId>idvalue1</efi:deviceId>
+    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:endBefore>2001-12-31T12:00:00</efi:endBefore>
+    <efi:sequentialProfiles>
+      <efi:sequentialProfile>
+        <efi:sequenceNr>0</efi:sequenceNr>
+        <efi:maxIntervalBefore>0</efi:maxIntervalBefore>
+        <efi:profileContainer>
+	      <efi:electricityProfile>
+		    <efi:unit>Watt</efi:unit>
+		    <efi:profileElements>
+		      <efi:element>
+		        <efi:duration>PT2M</efi:duration>
+		        <efi:powerValue>
+		          <efi:value>200</efi:value>
+		        </efi:powerValue>
+		      </efi:element>
+		      <efi:element>
+		        <efi:duration>PT5M</efi:duration>
+		        <efi:powerValue>
+		          <efi:value efi:multiplier="kilo">1.2</efi:value>
+		        </efi:powerValue>
+		      </efi:element>
+		    </efi:profileElements>
+		  </efi:electricityProfile>
+        </efi:profileContainer>
+      </efi:sequentialProfile>
+    </efi:sequentialProfiles>
+  </efi:timeShiftableUpdate>
+</efi:efiMessage>

@@ -313,22 +313,29 @@
     	</complexContent>
     </complexType>
 
+    <complexType name="SequentialProfile">
+    	<sequence>
+    		<element name="sequenceNr" type="int"></element>
+    		<element name="maxIntervalBefore" type="int"></element>
+    		<element name="profileContainer" type="efi:ProfileContainer" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="SequentialProfiles">
+    	<sequence>
+    		<element name="sequentialProfile" type="efi:SequentialProfile" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
     <complexType name="TimeShiftableUpdate">
     	<complexContent>
     		<extension base="efi:ControlSpaceUpdate">
     		<sequence>
-    			<element name="sequentialProfiles" type="efi:SequentialProfile" maxOccurs="unbounded" minOccurs="1"></element>
+    			<element name="endBefore" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+    			<element name="sequentialProfiles" type="efi:SequentialProfiles" maxOccurs="1" minOccurs="1"></element>
     		</sequence>
     		</extension>
     	</complexContent>
-    </complexType>
-
-    <complexType name="SequentialProfile">
-    	<sequence>
-    		<element name="profileId" type="int"></element>
-    		<element name="maxIntervalBefore" type="int"></element>
-    		<element name="commodityProfile" type="efi:Profile" maxOccurs="1" minOccurs="1"></element>
-    	</sequence>
     </complexType>
 
     <complexType name="TimeShiftableAllocation">
@@ -423,11 +430,26 @@
 
 	<simpleType name="MultiplierType">
 	  <restriction base="string">
-	  	<enumeration value="micro"/>
-	    <enumeration value="milli"/>
-	    <enumeration value="none"/>
-	    <enumeration value="kilo"/>
-	    <enumeration value="mega"/>
+		<enumeration value="yocto"></enumeration>
+		<enumeration value="zepto"></enumeration>
+		<enumeration value="atto"></enumeration>
+		<enumeration value="femto"></enumeration>
+		<enumeration value="pico"></enumeration>
+	    <enumeration value="deci"></enumeration>
+		<enumeration value="nano"></enumeration>
+		<enumeration value="micro"></enumeration>
+		<enumeration value="milli"></enumeration>
+		<enumeration value="centi"></enumeration>
+		<enumeration value="deca"></enumeration>
+		<enumeration value="hecto"></enumeration>
+		<enumeration value="kilo"></enumeration>
+		<enumeration value="mega"></enumeration>
+		<enumeration value="giga"></enumeration>
+		<enumeration value="tera"></enumeration>
+		<enumeration value="peta"></enumeration>
+		<enumeration value="exa"></enumeration>
+		<enumeration value="zetta"></enumeration>
+		<enumeration value="yotta"></enumeration>
 	  </restriction>
 	</simpleType>
 
@@ -677,6 +699,8 @@
 			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
 			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
 			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
+			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
+			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
 		</choice>
 	</complexType>
 	
