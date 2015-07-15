@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+  <efi:storageStateUpdate>
+    <efi:messageId>idvalue0</efi:messageId>
+    <efi:deviceId>idvalue1</efi:deviceId>
+    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:currentFillLevel>0.0</efi:currentFillLevel>
+    <efi:actuatorUpdates>
+    <efi:actuatorUpdate>
+      <efi:actuatorId>0</efi:actuatorId>
+      <efi:currentRunningMode>0</efi:currentRunningMode>
+      <efi:timerUpdates>
+      <efi:timerUpdate>
+      <efi:timerId>0</efi:timerId>
+      <efi:finishedAt>2001-12-31T12:00:00</efi:finishedAt>
+      </efi:timerUpdate>
+      </efi:timerUpdates>
+    </efi:actuatorUpdate>
+    </efi:actuatorUpdates>
+  </efi:storageStateUpdate>
+</efi:efiMessage>

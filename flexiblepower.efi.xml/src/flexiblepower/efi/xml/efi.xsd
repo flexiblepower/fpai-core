@@ -481,23 +481,31 @@
 		</sequence>
 	</complexType>
 
+	<complexType name="PossibleTransitions">
+		<sequence>
+			<element name="possibleTransition" type="efi:Transition" minOccurs="1" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
 	<complexType name="RunningMode">
 		<sequence>
-			<element name="runningModeId" type="int" maxOccurs="1"
-				minOccurs="1">
-			</element>
+			<element name="runningModeId" type="int" maxOccurs="1" minOccurs="1"></element>
 			<element name="runningModeName" type="string" maxOccurs="1" minOccurs="1"></element>
 			<element name="runningModeBehaviour" type="efi:RunningModeBehaviourType" maxOccurs="1" minOccurs="1"></element>
-			<element name="possibleTransition" type="efi:Transition" maxOccurs="unbounded" minOccurs="1"></element>
+			<element name="possibleTransitions" type="efi:PossibleTransitions" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="RunningModes">
+		<sequence>
+			<element name="runningMode" type="efi:RunningMode" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
 	<complexType name="ActuatorBehaviour">
 		<sequence>
 			<element name="actuatorId" type="string" maxOccurs="1" minOccurs="1"></element>
-			<element name="runningModes" type="efi:RunningMode"
-				maxOccurs="unbounded" minOccurs="1">
-			</element>
+			<element name="runningModes" type="efi:RunningModes" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
@@ -506,12 +514,18 @@
 			<element name="rangeElement" type="efi:RangeElement" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
+	
+	<complexType name="ActuatorBehaviours">
+		<sequence>
+			<element name="actuatorBehaviour" type="efi:ActuatorBehaviour" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
 
 	<complexType name="StorageSystemDescription">
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="actuators" type="efi:ActuatorBehaviour" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours" maxOccurs="1" minOccurs="1"></element>
 					<element name="leakageBehaviour" type="efi:LeakageFunction" maxOccurs="1" minOccurs="0"></element>
 				</sequence>
 			</extension>
@@ -526,10 +540,14 @@
 
 	<complexType name="TimerUpdate">
 		<sequence>
-			<element name="timeId" type="string" maxOccurs="1"
-				minOccurs="1">
-			</element>
+			<element name="timerId" type="int" maxOccurs="1" minOccurs="1"></element>
 			<element name="finishedAt" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="TimerUpdates">
+		<sequence>
+			<element name="timerUpdate" type="efi:TimerUpdate" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
@@ -539,7 +557,13 @@
 				minOccurs="1">
 			</element>
 			<element name="currentRunningMode" type="int" maxOccurs="1" minOccurs="1"></element>
-			<element name="timersUpdate" type="efi:TimerUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="timerUpdates" type="efi:TimerUpdates" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ActuatorUpdates">
+		<sequence>
+			<element name="actuatorUpdate" type="efi:ActuatorUpdate" maxOccurs="unbounded" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
@@ -547,10 +571,8 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="currentFillLevel" type="double"
-						maxOccurs="1" minOccurs="1">
-					</element>
-					<element name="actuatorsUpdate" type="efi:ActuatorUpdate" maxOccurs="unbounded" minOccurs="0"></element>
+					<element name="currentFillLevel" type="double" maxOccurs="1" minOccurs="1"></element>
+					<element name="actuatorUpdates" type="efi:ActuatorUpdates" maxOccurs="1" minOccurs="0"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -572,7 +594,7 @@
 	</complexType>
 
 
-	<complexType name="StorageTargetStateUpdate">
+	<complexType name="StorageTargetProfileUpdate">
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
@@ -583,33 +605,25 @@
 	</complexType>
 
 
-	<complexType name="StorageForecastElement">
+	<complexType name="StorageUsageForecastElement">
 		<sequence>
 			<element name="duration" type="duration" maxOccurs="1" minOccurs="1"></element>
-			<element name="deltaFillLevelWithProbabiltiy"
-				type="efi:ValueWithProbability" maxOccurs="1" minOccurs="1">
-			</element>
+			<element name="deltaFillLevel" type="efi:ValueWithProbability" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
 	</complexType>
 
-	<complexType name="StorageUsageForecast">
+	<complexType name="StorageUsageForecastElements">
+		<sequence>
+			<element name="storageUsageForecastElement" type="efi:StorageUsageForecastElement" maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="StorageUsageForecastUpdate">
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="unit" type="string" maxOccurs="1"
-						minOccurs="1">
-					</element>
-					<element name="storageUsageForecastElements" type="efi:StorageForecastElement" maxOccurs="unbounded" minOccurs="1"></element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="StorageAllocation">
-		<complexContent>
-			<extension base="efi:Allocation">
-				<sequence>
-					<element name="actuatorAllocation" type="efi:ActuatorAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+					<element name="unit" type="string" maxOccurs="1" minOccurs="1"></element>
+					<element name="storageUsageForecastElements" type="efi:StorageUsageForecastElements" maxOccurs="1" minOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -621,6 +635,22 @@
 			<element name="runningModeId" type="int" maxOccurs="1" minOccurs="1"></element>
 			<element name="startTime" type="dateTime" maxOccurs="1" minOccurs="1"></element>
 		</sequence>
+	</complexType>
+
+	<complexType name="ActuatorAllocations">
+		<sequence>
+			<element name="actuatorAllocation" type="efi:ActuatorAllocation" maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="StorageAllocation">
+		<complexContent>
+			<extension base="efi:Allocation">
+				<sequence>
+					<element name="actuatorAllocations" type="efi:ActuatorAllocations" maxOccurs="1" minOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="OutputAdjustableRegistration">
@@ -709,6 +739,11 @@
 			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
 			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
 			<element name="storageRegistration" type="efi:StorageRegistration"/>
+			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/>
+			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/>
+			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/>
+			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"></element>
+			<element name="storageAllocation" type="efi:StorageAllocation"></element>
 		</choice>
 	</complexType>
 	
