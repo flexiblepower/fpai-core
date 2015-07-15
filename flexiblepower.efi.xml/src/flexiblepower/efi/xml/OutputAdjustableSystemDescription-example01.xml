@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+  <efi:outputAdjustableSystemDescription>
+    <efi:messageId>idvalue0</efi:messageId>
+    <efi:deviceId>idvalue1</efi:deviceId>
+    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:runningModes>
+      <efi:runningModeId>0</efi:runningModeId>
+      <efi:runningModeName>efi:runningModeName</efi:runningModeName>
+      <efi:runningModeBehaviour>
+        <efi:runningModeElement>
+          <efi:lowerBound>0.0</efi:lowerBound>
+          <efi:upperBound>0.0</efi:upperBound>
+          <efi:fillingRate>0.0</efi:fillingRate>
+        </efi:runningModeElement>
+      </efi:runningModeBehaviour>
+      <efi:possibleTransitions>
+        <efi:possibleTransition>
+          <efi:toRunningMode>0</efi:toRunningMode>
+          <efi:transitionCosts efi:currency="pound">0.0</efi:transitionCosts>
+        </efi:possibleTransition>
+      </efi:possibleTransitions>
+    </efi:runningModes>
+  </efi:outputAdjustableSystemDescription>
+</efi:efiMessage>
