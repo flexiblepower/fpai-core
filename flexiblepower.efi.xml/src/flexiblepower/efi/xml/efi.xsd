@@ -409,7 +409,6 @@
 			<element name="lowerBound" type="double"/>
 			<element name="upperBound" type="double"/>
 			<element name="fillingRate" type="double"/>
-			<element name="runningCosts" type="efi:Price" minOccurs="0"/>
 		</sequence>
 	</complexType>
 	<complexType name="PossibleTransitions">
