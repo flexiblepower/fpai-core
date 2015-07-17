@@ -421,7 +421,7 @@
 		<sequence>
 			<element name="runningModeId" type="int"/>
 			<element name="runningModeName" type="string"/>
-			<element name="runningModeBehaviour" type="efi:RunningModeBehaviourType"/>
+			<element name="runningModeBehaviour" type="efi:RunningModeBehaviour"/>
 			<element name="possibleTransitions" type="efi:PossibleTransitions"/>
 		</sequence>
 	</complexType>
@@ -645,7 +645,7 @@
 			</extension>
 		</complexContent>
 	</complexType>
-	<complexType name="RunningModeBehaviourType">
+	<complexType name="RunningModeBehaviour">
 		<sequence>
 			<element name="runningModeElement" type="efi:RunningModeElement" maxOccurs="unbounded"/>
 		</sequence>
