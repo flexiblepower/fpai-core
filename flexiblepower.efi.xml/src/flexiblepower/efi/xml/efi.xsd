@@ -652,6 +652,9 @@
 	</complexType>
 	<complexType name="EfiMessageChoice">
 		<choice>
+			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/>
+			<element name="allocationRevoke" type="efi:AllocationRevoke"/>
+			<element name="allocationStatusUpdate" type="efi:AllocationStatusUpdate"/>
 			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
 			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
 			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
