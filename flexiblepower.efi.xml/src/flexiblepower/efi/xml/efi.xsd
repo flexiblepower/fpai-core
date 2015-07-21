@@ -440,23 +440,24 @@
 			<element name="possibleTransition" type="efi:Transition" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
-	<complexType name="RunningMode">
+	<complexType name="StorageRunningMode">
 		<sequence>
 			<element name="runningModeId" type="int"/>
 			<element name="runningModeName" type="string"/>
-			<element name="runningModeBehaviour" type="efi:RunningModeBehaviour"/>
+			<element name="runningModeBehaviour" type="efi:StorageRunningModeBehaviour"/>
 			<element name="possibleTransitions" type="efi:PossibleTransitions"/>
 		</sequence>
 	</complexType>
-	<complexType name="RunningModes">
+	<complexType name="StorageRunningModes">
 		<sequence>
-			<element name="runningMode" type="efi:RunningMode" maxOccurs="unbounded"/>
+			<element name="runningMode" type="efi:StorageRunningMode" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<complexType name="ActuatorBehaviour">
 		<sequence>
 			<element name="actuatorId" type="string"/>
-			<element name="runningModes" type="efi:RunningModes"/>
+			<element name="runningModes" type="efi:StorageRunningModes"/>
+			<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
 		</sequence>
 	</complexType>
 	<complexType name="LeakageFunction">
@@ -464,6 +465,27 @@
 			<element name="leakageElement" type="efi:LeakageElement" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
+
+	<complexType name="RunningModeElement">
+		<complexContent>
+			<extension base="efi:RangeElement">
+				<sequence>
+					<element name="fillingRatePerSecond" type="double" minOccurs="1" maxOccurs="1"/>
+					<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
+					<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
+					<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
+					<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="StorageRunningModeBehaviour">
+		<sequence>
+			<element name="runningModeElement" type="efi:RunningModeElement" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
 	<complexType name="ActuatorBehaviours">
 		<sequence>
 			<element name="actuatorBehaviour" type="efi:ActuatorBehaviour" minOccurs="0" maxOccurs="unbounded"/>
@@ -474,7 +496,6 @@
 			<extension base="efi:StorageUpdate">
 				<sequence>
 					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours" minOccurs="1" maxOccurs="1"/>
-					<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
 					<element name="leakageBehaviour" type="efi:LeakageFunction" minOccurs="0"/>
 				</sequence>
 			</extension>
@@ -607,11 +628,37 @@
 		</complexContent>
 	</complexType>
 
+	<complexType name="OutputAdjustableRunningModeBehaviour">
+		<sequence>
+			<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
+			<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
+			<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
+			<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="OutputAdjustableRunningMode">
+		<sequence>
+			<element name="runningModeId" type="int"/>
+			<element name="runningModeName" type="string"/>
+			<element name="runningModeBehaviour" type="efi:OutputAdjustableRunningModeBehaviour"/>
+			<element name="possibleTransitions" type="efi:PossibleTransitions"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="OutputAdjustableRunningModes">
+		<sequence>
+			<element name="runningMode" type="efi:OutputAdjustableRunningMode" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
+
 	<complexType name="OutputAdjustableSystemDescription">
 		<complexContent>
 			<extension base="efi:InflexibleUpdate">
 				<sequence>
-					<element name="runningModes" type="efi:RunningMode" maxOccurs="unbounded"/>
+					<element name="runningModes" type="efi:OutputAdjustableRunningModes" minOccurs="1" maxOccurs="1"/>
+					<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -658,46 +705,28 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="RunningModeElement">
-		<complexContent>
-			<extension base="efi:RangeElement">
-				<sequence>
-					<element name="fillingRatePerSecond" type="double" minOccurs="1" maxOccurs="1"/>
-					<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-	<complexType name="RunningModeBehaviour">
-		<sequence>
-			<element name="runningModeElement" type="efi:RunningModeElement" maxOccurs="unbounded"/>
-		</sequence>
-	</complexType>
 	<complexType name="EfiMessageChoice">
 		<choice>
-			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/>
-			<element name="allocationRevoke" type="efi:AllocationRevoke"/>
+<!-- 			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/> -->
+<!-- 			<element name="allocationRevoke" type="efi:AllocationRevoke"/> -->
 			<element name="allocationStatusUpdate" type="efi:AllocationStatusUpdate"/>
-			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
-			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
-			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
-			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
-			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
-			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
-			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
-			<element name="storageRegistration" type="efi:StorageRegistration"/>
-			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/>
-			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/>
-			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/>
-			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"/>
-			<element name="storageAllocation" type="efi:StorageAllocation"/>
-			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration"/>
-			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription"></element>
-			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate"></element>
-			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation"></element>
+<!-- 			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/> -->
+<!-- 			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/> -->
+<!-- 			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/> -->
+<!-- 			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/> -->
+<!-- 			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/> -->
+<!-- 			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/> -->
+<!-- 			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/> -->
+<!-- 			<element name="storageRegistration" type="efi:StorageRegistration"/> -->
+<!-- 			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/> -->
+<!-- 			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/> -->
+<!-- 			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/> -->
+<!-- 			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"/> -->
+<!-- 			<element name="storageAllocation" type="efi:StorageAllocation"/> -->
+<!-- 			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration"/> -->
+<!-- 			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription"></element> -->
+<!-- 			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate"></element> -->
+<!-- 			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation"></element> -->
 		</choice>
 	</complexType>
 	
