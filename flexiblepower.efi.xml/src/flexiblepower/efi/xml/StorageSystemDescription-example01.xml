@@ -16,32 +16,52 @@
 				  <efi:runningModeElement>
 				    <efi:lowerBound>0.0</efi:lowerBound>
 				    <efi:upperBound>10</efi:upperBound>
-				    <efi:fillingRate>0.02</efi:fillingRate>
+				    <efi:fillingRatePerSecond>0.02</efi:fillingRatePerSecond>
 				    <efi:electricityConsumption>-500</efi:electricityConsumption>
 				  </efi:runningModeElement>
 				  <efi:runningModeElement>
 				    <efi:lowerBound>10</efi:lowerBound>
 				    <efi:upperBound>20</efi:upperBound>
-				    <efi:fillingRate>0.03</efi:fillingRate>
+				    <efi:fillingRatePerSecond>0.03</efi:fillingRatePerSecond>
 				    <efi:electricityConsumption>-700</efi:electricityConsumption>
 				  </efi:runningModeElement>
 				</efi:runningModeBehaviour>
 				<efi:possibleTransitions>
 					<efi:possibleTransition>
 					  <efi:toRunningMode>0</efi:toRunningMode>
-					  <efi:transitionCosts efi:currency="pound">0.0</efi:transitionCosts>
+					  <efi:startTimerIds>
+					  	<efi:timerId>1</efi:timerId>
+					  	<efi:timerId>2</efi:timerId>
+					  </efi:startTimerIds>
+					  <efi:blockingTimerIds>
+					    <efi:timerId>3</efi:timerId>
+					  	<efi:timerId>4</efi:timerId>
+					  </efi:blockingTimerIds>
+					  <efi:transitionCosts efi:currency="euro">0.0004</efi:transitionCosts>
 					</efi:possibleTransition>
 				</efi:possibleTransitions>
 	        </efi:runningMode>
 	      </efi:runningModes>
 	      </efi:actuatorBehaviour>
     </efi:actuatorBehaviours>
+    <efi:timers>
+    	<efi:timer>
+    		<efi:timerId>1</efi:timerId>
+    		<efi:timerLabel>IdleTimer</efi:timerLabel>
+    		<efi:duration>PT5M</efi:duration>
+    	</efi:timer>
+    	<efi:timer>
+    		<efi:timerId>2</efi:timerId>
+    		<efi:timerLabel>OnTimer</efi:timerLabel>
+    		<efi:duration>PT15M</efi:duration>
+    	</efi:timer>
+    </efi:timers>
     <efi:leakageBehaviour>
-      <efi:rangeElement xsi:type="efi:RangeElement">
+      <efi:leakageElement>
         <efi:lowerBound>0.0</efi:lowerBound>
         <efi:upperBound>0.0</efi:upperBound>
-        <efi:fillingRate>0.0</efi:fillingRate>
-      </efi:rangeElement>
+        <efi:leakageRatePerSecond>0.0</efi:leakageRatePerSecond>
+      </efi:leakageElement>
     </efi:leakageBehaviour>
   </efi:storageSystemDescription>
 </efi:efiMessage>

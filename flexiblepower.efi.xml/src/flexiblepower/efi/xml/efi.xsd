@@ -342,11 +342,24 @@
 			<element name="duration" type="duration"/>
 		</sequence>
 	</complexType>
+	
+	<complexType name="Timers">
+		<sequence>
+			<element name="timer" type="efi:Timer" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	
+	<complexType name="TimerIds">
+		<sequence>
+			<element name="timerId" type="int" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>	
+	
 	<complexType name="Transition">
 		<sequence>
 			<element name="toRunningMode" type="int"/>
-			<element name="startTimerId" type="int" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="blockingTimerId" type="int" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="startTimerIds" type="efi:TimerIds" minOccurs="1" maxOccurs="1"/>
+			<element name="blockingTimerIds" type="efi:TimerIds" minOccurs="1" maxOccurs="1"/>
 			<element name="transitionTime" type="duration" minOccurs="0"/>
 			<element name="transitionCosts" type="efi:Price"/>
 		</sequence>
@@ -360,8 +373,8 @@
 	</complexType>
 	<simpleType name="CurrencyType">
 		<restriction base="string">
-			<enumeration value="pound"/>
 			<enumeration value="euro"/>
+			<enumeration value="pound"/>
 			<enumeration value="dollar"/>
 		</restriction>
 	</simpleType>
@@ -404,13 +417,24 @@
 			<enumeration value="yotta"/>
 		</restriction>
 	</simpleType>
+
 	<complexType name="RangeElement">
 		<sequence>
 			<element name="lowerBound" type="double"/>
 			<element name="upperBound" type="double"/>
-			<element name="fillingRate" type="double"/>
 		</sequence>
 	</complexType>
+
+	<complexType name="LeakageElement">
+		<complexContent>
+			<extension base="efi:RangeElement">
+				<sequence>
+					<element name="leakageRatePerSecond" type="double"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
 	<complexType name="PossibleTransitions">
 		<sequence>
 			<element name="possibleTransition" type="efi:Transition" maxOccurs="unbounded"/>
@@ -437,7 +461,7 @@
 	</complexType>
 	<complexType name="LeakageFunction">
 		<sequence>
-			<element name="rangeElement" type="efi:RangeElement" maxOccurs="unbounded"/>
+			<element name="leakageElement" type="efi:LeakageElement" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<complexType name="ActuatorBehaviours">
@@ -449,7 +473,8 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours"/>
+					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours" minOccurs="1" maxOccurs="1"/>
+					<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
 					<element name="leakageBehaviour" type="efi:LeakageFunction" minOccurs="0"/>
 				</sequence>
 			</extension>
@@ -637,9 +662,11 @@
 		<complexContent>
 			<extension base="efi:RangeElement">
 				<sequence>
+					<element name="fillingRatePerSecond" type="double" minOccurs="1" maxOccurs="1"/>
 					<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
 					<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
 					<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
+					<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
 				</sequence>
 			</extension>
 		</complexContent>
