@@ -707,26 +707,26 @@
 
 	<complexType name="EfiMessageChoice">
 		<choice>
-<!-- 			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/> -->
-<!-- 			<element name="allocationRevoke" type="efi:AllocationRevoke"/> -->
+			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/>
+			<element name="allocationRevoke" type="efi:AllocationRevoke"/>
 			<element name="allocationStatusUpdate" type="efi:AllocationStatusUpdate"/>
-<!-- 			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/> -->
-<!-- 			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/> -->
-<!-- 			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/> -->
-<!-- 			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/> -->
-<!-- 			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/> -->
-<!-- 			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/> -->
-<!-- 			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/> -->
-<!-- 			<element name="storageRegistration" type="efi:StorageRegistration"/> -->
-<!-- 			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/> -->
-<!-- 			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/> -->
-<!-- 			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/> -->
-<!-- 			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"/> -->
-<!-- 			<element name="storageAllocation" type="efi:StorageAllocation"/> -->
-<!-- 			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration"/> -->
-<!-- 			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription"></element> -->
-<!-- 			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate"></element> -->
-<!-- 			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation"></element> -->
+			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
+			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
+			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
+			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
+			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
+			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
+			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
+			<element name="storageRegistration" type="efi:StorageRegistration"/>
+			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/>
+			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/>
+			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/>
+			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"/>
+			<element name="storageAllocation" type="efi:StorageAllocation"/>
+			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration"/>
+			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription"/>
+			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate"/>
+			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation"/>
 		</choice>
 	</complexType>
 	
