@@ -36,7 +36,7 @@ public class Transition {
 
     /**
      * This helper class should be used to easily define a {@link Transition}. Use the {@link Transition#create(int)} or
-     * {@link Transition#create(RunningMode))} method to get a new instance of this class.
+     * {@link Transition#create(RunningMode)} method to get a new instance of this class.
      */
     public static class Builder {
         private final int toRunningMode;
