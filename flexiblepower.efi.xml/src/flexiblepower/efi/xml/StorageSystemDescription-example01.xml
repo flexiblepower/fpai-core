@@ -1,66 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:storageSystemDescription>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:messageId>message-002</efi:messageId>
+    <efi:deviceId>storage-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T12:00:10</efi:timestamp>
+    <efi:validFrom>2015-12-31T12:00:10</efi:validFrom>
     <efi:actuatorBehaviours>
 	    <efi:actuatorBehaviour>
-	      <efi:actuatorId>efi:actuatorId</efi:actuatorId>
+	      <efi:actuatorId>1</efi:actuatorId>
 	      <efi:runningModes>
 	        <efi:runningMode>
-				<efi:runningModeId>0</efi:runningModeId>
-				<efi:runningModeName>efi:runningModeName</efi:runningModeName>
+				<efi:runningModeId>1</efi:runningModeId>
+				<efi:runningModeName>On</efi:runningModeName>
 				<efi:runningModeBehaviour>
 				  <efi:runningModeElement>
-				    <efi:lowerBound>0.0</efi:lowerBound>
-				    <efi:upperBound>10</efi:upperBound>
+				    <efi:lowerBound>0</efi:lowerBound>
+				    <efi:upperBound>30</efi:upperBound>
 				    <efi:fillingRatePerSecond>0.02</efi:fillingRatePerSecond>
-				    <efi:electricityConsumption>-500</efi:electricityConsumption>
+				    <efi:gasConsumption>500</efi:gasConsumption>
 				  </efi:runningModeElement>
 				  <efi:runningModeElement>
-				    <efi:lowerBound>10</efi:lowerBound>
-				    <efi:upperBound>20</efi:upperBound>
-				    <efi:fillingRatePerSecond>0.03</efi:fillingRatePerSecond>
-				    <efi:electricityConsumption>-700</efi:electricityConsumption>
+				    <efi:lowerBound>30</efi:lowerBound>
+				    <efi:upperBound>70</efi:upperBound>
+				    <efi:fillingRatePerSecond>0.015</efi:fillingRatePerSecond>
+				    <efi:gasConsumption>550</efi:gasConsumption>
 				  </efi:runningModeElement>
 				</efi:runningModeBehaviour>
 				<efi:possibleTransitions>
 					<efi:possibleTransition>
-					  <efi:toRunningMode>0</efi:toRunningMode>
+					  <efi:toRunningMode>2</efi:toRunningMode>
 					  <efi:startTimerIds>
-					  	<efi:timerId>1</efi:timerId>
 					  	<efi:timerId>2</efi:timerId>
 					  </efi:startTimerIds>
 					  <efi:blockingTimerIds>
-					    <efi:timerId>3</efi:timerId>
-					  	<efi:timerId>4</efi:timerId>
+					    <efi:timerId>1</efi:timerId>
+					  </efi:blockingTimerIds>
+					  <efi:transitionCosts efi:currency="euro">0</efi:transitionCosts>
+					</efi:possibleTransition>
+				</efi:possibleTransitions>
+	        </efi:runningMode>
+	        <efi:runningMode>
+				<efi:runningModeId>2</efi:runningModeId>
+				<efi:runningModeName>Off</efi:runningModeName>
+				<efi:runningModeBehaviour>
+				  <efi:runningModeElement>
+				    <efi:lowerBound>0</efi:lowerBound>
+				    <efi:upperBound>70</efi:upperBound>
+				    <efi:fillingRatePerSecond>0</efi:fillingRatePerSecond>
+				    <efi:gasConsumption>0</efi:gasConsumption>
+				  </efi:runningModeElement>
+				</efi:runningModeBehaviour>
+				<efi:possibleTransitions>
+					<efi:possibleTransition>
+					  <efi:toRunningMode>1</efi:toRunningMode>
+					  <efi:startTimerIds>
+					  	<efi:timerId>1</efi:timerId>
+					  </efi:startTimerIds>
+					  <efi:blockingTimerIds>
+					    <efi:timerId>2</efi:timerId>
 					  </efi:blockingTimerIds>
 					  <efi:transitionCosts efi:currency="euro">0.0004</efi:transitionCosts>
 					</efi:possibleTransition>
 				</efi:possibleTransitions>
 	        </efi:runningMode>
 	      </efi:runningModes>
+	        <efi:timers>
+		    	<efi:timer>
+		    		<efi:timerId>1</efi:timerId>
+		    		<efi:timerLabel>OffTimer</efi:timerLabel>
+		    		<efi:duration>PT5M</efi:duration>
+		    	</efi:timer>
+		    	<efi:timer>
+		    		<efi:timerId>2</efi:timerId>
+		    		<efi:timerLabel>OnTimer</efi:timerLabel>
+		    		<efi:duration>PT15M</efi:duration>
+		    	</efi:timer>
+		    </efi:timers>
 	      </efi:actuatorBehaviour>
     </efi:actuatorBehaviours>
-    <efi:timers>
-    	<efi:timer>
-    		<efi:timerId>1</efi:timerId>
-    		<efi:timerLabel>IdleTimer</efi:timerLabel>
-    		<efi:duration>PT5M</efi:duration>
-    	</efi:timer>
-    	<efi:timer>
-    		<efi:timerId>2</efi:timerId>
-    		<efi:timerLabel>OnTimer</efi:timerLabel>
-    		<efi:duration>PT15M</efi:duration>
-    	</efi:timer>
-    </efi:timers>
     <efi:leakageBehaviour>
       <efi:leakageElement>
-        <efi:lowerBound>0.0</efi:lowerBound>
-        <efi:upperBound>0.0</efi:upperBound>
-        <efi:leakageRatePerSecond>0.0</efi:leakageRatePerSecond>
+        <efi:lowerBound>0</efi:lowerBound>
+        <efi:upperBound>70</efi:upperBound>
+        <efi:leakageRatePerSecond>0.0001</efi:leakageRatePerSecond>
       </efi:leakageElement>
     </efi:leakageBehaviour>
   </efi:storageSystemDescription>

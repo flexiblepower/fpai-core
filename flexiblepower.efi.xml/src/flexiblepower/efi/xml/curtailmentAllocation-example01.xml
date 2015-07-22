@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:curtailmentAllocation>
-    <efi:messageId>message-005</efi:messageId>
-    <efi:deviceId>device-001</efi:deviceId>
+    <efi:messageId>message-004</efi:messageId>
+    <efi:deviceId>inflexible-device-001</efi:deviceId>
     <efi:timestamp>2015-07-10T12:30:00</efi:timestamp>
-    <efi:controlSpaceUpdateId>idvalue2</efi:controlSpaceUpdateId>
+    <efi:controlSpaceUpdateId>controlSpaceUpdate-001</efi:controlSpaceUpdateId>
     <efi:isEmergencyAllocation>true</efi:isEmergencyAllocation>
     <efi:startTime>2015-07-10T13:00:00</efi:startTime>
     <efi:curtailProfiles>
@@ -14,7 +14,7 @@
 	      <efi:element>
 	        <efi:duration>PT15M</efi:duration>
 	        <efi:powerValue>
-	          <efi:value efi:multiplier="none">1500</efi:value>
+	          <efi:value efi:multiplier="kilo">1.5</efi:value>
 	        </efi:powerValue>
 	      </efi:element>
 	    </efi:profileElements>

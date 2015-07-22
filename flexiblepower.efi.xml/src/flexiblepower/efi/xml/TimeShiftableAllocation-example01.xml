@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:timeShiftableAllocation>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:controlSpaceUpdateId>idvalue2</efi:controlSpaceUpdateId>
+    <efi:messageId>message-003</efi:messageId>
+    <efi:deviceId>time-shiftable-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T15:32:10</efi:timestamp>
+    <efi:controlSpaceUpdateId>message-002</efi:controlSpaceUpdateId>
     <efi:isEmergencyAllocation>false</efi:isEmergencyAllocation>
     <efi:sequentialProfileAllocations>
       <efi:sequentialProfileAllocation>
-        <efi:sequenceNr>0</efi:sequenceNr>
-        <efi:startTime>2001-12-31T12:00:00</efi:startTime>
+        <efi:sequenceNr>1</efi:sequenceNr>
+        <efi:startTime>2015-12-31T15:35:00</efi:startTime>
       </efi:sequentialProfileAllocation>
     </efi:sequentialProfileAllocations>
   </efi:timeShiftableAllocation>

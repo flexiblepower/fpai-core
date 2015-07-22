@@ -42,7 +42,7 @@
 				<sequence>
 					<element name="allocationId" type="ID"/>
 					<element name="status" type="efi:AllocationStatus"/>
-					<element name="additionalInfo" type="string"/>
+					<element name="additionalInfo" type="string" minOccurs="0" maxOccurs="1"/>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -588,7 +588,6 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="unit" type="string"/>
 					<element name="storageUsageForecastElements" type="efi:StorageUsageForecastElements"/>
 				</sequence>
 			</extension>

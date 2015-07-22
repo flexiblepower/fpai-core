@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:outputAdjustableRegistration>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:allocationDelay>P1D</efi:allocationDelay>
+    <efi:messageId>message-001</efi:messageId>
+    <efi:deviceId>output-adjustable-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T12:00:00</efi:timestamp>
+    <efi:allocationDelay>PT0S</efi:allocationDelay>
     <efi:supportedCommodities>
       <efi:commodityType>ELECTRICITY</efi:commodityType>
     </efi:supportedCommodities>

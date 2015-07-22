@@ -3,16 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
 	<efi:storageUsageForecastUpdate>
-		<efi:messageId>idvalue0</efi:messageId>
-		<efi:deviceId>idvalue1</efi:deviceId>
-		<efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-		<efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
-		<efi:unit>efi:unit</efi:unit>
+    <efi:messageId>message-005</efi:messageId>
+    <efi:deviceId>storage-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T12:50:00</efi:timestamp>
+    <efi:validFrom>2015-12-31T13:00:00</efi:validFrom>
 		<efi:storageUsageForecastElements>
 			<efi:storageUsageForecastElement>
-				<efi:duration>P1D</efi:duration>
+				<efi:duration>PT10M</efi:duration>
 				<efi:deltaFillLevel>
-					<efi:value efi:multiplier="yocto">0.0</efi:value>
+					<efi:value>-10</efi:value>
 				</efi:deltaFillLevel>
 			</efi:storageUsageForecastElement>
 		</efi:storageUsageForecastElements>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:timeShiftableUpdate>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
-    <efi:endBefore>2001-12-31T12:00:00</efi:endBefore>
+    <efi:messageId>message-002</efi:messageId>
+    <efi:deviceId>time-shiftable-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T12:00:00</efi:timestamp>
+    <efi:validFrom>2015-12-31T12:00:00</efi:validFrom>
+    <efi:endBefore>2015-12-31T16:00:00</efi:endBefore>
     <efi:sequentialProfiles>
       <efi:sequentialProfile>
-        <efi:sequenceNr>0</efi:sequenceNr>
+        <efi:sequenceNr>1</efi:sequenceNr>
         <efi:maxIntervalBefore>0</efi:maxIntervalBefore>
         <efi:profileContainer>
 	      <efi:electricityProfile>

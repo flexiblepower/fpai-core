@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:inFlexibileForecast>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
+    <efi:messageId>message-001</efi:messageId>
+    <efi:deviceId>device-001</efi:deviceId>
+    <efi:timestamp>2015-07-10T12:00:00</efi:timestamp>
+    <efi:validFrom>2015-07-10T12:30:00</efi:validFrom>
     <efi:forecastProfiles>
 	  <efi:electricityProfile>
 	    <efi:unit>Watt</efi:unit>
 	    <efi:profileElements>
 	      <efi:element>
-	        <efi:duration>P1D</efi:duration>
+	        <efi:duration>PT15M</efi:duration>
 	        <efi:powerValue>
-	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	          <efi:value efi:multiplier="kilo">1.5</efi:value>
 	        </efi:powerValue>
 	      </efi:element>
 	    </efi:profileElements>
@@ -21,9 +21,9 @@
 	    <efi:unit>Watt</efi:unit>
 	    <efi:profileElements>
 	      <efi:element>
-	        <efi:duration>P1D</efi:duration>
+	        <efi:duration>PT15M</efi:duration>
 	        <efi:powerValue>
-	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	          <efi:value>800</efi:value>
 	        </efi:powerValue>
 	      </efi:element>
 	    </efi:profileElements>
@@ -32,9 +32,9 @@
 	    <efi:unit>Watt</efi:unit>
 	    <efi:profileElements>
 	      <efi:element>
-	        <efi:duration>P1D</efi:duration>
+	        <efi:duration>PT15M</efi:duration>
 	        <efi:powerValue>
-	          <efi:value efi:multiplier="micro">0.0</efi:value>
+	          <efi:value efi:multiplier="kilo">1.1</efi:value>
 	        </efi:powerValue>
 	      </efi:element>
 	    </efi:profileElements>

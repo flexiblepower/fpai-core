@@ -1,26 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
   <efi:outputAdjustableSystemDescription>
-    <efi:messageId>idvalue0</efi:messageId>
-    <efi:deviceId>idvalue1</efi:deviceId>
-    <efi:timestamp>2001-12-31T12:00:00</efi:timestamp>
-    <efi:validFrom>2001-12-31T12:00:00</efi:validFrom>
-    <efi:runningModes>
-      <efi:runningModeId>0</efi:runningModeId>
-      <efi:runningModeName>efi:runningModeName</efi:runningModeName>
-      <efi:runningModeBehaviour>
-        <efi:runningModeElement>
-          <efi:lowerBound>0.0</efi:lowerBound>
-          <efi:upperBound>0.0</efi:upperBound>
-          <efi:fillingRate>0.0</efi:fillingRate>
-        </efi:runningModeElement>
-      </efi:runningModeBehaviour>
-      <efi:possibleTransitions>
-        <efi:possibleTransition>
-          <efi:toRunningMode>0</efi:toRunningMode>
-          <efi:transitionCosts efi:currency="pound">0.0</efi:transitionCosts>
-        </efi:possibleTransition>
-      </efi:possibleTransitions>
-    </efi:runningModes>
+    <efi:messageId>message-002</efi:messageId>
+    <efi:deviceId>output-adjustable-device-001</efi:deviceId>
+    <efi:timestamp>2015-12-31T12:01:00</efi:timestamp>
+    <efi:validFrom>20015-12-31T12:01:00</efi:validFrom>
+	      <efi:runningModes>
+	        <efi:runningMode>
+				<efi:runningModeId>1</efi:runningModeId>
+				<efi:runningModeName>On</efi:runningModeName>
+				<efi:runningModeBehaviour>
+			    	<efi:electricityConsumption efi:multiplier="kilo">-2.5</efi:electricityConsumption>
+			    	<efi:runningCostsPerSecond efi:currency="euro">0.000001</efi:runningCostsPerSecond>
+				</efi:runningModeBehaviour>
+				<efi:possibleTransitions>
+					<efi:possibleTransition>
+					  <efi:toRunningMode>2</efi:toRunningMode>
+					  <efi:startTimerIds>
+					  	<efi:timerId>2</efi:timerId>
+					  </efi:startTimerIds>
+					  <efi:blockingTimerIds>
+					    <efi:timerId>1</efi:timerId>
+					  </efi:blockingTimerIds>
+					  <efi:transitionCosts efi:currency="euro">0</efi:transitionCosts>
+					</efi:possibleTransition>
+				</efi:possibleTransitions>
+	        </efi:runningMode>
+	        <efi:runningMode>
+				<efi:runningModeId>2</efi:runningModeId>
+				<efi:runningModeName>Off</efi:runningModeName>
+				<efi:runningModeBehaviour>
+					<efi:electricityConsumption>0</efi:electricityConsumption>
+				</efi:runningModeBehaviour>
+				<efi:possibleTransitions>
+					<efi:possibleTransition>
+					  <efi:toRunningMode>1</efi:toRunningMode>
+					  <efi:startTimerIds>
+					  	<efi:timerId>1</efi:timerId>
+					  </efi:startTimerIds>
+					  <efi:blockingTimerIds>
+					    <efi:timerId>2</efi:timerId>
+					  </efi:blockingTimerIds>
+					  <efi:transitionCosts efi:currency="euro">0.0004</efi:transitionCosts>
+					</efi:possibleTransition>
+				</efi:possibleTransitions>
+	        </efi:runningMode>
+	      </efi:runningModes>
+	<efi:timers>
+    	<efi:timer>
+    		<efi:timerId>1</efi:timerId>
+    		<efi:timerLabel>OffTimer</efi:timerLabel>
+    		<efi:duration>PT5M</efi:duration>
+    	</efi:timer>
+    	<efi:timer>
+    		<efi:timerId>2</efi:timerId>
+    		<efi:timerLabel>OnTimer</efi:timerLabel>
+    		<efi:duration>PT15M</efi:duration>
+    	</efi:timer>
+    </efi:timers>
   </efi:outputAdjustableSystemDescription>
 </efi:efiMessage>
