@@ -24,12 +24,4 @@ build
 !.metadata/.plugins/org.eclipse.core.resources/.plugins/
 .com_puppetlabs_geppetto_pptp_target
 
-# GWT generated stuff
-.gwt
-gwt-unitCache
-deploy
-*.cache.html
-*.cache.gif
-*.gwt.rpc
-*.nocache.js
-hosted.html
+.recommenders/
