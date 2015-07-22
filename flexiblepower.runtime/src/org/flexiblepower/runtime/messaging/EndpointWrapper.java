@@ -3,13 +3,14 @@ package org.flexiblepower.runtime.messaging;
 import java.io.Closeable;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Port;
 import org.flexiblepower.messaging.Ports;
-import org.flexiblepower.runtime.context.RuntimeContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -29,8 +30,12 @@ public class EndpointWrapper implements ManagedEndpoint, Closeable {
     private final ConnectionManagerImpl connectionManager;
 
     private final BundleContext bundleContext;
+    /** {@link ServiceReference} to the {@link FlexiblePowerContext} if there is one, otherwise null */
     private final ServiceReference<FlexiblePowerContext> serviceReference;
+    /** The {@link FlexiblePowerContext} to schedule commands if there is one, otherwise null */
     private final FlexiblePowerContext endpointContext;
+    /** In case there is no {@link FlexiblePowerContext}, this {@link ExecutorService} is used to submit commands */
+    private final ExecutorService executorService;
 
     private final SortedMap<String, EndpointPortImpl> ports;
 
@@ -51,14 +56,16 @@ public class EndpointWrapper implements ManagedEndpoint, Closeable {
         checkPorts();
 
         Bundle bundle = FrameworkUtil.getBundle(endpoint.getClass());
-        if (bundle == null) {
-            RuntimeContext context = new RuntimeContext();
-            context.start(endpoint.getClass().getName());
-
+        if (bundle == null || bundle.getBundleContext() == null
+            || bundle.getBundleContext().getServiceReference(FlexiblePowerContext.class) == null) {
+            // We are not able to find a FlexiblePowerContext. Create an ExecutorService to deliver messages.
+            executorService = Executors.newSingleThreadExecutor();
             bundleContext = null;
             serviceReference = null;
-            endpointContext = context;
+            endpointContext = null;
         } else {
+            // Use the FlexiblePowerContext to deliver messages.
+            executorService = null;
             bundleContext = bundle.getBundleContext();
             serviceReference = bundleContext.getServiceReference(FlexiblePowerContext.class);
             endpointContext = bundleContext.getService(serviceReference);
@@ -158,7 +165,11 @@ public class EndpointWrapper implements ManagedEndpoint, Closeable {
     }
 
     void addCommand(Command command) {
-        endpointContext.submit(command);
+        if (endpointContext == null) {
+            executorService.submit(command);
+        } else { // executorService == null
+            endpointContext.submit(command);
+        }
     }
 
     @Override
@@ -167,10 +178,11 @@ public class EndpointWrapper implements ManagedEndpoint, Closeable {
             port.close();
         }
 
-        if (serviceReference != null) {
+        if (bundleContext != null) {
             bundleContext.ungetService(serviceReference);
-        } else {
-            ((RuntimeContext) endpointContext).stop();
+        }
+        if (executorService != null) {
+            executorService.shutdown();
         }
     }
 }
