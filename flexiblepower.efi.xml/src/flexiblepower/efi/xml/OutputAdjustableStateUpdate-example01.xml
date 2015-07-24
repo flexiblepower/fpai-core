@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
-  <efi:outputAdjustableStateUpdate>
-    <efi:messageId>message-003</efi:messageId>
-    <efi:deviceId>output-adjustable-device-001</efi:deviceId>
-    <efi:timestamp>2015-12-31T12:01:10</efi:timestamp>
-    <efi:validFrom>20015-12-31T12:01:10</efi:validFrom>
-    <efi:currentRunningModeId>2</efi:currentRunningModeId>
-	<efi:timerUpdates>
-	 <efi:timerUpdate>
-	  <efi:timerId>1</efi:timerId>
-	  <efi:finishedAt>2015-12-31T11:55:00</efi:finishedAt>
-	 </efi:timerUpdate>
-	  <efi:timerUpdate>
-	   <efi:timerId>2</efi:timerId>
-	   <efi:finishedAt>2015-12-31T11:30:45</efi:finishedAt>
-	  </efi:timerUpdate>
-	 </efi:timerUpdates>
-  </efi:outputAdjustableStateUpdate>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+	<efi:outputAdjustableStateUpdate>
+		<efi:messageId>message-003</efi:messageId>
+		<efi:deviceId>output-adjustable-device-001</efi:deviceId>
+		<efi:timestamp>2015-12-31T12:01:10</efi:timestamp>
+		<efi:validFrom>20015-12-31T12:01:10</efi:validFrom>
+		<efi:currentRunningModeId>2</efi:currentRunningModeId>
+		<efi:timerUpdates>
+			<efi:timerUpdate>
+				<efi:timerId>1</efi:timerId>
+				<efi:finishedAt>2015-12-31T11:55:00</efi:finishedAt>
+			</efi:timerUpdate>
+			<efi:timerUpdate>
+				<efi:timerId>2</efi:timerId>
+				<efi:finishedAt>2015-12-31T11:30:45</efi:finishedAt>
+			</efi:timerUpdate>
+		</efi:timerUpdates>
+	</efi:outputAdjustableStateUpdate>
 </efi:efiMessage>

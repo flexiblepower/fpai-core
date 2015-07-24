@@ -3,10 +3,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
 	<efi:storageTargetProfileUpdate>
-    <efi:messageId>message-004</efi:messageId>
-    <efi:deviceId>storage-device-001</efi:deviceId>
-    <efi:timestamp>2015-12-31T12:05:00</efi:timestamp>
-    <efi:validFrom>2015-12-31T12:05:00</efi:validFrom>
+		<efi:messageId>message-004</efi:messageId>
+		<efi:deviceId>storage-device-001</efi:deviceId>
+		<efi:timestamp>2015-12-31T12:05:00</efi:timestamp>
+		<efi:validFrom>2015-12-31T12:05:00</efi:validFrom>
 		<efi:targetProfile>
 			<efi:startTime>2015-12-31T12:45:00</efi:startTime>
 			<efi:targetProfileElement>

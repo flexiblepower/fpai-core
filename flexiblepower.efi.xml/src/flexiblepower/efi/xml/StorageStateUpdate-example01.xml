@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
-  <efi:storageStateUpdate>
-    <efi:messageId>message-003</efi:messageId>
-    <efi:deviceId>storage-device-001</efi:deviceId>
-    <efi:timestamp>2015-12-31T12:01:00</efi:timestamp>
-    <efi:validFrom>2015-12-31T12:01:00</efi:validFrom>
-    <efi:currentFillLevel>35.7</efi:currentFillLevel>
-    <efi:actuatorUpdates>
-    <efi:actuatorUpdate>
-      <efi:actuatorId>1</efi:actuatorId>
-      <efi:currentRunningMode>1</efi:currentRunningMode>
-      <efi:timerUpdates>
-	      <efi:timerUpdate>
-		      <efi:timerId>1</efi:timerId>
-		      <efi:finishedAt>2015-12-31T11:55:00</efi:finishedAt>
-	      </efi:timerUpdate>
-		      <efi:timerUpdate>
-			      <efi:timerId>2</efi:timerId>
-			      <efi:finishedAt>2015-12-31T12:13:45</efi:finishedAt>
-		      </efi:timerUpdate>
-	      </efi:timerUpdates>
-    </efi:actuatorUpdate>
-    </efi:actuatorUpdates>
-  </efi:storageStateUpdate>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+	<efi:storageStateUpdate>
+		<efi:messageId>message-003</efi:messageId>
+		<efi:deviceId>storage-device-001</efi:deviceId>
+		<efi:timestamp>2015-12-31T12:01:00</efi:timestamp>
+		<efi:validFrom>2015-12-31T12:01:00</efi:validFrom>
+		<efi:currentFillLevel>35.7</efi:currentFillLevel>
+		<efi:actuatorUpdates>
+			<efi:actuatorUpdate>
+				<efi:actuatorId>1</efi:actuatorId>
+				<efi:currentRunningMode>1</efi:currentRunningMode>
+				<efi:timerUpdates>
+					<efi:timerUpdate>
+						<efi:timerId>1</efi:timerId>
+						<efi:finishedAt>2015-12-31T11:55:00</efi:finishedAt>
+					</efi:timerUpdate>
+					<efi:timerUpdate>
+						<efi:timerId>2</efi:timerId>
+						<efi:finishedAt>2015-12-31T12:13:45</efi:finishedAt>
+					</efi:timerUpdate>
+				</efi:timerUpdates>
+			</efi:actuatorUpdate>
+		</efi:actuatorUpdates>
+	</efi:storageStateUpdate>
 </efi:efiMessage>

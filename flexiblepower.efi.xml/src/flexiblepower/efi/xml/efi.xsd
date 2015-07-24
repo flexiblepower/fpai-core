@@ -1,427 +1,492 @@
 <?xml version="1.1" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 (http://www.altova.com) by Dennis Krukkert (TNO ICT) -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:efi="http://www.flexiblepower.org/efi" targetNamespace="http://www.flexiblepower.org/efi" elementFormDefault="qualified" attributeFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:efi="http://www.flexiblepower.org/efi"
+	targetNamespace="http://www.flexiblepower.org/efi" elementFormDefault="qualified"
+	attributeFormDefault="qualified">
+
 	<complexType name="EfiMessage">
 		<sequence>
-			<element name="messageId" type="ID"/>
-			<element name="deviceId" type="ID"/>
-			<element name="timestamp" type="dateTime"/>
+			<element name="messageId" type="ID" />
+			<element name="deviceId" type="ID" />
+			<element name="timestamp" type="dateTime" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ControlSpaceRegistration">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
-					<element name="allocationDelay" type="duration"/>
+					<element name="allocationDelay" type="duration" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ControlSpaceUpdate">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
-					<element name="validFrom" type="dateTime"/>
+					<element name="validFrom" type="dateTime" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="Allocation">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
-					<element name="controlSpaceUpdateId" type="ID"/>
-					<element name="isEmergencyAllocation" type="boolean"/>
+					<element name="controlSpaceUpdateId" type="ID" />
+					<element name="isEmergencyAllocation" type="boolean" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="AllocationStatusUpdate">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
-					<element name="allocationId" type="ID"/>
-					<element name="status" type="efi:AllocationStatus"/>
-					<element name="additionalInfo" type="string" minOccurs="0" maxOccurs="1"/>
+					<element name="allocationId" type="ID" />
+					<element name="status" type="efi:AllocationStatus" />
+					<element name="additionalInfo" type="string" minOccurs="0"
+						maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<simpleType name="AllocationStatus">
 		<restriction base="string">
-			<enumeration value="ACCEPTED"/>
-			<enumeration value="REJECTED"/>
-			<enumeration value="PROCESSING"/>
-			<enumeration value="STARTED"/>
-			<enumeration value="FINISHED"/>
+			<enumeration value="ACCEPTED" />
+			<enumeration value="REJECTED" />
+			<enumeration value="PROCESSING" />
+			<enumeration value="STARTED" />
+			<enumeration value="FINISHED" />
 		</restriction>
 	</simpleType>
+
 	<complexType name="ControlSpaceRevoke">
 		<complexContent>
-			<extension base="efi:EfiMessage"/>
+			<extension base="efi:EfiMessage" />
 		</complexContent>
 	</complexType>
+
 	<complexType name="AllocationRevoke">
 		<complexContent>
-			<extension base="efi:EfiMessage"/>
+			<extension base="efi:EfiMessage" />
 		</complexContent>
 	</complexType>
+
 	<simpleType name="CommodityEnum">
 		<restriction base="string">
-			<enumeration value="ELECTRICITY"/>
-			<enumeration value="GAS"/>
-			<enumeration value="HEAT"/>
+			<enumeration value="ELECTRICITY" />
+			<enumeration value="GAS" />
+			<enumeration value="HEAT" />
 		</restriction>
 	</simpleType>
+
 	<complexType name="Commodity" abstract="true">
 		<sequence>
 			<element name="unitOfEnergy" type="string">
 				<annotation>
-					<documentation>This is the unit of energy for this commodity.</documentation>
+					<documentation>This is the unit of energy for this commodity.
+					</documentation>
 				</annotation>
 			</element>
-			<element name="unitOfPower" type="string"/>
-			<element name="unitOfPotential" type="string"/>
-			<element name="unitOfFlow" type="string"/>
+			<element name="unitOfPower" type="string" />
+			<element name="unitOfPotential" type="string" />
+			<element name="unitOfFlow" type="string" />
 		</sequence>
 	</complexType>
+
 	<complexType name="Electricity">
 		<complexContent>
 			<restriction base="efi:Commodity">
 				<sequence>
-					<element name="unitOfEnergy" type="string" fixed="WattHour"/>
-					<element name="unitOfPower" type="string" fixed="Watt"/>
-					<element name="unitOfPotential" type="string" fixed="Volt"/>
-					<element name="unitOfFlow" type="string" fixed="Ampere"/>
+					<element name="unitOfEnergy" type="string" fixed="WattHour" />
+					<element name="unitOfPower" type="string" fixed="Watt" />
+					<element name="unitOfPotential" type="string" fixed="Volt" />
+					<element name="unitOfFlow" type="string" fixed="Ampere" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="Heat">
 		<complexContent>
 			<restriction base="efi:Commodity">
 				<sequence>
-					<element name="unitOfEnergy" type="string" fixed="Joule"/>
-					<element name="unitOfPower" type="string" fixed="Watt"/>
-					<element name="unitOfPotential" type="string" fixed="Temperature"/>
-					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond"/>
+					<element name="unitOfEnergy" type="string" fixed="Joule" />
+					<element name="unitOfPower" type="string" fixed="Watt" />
+					<element name="unitOfPotential" type="string" fixed="Temperature" />
+					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="Gas">
 		<complexContent>
 			<restriction base="efi:Commodity">
 				<sequence>
-					<element name="unitOfEnergy" type="string" fixed="Joule"/>
-					<element name="unitOfPower" type="string" fixed="Watt"/>
-					<element name="unitOfPotential" type="string" fixed="Pressure"/>
-					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond"/>
+					<element name="unitOfEnergy" type="string" fixed="Joule" />
+					<element name="unitOfPower" type="string" fixed="Watt" />
+					<element name="unitOfPotential" type="string" fixed="Pressure" />
+					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ProfileElement">
 		<sequence>
-			<element name="duration" type="duration"/>
-			<element name="powerValue" type="efi:ValueWithProbability"/>
+			<element name="duration" type="duration" />
+			<element name="powerValue" type="efi:ValueWithProbability" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ProfileElements">
 		<sequence>
-			<element name="element" type="efi:ProfileElement" maxOccurs="unbounded"/>
+			<element name="element" type="efi:ProfileElement" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="Profile" abstract="true">
 		<sequence>
-			<element name="unit" type="string"/>
-			<element name="profileElements" type="efi:ProfileElements"/>
+			<element name="unit" type="string" />
+			<element name="profileElements" type="efi:ProfileElements" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ElectricityProfile">
 		<complexContent>
 			<restriction base="efi:Profile">
 				<sequence>
-					<element name="unit" type="string" fixed="Watt"/>
-					<element name="profileElements" type="efi:ProfileElements"/>
+					<element name="unit" type="string" fixed="Watt" />
+					<element name="profileElements" type="efi:ProfileElements" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="HeatProfile">
 		<complexContent>
 			<restriction base="efi:Profile">
 				<sequence>
-					<element name="unit" type="string" fixed="Watt"/>
-					<element name="profileElements" type="efi:ProfileElements"/>
+					<element name="unit" type="string" fixed="Watt" />
+					<element name="profileElements" type="efi:ProfileElements" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="GasProfile">
 		<annotation>
-			<documentation>This profile can only be used for gas values.</documentation>
+			<documentation>This profile can only be used for gas values.
+			</documentation>
 		</annotation>
 		<complexContent>
 			<restriction base="efi:Profile">
 				<sequence>
-					<element name="unit" type="string" fixed="Watt"/>
-					<element name="profileElements" type="efi:ProfileElements"/>
+					<element name="unit" type="string" fixed="Watt" />
+					<element name="profileElements" type="efi:ProfileElements" />
 				</sequence>
 			</restriction>
 		</complexContent>
 	</complexType>
+
 	<complexType name="ValueWithProbability">
 		<sequence>
-			<element name="value" type="efi:MeasureType"/>
-			<element name="probabilityInfo" type="efi:ProbabilityInfo" minOccurs="0"/>
+			<element name="value" type="efi:MeasureType" />
+			<element name="probabilityInfo" type="efi:ProbabilityInfo"
+				minOccurs="0" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ProbabilityInfo">
 		<sequence>
-			<element name="the95PPRLowerBound" type="double"/>
-			<element name="the68PPRLowerBound" type="double"/>
-			<element name="the68PPRUpperBound" type="double"/>
-			<element name="the95PPRUpperBound" type="double"/>
+			<element name="the95PPRLowerBound" type="double" />
+			<element name="the68PPRLowerBound" type="double" />
+			<element name="the68PPRUpperBound" type="double" />
+			<element name="the95PPRUpperBound" type="double" />
 		</sequence>
 	</complexType>
+
 	<complexType name="InflexibleRegistration">
 		<complexContent>
 			<extension base="efi:ControlSpaceRegistration">
 				<sequence>
-					<element name="supportedCommodities" type="efi:SupportedCommodities"/>
-					<element name="curtailmentOptions" type="efi:CurtailmentOptions" minOccurs="0"/>
+					<element name="supportedCommodities" type="efi:SupportedCommodities" />
+					<element name="curtailmentOptions" type="efi:CurtailmentOptions"
+						minOccurs="0" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SupportedCommodities">
 		<sequence>
-			<element name="commodityType" type="efi:CommodityEnum" maxOccurs="unbounded"/>
+			<element name="commodityType" type="efi:CommodityEnum"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="CurtailmentOptions">
 		<sequence>
-			<element name="commodityType" type="efi:CommodityEnum"/>
-			<element name="curtailmentLevels" type="efi:CurtailmentLevels"/>
+			<element name="commodityType" type="efi:CommodityEnum" />
+			<element name="curtailmentLevels" type="efi:CurtailmentLevels" />
 		</sequence>
 	</complexType>
+
 	<complexType name="CurtailmentLevels">
 		<sequence>
-			<element name="curtailmentRange" type="efi:CurtailmentRange" maxOccurs="unbounded"/>
+			<element name="curtailmentRange" type="efi:CurtailmentRange"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="CurtailmentRange">
 		<sequence>
-			<element name="lowerBound" type="double"/>
-			<element name="upperBound" type="double"/>
+			<element name="lowerBound" type="double" />
+			<element name="upperBound" type="double" />
 		</sequence>
 	</complexType>
+
 	<complexType name="InflexibleUpdate">
 		<complexContent>
-			<extension base="efi:ControlSpaceUpdate"/>
+			<extension base="efi:ControlSpaceUpdate" />
 		</complexContent>
 	</complexType>
+
 	<complexType name="InflexibleMeasurement">
 		<complexContent>
 			<extension base="efi:InflexibleUpdate">
 				<sequence>
-					<element name="measurement" type="efi:MeasureType"/>
-					<element name="commodityType" type="efi:CommodityEnum"/>
-					<element name="commodityUnit" type="efi:FlowUnitType"/>
+					<element name="measurement" type="efi:MeasureType" />
+					<element name="commodityType" type="efi:CommodityEnum" />
+					<element name="commodityUnit" type="efi:FlowUnitType" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="MeasureType">
 		<simpleContent>
 			<extension base="double">
-				<attribute name="multiplier" type="efi:MultiplierType"/>
+				<attribute name="multiplier" type="efi:MultiplierType" />
 			</extension>
 		</simpleContent>
 	</complexType>
+
 	<complexType name="ProfileContainer">
 		<sequence>
-			<element name="electricityProfile" type="efi:ElectricityProfile" minOccurs="0"/>
-			<element name="heatProfile" type="efi:HeatProfile" minOccurs="0"/>
-			<element name="gasProfile" type="efi:GasProfile" minOccurs="0"/>
+			<element name="electricityProfile" type="efi:ElectricityProfile"
+				minOccurs="0" />
+			<element name="heatProfile" type="efi:HeatProfile" minOccurs="0" />
+			<element name="gasProfile" type="efi:GasProfile" minOccurs="0" />
 		</sequence>
 	</complexType>
+
 	<complexType name="InflexibleForecast">
 		<complexContent>
 			<extension base="efi:InflexibleUpdate">
 				<sequence>
-					<element name="forecastProfiles" type="efi:ProfileContainer"/>
+					<element name="forecastProfiles" type="efi:ProfileContainer" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="CurtailmentAllocation">
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="startTime" type="dateTime"/>
-					<element name="curtailProfiles" type="efi:ProfileContainer"/>
+					<element name="startTime" type="dateTime" />
+					<element name="curtailProfiles" type="efi:ProfileContainer" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="TimeShiftableRegistration">
 		<complexContent>
 			<extension base="efi:ControlSpaceRegistration">
 				<sequence>
-					<element name="supportedCommodities" type="efi:SupportedCommodities"/>
+					<element name="supportedCommodities" type="efi:SupportedCommodities" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SequentialProfile">
 		<sequence>
-			<element name="sequenceNr" type="int"/>
-			<element name="maxIntervalBefore" type="int"/>
-			<element name="profileContainer" type="efi:ProfileContainer"/>
+			<element name="sequenceNr" type="int" />
+			<element name="maxIntervalBefore" type="int" />
+			<element name="profileContainer" type="efi:ProfileContainer" />
 		</sequence>
 	</complexType>
+
 	<complexType name="SequentialProfiles">
 		<sequence>
-			<element name="sequentialProfile" type="efi:SequentialProfile" maxOccurs="unbounded"/>
+			<element name="sequentialProfile" type="efi:SequentialProfile"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="TimeShiftableUpdate">
 		<complexContent>
 			<extension base="efi:ControlSpaceUpdate">
 				<sequence>
-					<element name="endBefore" type="dateTime"/>
-					<element name="sequentialProfiles" type="efi:SequentialProfiles"/>
+					<element name="endBefore" type="dateTime" />
+					<element name="sequentialProfiles" type="efi:SequentialProfiles" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="SequentialProfileAllocation">
 		<sequence>
-			<element name="sequenceNr" type="int"/>
-			<element name="startTime" type="dateTime"/>
+			<element name="sequenceNr" type="int" />
+			<element name="startTime" type="dateTime" />
 		</sequence>
 	</complexType>
+
 	<complexType name="SequentialProfileAllocations">
 		<sequence>
-			<element name="sequentialProfileAllocation" type="efi:SequentialProfileAllocation" maxOccurs="unbounded"/>
+			<element name="sequentialProfileAllocation" type="efi:SequentialProfileAllocation"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="TimeShiftableAllocation">
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations" maxOccurs="unbounded"/>
+					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations"
+						maxOccurs="unbounded" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="StorageRegistration">
 		<complexContent>
 			<extension base="efi:ControlSpaceRegistration">
 				<sequence>
-					<element name="fillLevelLabel" type="string"/>
-					<element name="fillLevelUnit" type="string"/>
-					<element name="actuators" type="efi:Actuator" minOccurs="0" maxOccurs="unbounded"/>
+					<element name="fillLevelLabel" type="string" />
+					<element name="fillLevelUnit" type="string" />
+					<element name="actuators" type="efi:Actuator" minOccurs="0"
+						maxOccurs="unbounded" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
+
 	<complexType name="Actuator">
 		<sequence>
-			<element name="actuatorId" type="int"/>
-			<element name="actuatorLabel" type="string"/>
-			<element name="supportedCommodities" type="efi:SupportedCommodities" maxOccurs="unbounded"/>
+			<element name="actuatorId" type="int" />
+			<element name="actuatorLabel" type="string" />
+			<element name="supportedCommodities" type="efi:SupportedCommodities"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="Timer">
 		<sequence>
-			<element name="timerId" type="int"/>
-			<element name="timerLabel" type="string"/>
-			<element name="duration" type="duration"/>
+			<element name="timerId" type="int" />
+			<element name="timerLabel" type="string" />
+			<element name="duration" type="duration" />
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="Timers">
 		<sequence>
-			<element name="timer" type="efi:Timer" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="timer" type="efi:Timer" minOccurs="0"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="TimerIds">
 		<sequence>
-			<element name="timerId" type="int" minOccurs="0" maxOccurs="unbounded"/>
-		</sequence>
-	</complexType>	
-	
-	<complexType name="Transition">
-		<sequence>
-			<element name="toRunningMode" type="int"/>
-			<element name="startTimerIds" type="efi:TimerIds" minOccurs="1" maxOccurs="1"/>
-			<element name="blockingTimerIds" type="efi:TimerIds" minOccurs="1" maxOccurs="1"/>
-			<element name="transitionTime" type="duration" minOccurs="0"/>
-			<element name="transitionCosts" type="efi:Price"/>
+			<element name="timerId" type="int" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
+	<complexType name="Transition">
+		<sequence>
+			<element name="toRunningMode" type="int" />
+			<element name="startTimerIds" type="efi:TimerIds" minOccurs="1"
+				maxOccurs="1" />
+			<element name="blockingTimerIds" type="efi:TimerIds"
+				minOccurs="1" maxOccurs="1" />
+			<element name="transitionTime" type="duration" minOccurs="0" />
+			<element name="transitionCosts" type="efi:Price" />
+		</sequence>
+	</complexType>
+
 	<complexType name="Price">
 		<simpleContent>
 			<extension base="decimal">
-				<attribute name="currency" type="efi:CurrencyType"/>
+				<attribute name="currency" type="efi:CurrencyType" />
 			</extension>
 		</simpleContent>
 	</complexType>
+
 	<simpleType name="CurrencyType">
 		<restriction base="string">
-			<enumeration value="euro"/>
-			<enumeration value="pound"/>
-			<enumeration value="dollar"/>
+			<enumeration value="euro" />
+			<enumeration value="pound" />
+			<enumeration value="dollar" />
 		</restriction>
 	</simpleType>
+
 	<simpleType name="PowerUnitType">
 		<restriction base="string">
-			<enumeration value="Watt"/>
+			<enumeration value="Watt" />
 		</restriction>
 	</simpleType>
+
 	<simpleType name="PotentialUnitType">
 		<restriction base="string">
-			<enumeration value="ToBeDone"/>
+			<enumeration value="ToBeDone" />
 		</restriction>
 	</simpleType>
+
 	<simpleType name="FlowUnitType">
 		<restriction base="string">
-			<enumeration value="ToBeDone"/>
+			<enumeration value="ToBeDone" />
 		</restriction>
 	</simpleType>
+
 	<simpleType name="MultiplierType">
 		<restriction base="string">
-			<enumeration value="yocto"/>
-			<enumeration value="zepto"/>
-			<enumeration value="atto"/>
-			<enumeration value="femto"/>
-			<enumeration value="pico"/>
-			<enumeration value="deci"/>
-			<enumeration value="nano"/>
-			<enumeration value="micro"/>
-			<enumeration value="milli"/>
-			<enumeration value="centi"/>
-			<enumeration value="deca"/>
-			<enumeration value="hecto"/>
-			<enumeration value="kilo"/>
-			<enumeration value="mega"/>
-			<enumeration value="giga"/>
-			<enumeration value="tera"/>
-			<enumeration value="peta"/>
-			<enumeration value="exa"/>
-			<enumeration value="zetta"/>
-			<enumeration value="yotta"/>
+			<enumeration value="yocto" />
+			<enumeration value="zepto" />
+			<enumeration value="atto" />
+			<enumeration value="femto" />
+			<enumeration value="pico" />
+			<enumeration value="deci" />
+			<enumeration value="nano" />
+			<enumeration value="micro" />
+			<enumeration value="milli" />
+			<enumeration value="centi" />
+			<enumeration value="deca" />
+			<enumeration value="hecto" />
+			<enumeration value="kilo" />
+			<enumeration value="mega" />
+			<enumeration value="giga" />
+			<enumeration value="tera" />
+			<enumeration value="peta" />
+			<enumeration value="exa" />
+			<enumeration value="zetta" />
+			<enumeration value="yotta" />
 		</restriction>
 	</simpleType>
 
 	<complexType name="RangeElement">
 		<sequence>
-			<element name="lowerBound" type="double"/>
-			<element name="upperBound" type="double"/>
+			<element name="lowerBound" type="double" />
+			<element name="upperBound" type="double" />
 		</sequence>
 	</complexType>
 
@@ -429,40 +494,48 @@
 		<complexContent>
 			<extension base="efi:RangeElement">
 				<sequence>
-					<element name="leakageRatePerSecond" type="double"/>
+					<element name="leakageRatePerSecond" type="double" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
-	
+
 	<complexType name="PossibleTransitions">
 		<sequence>
-			<element name="possibleTransition" type="efi:Transition" maxOccurs="unbounded"/>
+			<element name="possibleTransition" type="efi:Transition"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="StorageRunningMode">
 		<sequence>
-			<element name="runningModeId" type="int"/>
-			<element name="runningModeName" type="string"/>
-			<element name="runningModeBehaviour" type="efi:StorageRunningModeBehaviour"/>
-			<element name="possibleTransitions" type="efi:PossibleTransitions"/>
+			<element name="runningModeId" type="int" />
+			<element name="runningModeName" type="string" />
+			<element name="runningModeBehaviour" type="efi:StorageRunningModeBehaviour" />
+			<element name="possibleTransitions" type="efi:PossibleTransitions" />
 		</sequence>
 	</complexType>
+
 	<complexType name="StorageRunningModes">
 		<sequence>
-			<element name="runningMode" type="efi:StorageRunningMode" maxOccurs="unbounded"/>
+			<element name="runningMode" type="efi:StorageRunningMode"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ActuatorBehaviour">
 		<sequence>
-			<element name="actuatorId" type="string"/>
-			<element name="runningModes" type="efi:StorageRunningModes"/>
-			<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
+			<element name="actuatorId" type="string" />
+			<element name="runningModes" type="efi:StorageRunningModes" />
+			<element name="timers" type="efi:Timers" minOccurs="1"
+				maxOccurs="1" />
 		</sequence>
 	</complexType>
+
 	<complexType name="LeakageFunction">
 		<sequence>
-			<element name="leakageElement" type="efi:LeakageElement" maxOccurs="unbounded"/>
+			<element name="leakageElement" type="efi:LeakageElement"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -470,33 +543,43 @@
 		<complexContent>
 			<extension base="efi:RangeElement">
 				<sequence>
-					<element name="fillingRatePerSecond" type="double" minOccurs="1" maxOccurs="1"/>
-					<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
-					<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
+					<element name="fillingRatePerSecond" type="double"
+						minOccurs="1" maxOccurs="1" />
+					<element name="electricityConsumption" type="efi:MeasureType"
+						minOccurs="0" />
+					<element name="gasConsumption" type="efi:MeasureType"
+						minOccurs="0" />
+					<element name="heatConsumption" type="efi:MeasureType"
+						minOccurs="0" />
+					<element name="runningCostsPerSecond" type="efi:Price"
+						minOccurs="0" />
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
-	
+
 	<complexType name="StorageRunningModeBehaviour">
 		<sequence>
-			<element name="runningModeElement" type="efi:RunningModeElement" maxOccurs="unbounded"/>
+			<element name="runningModeElement" type="efi:RunningModeElement"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
 	<complexType name="ActuatorBehaviours">
 		<sequence>
-			<element name="actuatorBehaviour" type="efi:ActuatorBehaviour" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="actuatorBehaviour" type="efi:ActuatorBehaviour"
+				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
+
 	<complexType name="StorageSystemDescription">
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours" minOccurs="1" maxOccurs="1"/>
-					<element name="leakageBehaviour" type="efi:LeakageFunction" minOccurs="0"/>
+					<element name="actuatorBehaviours" type="efi:ActuatorBehaviours"
+						minOccurs="1" maxOccurs="1" />
+					<element name="leakageBehaviour" type="efi:LeakageFunction"
+						minOccurs="0" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -504,34 +587,36 @@
 
 	<complexType name="StorageUpdate">
 		<complexContent>
-			<extension base="efi:ControlSpaceUpdate"/>
+			<extension base="efi:ControlSpaceUpdate" />
 		</complexContent>
 	</complexType>
 
 	<complexType name="TimerUpdate">
 		<sequence>
-			<element name="timerId" type="int"/>
-			<element name="finishedAt" type="dateTime"/>
+			<element name="timerId" type="int" />
+			<element name="finishedAt" type="dateTime" />
 		</sequence>
 	</complexType>
 
 	<complexType name="TimerUpdates">
 		<sequence>
-			<element name="timerUpdate" type="efi:TimerUpdate" maxOccurs="unbounded"/>
+			<element name="timerUpdate" type="efi:TimerUpdate" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
 	<complexType name="ActuatorUpdate">
 		<sequence>
-			<element name="actuatorId" type="int"/>
-			<element name="currentRunningMode" type="int"/>
-			<element name="timerUpdates" type="efi:TimerUpdates" minOccurs="0"/>
+			<element name="actuatorId" type="int" />
+			<element name="currentRunningMode" type="int" />
+			<element name="timerUpdates" type="efi:TimerUpdates"
+				minOccurs="0" />
 		</sequence>
 	</complexType>
 
 	<complexType name="ActuatorUpdates">
 		<sequence>
-			<element name="actuatorUpdate" type="efi:ActuatorUpdate" maxOccurs="unbounded"/>
+			<element name="actuatorUpdate" type="efi:ActuatorUpdate"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -539,8 +624,9 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="currentFillLevel" type="double"/>
-					<element name="actuatorUpdates" type="efi:ActuatorUpdates" minOccurs="0"/>
+					<element name="currentFillLevel" type="double" />
+					<element name="actuatorUpdates" type="efi:ActuatorUpdates"
+						minOccurs="0" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -548,16 +634,17 @@
 
 	<complexType name="TargetProfileElement">
 		<sequence>
-			<element name="duration" type="duration"/>
-			<element name="fillLevelLowerBound" type="double"/>
-			<element name="fillLevelUpperBound" type="double"/>
+			<element name="duration" type="duration" />
+			<element name="fillLevelLowerBound" type="double" />
+			<element name="fillLevelUpperBound" type="double" />
 		</sequence>
 	</complexType>
 
 	<complexType name="TargetProfile">
 		<sequence>
-			<element name="startTime" type="dateTime"/>
-			<element name="targetProfileElement" type="efi:TargetProfileElement" maxOccurs="unbounded"/>
+			<element name="startTime" type="dateTime" />
+			<element name="targetProfileElement" type="efi:TargetProfileElement"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -565,7 +652,7 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="targetProfile" type="efi:TargetProfile"/>
+					<element name="targetProfile" type="efi:TargetProfile" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -573,14 +660,15 @@
 
 	<complexType name="StorageUsageForecastElement">
 		<sequence>
-			<element name="duration" type="duration"/>
-			<element name="deltaFillLevel" type="efi:ValueWithProbability"/>
+			<element name="duration" type="duration" />
+			<element name="deltaFillLevel" type="efi:ValueWithProbability" />
 		</sequence>
 	</complexType>
 
 	<complexType name="StorageUsageForecastElements">
 		<sequence>
-			<element name="storageUsageForecastElement" type="efi:StorageUsageForecastElement" maxOccurs="unbounded"/>
+			<element name="storageUsageForecastElement" type="efi:StorageUsageForecastElement"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -588,7 +676,7 @@
 		<complexContent>
 			<extension base="efi:StorageUpdate">
 				<sequence>
-					<element name="storageUsageForecastElements" type="efi:StorageUsageForecastElements"/>
+					<element name="storageUsageForecastElements" type="efi:StorageUsageForecastElements" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -596,14 +684,16 @@
 
 	<complexType name="ActuatorAllocation">
 		<sequence>
-			<element name="actuatorId" type="int"/>
-			<element name="runningModeId" type="int"/>
-			<element name="startTime" type="dateTime"/>
+			<element name="actuatorId" type="int" />
+			<element name="runningModeId" type="int" />
+			<element name="startTime" type="dateTime" />
 		</sequence>
 	</complexType>
+
 	<complexType name="ActuatorAllocations">
 		<sequence>
-			<element name="actuatorAllocation" type="efi:ActuatorAllocation" maxOccurs="unbounded"/>
+			<element name="actuatorAllocation" type="efi:ActuatorAllocation"
+				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -611,7 +701,7 @@
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="actuatorAllocations" type="efi:ActuatorAllocations"/>
+					<element name="actuatorAllocations" type="efi:ActuatorAllocations" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -621,7 +711,7 @@
 		<complexContent>
 			<extension base="efi:ControlSpaceRegistration">
 				<sequence>
-					<element name="supportedCommodities" type="efi:SupportedCommodities"/>
+					<element name="supportedCommodities" type="efi:SupportedCommodities" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -629,35 +719,41 @@
 
 	<complexType name="OutputAdjustableRunningModeBehaviour">
 		<sequence>
-			<element name="electricityConsumption" type="efi:MeasureType" minOccurs="0"/>
-			<element name="gasConsumption" type="efi:MeasureType" minOccurs="0"/>
-			<element name="heatConsumption" type="efi:MeasureType" minOccurs="0"/>
-			<element name="runningCostsPerSecond" type="efi:Price" minOccurs="0"/>
+			<element name="electricityConsumption" type="efi:MeasureType"
+				minOccurs="0" />
+			<element name="gasConsumption" type="efi:MeasureType"
+				minOccurs="0" />
+			<element name="heatConsumption" type="efi:MeasureType"
+				minOccurs="0" />
+			<element name="runningCostsPerSecond" type="efi:Price"
+				minOccurs="0" />
 		</sequence>
 	</complexType>
 
 	<complexType name="OutputAdjustableRunningMode">
 		<sequence>
-			<element name="runningModeId" type="int"/>
-			<element name="runningModeName" type="string"/>
-			<element name="runningModeBehaviour" type="efi:OutputAdjustableRunningModeBehaviour"/>
-			<element name="possibleTransitions" type="efi:PossibleTransitions"/>
-		</sequence>
-	</complexType>
-	
-	<complexType name="OutputAdjustableRunningModes">
-		<sequence>
-			<element name="runningMode" type="efi:OutputAdjustableRunningMode" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="runningModeId" type="int" />
+			<element name="runningModeName" type="string" />
+			<element name="runningModeBehaviour" type="efi:OutputAdjustableRunningModeBehaviour" />
+			<element name="possibleTransitions" type="efi:PossibleTransitions" />
 		</sequence>
 	</complexType>
 
+	<complexType name="OutputAdjustableRunningModes">
+		<sequence>
+			<element name="runningMode" type="efi:OutputAdjustableRunningMode"
+				minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
 
 	<complexType name="OutputAdjustableSystemDescription">
 		<complexContent>
 			<extension base="efi:InflexibleUpdate">
 				<sequence>
-					<element name="runningModes" type="efi:OutputAdjustableRunningModes" minOccurs="1" maxOccurs="1"/>
-					<element name="timers" type="efi:Timers" minOccurs="1" maxOccurs="1"/>
+					<element name="runningModes" type="efi:OutputAdjustableRunningModes"
+						minOccurs="1" maxOccurs="1" />
+					<element name="timers" type="efi:Timers" minOccurs="1"
+						maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -665,7 +761,7 @@
 
 	<complexType name="OutputAdjustableUpdate">
 		<complexContent>
-			<extension base="efi:ControlSpaceUpdate"/>
+			<extension base="efi:ControlSpaceUpdate" />
 		</complexContent>
 	</complexType>
 
@@ -673,8 +769,9 @@
 		<complexContent>
 			<extension base="efi:OutputAdjustableUpdate">
 				<sequence>
-					<element name="currentRunningModeId" type="int"/>
-					<element name="timerUpdates" type="efi:TimerUpdates" minOccurs="1" maxOccurs="1"/>
+					<element name="currentRunningModeId" type="int" />
+					<element name="timerUpdates" type="efi:TimerUpdates"
+						minOccurs="1" maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -684,7 +781,8 @@
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="runningModeSelectors" type="efi:RunningModeSelectors" minOccurs="1" maxOccurs="1"/>
+					<element name="runningModeSelectors" type="efi:RunningModeSelectors"
+						minOccurs="1" maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -692,43 +790,43 @@
 
 	<complexType name="RunningModeSelectors">
 		<sequence>
-			<element name="runningModeSelectors" type="efi:RunningModeSelector" minOccurs="1" maxOccurs="unbounded"/>
+			<element name="runningModeSelectors" type="efi:RunningModeSelector"
+				minOccurs="1" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
-	
 	<complexType name="RunningModeSelector">
 		<sequence>
-			<element name="runningModeId" type="int"/>
-			<element name="startTime" type="dateTime"/>
+			<element name="runningModeId" type="int" />
+			<element name="startTime" type="dateTime" />
 		</sequence>
 	</complexType>
 
 	<complexType name="EfiMessageChoice">
 		<choice>
-			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke"/>
-			<element name="allocationRevoke" type="efi:AllocationRevoke"/>
-			<element name="allocationStatusUpdate" type="efi:AllocationStatusUpdate"/>
-			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration"/>
-			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement"/>
-			<element name="inFlexibileForecast" type="efi:InflexibleForecast"/>
-			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation"/>
-			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration"/>
-			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate"/>
-			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation"/>
-			<element name="storageRegistration" type="efi:StorageRegistration"/>
-			<element name="storageSystemDescription" type="efi:StorageSystemDescription"/>
-			<element name="storageStateUpdate" type="efi:StorageStateUpdate"/>
-			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate"/>
-			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate"/>
-			<element name="storageAllocation" type="efi:StorageAllocation"/>
-			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration"/>
-			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription"/>
-			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate"/>
-			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation"/>
+			<element name="controlSpaceRevoke" type="efi:ControlSpaceRevoke" />
+			<element name="allocationRevoke" type="efi:AllocationRevoke" />
+			<element name="allocationStatusUpdate" type="efi:AllocationStatusUpdate" />
+			<element name="inFlexibleRegistration" type="efi:InflexibleRegistration" />
+			<element name="inFlexibileMeasurement" type="efi:InflexibleMeasurement" />
+			<element name="inFlexibileForecast" type="efi:InflexibleForecast" />
+			<element name="curtailmentAllocation" type="efi:CurtailmentAllocation" />
+			<element name="timeShiftableRegistration" type="efi:TimeShiftableRegistration" />
+			<element name="timeShiftableUpdate" type="efi:TimeShiftableUpdate" />
+			<element name="timeShiftableAllocation" type="efi:TimeShiftableAllocation" />
+			<element name="storageRegistration" type="efi:StorageRegistration" />
+			<element name="storageSystemDescription" type="efi:StorageSystemDescription" />
+			<element name="storageStateUpdate" type="efi:StorageStateUpdate" />
+			<element name="storageTargetProfileUpdate" type="efi:StorageTargetProfileUpdate" />
+			<element name="storageUsageForecastUpdate" type="efi:StorageUsageForecastUpdate" />
+			<element name="storageAllocation" type="efi:StorageAllocation" />
+			<element name="outputAdjustableRegistration" type="efi:OutputAdjustableRegistration" />
+			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription" />
+			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate" />
+			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation" />
 		</choice>
 	</complexType>
-	
-	<element name="efiMessage" type="efi:EfiMessageChoice"/>
-	
+
+	<element name="efiMessage" type="efi:EfiMessageChoice" />
+
 </schema>

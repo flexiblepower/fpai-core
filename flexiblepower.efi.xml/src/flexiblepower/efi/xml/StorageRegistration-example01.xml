@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
-  <efi:storageRegistration>
-    <efi:messageId>message-001</efi:messageId>
-    <efi:deviceId>storage-device-001</efi:deviceId>
-    <efi:timestamp>2015-12-31T12:00:00</efi:timestamp>
-    <efi:allocationDelay>PT0S</efi:allocationDelay>
-    <efi:fillLevelLabel>Temperature</efi:fillLevelLabel>
-    <efi:fillLevelUnit>Degrees Celsius</efi:fillLevelUnit>
-    <efi:actuators>
-      <efi:actuatorId>1</efi:actuatorId>
-      <efi:actuatorLabel>Burner</efi:actuatorLabel>
-      <efi:supportedCommodities>
-        <efi:commodityType>GAS</efi:commodityType>
-      </efi:supportedCommodities>
-    </efi:actuators>
-  </efi:storageRegistration>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+	<efi:storageRegistration>
+		<efi:messageId>message-001</efi:messageId>
+		<efi:deviceId>storage-device-001</efi:deviceId>
+		<efi:timestamp>2015-12-31T12:00:00</efi:timestamp>
+		<efi:allocationDelay>PT0S</efi:allocationDelay>
+		<efi:fillLevelLabel>Temperature</efi:fillLevelLabel>
+		<efi:fillLevelUnit>Degrees Celsius</efi:fillLevelUnit>
+		<efi:actuators>
+			<efi:actuatorId>1</efi:actuatorId>
+			<efi:actuatorLabel>Burner</efi:actuatorLabel>
+			<efi:supportedCommodities>
+				<efi:commodityType>GAS</efi:commodityType>
+			</efi:supportedCommodities>
+		</efi:actuators>
+	</efi:storageRegistration>
 </efi:efiMessage>

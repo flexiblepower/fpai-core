@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
-  <efi:inFlexibleRegistration>
-    <efi:messageId>message-001</efi:messageId>
-    <efi:deviceId>device-001</efi:deviceId>
-    <efi:timestamp>2015-07-10T12:00:00</efi:timestamp>
-    <efi:allocationDelay>PT1M</efi:allocationDelay>
-    <efi:supportedCommodities>
-      <efi:commodityType>ELECTRICITY</efi:commodityType>
-    </efi:supportedCommodities>
-    <efi:curtailmentOptions>
-      <efi:commodityType>ELECTRICITY</efi:commodityType>
-      <efi:curtailmentLevels>
-        <efi:curtailmentRange>
-          <efi:lowerBound>1500</efi:lowerBound>
-          <efi:upperBound>1500</efi:upperBound>
-        </efi:curtailmentRange>
-      </efi:curtailmentLevels>
-    </efi:curtailmentOptions>
-  </efi:inFlexibleRegistration>
+<efi:efiMessage xmlns:efi="http://www.flexiblepower.org/efi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.flexiblepower.org/efi efi.xsd ">
+	<efi:inFlexibleRegistration>
+		<efi:messageId>message-001</efi:messageId>
+		<efi:deviceId>device-001</efi:deviceId>
+		<efi:timestamp>2015-07-10T12:00:00</efi:timestamp>
+		<efi:allocationDelay>PT1M</efi:allocationDelay>
+		<efi:supportedCommodities>
+			<efi:commodityType>ELECTRICITY</efi:commodityType>
+		</efi:supportedCommodities>
+		<efi:curtailmentOptions>
+			<efi:commodityType>ELECTRICITY</efi:commodityType>
+			<efi:curtailmentLevels>
+				<efi:curtailmentRange>
+					<efi:lowerBound>1500</efi:lowerBound>
+					<efi:upperBound>1500</efi:upperBound>
+				</efi:curtailmentRange>
+			</efi:curtailmentLevels>
+		</efi:curtailmentOptions>
+	</efi:inFlexibleRegistration>
 </efi:efiMessage>

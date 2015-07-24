@@ -9,7 +9,7 @@
 		<electricity>true</electricity>
 		<gas>false</gas>
 		<heat>false</heat>
-	</commodity_set> 
+	</commodity_set>
 </resource_message>
 
 <resource_message type=Uncontrolled_Controlspace_Registration>
@@ -21,5 +21,5 @@
 		<electricity>true</electricity>
 		<gas>false</gas>
 		<heat>false</heat>
-	</commodity_set> 
+	</commodity_set>
 </resource_message>
