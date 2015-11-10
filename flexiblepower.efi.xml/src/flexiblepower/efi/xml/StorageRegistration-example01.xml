@@ -10,11 +10,13 @@
 		<efi:fillLevelLabel>Temperature</efi:fillLevelLabel>
 		<efi:fillLevelUnit>Degrees Celsius</efi:fillLevelUnit>
 		<efi:actuators>
-			<efi:actuatorId>1</efi:actuatorId>
-			<efi:actuatorLabel>Burner</efi:actuatorLabel>
-			<efi:supportedCommodities>
-				<efi:commodityType>GAS</efi:commodityType>
-			</efi:supportedCommodities>
+			<efi:actuator>
+				<efi:actuatorId>1</efi:actuatorId>
+				<efi:actuatorLabel>Burner</efi:actuatorLabel>
+				<efi:supportedCommodities>
+					<efi:commodityType>GAS</efi:commodityType>
+				</efi:supportedCommodities>
+			</efi:actuator>
 		</efi:actuators>
 	</efi:storageRegistration>
 </efi:efiMessage>

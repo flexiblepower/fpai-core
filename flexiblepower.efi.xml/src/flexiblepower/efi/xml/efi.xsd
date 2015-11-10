@@ -119,7 +119,7 @@
 					<element name="unitOfEnergy" type="string" fixed="Joule" />
 					<element name="unitOfPower" type="string" fixed="Watt" />
 					<element name="unitOfPotential" type="string" fixed="Temperature" />
-					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" />
+					<element name="unitOfFlow" type="string" fixed="LitersPerMinute" />
 				</sequence>
 			</restriction>
 		</complexContent>
@@ -132,7 +132,7 @@
 					<element name="unitOfEnergy" type="string" fixed="Joule" />
 					<element name="unitOfPower" type="string" fixed="Watt" />
 					<element name="unitOfPotential" type="string" fixed="Pressure" />
-					<element name="unitOfFlow" type="string" fixed="CubicMetersPerSecond" />
+					<element name="unitOfFlow" type="string" fixed="LitersPerMinute" />
 				</sequence>
 			</restriction>
 		</complexContent>
@@ -375,8 +375,7 @@
 				<sequence>
 					<element name="fillLevelLabel" type="string" />
 					<element name="fillLevelUnit" type="string" />
-					<element name="actuators" type="efi:Actuator" minOccurs="0"
-						maxOccurs="unbounded" />
+					<element name="actuators" type="efi:Actuators" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -387,6 +386,13 @@
 			<element name="actuatorId" type="int" />
 			<element name="actuatorLabel" type="string" />
 			<element name="supportedCommodities" type="efi:SupportedCommodities"
+				maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="Actuators">
+		<sequence>
+			<element name="actuator" type="efi:Actuator"
 				maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
