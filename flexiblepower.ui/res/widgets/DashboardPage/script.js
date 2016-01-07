@@ -44,7 +44,7 @@ $(document).ready(function() {
 	
 		addWidget: function(widgetId, widgetTitle) {
 			var lastSlide = this.getLastSlide();
-			if(lastSlide.children("div[id^=widget]").size() >= 6) {
+			if(lastSlide.children("div[id^=widget]").size() >= 8) {
 				royalSlider.addPage();
 				lastSlide = this.getLastSlide();
 			}
@@ -66,10 +66,10 @@ $(document).ready(function() {
 				}
 			});
 			
-			// Clean up the slides, such that each one contains 6 widgets
+			// Clean up the slides, such that each one contains 8 widgets
 			for(var i = 0; i < this.slider.numSlides; i++) {
 				var slide = this.getSlide(i);
-				var missingWidgets = 6 - this.getWidgets(i).size();
+				var missingWidgets = 8 - this.getWidgets(i).size();
 				
 				for(var j = i + 1; j < this.slider.numSlides; j++) {
 					var nextSlide = this.getSlide(j);

@@ -651,17 +651,17 @@ header .bottom .button{
 }
 
 .page {
-	width: 975px;
+	width: 1300px;
 	background: white;
 	min-height: 471px;
 	padding: 5px;
 }
 
 #dashboardroot, #resourcelist, #applist {
-	width: 975px;
+	width: 1300px;
 }
 #dashboardroot .royalSlider, #resourcelist .royalSlider {
-	width: 975px;
+	width: 1300px;
 	height: 471px;
 }
 #dashboardroot  .rsBullets {
@@ -696,13 +696,13 @@ header .bottom .button{
 #dashboardroot .slides_container {
 	overflow:hidden;
 	position:relative;
-	width: 975px;
+	width: 1300px;
 	height: 464px;
 }*/
 #dashboardroot .slide, #resourcelist .slide, #applist .slide {
 	/*background: #ff0000;*/
 	display: block;
-	width: 975px;
+	width: 1300px;
 	height: 464px;
 }
 
