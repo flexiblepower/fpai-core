@@ -53,24 +53,24 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
     @Override
     public void run() {
         while (running.get()) {
-            synchronized (jobs) {
-                if (simulationClock.isRunning() || simulationClock.isStopping()) {
-                    long now = simulationClock.getCurrentTimeMillis();
-                    logger.trace("Simulation step {}", now);
-                    long waitTime = getNextJobTime() - now;
-                    if (waitTime <= 0) {
-                        Job<?> job = jobs.remove();
-                        currentTime = Math.max(currentTime, job.getTimeOfNextRun());
-                        logger.trace("Executing  {}", job);
-                        job.run();
-                        if (!job.isDone()) {
-                            jobs.add(job);
-                            logger.trace("Rescheduling {}", job);
-                        }
-                    } else if (simulationClock.isStopping()) {
-                        logger.trace("Stopping simulation clock");
-                        simulationClock.stop();
-                    } else {
+            if (simulationClock.isRunning() || simulationClock.isStopping()) {
+                long now = simulationClock.getCurrentTimeMillis();
+                logger.trace("Simulation step {}", now);
+                long waitTime = getNextJobTime() - now;
+                if (waitTime <= 0) {
+                    Job<?> job = jobs.remove();
+                    currentTime = Math.max(currentTime, job.getTimeOfNextRun());
+                    logger.trace("Executing  {}", job);
+                    job.run();
+                    if (!job.isDone()) {
+                        jobs.add(job);
+                        logger.trace("Rescheduling {}", job);
+                    }
+                } else if (simulationClock.isStopping()) {
+                    logger.trace("Stopping simulation clock");
+                    simulationClock.stop();
+                } else {
+                    synchronized (jobs) {
                         long sleepTime = (long) (waitTime / simulationClock.getSpeedFactor());
                         logger.trace("Sleeping {}ms until next job", sleepTime);
                         try {
@@ -82,13 +82,15 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
                         }
                         isWaiting = false;
                     }
-                } else {
-                    // Wait for simulation start
-                    try {
+                }
+            } else {
+                // Wait for simulation start
+                try {
+                    synchronized (jobs) {
                         jobs.wait();
-                        currentTime = simulationClock.getSimulationStartTime();
-                    } catch (InterruptedException e) {
                     }
+                    currentTime = simulationClock.getSimulationStartTime();
+                } catch (InterruptedException e) {
                 }
             }
         }
