@@ -10,6 +10,26 @@
 			<element name="timestamp" type="dateTime" />
 		</sequence>
 	</complexType>
+	
+	<complexType name="ElectricityMeasurement">
+		<complexContent>
+			<extension base="efi:EfiMessage">
+				<sequence>
+					<element name="powerMeasurement" type="efi:MeasureType" minOccurs="0" maxOccurs="1" />
+					<element name="cumulativeEnergyMeasurement" type="efi:MeasureType" minOccurs="0" maxOccurs="1" />
+					<element name="periodicEnergyMeasurement" type="efi:PeriodicEnergyMeasurement" minOccurs="0" maxOccurs="1" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="PeriodicEnergyMeasurement">
+		<sequence>
+			<element name="startTime" type="dateTime" />
+			<element name="endTime" type="dateTime" />
+			<element name="energyMeasurement" type="efi:MeasureType" />
+		</sequence>
+	</complexType>
 
 	<complexType name="ControlSpaceRegistration">
 		<complexContent>
@@ -362,8 +382,7 @@
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations"
-						maxOccurs="unbounded" />
+					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations" minOccurs="1" maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -830,6 +849,7 @@
 			<element name="outputAdjustableSystemDescription" type="efi:OutputAdjustableSystemDescription" />
 			<element name="outputAdjustableStateUpdate" type="efi:OutputAdjustableStateUpdate" />
 			<element name="outputAdjustableAllocation" type="efi:OutputAdjustableAllocation" />
+			<element name="electricityMeasurement" type="efi:ElectricityMeasurement" />
 		</choice>
 	</complexType>
 
