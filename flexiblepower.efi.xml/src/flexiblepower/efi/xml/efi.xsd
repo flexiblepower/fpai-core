@@ -6,18 +6,36 @@
 	<complexType name="EfiMessage">
 		<sequence>
 			<element name="messageId" type="ID" />
-			<element name="deviceId" type="ID" />
+			<element name="efiDeviceId" type="ID" />
 			<element name="timestamp" type="dateTime" />
 		</sequence>
 	</complexType>
-	
+
+	<complexType name="CommodityMeasurement">
+		<complexContent>
+			<extension base="efi:EfiMessage">
+				<sequence>
+					<element name="powerMeasurement" type="efi:MeasureType"
+						minOccurs="0" maxOccurs="1" />
+					<element name="cumulativeEnergyMeasurement" type="efi:MeasureType"
+						minOccurs="0" maxOccurs="1" />
+					<element name="periodicEnergyMeasurement" type="efi:PeriodicEnergyMeasurement"
+						minOccurs="0" maxOccurs="1" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 	<complexType name="ElectricityMeasurement">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
-					<element name="powerMeasurement" type="efi:MeasureType" minOccurs="0" maxOccurs="1" />
-					<element name="cumulativeEnergyMeasurement" type="efi:MeasureType" minOccurs="0" maxOccurs="1" />
-					<element name="periodicEnergyMeasurement" type="efi:PeriodicEnergyMeasurement" minOccurs="0" maxOccurs="1" />
+					<element name="powerMeasurement" type="efi:MeasureType"
+						minOccurs="0" maxOccurs="1" />
+					<element name="cumulativeEnergyMeasurement" type="efi:MeasureType"
+						minOccurs="0" maxOccurs="1" />
+					<element name="periodicEnergyMeasurement" type="efi:PeriodicEnergyMeasurement"
+						minOccurs="0" maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -31,11 +49,21 @@
 		</sequence>
 	</complexType>
 
+	<complexType name="DeviceDescription">
+		<sequence>
+			<element name="deviceClass" type="efi:DeviceClass" />
+			<element name="serialNumber" type="string" />
+			<element name="label" type="string" />
+			<!-- <element name="locationInGrid" type="string" /> -->
+		</sequence>
+	</complexType>
+
 	<complexType name="ControlSpaceRegistration">
 		<complexContent>
 			<extension base="efi:EfiMessage">
 				<sequence>
 					<element name="allocationDelay" type="duration" />
+					<element name="deviceDescription" type="efi:DeviceDescription" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -87,7 +115,8 @@
 
 	<complexType name="ControlSpaceRevoke">
 		<complexContent>
-			<extension base="efi:EfiMessage" />
+			<extension base="efi:EfiMessage">
+			</extension>
 		</complexContent>
 	</complexType>
 
@@ -115,7 +144,7 @@
 			</element>
 			<element name="unitOfPower" type="string" />
 			<element name="unitOfPotential" type="string" />
-			<element name="unitOfFlow" type="string" />
+			<element name="unitOfRate" type="string" />
 		</sequence>
 	</complexType>
 
@@ -123,10 +152,10 @@
 		<complexContent>
 			<restriction base="efi:Commodity">
 				<sequence>
-					<element name="unitOfEnergy" type="string" fixed="WattHour" />
+					<element name="unitOfEnergy" type="string" fixed="Joule" />
 					<element name="unitOfPower" type="string" fixed="Watt" />
 					<element name="unitOfPotential" type="string" fixed="Volt" />
-					<element name="unitOfFlow" type="string" fixed="Ampere" />
+					<element name="unitOfRate" type="string" fixed="Ampere" />
 				</sequence>
 			</restriction>
 		</complexContent>
@@ -138,8 +167,8 @@
 				<sequence>
 					<element name="unitOfEnergy" type="string" fixed="Joule" />
 					<element name="unitOfPower" type="string" fixed="Watt" />
-					<element name="unitOfPotential" type="string" fixed="Temperature" />
-					<element name="unitOfFlow" type="string" fixed="LitersPerMinute" />
+					<element name="unitOfPotential" type="string" fixed="Kelvin" />
+					<element name="unitOfRate" type="string" fixed="KilogramsPerSecond" />
 				</sequence>
 			</restriction>
 		</complexContent>
@@ -152,7 +181,7 @@
 					<element name="unitOfEnergy" type="string" fixed="Joule" />
 					<element name="unitOfPower" type="string" fixed="Watt" />
 					<element name="unitOfPotential" type="string" fixed="Pressure" />
-					<element name="unitOfFlow" type="string" fixed="LitersPerMinute" />
+					<element name="unitOfRate" type="string" fixed="LitersPerMinute" />
 				</sequence>
 			</restriction>
 		</complexContent>
@@ -382,7 +411,8 @@
 		<complexContent>
 			<extension base="efi:Allocation">
 				<sequence>
-					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations" minOccurs="1" maxOccurs="1" />
+					<element name="sequentialProfileAllocations" type="efi:SequentialProfileAllocations"
+						minOccurs="1" maxOccurs="1" />
 				</sequence>
 			</extension>
 		</complexContent>
@@ -411,8 +441,7 @@
 
 	<complexType name="Actuators">
 		<sequence>
-			<element name="actuator" type="efi:Actuator"
-				maxOccurs="unbounded" />
+			<element name="actuator" type="efi:Actuator" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
@@ -536,7 +565,7 @@
 		<sequence>
 			<element name="runningModeId" type="int" />
 			<element name="runningModeName" type="string" />
-			<element name="runningModeBehaviour" type="efi:StorageRunningModeBehaviour" />
+			<element name="mutualExclusiveStorageOptions" type="efi:MutualExclusiveStorageOptions" />
 			<element name="possibleTransitions" type="efi:PossibleTransitions" />
 		</sequence>
 	</complexType>
@@ -583,11 +612,45 @@
 		</complexContent>
 	</complexType>
 
-	<complexType name="StorageRunningModeBehaviour">
+	<complexType name="MutualExclusiveStorageOptions">
 		<sequence>
-			<element name="runningModeElement" type="efi:RunningModeElement"
+			<element name="mutualExclusiveStorageOption" type="efi:MutualExclusiveStorageOption" minOccurs="1"
 				maxOccurs="unbounded" />
 		</sequence>
+	</complexType>
+
+	<complexType name="MutualExclusiveStorageOption">
+		<sequence>
+			<element name="storageId" type="int"
+				maxOccurs="unbounded" />
+			<element name="storageBehaviour" type="efi:StorageBehaviour" minOccurs="1"
+				maxOccurs="1" />
+		</sequence>
+	</complexType>
+
+	<complexType name="StorageBehaviour">
+		<sequence>
+			<element name="storageBehaviourElement" type="efi:StorageBehaviourElement"
+				maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="StorageBehaviourElement">
+		<sequence>
+			<element name="fillLevel" type="double" minOccurs="1"
+				maxOccurs="1" />
+			<element name="fillingRatePerSecond" type="double"
+				minOccurs="1" maxOccurs="1" />
+			<element name="electricityConsumption"
+				type="efi:MeasureType" minOccurs="0" />
+			<element name="gasConsumption" type="efi:MeasureType"
+				minOccurs="0" />
+			<element name="heatConsumption" type="efi:MeasureType"
+				minOccurs="0" />
+			<element name="runningCostsPerSecond" type="efi:Price"
+				minOccurs="0" />
+		</sequence>
+		<attribute name="type" type="efi:StorageBehaviourElementType"></attribute>
 	</complexType>
 
 	<complexType name="ActuatorBehaviours">
@@ -855,4 +918,29 @@
 
 	<element name="efiMessage" type="efi:EfiMessageChoice" />
 
+
+	<simpleType name="DeviceClass">
+		<restriction base="string">
+			<enumeration value="Refrigerator"></enumeration>
+			<enumeration value="Washing Machine"></enumeration>
+			<enumeration value="Heatpump"></enumeration>
+			<enumeration value="Battery"></enumeration>
+			<enumeration value="Electrical Vehicle"></enumeration>
+			<enumeration value="PV panel"></enumeration>
+			<enumeration value="Solar collector"></enumeration>
+			<enumeration value="Dishwasher"></enumeration>
+			<enumeration value="Airconditioner"></enumeration>
+			<enumeration value="Smart meter"></enumeration>
+			<enumeration value="Gas heater"></enumeration>
+			<enumeration value="Hot water storage"></enumeration>
+			<enumeration value="Floor heating"></enumeration>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="StorageBehaviourElementType">
+		<restriction base="string">
+			<enumeration value="discrete"></enumeration>
+			<enumeration value="continuous"></enumeration>
+		</restriction>
+	</simpleType>
 </schema>
