@@ -21,10 +21,7 @@ Test-Cases: ${classes;CONCRETE;EXTENDS;junit.framework.TestCase},${classes;ANNOT
 	org.apache.felix.metatype;version=latest,\
 	biz.aQute.bnd.annotation;version=latest,\
 	org.slf4j.osgi-over-slf4j;version=latest,\
-	slf4j.api;version=latest,\
-	biz.aQute.junit,\
-	junit,\
-	junit.osgi
+	slf4j.api;version=latest
 -runee: JavaSE-1.6
 -runfw: org.apache.felix.framework
 #-runtrace: true

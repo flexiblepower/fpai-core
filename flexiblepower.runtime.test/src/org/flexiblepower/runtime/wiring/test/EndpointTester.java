@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.flexiblepower.messaging.Cardinality;
 import org.flexiblepower.messaging.Connection;
+import org.flexiblepower.messaging.ConnectionFuture;
 import org.flexiblepower.messaging.ConnectionManager;
 import org.flexiblepower.messaging.ConnectionManager.EndpointPort;
 import org.flexiblepower.messaging.ConnectionManager.ManagedEndpoint;
 import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
+import org.flexiblepower.messaging.ConnectionManagerException;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.Filter;
 import org.flexiblepower.messaging.MessageHandler;
@@ -27,6 +27,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
+
+import junit.framework.TestCase;
 
 public class EndpointTester extends TestCase {
     private static final int SLEEP_TIME = 500;
@@ -217,6 +219,62 @@ public class EndpointTester extends TestCase {
         assertTrue(connAB.isConnected());
     }
 
+    public void testConnectEndpointPortsMethod() throws Exception {
+        EndpointA a = new EndpointA();
+        EndpointB b = new EndpointB();
+        EndpointC c = new EndpointC();
+        ConnectionManager connectionManager = setupEndpoints(a, b, c);
+
+        System.out.println(connectionManager.getEndpoints());
+
+        Thread.sleep(SLEEP_TIME);
+
+        // Test success scenario
+        connectionManager.connectEndpointPorts(EndpointA.class.getName(),
+                                               "A-anyIn",
+                                               EndpointB.class.getName(),
+                                               "B-anyOut");
+
+        EndpointPort portA = connectionManager.getEndpoint(EndpointA.class.getName()).getPort("A-anyIn");
+        EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
+        PotentialConnection connAB = portA.getPotentialConnection(portB);
+        assertNotNull(connAB);
+        assertTrue(connAB.isConnected());
+
+        // Test if not compatible
+        try {
+            connectionManager.connectEndpointPorts(EndpointC.class.getName(),
+                                                   "C-anyInOut",
+                                                   EndpointB.class.getName(),
+                                                   "B-anyOut");
+            fail();
+        } catch (ConnectionManagerException e) {
+            // expected
+        }
+    }
+
+    public void testAsyncConnectEndpointPortsMethod() throws Exception {
+        EndpointA a = new EndpointA();
+        EndpointB b = new EndpointB();
+        EndpointC c = new EndpointC();
+        ConnectionManager connectionManager = setupEndpoints(a, b, c);
+
+        System.out.println(connectionManager.getEndpoints());
+
+        ConnectionFuture future = connectionManager.asyncConnectEndpointPorts(EndpointA.class.getName(),
+                                                                              "A-anyIn",
+                                                                              EndpointB.class.getName(),
+                                                                              "B-anyOut");
+        future.awaitConnection();
+        assertTrue(future.isConnected());
+
+        EndpointPort portA = connectionManager.getEndpoint(EndpointA.class.getName()).getPort("A-anyIn");
+        EndpointPort portB = connectionManager.getEndpoint(EndpointB.class.getName()).getPort("B-anyOut");
+        PotentialConnection connAB = portA.getPotentialConnection(portB);
+        assertNotNull(connAB);
+        assertTrue(connAB.isConnected());
+    }
+
     @Port(name = "TextService",
           accepts = { String.class, Integer.class },
           sends = String.class,
@@ -363,7 +421,7 @@ public class EndpointTester extends TestCase {
     }
 
     @Ports({ @Port(name = "private", sends = DecodedStringMessage.class, accepts = DecodedStringMessage.class),
-            @Port(name = "public", sends = EncodedStringMessage.class, accepts = EncodedStringMessage.class) })
+             @Port(name = "public", sends = EncodedStringMessage.class, accepts = EncodedStringMessage.class) })
     static class CodecEndpoint implements Endpoint {
         private Connection privateConnection, publicConnection;
 
@@ -514,8 +572,10 @@ public class EndpointTester extends TestCase {
         }
 
         EndpointPort portEcho = checkNotNull("\"any\" port of the EchoEndpoint", meEcho.getPort("any"));
-        EndpointPort portPrivate1 = checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
-        EndpointPort portPrivate2 = checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
+        EndpointPort portPrivate1 =
+                                  checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
+        EndpointPort portPrivate2 =
+                                  checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
         EndpointPort portPublic1 = checkNotNull("\"public\" port of the CodecEndpoint 1", meCodec1.getPort("public"));
         EndpointPort portPublic2 = checkNotNull("\"public\" port of the CodecEndpoint 2", meCodec2.getPort("public"));
         EndpointPort portData = checkNotNull("\"something\" port of SendDataEndpoint", meData.getPort("something"));
@@ -552,7 +612,8 @@ public class EndpointTester extends TestCase {
     public abstract static class BaseEndpoint implements Endpoint {
         @Override
         public MessageHandler onConnect(Connection connection) {
-            System.out.println(BaseEndpoint.this.getClass().getSimpleName() + " connected port " + connection.getPort());
+            System.out.println(BaseEndpoint.this.getClass().getSimpleName() + " connected port "
+                               + connection.getPort());
             return new MessageHandler() {
                 @Override
                 public void handleMessage(Object message) {
@@ -691,8 +752,10 @@ public class EndpointTester extends TestCase {
         ManagedEndpoint meData = iterator.next();
 
         EndpointPort portEcho = checkNotNull("\"any\" port of the EchoEndpoint", meEcho.getPort("any"));
-        EndpointPort portPrivate1 = checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
-        EndpointPort portPrivate2 = checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
+        EndpointPort portPrivate1 =
+                                  checkNotNull("\"private\" port of the CodecEndpoint 1", meCodec1.getPort("private"));
+        EndpointPort portPrivate2 =
+                                  checkNotNull("\"private\" port of the CodecEndpoint 2", meCodec2.getPort("private"));
         EndpointPort portPublic1 = checkNotNull("\"public\" port of the CodecEndpoint 1", meCodec1.getPort("public"));
         EndpointPort portPublic2 = checkNotNull("\"public\" port of the CodecEndpoint 2", meCodec2.getPort("public"));
         EndpointPort portData = checkNotNull("\"something\" port of SendDataEndpoint", meData.getPort("something"));
