@@ -13,10 +13,13 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.flexiblepower.context.FlexiblePowerContext;
 import org.flexiblepower.messaging.Cardinality;
+import org.flexiblepower.messaging.ConnectionFuture;
 import org.flexiblepower.messaging.ConnectionManager;
+import org.flexiblepower.messaging.ConnectionManagerException;
 import org.flexiblepower.messaging.Endpoint;
 import org.flexiblepower.messaging.MessageListener;
 import org.osgi.framework.Constants;
@@ -64,6 +67,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private final MessageListenerContainer messageListenerContainer;
 
     private final Set<String> activeConnections;
+    private final List<ConnectionFutureImpl> connectionFutures;
 
     private boolean autoconnect;
 
@@ -73,6 +77,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
         messageListenerContainer = new MessageListenerContainer();
 
         activeConnections = new TreeSet<String>();
+        connectionFutures = new CopyOnWriteArrayList<ConnectionFutureImpl>();
         autoconnect = false;
     }
 
@@ -233,6 +238,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
                     autoConnect();
                 }
             }
+            // Check if there is a future connection that now can be connected
+            for (ConnectionFutureImpl future : connectionFutures) {
+                future.tryConnect();
+            }
         } catch (IllegalArgumentException ex) {
             logger.warn("Could not add endpoint: {}", ex.getMessage());
         }
@@ -357,8 +366,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                 EndpointPortImpl otherEnd = connection.getOtherEnd(port);
                                 // Or if the other is has a single cardinality and has other potential connections that
                                 // it can make
-                                if ((otherEnd.getCardinality() == Cardinality.SINGLE && otherEnd.getPotentialConnections()
-                                                                                                .size() == 1) || otherEnd.getCardinality() == Cardinality.MULTIPLE) {
+                                if ((otherEnd.getCardinality() == Cardinality.SINGLE
+                                     && otherEnd.getPotentialConnections()
+                                                .size() == 1)
+                                    || otherEnd.getCardinality() == Cardinality.MULTIPLE) {
                                     connection.connect();
                                     logger.debug("Autoconnected [" + port + "] to [" + otherEnd + "]");
                                 }
@@ -375,5 +386,59 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
     public MessageListenerContainer getMessageListenerContainer() {
         return messageListenerContainer;
+    }
+
+    @Override
+    public void connectEndpointPorts(String onePid,
+                                     String onePort,
+                                     String otherPid,
+                                     String otherPort) throws ConnectionManagerException {
+        ManagedEndpoint oneEndpoint = getEndpoint(onePid);
+        if (oneEndpoint == null) {
+            throw new ConnectionManagerException("Endpoint with pid " + onePid + " not found");
+        }
+        ManagedEndpoint otherEndpoint = getEndpoint(otherPid);
+        if (otherEndpoint == null) {
+            throw new ConnectionManagerException("Endpoint with pid " + otherPid + " not found");
+        }
+        EndpointPort oneEndpointPort = oneEndpoint.getPort(onePort);
+        if (oneEndpointPort == null) {
+            throw new ConnectionManagerException("Port with name " + onePort
+                                                 + " not found on endpoint with pid "
+                                                 + onePid);
+        }
+        EndpointPort otherEndpointPort = otherEndpoint.getPort(otherPort);
+        if (otherEndpointPort == null) {
+            throw new ConnectionManagerException("Port with name " + otherPort
+                                                 + " not found on endpoint with pid "
+                                                 + otherPid);
+        }
+        PotentialConnection potentialConnection = oneEndpointPort.getPotentialConnection(otherEndpointPort);
+        if (potentialConnection == null) {
+            throw new ConnectionManagerException("Cannot connect ports " + oneEndpointPort
+                                                 + " and "
+                                                 + otherEndpointPort);
+        }
+        try {
+            potentialConnection.connect();
+        } catch (IllegalStateException e) {
+            throw new ConnectionManagerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ConnectionFuture asyncConnectEndpointPorts(String onePid,
+                                                      String onePort,
+                                                      String otherPid,
+                                                      String otherPort) {
+        ConnectionFutureImpl future = new ConnectionFutureImpl(this, onePid, onePort, otherPid, otherPort);
+        if (!future.tryConnect()) {
+            connectionFutures.add(future);
+        }
+        return future;
+    }
+
+    void removeConnectionFuture(ConnectionFutureImpl connectionFutureImpl) {
+        connectionFutures.remove(connectionFutureImpl);
     }
 }
