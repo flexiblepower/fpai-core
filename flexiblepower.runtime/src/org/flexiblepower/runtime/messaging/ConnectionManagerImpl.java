@@ -389,10 +389,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
     }
 
     @Override
-    public void connectEndpointPorts(String onePid,
-                                     String onePort,
-                                     String otherPid,
-                                     String otherPort) throws ConnectionManagerException {
+    public PotentialConnection connectEndpointPorts(String onePid,
+                                                    String onePort,
+                                                    String otherPid,
+                                                    String otherPort) throws ConnectionManagerException {
         ManagedEndpoint oneEndpoint = getEndpoint(onePid);
         if (oneEndpoint == null) {
             throw new ConnectionManagerException("Endpoint with pid " + onePid + " not found");
@@ -420,10 +420,17 @@ public class ConnectionManagerImpl implements ConnectionManager {
                                                  + otherEndpointPort);
         }
         try {
+            // try to connect
             potentialConnection.connect();
         } catch (IllegalStateException e) {
             throw new ConnectionManagerException(e.getMessage());
         }
+        if (!potentialConnection.isConnected()) {
+            throw new ConnectionManagerException("Error occured during the connection of " + oneEndpointPort
+                                                 + " and "
+                                                 + otherEndpointPort);
+        }
+        return potentialConnection;
     }
 
     @Override

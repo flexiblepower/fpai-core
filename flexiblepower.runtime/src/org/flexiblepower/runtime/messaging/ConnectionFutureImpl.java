@@ -7,6 +7,7 @@ import javax.measure.quantity.Duration;
 import javax.measure.unit.SI;
 
 import org.flexiblepower.messaging.ConnectionFuture;
+import org.flexiblepower.messaging.ConnectionManager.PotentialConnection;
 import org.flexiblepower.messaging.ConnectionManagerException;
 
 public class ConnectionFutureImpl implements ConnectionFuture {
@@ -16,12 +17,10 @@ public class ConnectionFutureImpl implements ConnectionFuture {
     private final String onePort;
     private final String otherPid;
     private final String otherPort;
+    private PotentialConnection potentialConnection = null;
 
-    // private final Lock lock = new ReentrantLock();
-    // private final Condition isConnectedCondition = lock.newCondition();
     private final Object syncObject = new Object();
 
-    private boolean isConnected = false;
     private boolean isCancelled = false;
 
     ConnectionFutureImpl(ConnectionManagerImpl cm,
@@ -39,8 +38,7 @@ public class ConnectionFutureImpl implements ConnectionFuture {
     boolean tryConnect() {
         if (!isCancelled) {
             try {
-                connectionManager.connectEndpointPorts(onePid, onePort, otherPid, otherPort);
-                isConnected = true;
+                potentialConnection = connectionManager.connectEndpointPorts(onePid, onePort, otherPid, otherPort);
                 synchronized (syncObject) {
                     syncObject.notifyAll();
                 }
@@ -66,14 +64,19 @@ public class ConnectionFutureImpl implements ConnectionFuture {
 
     @Override
     public boolean isConnected() {
-        return isConnected;
+        return potentialConnection != null;
+    }
+
+    @Override
+    public PotentialConnection getPotentialConnection() {
+        return potentialConnection;
     }
 
     @Override
     public void awaitConnection() throws InterruptedException {
-        if (!isConnected && !isCancelled) {
+        if (!isConnected() && !isCancelled) {
             synchronized (syncObject) {
-                while (!isConnected) {
+                while (!isConnected()) {
                     syncObject.wait();
                 }
             }
@@ -84,15 +87,15 @@ public class ConnectionFutureImpl implements ConnectionFuture {
     public void awaitConnection(Measurable<Duration> timeout) throws TimeoutException, InterruptedException {
         long timeoutMs = timeout.longValue(SI.MILLI(SI.SECOND));
         long deadline = System.currentTimeMillis() + timeoutMs;
-        if (!isConnected && !isCancelled) {
+        if (!isConnected() && !isCancelled) {
             synchronized (syncObject) {
                 do {
                     syncObject.wait(timeoutMs);
                     timeoutMs = deadline - System.currentTimeMillis();
-                } while (!isConnected && timeoutMs > 0);
+                } while (!isConnected() && timeoutMs > 0);
             }
         }
-        if (!isConnected) {
+        if (!isConnected()) {
             throw new TimeoutException("Connection between " + onePid
                                        + ":"
                                        + onePort
