@@ -3,7 +3,7 @@
             org.apache.felix.webconsole
 -testpath: ${test-buildpath}
 
-Bundle-Version: 3.0.0.${qualifier}
+Bundle-Version: 3.1.0.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime
 Private-Package: \
 	org.flexiblepower.runtime.context,\
