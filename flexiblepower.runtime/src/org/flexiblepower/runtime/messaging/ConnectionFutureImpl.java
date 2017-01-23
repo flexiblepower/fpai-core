@@ -17,7 +17,7 @@ public class ConnectionFutureImpl implements ConnectionFuture {
     private final String onePort;
     private final String otherPid;
     private final String otherPort;
-    private PotentialConnection potentialConnection = null;
+    private volatile PotentialConnection potentialConnection = null;
 
     private final Object syncObject = new Object();
 
@@ -55,6 +55,9 @@ public class ConnectionFutureImpl implements ConnectionFuture {
     public void cancel() {
         isCancelled = true;
         connectionManager.removeConnectionFuture(this);
+        synchronized (syncObject) {
+            syncObject.notifyAll();
+        }
     }
 
     @Override
@@ -74,11 +77,9 @@ public class ConnectionFutureImpl implements ConnectionFuture {
 
     @Override
     public void awaitConnection() throws InterruptedException {
-        if (!isConnected() && !isCancelled) {
+        while (!isConnected() && !isCancelled) {
             synchronized (syncObject) {
-                while (!isConnected()) {
-                    syncObject.wait();
-                }
+                syncObject.wait();
             }
         }
     }
