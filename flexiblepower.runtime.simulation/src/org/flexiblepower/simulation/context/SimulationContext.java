@@ -3,6 +3,7 @@ package org.flexiblepower.simulation.context;
 import java.util.Date;
 
 import org.flexiblepower.context.FlexiblePowerContext;
+import org.flexiblepower.runtime.efpiid.EfpiIdProvider;
 import org.flexiblepower.scheduling.AbstractScheduler;
 import org.flexiblepower.scheduling.Job;
 import org.flexiblepower.simulation.api.Simulation;
@@ -10,6 +11,7 @@ import org.flexiblepower.simulation.api.Simulation;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
+import aQute.bnd.annotation.component.Reference;
 
 @Component(provide = { FlexiblePowerContext.class, Simulation.class })
 public class SimulationContext extends AbstractScheduler implements Simulation {
@@ -28,6 +30,17 @@ public class SimulationContext extends AbstractScheduler implements Simulation {
 
     private volatile boolean isWaiting = false;
     private volatile long currentTime = 0;
+    private String efpiId;
+
+    @Reference(dynamic = false, optional = false, multiple = false)
+    public void setEfpiIdProvider(EfpiIdProvider efpiIdProvider) {
+        efpiId = efpiIdProvider.efpiId();
+    }
+
+    @Override
+    public String efpiId() {
+        return efpiId;
+    }
 
     @Override
     public long currentTimeMillis() {

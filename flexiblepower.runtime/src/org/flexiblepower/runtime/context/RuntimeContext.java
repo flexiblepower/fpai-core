@@ -17,6 +17,7 @@ import javax.measure.Measure;
 import javax.measure.quantity.Duration;
 
 import org.flexiblepower.context.FlexiblePowerContext;
+import org.flexiblepower.runtime.efpiid.EfpiIdProvider;
 import org.flexiblepower.scheduling.AbstractScheduler;
 import org.flexiblepower.time.TimeService;
 import org.osgi.framework.Bundle;
@@ -25,12 +26,15 @@ import org.osgi.service.component.ComponentContext;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
+import aQute.bnd.annotation.component.Reference;
 
 @Component(servicefactory = true, provide = { FlexiblePowerContext.class,
-                                             ScheduledExecutorService.class,
-                                             TimeService.class })
+                                              ScheduledExecutorService.class,
+                                              TimeService.class })
 public class RuntimeContext extends AbstractScheduler implements ScheduledExecutorService, TimeService {
+
     private Bundle bundle;
+    private String efpiId;
 
     @Activate
     public void activate(ComponentContext context) {
@@ -44,6 +48,16 @@ public class RuntimeContext extends AbstractScheduler implements ScheduledExecut
         logger.info("Stopping RuntimeContext for bundle: {}", bundle.getSymbolicName());
         stop();
         logger.debug("Stopped RuntimeContext for bundle: {}", bundle.getSymbolicName());
+    }
+
+    @Reference(dynamic = false, optional = false, multiple = false)
+    public void setEfpiIdProvider(EfpiIdProvider efpiIdProvider) {
+        efpiId = efpiIdProvider.efpiId();
+    }
+
+    @Override
+    public String efpiId() {
+        return efpiId;
     }
 
     @Override
@@ -93,8 +107,8 @@ public class RuntimeContext extends AbstractScheduler implements ScheduledExecut
 
     @Override
     public <T>
-            List<Future<T>>
-            invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+           List<Future<T>>
+           invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
         List<Future<T>> list = new ArrayList<Future<T>>(tasks.size());
         for (Callable<T> task : tasks) {
             list.add(schedule(task, timeout, unit));
@@ -109,8 +123,8 @@ public class RuntimeContext extends AbstractScheduler implements ScheduledExecut
 
     @Override
     public <T>
-            T
-            invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException,
+           T
+           invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException,
                                                                                            ExecutionException,
                                                                                            TimeoutException {
         throw new UnsupportedOperationException("The RuntimeContext does not support this functionality");

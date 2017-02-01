@@ -3,12 +3,13 @@
             org.apache.felix.webconsole
 -testpath: ${test-buildpath}
 
-Bundle-Version: 3.1.0.${qualifier}
+Bundle-Version: 3.1.1.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime
 Private-Package: \
 	org.flexiblepower.runtime.context,\
 	org.flexiblepower.runtime.messaging,\
-	org.flexiblepower.scheduling
+	org.flexiblepower.scheduling,\
+	org.flexiblepower.runtime.efpiid
 Import-Package:  \
 	javax.servlet*;resolution:=optional,\
 	org.apache.felix*;resolution:=optional,\

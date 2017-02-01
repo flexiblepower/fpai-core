@@ -1,13 +1,14 @@
 -buildpath: ${default-buildpath}, flexiblepower.runtime;version=latest, flexiblepower.ui;version=latest
 -testpath: ${test-buildpath}
 
-Bundle-Version: 3.0.0.${qualifier}
+Bundle-Version: 3.0.1.${qualifier}
 Bundle-SymbolicName: flexiblepower.runtime.simulation
 Private-Package: \
 	org.flexiblepower.simulation.context,\
 	org.flexiblepower.simulation.ui,\
 	org.flexiblepower.runtime.messaging,\
-	org.flexiblepower.scheduling
+	org.flexiblepower.scheduling,\
+	org.flexiblepower.runtime.efpiid
 Export-Package: org.flexiblepower.simulation.api
 Import-Package: \
 	org.flexiblepower.ui;resolution:=optional,\
