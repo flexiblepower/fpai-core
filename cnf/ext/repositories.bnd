@@ -19,7 +19,7 @@
 		    cache=${workspace}/cnf/cache,\
 		aQute.bnd.deployer.repository.FixedIndexedRepo;\
 		    name=FlexiblePower Base 15.04;\
-		    locations=http://fan-ci.sensorlab.tno.nl/builds/flexiblepower-base/connectionmanager/LATEST/repo/index.xml;\
+		    locations=http://fan-ci.sensorlab.tno.nl/builds/flexiblepower-base/development/LATEST/repo/index.xml;\
 		    cache=${workspace}/cnf/cache,\
 		aQute.bnd.deployer.repository.FixedIndexedRepo;\
 		    name=FPAI Core Current Release;\
